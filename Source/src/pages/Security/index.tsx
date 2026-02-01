@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { getNetworkInfo, NetworkInfo } from "../../utils/systemInfo";
+import VirtualizedList from "../../components/VirtualizedList";
 
 export default function Security() {
   const navigate = useNavigate();
@@ -85,16 +86,21 @@ export default function Security() {
                 <div className="device-latency">Latency: -</div>
               </div>
             )}
-            {networkInfo.interfaces.map((name, idx) => (
-              <div key={name} className="device-card device-online">
-                <div className="device-header">
-                  <span className="device-id">IF-{String(idx + 1).padStart(3, '0')}</span>
-                  <span className="device-status online">🟢 オンライン</span>
+            <VirtualizedList
+              items={networkInfo.interfaces}
+              height={320}
+              itemHeight={72}
+              renderItem={(name: any, idx: number) => (
+                <div key={name} className="device-card device-online" style={{ padding: '10px' }}>
+                  <div className="device-header">
+                    <span className="device-id">IF-{String(idx + 1).padStart(3, '0')}</span>
+                    <span className="device-status online">🟢 オンライン</span>
+                  </div>
+                  <div className="device-name">{name}</div>
+                  <div className="device-latency">Latency: {networkInfo.average_latency}ms</div>
                 </div>
-                <div className="device-name">{name}</div>
-                <div className="device-latency">Latency: {networkInfo.average_latency}ms</div>
-              </div>
-            ))}
+              )}
+            />
           </div>
         </div>
       </main>

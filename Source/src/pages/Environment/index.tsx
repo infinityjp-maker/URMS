@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
 import { getSystemInfo, SystemInfo, getNetworkInfo, NetworkInfo } from "../../utils/systemInfo";
+import VirtualizedList from "../../components/VirtualizedList";
 
 export default function Environment() {
   const navigate = useNavigate();
@@ -144,16 +145,21 @@ export default function Environment() {
               </button>
             </div>
           </div>
-          <ul className="process-list">
-            {(processTab === 'cpu' ? networkInfo.top_cpu_processes : networkInfo.top_memory_processes).map((p, idx) => (
-              <li key={idx}>
-                <strong>{p.name}</strong> (PID: {p.pid}) - {p.cpu_usage.toFixed(1)}% CPU | {p.memory_mb} MB メモリ
-              </li>
-            ))}
-            {(processTab === 'cpu' ? networkInfo.top_cpu_processes : networkInfo.top_memory_processes).length === 0 && (
-              <li>プロセス情報を取得中...</li>
+          <div className="process-list">
+            {((processTab === 'cpu' ? networkInfo.top_cpu_processes : networkInfo.top_memory_processes).length === 0) && (
+              <div>プロセス情報を取得中...</div>
             )}
-          </ul>
+            <VirtualizedList
+              items={(processTab === 'cpu' ? networkInfo.top_cpu_processes : networkInfo.top_memory_processes)}
+              height={240}
+              itemHeight={40}
+              renderItem={(p: any, idx: number) => (
+                <div key={idx} style={{ padding: '6px 8px' }}>
+                  <strong>{p.name}</strong> (PID: {p.pid}) - {p.cpu_usage.toFixed(1)}% CPU | {p.memory_mb} MB メモリ
+                </div>
+              )}
+            />
+          </div>
         </div>
       </main>
     </div>

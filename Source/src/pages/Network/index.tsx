@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Environment/style.css";
 import { getNetworkInfo, NetworkInfo } from "../../utils/systemInfo";
+import VirtualizedList from "../../components/VirtualizedList";
 
 export default function Network() {
   const navigate = useNavigate();
@@ -85,14 +86,21 @@ export default function Network() {
 
         <div className="section-card">
           <h2>接続デバイス</h2>
-          <ul className="process-list">
+          <div className="process-list">
             {networkInfo.interfaces.length === 0 && (
-              <li>インターフェース未検出</li>
+              <div>インターフェース未検出</div>
             )}
-            {networkInfo.interfaces.map((name) => (
-              <li key={name}><strong>{name}</strong> - インターフェース</li>
-            ))}
-          </ul>
+            <VirtualizedList
+              items={networkInfo.interfaces}
+              height={240}
+              itemHeight={40}
+              renderItem={(name: any) => (
+                <div key={name} style={{ padding: '6px 8px' }}>
+                  <strong>{name}</strong> - インターフェース
+                </div>
+              )}
+            />
+          </div>
         </div>
       </main>
     </div>

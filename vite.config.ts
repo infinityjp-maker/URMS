@@ -11,6 +11,18 @@ export default defineConfig(async () => ({
   
   build: {
     outDir: './dist',
+    minify: 'esbuild',
+    sourcemap: false,
+    brotliSize: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
   },
   
   resolve: {

@@ -6,8 +6,8 @@ export default function SystemEventListener() {
   const [network, setNetwork] = useState<any>(null);
 
   useEffect(() => {
-    let unlistenSys: (() => Promise<void>) | undefined;
-    let unlistenNet: (() => Promise<void>) | undefined;
+    let unlistenSys: (() => void) | undefined;
+    let unlistenNet: (() => void) | undefined;
 
     (async () => {
       try {

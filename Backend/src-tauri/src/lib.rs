@@ -74,18 +74,30 @@ pub fn run() {
         }
     }
 
-    // Initialize logging: console + file under logs/urms.log
+    // Initialize logging with rotation: console + rotating file `logs/urms.log`.
     {
-        use simplelog::{CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, ColorChoice, WriteLogger};
-        use std::fs::File;
+        use flexi_logger::{Criterion, Duplicate, LogSpecBuilder, Logger, Naming, Cleanup, FileSpec};
 
         let _ = std::fs::create_dir_all("logs");
-        if let Ok(file) = File::create("logs/urms.log") {
-            let _ = CombinedLogger::init(vec![
-                TermLogger::new(LevelFilter::Info, Config::default(), TerminalMode::Mixed, ColorChoice::Auto),
-                WriteLogger::new(LevelFilter::Debug, Config::default(), file),
-            ]);
-        }
+
+        let mut spec_builder = LogSpecBuilder::new();
+        spec_builder.default(flexi_logger::LevelFilter::Info);
+
+        let file_spec = FileSpec::default()
+            .directory("logs")
+            .basename("urms")
+            .suffix("log");
+
+        let _ = Logger::with(spec_builder.build())
+            .duplicate_to_stderr(Duplicate::Info)
+            .log_to_file(file_spec)
+            .rotate(
+                Criterion::Size(10_000_000), // 10 MB
+                Naming::Numbers,
+                Cleanup::KeepLogFiles(10),
+            )
+            .start()
+            .map_err(|e| eprintln!("failed to init logger: {}", e));
     }
 
     // Simple WebView2 runtime presence check on Windows — logs a warning if likely missing
@@ -152,20 +164,33 @@ pub fn run() {
                 }
             }
             // Spawn a background async task to emit system and network updates periodically.
+            // Use an interval and run heavy collectors in blocking threads in parallel,
+            // with a longer interval to reduce CPU/io pressure and avoid overlapping work.
             {
                 use std::time::Duration;
-                use tokio::time::sleep;
+                use tokio::time::interval;
                 let app_handle = app.handle().clone();
                 tauri::async_runtime::spawn(async move {
+                    let mut intv = interval(Duration::from_secs(2));
                     loop {
-                        // Collect blocking system/network info and emit to frontend.
-                        let sys_info = system::commands::collect_system_info_blocking();
-                        let _ = app_handle.emit("system:update", &sys_info);
+                        // wait for next tick
+                        intv.tick().await;
 
-                        let net_info = system::commands::collect_network_info_blocking();
-                        let _ = app_handle.emit("network:update", &net_info);
+                        // Run blockers in parallel on blocking threads
+                        let sys_future = tauri::async_runtime::spawn_blocking(|| {
+                            system::commands::collect_system_info_blocking()
+                        });
+                        let net_future = tauri::async_runtime::spawn_blocking(|| {
+                            system::commands::collect_network_info_blocking()
+                        });
 
-                        sleep(Duration::from_secs(1)).await;
+                        // Await both results and emit if successful
+                        if let Ok(sys_res) = sys_future.await {
+                            let _ = app_handle.emit("system:update", &sys_res);
+                        }
+                        if let Ok(net_res) = net_future.await {
+                            let _ = app_handle.emit("network:update", &net_res);
+                        }
                     }
                 });
             }
