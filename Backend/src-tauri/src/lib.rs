@@ -77,7 +77,9 @@ pub fn run() {
     // Initialize logging with rotation: console + rotating file `logs/urms.log`.
     {
         use flexi_logger::{Criterion, Duplicate, LogSpecBuilder, Logger, Naming, Cleanup, FileSpec};
+        use std::io::Write;
 
+        // Ensure logs directory exists
         let _ = std::fs::create_dir_all("logs");
 
         let mut spec_builder = LogSpecBuilder::new();
@@ -88,7 +90,7 @@ pub fn run() {
             .basename("urms")
             .suffix("log");
 
-        let _ = Logger::with(spec_builder.build())
+        let logger_result = Logger::with(spec_builder.build())
             .duplicate_to_stderr(Duplicate::Info)
             .log_to_file(file_spec)
             .rotate(
@@ -96,8 +98,38 @@ pub fn run() {
                 Naming::Numbers,
                 Cleanup::KeepLogFiles(10),
             )
-            .start()
-            .map_err(|e| eprintln!("failed to init logger: {}", e));
+            .start();
+
+        if let Err(e) = logger_result {
+            // Fall back: try to write an error note to stderr and to a plain file
+            eprintln!("failed to init logger: {}", e);
+            if let Ok(mut f) = std::fs::OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open("logs/urms-fallback.log")
+            {
+                let _ = writeln!(f, "failed to init logger: {}", e);
+            }
+        } else {
+            log::info!("logger initialized");
+        }
+
+        // Install a panic hook that appends panic information to logs/panic.log for post-mortem.
+        {
+            let panic_path = std::path::PathBuf::from("logs").join("panic.log");
+            std::panic::set_hook(Box::new(move |info| {
+                let _ = std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&panic_path)
+                    .and_then(|mut f| {
+                        let _ = writeln!(f, "PANIC: {:?}\n", info);
+                        Ok(())
+                    });
+                // Also log via log crate if initialized
+                let _ = log::error!("PANIC: {:?}", info);
+            }));
+        }
     }
 
     // Simple WebView2 runtime presence check on Windows — logs a warning if likely missing
