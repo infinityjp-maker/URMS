@@ -22,18 +22,12 @@ jobs:
         with:
           toolchain: stable
 
-      - name: Build frontend
+      - name: Build backend (cargo release)
         shell: pwsh
         run: |
-          Push-Location Source
-          if (Test-Path package-lock.json) { npm ci } else { npm install }
-          npm run build
+          Push-Location Backend/src-tauri
+          cargo build --release
           Pop-Location
-
-      - name: Build Tauri (release)
-        shell: pwsh
-        run: |
-          npm run tauri:build -- --release
 
       - name: Find exe
         id: find_exe
