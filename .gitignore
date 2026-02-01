@@ -30,4 +30,7 @@ Backend/src-tauri/target/**
 # Ignore Tauri build artifacts
 Backend/src-tauri/target/
 
+# Local preview artifacts
+artifacts/
+
 
