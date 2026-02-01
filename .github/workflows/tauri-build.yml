@@ -33,6 +33,27 @@ jobs:
             Backend/src-tauri/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+                - name: Try enable sccache
+                  shell: pwsh
+                  run: |
+                    Write-Host 'Checking for sccache in PATH'
+                    if (Get-Command sccache -ErrorAction SilentlyContinue) {
+                      Write-Host 'sccache found in PATH; enabling RUSTC_WRAPPER'
+                      "RUSTC_WRAPPER=sccache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+                    } elseif (Test-Path "$env:USERPROFILE\.cargo\bin\sccache.exe") {
+                      Write-Host 'sccache found in cargo bin; enabling RUSTC_WRAPPER'
+                      "RUSTC_WRAPPER=$env:USERPROFILE\\.cargo\\bin\\sccache.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+                    } else {
+                      Write-Host 'sccache not found; skipping sccache setup'
+                    }
+
+                - name: Cache sccache
+                  uses: actions/cache@v4
+                  with:
+                    path: |
+                      ~/.cache/sccache
+                    key: ${{ runner.os }}-sccache-${{ hashFiles('**/Cargo.lock') }}
+
           on:
             push:
               branches: [ main ]
@@ -93,14 +114,21 @@ jobs:
                   run: |
                     $exe = '${{ steps.find_exe.outputs.exe }}'
                     Write-Host "Ensuring llvm-strip is available"
-                    # Prefer existing llvm-strip; avoid forcing package installs that may require admin.
-                    Write-Host "Attempting to strip $exe (if a strip tool exists in PATH)"
-                    if (Get-Command llvm-strip -ErrorAction SilentlyContinue) {
-                      try { llvm-strip $exe } catch { Write-Host 'llvm-strip failed: ' $_ }
-                    } elseif (Get-Command strip -ErrorAction SilentlyContinue) {
-                      try { strip $exe } catch { Write-Host 'strip failed: ' $_ }
+                    # Only perform strip on self-hosted runners (or when a strip tool is explicitly present).
+                    $isSelfHosted = $false
+                    if ($env:RUNNER_NAME -and $env:RUNNER_NAME -match 'self-hosted') { $isSelfHosted = $true }
+                    if ($env:GITHUB_RUNNER_LABELS -and $env:GITHUB_RUNNER_LABELS -match 'self-hosted') { $isSelfHosted = $true }
+                    if (-not $isSelfHosted -and -not (Get-Command llvm-strip -ErrorAction SilentlyContinue) -and -not (Get-Command strip -ErrorAction SilentlyContinue)) {
+                      Write-Host 'Not self-hosted runner and no strip tool found; skipping strip step'
                     } else {
-                      Write-Host 'No strip tool found on runner; skipping strip step'
+                      Write-Host "Attempting to strip $exe (if a strip tool exists in PATH)"
+                      if (Get-Command llvm-strip -ErrorAction SilentlyContinue) {
+                        try { llvm-strip $exe } catch { Write-Host 'llvm-strip failed: ' $_ }
+                      } elseif (Get-Command strip -ErrorAction SilentlyContinue) {
+                        try { strip $exe } catch { Write-Host 'strip failed: ' $_ }
+                      } else {
+                        Write-Host 'No strip tool found on runner; skipped'
+                      }
                     }
 
                 - name: Artifact info (size + sha256)
