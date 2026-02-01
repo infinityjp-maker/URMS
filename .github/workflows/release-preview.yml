@@ -7,166 +7,169 @@ jobs:
   build_preview:
     runs-on: windows-latest
     permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      name: Release Preview (manual)
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+      on:
+        workflow_dispatch: {}
 
-      - name: Cache Node modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            Source/node_modules
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      jobs:
+        build_preview:
+          runs-on: windows-latest
+          permissions:
+            contents: write
+          steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                node-version: '18'
 
-      - name: Cache Cargo registry & target
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            Backend/src-tauri/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+            - name: Cache Node modules
+              uses: actions/cache@v4
+              with:
+                path: |
+                  Source/node_modules
+                  node_modules
+                key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Try enable sccache
-        shell: pwsh
-        run: |
-          Write-Host 'Checking for sccache in PATH'
-          if (Get-Command sccache -ErrorAction SilentlyContinue) {
-            Write-Host 'sccache found in PATH; enabling RUSTC_WRAPPER'
-            "RUSTC_WRAPPER=sccache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          } elseif (Test-Path "$env:USERPROFILE\.cargo\bin\sccache.exe") {
-            Write-Host 'sccache found in cargo bin; enabling RUSTC_WRAPPER'
-            "RUSTC_WRAPPER=$env:USERPROFILE\\.cargo\\bin\\sccache.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          } else {
-            Write-Host 'sccache not found; skipping sccache setup'
-          }
+            - name: Setup Rust
+              uses: dtolnay/rust-toolchain@v1
+              with:
+                toolchain: stable
 
-      - name: Cache sccache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/sccache
-          key: ${{ runner.os }}-sccache-${{ hashFiles('**/Cargo.lock') }}
+            - name: Cache Cargo registry & target
+              uses: actions/cache@v4
+              with:
+                path: |
+                  ~/.cargo/registry
+                  ~/.cargo/git
+                  Backend/src-tauri/target
+                key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Dependency audit (node)
-        run: |
-          Push-Location Source
-          if (Test-Path package-lock.json) { npm ci } else { npm install }
-          npm audit --audit-level=high || echo 'npm audit reported issues'
-          Pop-Location
+            - name: Try enable sccache
+              shell: pwsh
+              run: |
+                Write-Host 'Checking for sccache in PATH'
+                if (Get-Command sccache -ErrorAction SilentlyContinue) {
+                  Write-Host 'sccache found in PATH; enabling RUSTC_WRAPPER'
+                  "RUSTC_WRAPPER=sccache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+                } elseif (Test-Path "$env:USERPROFILE\.cargo\bin\sccache.exe") {
+                  Write-Host 'sccache found in cargo bin; enabling RUSTC_WRAPPER'
+                  "RUSTC_WRAPPER=$env:USERPROFILE\\.cargo\\bin\\sccache.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+                } else {
+                  Write-Host 'sccache not found; skipping sccache setup'
+                }
 
-      - name: Dependency audit (cargo)
-        run: |
-          cargo install cargo-audit --force || true
-          cargo audit || echo 'cargo audit reported issues'
+            - name: Cache sccache
+              uses: actions/cache@v4
+              with:
+                path: |
+                  ~/.cache/sccache
+                key: ${{ runner.os }}-sccache-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build backend (cargo release)
-        shell: pwsh
-        run: |
-          Push-Location Backend/src-tauri
-          cargo build --release
-          Pop-Location
+            - name: Dependency audit (node)
+              run: |
+                Push-Location Source
+                if (Test-Path package-lock.json) { npm ci } else { npm install }
+                npm audit --audit-level=high || echo 'npm audit reported issues'
+                Pop-Location
 
-      - name: Find exe
-        id: find_exe
-        run: |
-          $files = Get-ChildItem -Path Backend/src-tauri/target/release -Filter *.exe -Recurse | Select-Object -First 1
-          if (-not $files) { Write-Error "No exe found"; exit 1 }
-          echo "exe=$($files.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            - name: Dependency audit (cargo)
+              run: |
+                cargo install cargo-audit --force || true
+                cargo audit || echo 'cargo audit reported issues'
 
-      - name: Strip exe (if tool available)
-        shell: pwsh
-        run: |
-          $exe = '${{ steps.find_exe.outputs.exe }}'
-          Write-Host "Ensuring llvm-strip is available"
-          # Prefer existing llvm-strip; avoid forcing package installs that may require admin.
-            # Only perform strip on self-hosted runners (or when a strip tool is explicitly present).
-            $isSelfHosted = $false
-            if ($env:RUNNER_NAME -and $env:RUNNER_NAME -match 'self-hosted') { $isSelfHosted = $true }
-            if ($env:GITHUB_RUNNER_LABELS -and $env:GITHUB_RUNNER_LABELS -match 'self-hosted') { $isSelfHosted = $true }
-            if (-not $isSelfHosted -and -not (Get-Command llvm-strip -ErrorAction SilentlyContinue) -and -not (Get-Command strip -ErrorAction SilentlyContinue)) {
-              Write-Host 'Not self-hosted runner and no strip tool found; skipping strip step'
-            } else {
-              Write-Host "Attempting to strip $exe (if a strip tool exists in PATH)"
-              if (Get-Command llvm-strip -ErrorAction SilentlyContinue) {
-                try { llvm-strip $exe } catch { Write-Host 'llvm-strip failed: ' $_ }
-              } elseif (Get-Command strip -ErrorAction SilentlyContinue) {
-                try { strip $exe } catch { Write-Host 'strip failed: ' $_ }
-              } else {
-                Write-Host 'No strip tool found on runner; skipped'
-              }
-            }
+            - name: Build backend (cargo release)
+              shell: pwsh
+              run: |
+                Push-Location Backend/src-tauri
+                cargo build --release
+                Pop-Location
 
-      - name: Artifact info (size + sha256)
-        shell: pwsh
-        run: |
-          $exe = '${{ steps.find_exe.outputs.exe }}'
-          $size = (Get-Item $exe).Length
-          $sha = Get-FileHash -Algorithm SHA256 -Path $exe | Select-Object -ExpandProperty Hash
-          $name = Split-Path -Path $exe -Leaf
-          $ts = (Get-Date).ToString('o')
-          $info = @()
-          $info += "name=$name"
-          $info += "path=$exe"
-          $info += "size=$size"
-          $info += "sha256=$sha"
-          $info += "generated_at=$ts"
-          $info -join "`n" | Out-File -FilePath artifact-info.txt -Encoding utf8
+            - name: Find exe
+              id: find_exe
+              run: |
+                $files = Get-ChildItem -Path Backend/src-tauri/target/release -Filter *.exe -Recurse | Select-Object -First 1
+                if (-not $files) { Write-Error "No exe found"; exit 1 }
+                echo "exe=$($files.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
-      - name: Upload artifact (unsigned)
-        uses: actions/upload-artifact@v4
-        with:
-          name: urms-preview-exe
-          path: ${{ steps.find_exe.outputs.exe }}
+            - name: Strip exe (if tool available)
+              shell: pwsh
+              run: |
+                $exe = '${{ steps.find_exe.outputs.exe }}'
+                Write-Host "Ensuring llvm-strip is available"
+                # Prefer existing llvm-strip; avoid forcing package installs that may require admin.
+                  # Only perform strip on self-hosted runners (or when a strip tool is explicitly present).
+                  $isSelfHosted = $false
+                  if ($env:RUNNER_NAME -and $env:RUNNER_NAME -match 'self-hosted') { $isSelfHosted = $true }
+                  if ($env:GITHUB_RUNNER_LABELS -and $env:GITHUB_RUNNER_LABELS -match 'self-hosted') { $isSelfHosted = $true }
+                  if (-not $isSelfHosted -and -not (Get-Command llvm-strip -ErrorAction SilentlyContinue) -and -not (Get-Command strip -ErrorAction SilentlyContinue)) {
+                    Write-Host 'Not self-hosted runner and no strip tool found; skipping strip step'
+                  } else {
+                    Write-Host "Attempting to strip $exe (if a strip tool exists in PATH)"
+                    if (Get-Command llvm-strip -ErrorAction SilentlyContinue) {
+                      try { llvm-strip $exe } catch { Write-Host 'llvm-strip failed: ' $_ }
+                    } elseif (Get-Command strip -ErrorAction SilentlyContinue) {
+                      try { strip $exe } catch { Write-Host 'strip failed: ' $_ }
+                    } else {
+                      Write-Host 'No strip tool found on runner; skipped'
+                    }
+                  }
 
-      - name: Upload artifact info
-        uses: actions/upload-artifact@v4
-        with:
-          name: urms-preview-info
-          path: artifact-info.txt
+            - name: Artifact info (size + sha256)
+              shell: pwsh
+              run: |
+                $exe = '${{ steps.find_exe.outputs.exe }}'
+                $size = (Get-Item $exe).Length
+                $sha = Get-FileHash -Algorithm SHA256 -Path $exe | Select-Object -ExpandProperty Hash
+                $name = Split-Path -Path $exe -Leaf
+                $ts = (Get-Date).ToString('o')
+                $info = @()
+                $info += "name=$name"
+                $info += "path=$exe"
+                $info += "size=$size"
+                $info += "sha256=$sha"
+                $info += "generated_at=$ts"
+                $info -join "`n" | Out-File -FilePath artifact-info.txt -Encoding utf8
 
-      - name: Smoke test: PE header + quick run
-        shell: pwsh
-        run: |
-          $exe = '${{ steps.find_exe.outputs.exe }}'
-          Write-Host "Checking PE header for $exe"
-          $bytes = Get-Content -Path $exe -Encoding Byte -TotalCount 2
-          if ($bytes.Count -lt 2) { Write-Error 'File too small to be a PE executable'; exit 1 }
-          if ($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) { Write-Error 'Not a valid PE executable (missing MZ header)'; exit 1 }
-          Write-Host 'PE header OK (MZ)'
+            - name: Upload artifact (unsigned)
+              uses: actions/upload-artifact@v4
+              with:
+                name: urms-preview-exe
+                path: ${{ steps.find_exe.outputs.exe }}
 
-          # Run '--version' and capture output; do not fail the job if it hangs — kill after timeout.
-          Write-Host "Attempting to run '$exe --version' (timeout 5s)"
-          $outFile = 'exe-version-output.txt'
-          try {
-            $p = Start-Process -FilePath $exe -ArgumentList '--version' -NoNewWindow -PassThru -RedirectStandardOutput $outFile -RedirectStandardError $outFile -ErrorAction Stop
-            $p.WaitForExit(5000)
-            if (-not $p.HasExited) {
-              Write-Host 'Process did not exit within timeout, killing'
-              $p.Kill()
-              Write-Host 'Killed process after timeout'
-            } else {
-              Write-Host "Process exited with code $($p.ExitCode)"
-            }
-          } catch {
-            Write-Host 'Could not start process with --version or it returned error; continuing'
-          }
-          if (Test-Path $outFile) { Write-Host '---- exe --version output ----'; Get-Content $outFile; Write-Host '---- end output ----' }
+            - name: Upload artifact info
+              uses: actions/upload-artifact@v4
+              with:
+                name: urms-preview-info
+                path: artifact-info.txt
 
-      - name: Upload artifact (unsigned)
-        uses: actions/upload-artifact@v4
-        with:
-          name: urms-preview-exe
-          path: ${{ steps.find_exe.outputs.exe }}
+            - name: Smoke test: PE header + quick run
+              shell: pwsh
+              run: |
+                $exe = '${{ steps.find_exe.outputs.exe }}'
+                Write-Host "Checking PE header for $exe"
+                $bytes = Get-Content -Path $exe -Encoding Byte -TotalCount 2
+                if ($bytes.Count -lt 2) { Write-Error 'File too small to be a PE executable'; exit 1 }
+                if ($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) { Write-Error 'Not a valid PE executable (missing MZ header)'; exit 1 }
+                Write-Host 'PE header OK (MZ)'
+
+                # Run '--version' and capture output; do not fail the job if it hangs — kill after timeout.
+                Write-Host "Attempting to run '$exe --version' (timeout 5s)"
+                $outFile = 'exe-version-output.txt'
+                try {
+                  $p = Start-Process -FilePath $exe -ArgumentList '--version' -NoNewWindow -PassThru -RedirectStandardOutput $outFile -RedirectStandardError $outFile -ErrorAction Stop
+                  $p.WaitForExit(5000)
+                  if (-not $p.HasExited) {
+                    Write-Host 'Process did not exit within timeout, killing'
+                    $p.Kill()
+                    Write-Host 'Killed process after timeout'
+                  } else {
+                    Write-Host "Process exited with code $($p.ExitCode)"
+                  }
+                } catch {
+                  Write-Host 'Could not start process with --version or it returned error; continuing'
+                }
+                if (Test-Path $outFile) { Write-Host '---- exe --version output ----'; Get-Content $outFile; Write-Host '---- end output ----' }
