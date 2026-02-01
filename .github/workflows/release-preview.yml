@@ -70,16 +70,14 @@ jobs:
         run: |
           $exe = '${{ steps.find_exe.outputs.exe }}'
           Write-Host "Ensuring llvm-strip is available"
-          if (-not (Get-Command llvm-strip -ErrorAction SilentlyContinue)) {
-            choco install llvm -y || Write-Host 'choco install llvm failed, continuing'
-          }
-          Write-Host "Attempting to strip $exe"
+          # Prefer existing llvm-strip; avoid forcing package installs that may require admin.
+          Write-Host "Attempting to strip $exe (if a strip tool exists in PATH)"
           if (Get-Command llvm-strip -ErrorAction SilentlyContinue) {
-            llvm-strip $exe || Write-Host 'llvm-strip failed'
+            try { llvm-strip $exe } catch { Write-Host 'llvm-strip failed: ' $_ }
           } elseif (Get-Command strip -ErrorAction SilentlyContinue) {
-            strip $exe || Write-Host 'strip failed'
+            try { strip $exe } catch { Write-Host 'strip failed: ' $_ }
           } else {
-            Write-Host 'No strip tool found on runner; skipping'
+            Write-Host 'No strip tool found on runner; skipping strip step'
           }
 
       - name: Artifact info (size + sha256)
@@ -88,8 +86,15 @@ jobs:
           $exe = '${{ steps.find_exe.outputs.exe }}'
           $size = (Get-Item $exe).Length
           $sha = Get-FileHash -Algorithm SHA256 -Path $exe | Select-Object -ExpandProperty Hash
-          $info = "path=$exe`nsize=$size`nsha256=$sha"
-          $info | Out-File -FilePath artifact-info.txt -Encoding utf8
+          $name = Split-Path -Path $exe -Leaf
+          $ts = (Get-Date).ToString('o')
+          $info = @()
+          $info += "name=$name"
+          $info += "path=$exe"
+          $info += "size=$size"
+          $info += "sha256=$sha"
+          $info += "generated_at=$ts"
+          $info -join "`n" | Out-File -FilePath artifact-info.txt -Encoding utf8
 
       - name: Upload artifact (unsigned)
         uses: actions/upload-artifact@v4
@@ -113,19 +118,23 @@ jobs:
           if ($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) { Write-Error 'Not a valid PE executable (missing MZ header)'; exit 1 }
           Write-Host 'PE header OK (MZ)'
 
+          # Run '--version' and capture output; do not fail the job if it hangs — kill after timeout.
           Write-Host "Attempting to run '$exe --version' (timeout 5s)"
+          $outFile = 'exe-version-output.txt'
           try {
-            $p = Start-Process -FilePath $exe -ArgumentList '--version' -NoNewWindow -PassThru -ErrorAction Stop
+            $p = Start-Process -FilePath $exe -ArgumentList '--version' -NoNewWindow -PassThru -RedirectStandardOutput $outFile -RedirectStandardError $outFile -ErrorAction Stop
             $p.WaitForExit(5000)
             if (-not $p.HasExited) {
               Write-Host 'Process did not exit within timeout, killing'
               $p.Kill()
+              Write-Host 'Killed process after timeout'
             } else {
               Write-Host "Process exited with code $($p.ExitCode)"
             }
           } catch {
             Write-Host 'Could not start process with --version or it returned error; continuing'
           }
+          if (Test-Path $outFile) { Write-Host '---- exe --version output ----'; Get-Content $outFile; Write-Host '---- end output ----' }
 
       - name: Upload artifact (unsigned)
         uses: actions/upload-artifact@v4
