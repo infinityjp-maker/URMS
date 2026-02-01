@@ -152,6 +152,44 @@ pub fn run() {
             warn!("WebView2 runtime not detected in common paths — user may need to install WebView2 runtime.");
         }
     }
+
+    // If a local `dist` folder exists in the repository root, prefer loading bundled assets
+    // and avoid accidentally pointing the runtime to a dev server. This unsets TAURI dev
+    // related env vars when a usable `dist` is available to prevent "localhost" connection errors.
+    {
+        use std::env;
+        use std::path::PathBuf;
+
+        // Try to locate repo root relative to current executable. Typical layout:
+        // <repo>/Backend/src-tauri/target/release/urms.exe
+        if let Ok(exe) = std::env::current_exe() {
+            if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
+                // Walk up: target/release -> target -> src-tauri -> Backend -> repo root
+                for _ in 0..4 {
+                    if let Some(pp) = p.parent() {
+                        p = pp.to_path_buf();
+                    }
+                }
+                let dist = p.join("dist");
+                if dist.exists() {
+                    // If TAURI dev envs are set, and dist exists, remove them so the app loads static files.
+                    let dev_vars = ["TAURI_DEV", "TAURI_DEV_SERVER_URL", "TAURI_DIST_DIR", "TAURI_DEV_PATH"];
+                    let mut removed = Vec::new();
+                    for v in dev_vars.iter() {
+                        if env::var_os(v).is_some() {
+                            env::remove_var(v);
+                            removed.push(*v);
+                        }
+                    }
+                    if !removed.is_empty() {
+                        log::info!("Found local dist at {:?}; unset env vars: {:?}", dist, removed);
+                    } else {
+                        log::info!("Found local dist at {:?}; no TAURI dev env vars set", dist);
+                    }
+                }
+            }
+        }
+    }
     
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
