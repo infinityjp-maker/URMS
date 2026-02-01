@@ -296,52 +296,114 @@ fn fetch_gpu_info_inner() -> Vec<GpuInfo> {
         // to avoid hangs on slow systems.
         let mut gpus = Vec::new();
 
-        let cmd = Command::new("wmic")
-            .args(["path", "win32_VideoController", "get", "Name,AdapterRAM", "/format:csv"])
-            .creation_flags(0x08000000) // CREATE_NO_WINDOW
-            .stdin(std::process::Stdio::null())
-            .stdout(std::process::Stdio::piped())
-            .spawn();
+        // Try WMIC first with a short timeout
+        let try_wmic = || {
+            let cmd = Command::new("wmic")
+                .args(["path", "win32_VideoController", "get", "Name,AdapterRAM", "/format:csv"])
+                .creation_flags(0x08000000) // CREATE_NO_WINDOW
+                .stdin(std::process::Stdio::null())
+                .stdout(std::process::Stdio::piped())
+                .spawn();
 
-        if let Ok(mut child) = cmd {
-            let start = Instant::now();
-            let timeout = Duration::from_secs(2);
+            if let Ok(mut child) = cmd {
+                let start = Instant::now();
+                let timeout = Duration::from_secs(3);
 
-            loop {
-                match child.try_wait() {
-                    Ok(Some(_)) => break,
-                    Ok(None) => {
-                        if start.elapsed() > timeout {
-                            let _ = child.kill();
-                            break;
+                loop {
+                    match child.try_wait() {
+                        Ok(Some(_)) => break,
+                        Ok(None) => {
+                            if start.elapsed() > timeout {
+                                let _ = child.kill();
+                                break;
+                            }
+                            std::thread::sleep(Duration::from_millis(50));
                         }
-                        std::thread::sleep(Duration::from_millis(50));
+                        Err(_) => break,
                     }
-                    Err(_) => break,
+                }
+
+                if let Ok(output) = child.wait_with_output() {
+                    let stdout = String::from_utf8_lossy(&output.stdout);
+                    for line in stdout.lines() {
+                        let line = line.trim();
+                        if line.is_empty() || line.starts_with("Node") {
+                            continue;
+                        }
+                        let parts: Vec<&str> = line.split(',').collect();
+                        if parts.len() >= 3 {
+                            let name = parts[2].trim();
+                            let ram_bytes = parts[1].trim().parse::<u64>().unwrap_or(0);
+                            let memory_total_mb = ram_bytes / 1024 / 1024;
+                            gpus.push(GpuInfo {
+                                name: if name.is_empty() { "GPU".to_string() } else { name.to_string() },
+                                usage: 0.0,
+                                memory_used_mb: 0,
+                                memory_total_mb,
+                                memory_usage: 0.0,
+                            });
+                        }
+                    }
                 }
             }
+        };
 
-            if let Ok(output) = child.wait_with_output() {
-                let stdout = String::from_utf8_lossy(&output.stdout);
+        try_wmic();
 
-                for line in stdout.lines() {
-                    let line = line.trim();
-                    if line.is_empty() || line.starts_with("Node") {
-                        continue;
+        // If WMIC produced nothing, try PowerShell as a fallback (Get-CimInstance)
+        if gpus.is_empty() {
+            log::info!("WMIC returned no GPU info; trying PowerShell fallback");
+            let ps_cmd = Command::new("powershell")
+                .args([
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-Command",
+                    "Get-CimInstance Win32_VideoController | Select-Object -Property Name,@{Name='AdapterRAM';Expression={$_.AdapterRAM}} | ConvertTo-Csv -NoTypeInformation",
+                ])
+                .creation_flags(0x08000000)
+                .stdin(std::process::Stdio::null())
+                .stdout(std::process::Stdio::piped())
+                .spawn();
+
+            if let Ok(mut child) = ps_cmd {
+                let start = Instant::now();
+                let timeout = Duration::from_secs(3);
+                loop {
+                    match child.try_wait() {
+                        Ok(Some(_)) => break,
+                        Ok(None) => {
+                            if start.elapsed() > timeout {
+                                let _ = child.kill();
+                                break;
+                            }
+                            std::thread::sleep(Duration::from_millis(50));
+                        }
+                        Err(_) => break,
                     }
+                }
 
-                    let parts: Vec<&str> = line.split(',').collect();
-                    if parts.len() >= 3 {
-                        let name = parts[2].trim();
-                        let ram_bytes = parts[1].trim().parse::<u64>().unwrap_or(0);
-                        let memory_total_mb = ram_bytes / 1024 / 1024;
-                        gpus.push(GpuInfo {
-                            name: if name.is_empty() { "GPU".to_string() } else { name.to_string() },
-                            usage: 0.0,
-                            memory_used_mb: 0,
-                            memory_total_mb,
-                            memory_usage: 0.0,
-                        });
+                if let Ok(output) = child.wait_with_output() {
+                    let stdout = String::from_utf8_lossy(&output.stdout);
+                    // Skip header line from ConvertTo-Csv
+                    for line in stdout.lines().skip(1) {
+                        let line = line.trim();
+                        if line.is_empty() {
+                            continue;
+                        }
+                        // CSV: "Name","AdapterRAM"
+                        let parts: Vec<&str> = line.split(',').collect();
+                        if parts.len() >= 2 {
+                            let name = parts[0].trim().trim_matches('"');
+                            let ram = parts[1].trim().trim_matches('"').parse::<u64>().unwrap_or(0);
+                            let memory_total_mb = ram / 1024 / 1024;
+                            gpus.push(GpuInfo {
+                                name: if name.is_empty() { "GPU".to_string() } else { name.to_string() },
+                                usage: 0.0,
+                                memory_used_mb: 0,
+                                memory_total_mb,
+                                memory_usage: 0.0,
+                            });
+                        }
                     }
                 }
             }
@@ -351,6 +413,7 @@ fn fetch_gpu_info_inner() -> Vec<GpuInfo> {
             return gpus;
         }
 
+        // Final fallback: unknown GPU placeholder
         vec![GpuInfo {
             name: "GPU".to_string(),
             usage: 0.0,
