@@ -164,4 +164,3 @@ jobs:
             Write-Host 'Could not start process with --version or it returned error; continuing'
           }
           if (Test-Path $outFile) { Write-Host '---- exe --version output ----'; Get-Content $outFile; Write-Host '---- end output ----' }
-                    $p.Kill()
