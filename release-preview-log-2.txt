@@ -1,0 +1,287 @@
+build_preview	Set up job	﻿2026-02-01T14:10:30.7043343Z Current runner version: '2.331.0'
+build_preview	Set up job	2026-02-01T14:10:30.7101922Z ##[group]Runner Image Provisioner
+build_preview	Set up job	2026-02-01T14:10:30.7103061Z Hosted Compute Agent
+build_preview	Set up job	2026-02-01T14:10:30.7103975Z Version: 20260123.484
+build_preview	Set up job	2026-02-01T14:10:30.7104912Z Commit: 6bd6555ca37d84114959e1c76d2c01448ff61c5d
+build_preview	Set up job	2026-02-01T14:10:30.7106047Z Build Date: 2026-01-23T19:41:17Z
+build_preview	Set up job	2026-02-01T14:10:30.7107068Z Worker ID: {d07b8dbf-d4d9-473e-b51d-49b9273847d2}
+build_preview	Set up job	2026-02-01T14:10:30.7108240Z Azure Region: eastus2
+build_preview	Set up job	2026-02-01T14:10:30.7109102Z ##[endgroup]
+build_preview	Set up job	2026-02-01T14:10:30.7111218Z ##[group]Operating System
+build_preview	Set up job	2026-02-01T14:10:30.7112208Z Microsoft Windows Server 2025
+build_preview	Set up job	2026-02-01T14:10:30.7113077Z 10.0.26100
+build_preview	Set up job	2026-02-01T14:10:30.7113800Z Datacenter
+build_preview	Set up job	2026-02-01T14:10:30.7114474Z ##[endgroup]
+build_preview	Set up job	2026-02-01T14:10:30.7115199Z ##[group]Runner Image
+build_preview	Set up job	2026-02-01T14:10:30.7116814Z Image: windows-2025
+build_preview	Set up job	2026-02-01T14:10:30.7117693Z Version: 20260127.11.2
+build_preview	Set up job	2026-02-01T14:10:30.7119368Z Included Software: https://github.com/actions/runner-images/blob/win25/20260127.11/images/windows/Windows2025-Readme.md
+build_preview	Set up job	2026-02-01T14:10:30.7122245Z Image Release: https://github.com/actions/runner-images/releases/tag/win25%2F20260127.11
+build_preview	Set up job	2026-02-01T14:10:30.7123773Z ##[endgroup]
+build_preview	Set up job	2026-02-01T14:10:30.7125480Z ##[group]GITHUB_TOKEN Permissions
+build_preview	Set up job	2026-02-01T14:10:30.7127909Z Contents: write
+build_preview	Set up job	2026-02-01T14:10:30.7128785Z Metadata: read
+build_preview	Set up job	2026-02-01T14:10:30.7129541Z ##[endgroup]
+build_preview	Set up job	2026-02-01T14:10:30.7132317Z Secret source: Actions
+build_preview	Set up job	2026-02-01T14:10:30.7133300Z Prepare workflow directory
+build_preview	Set up job	2026-02-01T14:10:30.7646996Z Prepare all required actions
+build_preview	Set up job	2026-02-01T14:10:30.7702865Z Getting action download info
+build_preview	Set up job	2026-02-01T14:10:31.1285381Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+build_preview	Set up job	2026-02-01T14:10:31.2835440Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+build_preview	Set up job	2026-02-01T14:10:31.4664884Z Download action repository 'dtolnay/rust-toolchain@v1' (SHA:e97e2d8cc328f1b50210efc529dca0028893a2d9)
+build_preview	Set up job	2026-02-01T14:10:31.7696782Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+build_preview	Set up job	2026-02-01T14:10:32.2238791Z Complete job name: build_preview
+build_preview	Checkout	﻿2026-02-01T14:10:32.3881270Z ##[group]Run actions/checkout@v4
+build_preview	Checkout	2026-02-01T14:10:32.3882693Z with:
+build_preview	Checkout	2026-02-01T14:10:32.3883370Z   repository: infinityjp-maker/URMS
+build_preview	Checkout	2026-02-01T14:10:32.3884805Z   token: ***
+build_preview	Checkout	2026-02-01T14:10:32.3885455Z   ssh-strict: true
+build_preview	Checkout	2026-02-01T14:10:32.3886166Z   ssh-user: git
+build_preview	Checkout	2026-02-01T14:10:32.3886832Z   persist-credentials: true
+build_preview	Checkout	2026-02-01T14:10:32.3887591Z   clean: true
+build_preview	Checkout	2026-02-01T14:10:32.3888282Z   sparse-checkout-cone-mode: true
+build_preview	Checkout	2026-02-01T14:10:32.3889117Z   fetch-depth: 1
+build_preview	Checkout	2026-02-01T14:10:32.3889799Z   fetch-tags: false
+build_preview	Checkout	2026-02-01T14:10:32.3890487Z   show-progress: true
+build_preview	Checkout	2026-02-01T14:10:32.3891373Z   lfs: false
+build_preview	Checkout	2026-02-01T14:10:32.3892010Z   submodules: false
+build_preview	Checkout	2026-02-01T14:10:32.3892718Z   set-safe-directory: true
+build_preview	Checkout	2026-02-01T14:10:32.3893723Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:32.5891026Z Syncing repository: infinityjp-maker/URMS
+build_preview	Checkout	2026-02-01T14:10:32.5897018Z ##[group]Getting Git version info
+build_preview	Checkout	2026-02-01T14:10:32.5899629Z Working directory is 'D:\a\URMS\URMS'
+build_preview	Checkout	2026-02-01T14:10:32.7195483Z [command]"C:\Program Files\Git\bin\git.exe" version
+build_preview	Checkout	2026-02-01T14:10:33.2238999Z git version 2.52.0.windows.1
+build_preview	Checkout	2026-02-01T14:10:33.2243333Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:33.2256027Z Temporarily overriding HOME='D:\a\_temp\eb15bfb3-2be9-49a3-a4e9-4f390bfc48dc' before making global git config changes
+build_preview	Checkout	2026-02-01T14:10:33.2259579Z Adding repository directory to the temporary git global config as a safe directory
+build_preview	Checkout	2026-02-01T14:10:33.2262645Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\URMS\URMS
+build_preview	Checkout	2026-02-01T14:10:33.2266311Z Deleting the contents of 'D:\a\URMS\URMS'
+build_preview	Checkout	2026-02-01T14:10:33.2268501Z ##[group]Initializing the repository
+build_preview	Checkout	2026-02-01T14:10:33.2274817Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\URMS\URMS
+build_preview	Checkout	2026-02-01T14:10:33.3238526Z Initialized empty Git repository in D:/a/URMS/URMS/.git/
+build_preview	Checkout	2026-02-01T14:10:33.9633285Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/infinityjp-maker/URMS
+build_preview	Checkout	2026-02-01T14:10:33.9635636Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:33.9636666Z ##[group]Disabling automatic garbage collection
+build_preview	Checkout	2026-02-01T14:10:33.9637950Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+build_preview	Checkout	2026-02-01T14:10:33.9640452Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:33.9641311Z ##[group]Setting up auth
+build_preview	Checkout	2026-02-01T14:10:33.9642252Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+build_preview	Checkout	2026-02-01T14:10:33.9645046Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+build_preview	Checkout	2026-02-01T14:10:35.2622475Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build_preview	Checkout	2026-02-01T14:10:35.2998618Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+build_preview	Checkout	2026-02-01T14:10:35.8746871Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+build_preview	Checkout	2026-02-01T14:10:36.4949868Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+build_preview	Checkout	2026-02-01T14:10:36.4952058Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+build_preview	Checkout	2026-02-01T14:10:36.5186081Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:36.5187025Z ##[group]Fetching the repository
+build_preview	Checkout	2026-02-01T14:10:36.5210513Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +10f1c60745a40444deb6c902945bf02f9fe5ee4f:refs/remotes/origin/main
+build_preview	Checkout	2026-02-01T14:10:37.4630271Z From https://github.com/infinityjp-maker/URMS
+build_preview	Checkout	2026-02-01T14:10:37.4631374Z  * [new ref]         10f1c60745a40444deb6c902945bf02f9fe5ee4f -> origin/main
+build_preview	Checkout	2026-02-01T14:10:37.5028131Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:37.5029440Z ##[group]Determining the checkout info
+build_preview	Checkout	2026-02-01T14:10:37.5030929Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:37.5043251Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+build_preview	Checkout	2026-02-01T14:10:37.5551860Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+build_preview	Checkout	2026-02-01T14:10:37.5881215Z ##[group]Checking out the ref
+build_preview	Checkout	2026-02-01T14:10:37.5892992Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B main refs/remotes/origin/main
+build_preview	Checkout	2026-02-01T14:10:37.6510216Z branch 'main' set up to track 'origin/main'.
+build_preview	Checkout	2026-02-01T14:10:37.6517362Z Switched to a new branch 'main'
+build_preview	Checkout	2026-02-01T14:10:37.6560108Z ##[endgroup]
+build_preview	Checkout	2026-02-01T14:10:37.7131913Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+build_preview	Checkout	2026-02-01T14:10:37.7463570Z 10f1c60745a40444deb6c902945bf02f9fe5ee4f
+build_preview	Setup Node	﻿2026-02-01T14:10:37.8040297Z ##[group]Run actions/setup-node@v4
+build_preview	Setup Node	2026-02-01T14:10:37.8040631Z with:
+build_preview	Setup Node	2026-02-01T14:10:37.8040813Z   node-version: 18
+build_preview	Setup Node	2026-02-01T14:10:37.8040999Z   always-auth: false
+build_preview	Setup Node	2026-02-01T14:10:37.8041191Z   check-latest: false
+build_preview	Setup Node	2026-02-01T14:10:37.8041531Z   token: ***
+build_preview	Setup Node	2026-02-01T14:10:37.8041697Z ##[endgroup]
+build_preview	Setup Node	2026-02-01T14:10:38.1022816Z Attempting to download 18...
+build_preview	Setup Node	2026-02-01T14:10:38.5378015Z Acquiring 18.20.8 - x64 from https://github.com/actions/node-versions/releases/download/18.20.8-14110393767/node-18.20.8-win32-x64.7z
+build_preview	Setup Node	2026-02-01T14:10:38.9078472Z Extracting ...
+build_preview	Setup Node	2026-02-01T14:10:41.1768167Z Adding to the cache ...
+build_preview	Setup Node	2026-02-01T14:10:45.5040194Z ##[group]Environment details
+build_preview	Setup Node	2026-02-01T14:10:46.5866845Z node: v18.20.8
+build_preview	Setup Node	2026-02-01T14:10:46.5867486Z npm: 10.8.2
+build_preview	Setup Node	2026-02-01T14:10:46.5867873Z yarn: 1.22.22
+build_preview	Setup Node	2026-02-01T14:10:46.5868732Z ##[endgroup]
+build_preview	Setup Rust	﻿2026-02-01T14:10:46.6308863Z ##[group]Run dtolnay/rust-toolchain@v1
+build_preview	Setup Rust	2026-02-01T14:10:46.6309247Z with:
+build_preview	Setup Rust	2026-02-01T14:10:46.6309406Z   toolchain: stable
+build_preview	Setup Rust	2026-02-01T14:10:46.6309583Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:46.6563182Z ##[group]Run : parse toolchain version
+build_preview	Setup Rust	2026-02-01T14:10:46.6563533Z [36;1m: parse toolchain version[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6563784Z [36;1mif [[ -z $toolchain ]]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6564263Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6564804Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6565064Z [36;1m  exit 1[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6565356Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6565740Z [36;1m  if [[ Windows == macOS ]]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6566225Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6566744Z [36;1m  else[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6567103Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6567517Z [36;1m  fi[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6567765Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6568254Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6568679Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6569160Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6569615Z [36;1melse[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6569818Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6570074Z [36;1mfi[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.6592400Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:46.6592820Z env:
+build_preview	Setup Rust	2026-02-01T14:10:46.6592967Z   toolchain: stable
+build_preview	Setup Rust	2026-02-01T14:10:46.6593707Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:46.8572711Z ##[group]Run : construct rustup command line
+build_preview	Setup Rust	2026-02-01T14:10:46.8573038Z [36;1m: construct rustup command line[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.8573451Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.8574264Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.8574725Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.8591390Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:46.8591769Z env:
+build_preview	Setup Rust	2026-02-01T14:10:46.8591913Z   targets: 
+build_preview	Setup Rust	2026-02-01T14:10:46.8592066Z   components: 
+build_preview	Setup Rust	2026-02-01T14:10:46.8592219Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:46.9400568Z ##[group]Run : set $CARGO_HOME
+build_preview	Setup Rust	2026-02-01T14:10:46.9400844Z [36;1m: set $CARGO_HOME[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9401158Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$USERPROFILE\.cargo"} >> $GITHUB_ENV[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9417470Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:46.9417863Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:46.9996626Z ##[group]Run : install rustup if needed on windows
+build_preview	Setup Rust	2026-02-01T14:10:46.9996988Z [36;1m: install rustup if needed on windows[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9997278Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9998016Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://win.rustup.rs/x86_64 --output 'D:\a\_temp\rustup-init.exe'[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9998840Z [36;1m  'D:\a\_temp\rustup-init.exe' --default-toolchain none --no-modify-path -y[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9999233Z [36;1m  echo "$CARGO_HOME\bin" >> $GITHUB_PATH[0m
+build_preview	Setup Rust	2026-02-01T14:10:46.9999472Z [36;1mfi[0m
+build_preview	Setup Rust	2026-02-01T14:10:47.0015935Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:47.0018495Z env:
+build_preview	Setup Rust	2026-02-01T14:10:47.0018672Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:47.0018915Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:47.0767926Z ##[group]Run rustup toolchain install stable --profile minimal --no-self-update
+build_preview	Setup Rust	2026-02-01T14:10:47.0768463Z [36;1mrustup toolchain install stable --profile minimal --no-self-update[0m
+build_preview	Setup Rust	2026-02-01T14:10:47.0785299Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:47.0785682Z env:
+build_preview	Setup Rust	2026-02-01T14:10:47.0785853Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:47.0786090Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:50.5630344Z info: syncing channel updates for 'stable-x86_64-pc-windows-msvc'
+build_preview	Setup Rust	2026-02-01T14:10:51.0186552Z 
+build_preview	Setup Rust	2026-02-01T14:10:51.0401435Z   stable-x86_64-pc-windows-msvc unchanged - rustc 1.93.0 (254b59607 2026-01-19)
+build_preview	Setup Rust	2026-02-01T14:10:51.0402685Z 
+build_preview	Setup Rust	2026-02-01T14:10:51.0649813Z ##[group]Run rustup default stable
+build_preview	Setup Rust	2026-02-01T14:10:51.0650113Z [36;1mrustup default stable[0m
+build_preview	Setup Rust	2026-02-01T14:10:51.0666064Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:51.0666438Z env:
+build_preview	Setup Rust	2026-02-01T14:10:51.0666607Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:51.0666845Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:51.1454592Z info: using existing install for 'stable-x86_64-pc-windows-msvc'
+build_preview	Setup Rust	2026-02-01T14:10:51.1926623Z info: default toolchain set to 'stable-x86_64-pc-windows-msvc'
+build_preview	Setup Rust	2026-02-01T14:10:51.1927189Z 
+build_preview	Setup Rust	2026-02-01T14:10:51.2141161Z   stable-x86_64-pc-windows-msvc unchanged - rustc 1.93.0 (254b59607 2026-01-19)
+build_preview	Setup Rust	2026-02-01T14:10:51.2142308Z 
+build_preview	Setup Rust	2026-02-01T14:10:51.2375238Z ##[group]Run : create cachekey
+build_preview	Setup Rust	2026-02-01T14:10:51.2375495Z [36;1m: create cachekey[0m
+build_preview	Setup Rust	2026-02-01T14:10:51.2375964Z [36;1mDATE=$(rustc +stable --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+build_preview	Setup Rust	2026-02-01T14:10:51.2376583Z [36;1mHASH=$(rustc +stable --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+build_preview	Setup Rust	2026-02-01T14:10:51.2377053Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+build_preview	Setup Rust	2026-02-01T14:10:51.2393388Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:51.2393763Z env:
+build_preview	Setup Rust	2026-02-01T14:10:51.2393936Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:51.2394163Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:52.2183120Z ##[group]Run : disable incremental compilation
+build_preview	Setup Rust	2026-02-01T14:10:52.2183485Z [36;1m: disable incremental compilation[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2183779Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2184079Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2184325Z [36;1mfi[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2199921Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:52.2200290Z env:
+build_preview	Setup Rust	2026-02-01T14:10:52.2200465Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:52.2200718Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:52.2841103Z ##[group]Run : enable colors in Cargo output
+build_preview	Setup Rust	2026-02-01T14:10:52.2841628Z [36;1m: enable colors in Cargo output[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2842088Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2842605Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2843049Z [36;1mfi[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.2861561Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:52.2861948Z env:
+build_preview	Setup Rust	2026-02-01T14:10:52.2862119Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:52.2862357Z   CARGO_INCREMENTAL: 0
+build_preview	Setup Rust	2026-02-01T14:10:52.2862528Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:52.3637315Z ##[group]Run : enable Cargo sparse registry
+build_preview	Setup Rust	2026-02-01T14:10:52.3637840Z [36;1m: enable Cargo sparse registry[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3638419Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3639855Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "D:\a\_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3642275Z [36;1m  if rustc +stable --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3643132Z [36;1m    touch "D:\a\_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3643909Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3644717Z [36;1m  elif rustc +stable --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3645576Z [36;1m    touch "D:\a\_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3646348Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3646889Z [36;1m  fi[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3647135Z [36;1mfi[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.3673830Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:52.3674467Z env:
+build_preview	Setup Rust	2026-02-01T14:10:52.3674774Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:52.3675196Z   CARGO_INCREMENTAL: 0
+build_preview	Setup Rust	2026-02-01T14:10:52.3675533Z   CARGO_TERM_COLOR: always
+build_preview	Setup Rust	2026-02-01T14:10:52.3675856Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:52.6110073Z ##[group]Run : work around spurious network errors in curl 8.0
+build_preview	Setup Rust	2026-02-01T14:10:52.6110708Z [36;1m: work around spurious network errors in curl 8.0[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.6111582Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.6112557Z [36;1mif rustc +stable --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.6113248Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.6113720Z [36;1mfi[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.6139049Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:52.6139679Z env:
+build_preview	Setup Rust	2026-02-01T14:10:52.6139961Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:52.6140406Z   CARGO_INCREMENTAL: 0
+build_preview	Setup Rust	2026-02-01T14:10:52.6140718Z   CARGO_TERM_COLOR: always
+build_preview	Setup Rust	2026-02-01T14:10:52.6141026Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:52.7710781Z ##[group]Run rustc +stable --version --verbose
+build_preview	Setup Rust	2026-02-01T14:10:52.7711304Z [36;1mrustc +stable --version --verbose[0m
+build_preview	Setup Rust	2026-02-01T14:10:52.7732922Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+build_preview	Setup Rust	2026-02-01T14:10:52.7733306Z env:
+build_preview	Setup Rust	2026-02-01T14:10:52.7733477Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Setup Rust	2026-02-01T14:10:52.7733724Z   CARGO_INCREMENTAL: 0
+build_preview	Setup Rust	2026-02-01T14:10:52.7733907Z   CARGO_TERM_COLOR: always
+build_preview	Setup Rust	2026-02-01T14:10:52.7734095Z ##[endgroup]
+build_preview	Setup Rust	2026-02-01T14:10:52.8665407Z rustc 1.93.0 (254b59607 2026-01-19)
+build_preview	Setup Rust	2026-02-01T14:10:52.8666073Z binary: rustc
+build_preview	Setup Rust	2026-02-01T14:10:52.8672814Z commit-hash: 254b59607d4417e9dffbc307138ae5c86280fe4c
+build_preview	Setup Rust	2026-02-01T14:10:52.8674739Z commit-date: 2026-01-19
+build_preview	Setup Rust	2026-02-01T14:10:52.8691576Z host: x86_64-pc-windows-msvc
+build_preview	Setup Rust	2026-02-01T14:10:52.8692305Z release: 1.93.0
+build_preview	Setup Rust	2026-02-01T14:10:52.8692928Z LLVM version: 21.1.8
+build_preview	Install Node deps	﻿2026-02-01T14:10:52.8979178Z ##[group]Run if (Test-Path package-lock.json) { npm ci } else { npm install }
+build_preview	Install Node deps	2026-02-01T14:10:52.8979774Z [36;1mif (Test-Path package-lock.json) { npm ci } else { npm install }[0m
+build_preview	Install Node deps	2026-02-01T14:10:52.9655725Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+build_preview	Install Node deps	2026-02-01T14:10:52.9656137Z env:
+build_preview	Install Node deps	2026-02-01T14:10:52.9656343Z   CARGO_HOME: C:\Users\runneradmin\.cargo
+build_preview	Install Node deps	2026-02-01T14:10:52.9656622Z   CARGO_INCREMENTAL: 0
+build_preview	Install Node deps	2026-02-01T14:10:52.9656849Z   CARGO_TERM_COLOR: always
+build_preview	Install Node deps	2026-02-01T14:10:52.9657067Z ##[endgroup]
+build_preview	Install Node deps	2026-02-01T14:10:59.8569733Z npm error code ENOENT
+build_preview	Install Node deps	2026-02-01T14:10:59.8573386Z npm error syscall open
+build_preview	Install Node deps	2026-02-01T14:10:59.8574204Z npm error path D:\a\URMS\URMS\package.json
+build_preview	Install Node deps	2026-02-01T14:10:59.8578886Z npm error errno -4058
+build_preview	Install Node deps	2026-02-01T14:10:59.8580256Z npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'D:\a\URMS\URMS\package.json'
+build_preview	Install Node deps	2026-02-01T14:10:59.8583155Z npm error enoent This is related to npm not being able to find a file.
+build_preview	Install Node deps	2026-02-01T14:10:59.8584069Z npm error enoent
+build_preview	Install Node deps	2026-02-01T14:10:59.8597445Z npm error A complete log of this run can be found in: C:\npm\cache\_logs\2026-02-01T14_10_59_132Z-debug-0.log
+build_preview	Install Node deps	2026-02-01T14:11:00.1881922Z ##[error]Process completed with exit code 1.
+build_preview	Post Checkout	﻿2026-02-01T14:11:00.2122361Z Post job cleanup.
+build_preview	Post Checkout	2026-02-01T14:11:00.4743934Z [command]"C:\Program Files\Git\bin\git.exe" version
+build_preview	Post Checkout	2026-02-01T14:11:00.5041800Z git version 2.52.0.windows.1
+build_preview	Post Checkout	2026-02-01T14:11:00.5132911Z Temporarily overriding HOME='D:\a\_temp\ac444a1b-742b-45bf-b396-1fdab21f6f15' before making global git config changes
+build_preview	Post Checkout	2026-02-01T14:11:00.5134651Z Adding repository directory to the temporary git global config as a safe directory
+build_preview	Post Checkout	2026-02-01T14:11:00.5146341Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\URMS\URMS
+build_preview	Post Checkout	2026-02-01T14:11:00.5663795Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+build_preview	Post Checkout	2026-02-01T14:11:00.6140133Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+build_preview	Post Checkout	2026-02-01T14:11:01.2442952Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build_preview	Post Checkout	2026-02-01T14:11:01.2725031Z http.https://github.com/.extraheader
+build_preview	Post Checkout	2026-02-01T14:11:01.2777104Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+build_preview	Post Checkout	2026-02-01T14:11:01.3119546Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+build_preview	Post Checkout	2026-02-01T14:11:01.8865902Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+build_preview	Post Checkout	2026-02-01T14:11:01.9228160Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+build_preview	Complete job	﻿2026-02-01T14:11:02.5135308Z Cleaning up orphan processes

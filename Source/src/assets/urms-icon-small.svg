@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Bright blue background -->
+  <rect width="1024" height="1024" fill="#0078D7" />
+
+  <!-- White rounded block (main body of 'U') -->
+  <rect x="160" y="160" width="704" height="704" rx="176" fill="#ffffff" />
+
+  <!-- Cut-out at top to make a 'U' shape by overlaying blue -->
+  <rect x="160" y="160" width="704" height="360" rx="176" fill="#0078D7" />
+
+  <!-- subtle inner highlight to give a bit of depth -->
+  <rect x="192" y="512" width="640" height="320" rx="120" fill="#ffffff" opacity="0.06" />
+</svg>

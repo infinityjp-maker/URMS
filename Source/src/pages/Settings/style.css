@@ -1,0 +1,199 @@
+.settings-page {
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--text-primary);
+  padding: 20px;
+  animation: ambientShift 6s ease-in-out infinite;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background: var(--section-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid var(--section-border);
+}
+
+.nav-button {
+  padding: 8px 16px;
+  background: var(--nav-bg);
+  border: 1px solid var(--nav-border);
+  color: var(--nav-text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.nav-button:hover {
+  background: var(--nav-bg-hover);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--nav-text) 35%, transparent);
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--page-title);
+  text-shadow: var(--card-title-shadow);
+  margin: 0;
+  flex: 1;
+}
+
+.page-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.settings-section {
+  background: var(--section-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--section-border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.settings-section:hover {
+  background: color-mix(in srgb, var(--section-bg) 85%, transparent);
+  border-color: var(--nav-border);
+}
+
+.settings-section h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: var(--section-title);
+  text-shadow: var(--card-title-shadow);
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+  transition: all 0.3s ease;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-item:hover {
+  background: rgba(14, 165, 233, 0.03);
+  padding: 12px 8px;
+  border-radius: 6px;
+  margin: 0 -8px;
+}
+
+.setting-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.setting-select,
+.setting-button,
+.setting-checkbox {
+  padding: 8px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.setting-select {
+  min-width: 150px;
+}
+
+.setting-select:hover,
+.setting-button:hover {
+  background: var(--nav-bg-hover);
+  border-color: var(--nav-border);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--nav-text) 25%, transparent);
+}
+
+.setting-select:focus,
+.setting-button:focus {
+  outline: none;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--nav-text) 30%, transparent);
+}
+
+.setting-checkbox {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  accent-color: var(--nav-text);
+  cursor: pointer;
+}
+
+.setting-text {
+  margin-left: 8px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.about-info {
+  text-align: center;
+  padding: 20px;
+}
+
+.about-info p {
+  margin: 8px 0;
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.6;
+}
+
+.about-info p strong {
+  color: var(--section-title);
+  text-shadow: var(--card-title-shadow);
+  font-weight: 700;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ambientShift {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.02) saturate(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-page,
+  .settings-section {
+    animation: none;
+  }
+  .settings-section:hover,
+  .setting-item:hover,
+  .setting-select:hover,
+  .setting-button:hover,
+  .nav-button:hover {
+    background: transparent;
+    transform: none;
+  }
+}

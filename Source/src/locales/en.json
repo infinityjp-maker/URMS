@@ -1,0 +1,75 @@
+{
+  "common": {
+    "back": "← BACK",
+    "language": "Language"
+  },
+  "dashboard": {
+    "title": "⚡ URMS COMMAND CENTER",
+    "system": "SYSTEM",
+    "storage": "STORAGE",
+    "network": "NETWORK",
+    "process": "PROCESS",
+    "urms": "URMS",
+    "settings": "SETTINGS",
+    "alerts": "ALERTS",
+    "csue": "CSUE",
+    "utc": "UTC",
+    "cpu": "CPU",
+    "ram": "RAM",
+    "disk": "Disk",
+    "networkStatus": "Network",
+    "files": "Files",
+    "free": "GB Free",
+    "online": "Online",
+    "offline": "Offline",
+    "latency": "Latency",
+    "status": "Status"
+  },
+  "environment": {
+    "title": "🌍 ENVIRONMENT",
+    "systemEnvironment": "System Environment",
+    "cpuUsage": "CPU Usage",
+    "memoryUsage": "Memory Usage",
+    "diskUsage": "Disk Usage",
+    "networkStatus": "Network Status",
+    "connected": "🟢 Connected",
+    "processInformation": "Process Information",
+    "powerShell": "PowerShell",
+    "dotnet": ".NET Runtime",
+    "vscode": "VS Code"
+  },
+  "logs": {
+    "title": "📋 LOGS",
+    "all": "All",
+    "info": "Info",
+    "warnings": "Warnings",
+    "errors": "Errors"
+  },
+  "security": {
+    "title": "🔒 SECURITY",
+    "onlineDevices": "Online Devices",
+    "offlineDevices": "Offline Devices",
+    "avgLatency": "Avg Latency",
+    "networkDevices": "Network Devices"
+  },
+  "settings": {
+    "title": "⚙️ SETTINGS",
+    "displaySettings": "Display Settings",
+    "theme": "Theme",
+    "darkNeon": "Dark (Neon)",
+    "light": "Light",
+    "animations": "Animations",
+    "enableAnimations": "Enable animations",
+    "systemSettings": "System Settings",
+    "autoRefresh": "Auto Refresh",
+    "every5Seconds": "Every 5 seconds",
+    "every10Seconds": "Every 10 seconds",
+    "every30Seconds": "Every 30 seconds",
+    "updateCheck": "Update Check",
+    "checkNow": "Check Now",
+    "about": "About",
+    "version": "URMS v4.0",
+    "description": "Unified Resource Management System",
+    "copyright": "© 2024 - Advanced System Control"
+  }
+}

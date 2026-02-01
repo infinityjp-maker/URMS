@@ -1,0 +1,75 @@
+{
+  "common": {
+    "back": "← 戻る",
+    "language": "言語"
+  },
+  "dashboard": {
+    "title": "⚡ URMS コマンドセンター",
+    "system": "システム",
+    "storage": "ストレージ",
+    "network": "ネットワーク",
+    "process": "プロセス",
+    "urms": "URMS",
+    "settings": "設定",
+    "alerts": "アラート",
+    "csue": "JST (日本標準時)",
+    "utc": "UTC (協定世界時)",
+    "cpu": "CPU",
+    "ram": "RAM",
+    "disk": "ディスク",
+    "networkStatus": "ネットワーク",
+    "files": "ファイル",
+    "free": "GB 空き容量",
+    "online": "オンライン",
+    "offline": "オフライン",
+    "latency": "レイテンシ",
+    "status": "ステータス"
+  },
+  "environment": {
+    "title": "🌍 環境情報",
+    "systemEnvironment": "システム環境",
+    "cpuUsage": "CPU使用率",
+    "memoryUsage": "メモリ使用率",
+    "diskUsage": "ディスク使用率",
+    "networkStatus": "ネットワークステータス",
+    "connected": "🟢 接続中",
+    "processInformation": "プロセス情報",
+    "powerShell": "PowerShell",
+    "dotnet": ".NET ランタイム",
+    "vscode": "VS Code"
+  },
+  "logs": {
+    "title": "📋 ログ",
+    "all": "すべて",
+    "info": "情報",
+    "warnings": "警告",
+    "errors": "エラー"
+  },
+  "security": {
+    "title": "🔒 セキュリティ",
+    "onlineDevices": "オンラインデバイス",
+    "offlineDevices": "オフラインデバイス",
+    "avgLatency": "平均レイテンシ",
+    "networkDevices": "ネットワークデバイス"
+  },
+  "settings": {
+    "title": "⚙️ 設定",
+    "displaySettings": "表示設定",
+    "theme": "テーマ",
+    "darkNeon": "ダーク (ネオン)",
+    "light": "ライト",
+    "animations": "アニメーション",
+    "enableAnimations": "アニメーション有効",
+    "systemSettings": "システム設定",
+    "autoRefresh": "自動更新",
+    "every5Seconds": "5秒ごと",
+    "every10Seconds": "10秒ごと",
+    "every30Seconds": "30秒ごと",
+    "updateCheck": "更新確認",
+    "checkNow": "今すぐ確認",
+    "about": "について",
+    "version": "URMS v4.0",
+    "description": "統合リソース管理システム",
+    "copyright": "© 2024 - Advanced System Control"
+  }
+}

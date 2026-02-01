@@ -1,0 +1,153 @@
+.floating-card{
+  --accent: #7c3aed;
+  position:relative;
+  border-radius:14px;
+  padding:18px;
+  background: var(--card-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  transform-style: preserve-3d;
+  transition: transform 280ms cubic-bezier(.2,.9,.3,1), box-shadow 280ms ease;
+  overflow: hidden;
+  min-height: 110px;
+  display:flex;
+  flex-direction:column;
+}
+
+.card-inner{
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.card-header h3{
+  margin:0;
+  font-size:18px;
+  color: var(--card-title);
+  text-shadow: var(--card-title-shadow);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.header-right{ 
+  font-size:12px; 
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.card-body{
+  margin-top:10px;
+  color: var(--card-text);
+  font-size:14px;
+  overflow: hidden;
+  word-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.floating-card:hover{
+  transform: translateY(-8px);
+  box-shadow: var(--card-shadow);
+}
+
+.card-ghost{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:-14px;
+  width:86%;
+  height:50px;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 60%, transparent), transparent);
+  filter: blur(20px);
+  opacity:0.85;
+  z-index:1;
+  transition: opacity 280ms ease, transform 280ms ease, height 280ms ease;
+}
+
+.floating-card:hover .card-ghost{
+  height: 70px;
+  opacity: 1;
+}
+
+/* subtle floating animation */
+@keyframes floaty { 0%{ transform: translateY(0)} 50%{ transform: translateY(-6px)} 100%{ transform: translateY(0)} }
+.floating-card{ animation: floaty 6s ease-in-out infinite; }
+
+/* focus accessibility */
+.floating-card:focus-within{ outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
+
+/* respect user motion preferences */
+@media (prefers-reduced-motion: reduce){
+  .floating-card{ animation: none !important; transition: none !important; }
+  .floating-card:hover{ transform: none !important; }
+}
+
+/* Neon variant */
+.floating-card.neon{
+  background: var(--card-bg);
+  border-radius:12px;
+  padding:16px;
+  border: 2px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.floating-card.neon::before{
+  content:"";
+  position:absolute;
+  inset: -1px;
+  border-radius:14px;
+  background: radial-gradient(60% 40% at 10% 10%, color-mix(in srgb, var(--accent) 36%, transparent), transparent);
+  filter: blur(10px);
+  opacity:0.9;
+  z-index:0;
+  pointer-events:none;
+  mix-blend-mode: screen;
+}
+
+.floating-card.neon .card-inner{ position:relative; z-index:2; transition: transform 220ms cubic-bezier(.2,.9,.3,1); transform-style: preserve-3d; }
+.floating-card.neon .card-header h3{ font-size:14px; letter-spacing:1px; text-transform:uppercase; color: var(--card-title); text-shadow: var(--card-title-shadow); }
+
+/* tilt enabled */
+.floating-card.tilt-enabled{ perspective:700px; }
+.floating-card.tilt-enabled .card-inner{ will-change: transform; }
+
+/* sizes */
+.floating-card.sm{ padding:12px; min-height: 86px; }
+.floating-card.md{ padding:14px; min-height:110px; }
+.floating-card.lg{ padding:24px; min-height:240px; font-size: 15px; }
+
+/* sparkline */
+.sparkline{ display:block; width:100%; height:34px; margin-top:8px; }
+
+/* small list styles used in dashboard */
+.stat-list{ list-style:none; padding:0; margin:8px 0 0 0; }
+.stat-list li{ display:flex; justify-content:space-between; font-size:13px; padding:2px 0; color:var(--stat-label); }
+.proc-list{ list-style:none; padding:0; margin:6px 0 0 0; font-size:13px; }
+
+/* focus accessibility */
+.floating-card:focus-within{ outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
+
+/* respect user motion preferences */
+@media (prefers-reduced-motion: reduce){
+  .floating-card{ animation: none !important; transition: none !important; }
+  .floating-card:hover{ transform: none !important; }
+}
