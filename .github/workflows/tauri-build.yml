@@ -15,36 +15,58 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          name: Tauri Build
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
+          on:
+            push:
+              branches: [ main ]
+            pull_request:
+              branches: [ main ]
 
-      - name: Cache Cargo registry
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          jobs:
+            build:
+              runs-on: windows-latest
+              steps:
+                - uses: actions/checkout@v4
 
-      - name: Install Node deps
-        shell: pwsh
-        run: |
-          if (Test-Path package-lock.json) { npm ci } else { npm install }
+                - name: Setup Node
+                  uses: actions/setup-node@v4
+                  with:
+                    node-version: '18'
 
-      - name: Build frontend
-        run: |
-          npm run build
+                - name: Setup Rust
+                  uses: dtolnay/rust-toolchain@v1
+                  with:
+                    toolchain: stable
 
-      - name: Build Tauri (release)
-        run: |
-          npm run tauri:build -- --release
+                - name: Cache Cargo registry
+                  uses: actions/cache@v4
+                  with:
+                    path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                    key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Upload release artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tauri-release
-          path: Backend/src-tauri/target/release/*.exe
+                - name: Install Node deps (root)
+                  shell: pwsh
+                  run: |
+                    if (Test-Path package-lock.json) { npm ci } else { npm install }
+
+                - name: Build frontend
+                  shell: pwsh
+                  run: |
+                    Push-Location Source
+                    if (Test-Path package-lock.json) { npm ci } else { npm install }
+                    npm run build
+                    Pop-Location
+
+                - name: Build Tauri (release)
+                  shell: pwsh
+                  run: |
+                    npm run tauri:build -- --release
+
+                - name: Upload release artifact
+                  uses: actions/upload-artifact@v4
+                  with:
+                    name: tauri-release
+                    path: Backend/src-tauri/target/release/*.exe
