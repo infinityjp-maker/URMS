@@ -1,0 +1,21 @@
+name-template: "$NEXT_PATCH (${YYYY-MM-DD})"
+tag-template: "v$NEXT_PATCH"
+categories:
+  - title: "Added"
+    label: "enhancement"
+  - title: "Changed"
+    label: "changed"
+  - title: "Fixed"
+    label: "bug"
+  - title: "Security"
+    label: "security"
+template: |
+  ## What's Changed
+
+  $CHANGES
+
+change-template: |
+- $TITLE #$NUMBER (@$AUTHOR)
+
+change-title-escapes:
+  - "-"
