@@ -31,8 +31,9 @@ jobs:
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Node deps
+        shell: pwsh
         run: |
-          npm ci
+          if (Test-Path package-lock.json) { npm ci } else { npm install }
 
       - name: Build frontend
         run: |

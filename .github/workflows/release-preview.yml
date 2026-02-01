@@ -23,7 +23,9 @@ jobs:
           toolchain: stable
 
       - name: Install Node deps
-        run: npm ci
+        shell: pwsh
+        run: |
+          if (Test-Path package-lock.json) { npm ci } else { npm install }
 
       - name: Build frontend
         run: npm run build
