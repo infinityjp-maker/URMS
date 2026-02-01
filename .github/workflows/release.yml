@@ -1,5 +1,7 @@
 name: Release (tag)
 
+name: Release (tag)
+
 on:
   push:
     tags:
@@ -35,16 +37,18 @@ jobs:
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install Node deps
+      - name: Build frontend
         shell: pwsh
         run: |
+          Push-Location Source
           if (Test-Path package-lock.json) { npm ci } else { npm install }
-
-      - name: Build frontend
-        run: npm run build
+          npm run build
+          Pop-Location
 
       - name: Build Tauri (release)
-        run: npm run tauri:build -- --release
+        shell: pwsh
+        run: |
+          npm run tauri:build -- --release
 
       - name: Locate built exe
         id: find_exe
@@ -110,4 +114,5 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.find_exe.outputs.exe }}
           asset_name: urms-${{ github.ref_name }}.exe
+          asset_content_type: application/octet-stream
           asset_content_type: application/octet-stream

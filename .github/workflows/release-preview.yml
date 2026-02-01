@@ -15,33 +15,52 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          name: Release Preview (manual)
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
+          on:
+            workflow_dispatch: {}
 
-      - name: Install Node deps
-        shell: pwsh
-        run: |
-          if (Test-Path package-lock.json) { npm ci } else { npm install }
+          jobs:
+            build_preview:
+              runs-on: windows-latest
+              permissions:
+                contents: write
+              steps:
+                - name: Checkout
+                  uses: actions/checkout@v4
 
-      - name: Build frontend
-        run: npm run build
+                - name: Setup Node
+                  uses: actions/setup-node@v4
+                  with:
+                    node-version: '18'
 
-      - name: Build Tauri (release)
-        run: npm run tauri:build -- --release
+                - name: Setup Rust
+                  uses: dtolnay/rust-toolchain@v1
+                  with:
+                    toolchain: stable
 
-      - name: Find exe
-        id: find_exe
-        run: |
-          $files = Get-ChildItem -Path Backend/src-tauri/target/release -Filter *.exe -Recurse | Select-Object -First 1
-          if (-not $files) { Write-Error "No exe found"; exit 1 }
-          echo "exe=$($files.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+                - name: Build frontend
+                  shell: pwsh
+                  run: |
+                    Push-Location Source
+                    if (Test-Path package-lock.json) { npm ci } else { npm install }
+                    npm run build
+                    Pop-Location
 
-      - name: Upload artifact (unsigned)
-        uses: actions/upload-artifact@v4
-        with:
-          name: urms-preview-exe
-          path: ${{ steps.find_exe.outputs.exe }}
+                - name: Build Tauri (release)
+                  shell: pwsh
+                  run: |
+                    npm run tauri:build -- --release
+
+                - name: Find exe
+                  id: find_exe
+                  run: |
+                    $files = Get-ChildItem -Path Backend/src-tauri/target/release -Filter *.exe -Recurse | Select-Object -First 1
+                    if (-not $files) { Write-Error "No exe found"; exit 1 }
+                    echo "exe=$($files.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+                - name: Upload artifact (unsigned)
+                  uses: actions/upload-artifact@v4
+                  with:
+                    name: urms-preview-exe
+                    path: ${{ steps.find_exe.outputs.exe }}
