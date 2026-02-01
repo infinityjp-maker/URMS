@@ -23,7 +23,8 @@
       "@components/*": ["Source/src/components/*"],
       "@hooks/*": ["Source/src/hooks/*"],
       "@utils/*": ["Source/src/utils/*"],
-      "@styles/*": ["Source/src/styles/*"]
+      "@styles/*": ["Source/src/styles/*"],
+      "@pages/*": ["Source/src/pages/*"]
     },
 
     /* Linting */
