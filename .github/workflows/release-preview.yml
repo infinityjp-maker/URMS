@@ -34,10 +34,12 @@ jobs:
           npm run build
           Pop-Location
 
-      - name: Build Tauri (release)
+      - name: Build app binary with cargo (release)
         shell: pwsh
         run: |
-          npx --yes @tauri-apps/cli@^2 build --release
+          Push-Location Backend/src-tauri
+          cargo build --release
+          Pop-Location
 
       - name: Locate built exe
         id: find_exe
