@@ -37,7 +37,7 @@ jobs:
       - name: Build Tauri (release)
         shell: pwsh
         run: |
-          npx tauri build --release
+          npx --yes @tauri-apps/cli@^2 build -- --release
 
       - name: Locate built exe
         id: find_exe
