@@ -7,7 +7,7 @@ import ResourceDetail from "./pages/Environment/ResourceDetail";
 import Network from "./pages/Network";
 import Subsystems from "./pages/Subsystems";
 import SubsystemDetail from "./pages/Subsystems/SubsystemDetail";
-import Logs from "Source/src/pages/Logs/index.tsx";
+import Logs from "@pages/Logs";
 import Security from "./pages/Security";
 import Settings from "./pages/Settings";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
