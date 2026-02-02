@@ -297,7 +297,7 @@ fn fetch_gpu_info_inner() -> Vec<GpuInfo> {
         let mut gpus = Vec::new();
 
         // Try WMIC first with a short timeout
-        let try_wmic = || {
+        let mut try_wmic = || {
             let cmd = Command::new("wmic")
                 .args(["path", "win32_VideoController", "get", "Name,AdapterRAM", "/format:csv"])
                 .creation_flags(0x08000000) // CREATE_NO_WINDOW
