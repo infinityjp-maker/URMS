@@ -1,0 +1,71 @@
+
+Name                       : urms
+Id                         : 113628
+PriorityClass              : Normal
+FileVersion                : 0.1.0
+HandleCount                : 142
+WorkingSet                 : 10383360
+PagedMemorySize            : 2052096
+PrivateMemorySize          : 2052096
+VirtualMemorySize          : 122867712
+TotalProcessorTime         : 00:00:00.0468750
+SI                         : 1
+Handles                    : 142
+VM                         : 4417835008
+WS                         : 10383360
+PM                         : 2052096
+NPM                        : 10408
+Path                       : D:\GitHub\URMS\Backend\src-tauri\target\release\urms.exe
+CommandLine                : "D:\GitHub\URMS\Backend\src-tauri\target\release\urms.exe" 
+Parent                     : System.Diagnostics.Process (pwsh)
+Company                    : infin
+CPU                        : 0.375
+ProductVersion             : 0.1.0
+Description                : urms
+Product                    : urms
+__NounName                 : Process
+SafeHandle                 : Microsoft.Win32.SafeHandles.SafeProcessHandle
+Handle                     : 3520
+BasePriority               : 8
+ExitCode                   : 
+HasExited                  : False
+StartTime                  : 2026/02/02 月曜日 23:41:29
+ExitTime                   : 
+MachineName                : .
+MaxWorkingSet              : 1413120
+MinWorkingSet              : 204800
+Modules                    : {System.Diagnostics.ProcessModule (urms.exe), System.Diagnostics.ProcessModule (ntdll.dll), System.Diagnostics.ProcessModule (KERNEL32.DLL), System.Diagnostics.ProcessModule (KERNELBASE.dll)…}
+NonpagedSystemMemorySize64 : 10408
+NonpagedSystemMemorySize   : 10408
+PagedMemorySize64          : 2052096
+PagedSystemMemorySize64    : 164888
+PagedSystemMemorySize      : 164888
+PeakPagedMemorySize64      : 3338240
+PeakPagedMemorySize        : 3338240
+PeakWorkingSet64           : 11984896
+PeakWorkingSet             : 11984896
+PeakVirtualMemorySize64    : 4419899392
+PeakVirtualMemorySize      : 124932096
+PriorityBoostEnabled       : True
+PrivateMemorySize64        : 2052096
+ProcessorAffinity          : 16777215
+SessionId                  : 1
+StartInfo                  : System.Diagnostics.ProcessStartInfo
+Threads                    : {97088, 104972, 100372, 112800}
+VirtualMemorySize64        : 4417835008
+EnableRaisingEvents        : False
+StandardInput              : 
+StandardOutput             : 
+StandardError              : 
+WorkingSet64               : 10383360
+SynchronizingObject        : 
+MainModule                 : System.Diagnostics.ProcessModule (urms.exe)
+PrivilegedProcessorTime    : 00:00:00.3593750
+UserProcessorTime          : 00:00:00.0937500
+ProcessName                : urms
+MainWindowHandle           : 124850628
+MainWindowTitle            : urms
+Responding                 : True
+Site                       : 
+Container                  : 
+

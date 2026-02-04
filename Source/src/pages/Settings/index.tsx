@@ -20,6 +20,94 @@ export default function Settings() {
     } else {
       document.body.className = '';
     }
+    // hook up settings load/save buttons
+    const loadBtn = document.getElementById('load-google-settings');
+    const saveBtn = document.getElementById('save-google-settings');
+    const keyInput = document.getElementById('google-api-key') as HTMLInputElement | null;
+    const calInput = document.getElementById('google-calendar-id') as HTMLInputElement | null;
+
+    const loadHandler = async () => {
+      try {
+        const mod = await import('@tauri-apps/api/tauri');
+        const tauri = mod.default || mod;
+        const res = await tauri.invoke('settings_get_google_credentials');
+        if (res) {
+          if (keyInput && res.google_api_key) keyInput.value = res.google_api_key;
+          if (calInput && res.google_calendar_id) calInput.value = res.google_calendar_id;
+        }
+      } catch (e) { console.warn('load settings failed', e); }
+    };
+
+    const saveHandler = async () => {
+      try {
+        if (!keyInput || !calInput) return;
+        const apiKey = keyInput.value.trim();
+        const calId = calInput.value.trim();
+        const mod = await import('@tauri-apps/api/tauri');
+        const tauri = mod.default || mod;
+        await tauri.invoke('settings_set_google_credentials', { api_key: apiKey, calendar_id: calId });
+        // optionally set sync interval if provided
+        const intervalInput = document.getElementById('sync-interval') as HTMLInputElement | null;
+        if (intervalInput) {
+          const mins = parseInt(intervalInput.value || '0', 10);
+          if (!isNaN(mins) && mins > 0) {
+            await tauri.invoke('settings_set_sync_interval', { sync_minutes: mins });
+          }
+        }
+        alert('Saved');
+      } catch (e) { console.warn('save settings failed', e); alert('Save failed'); }
+    };
+
+    const deleteBtn = document.getElementById('delete-google-settings');
+    const oauthBtn = document.getElementById('start-google-oauth');
+    const clientIdInput = document.getElementById('google-client-id') as HTMLInputElement | null;
+    const clientSecretInput = document.getElementById('google-client-secret') as HTMLInputElement | null;
+    const oauthStatus = document.getElementById('oauth-status');
+
+    const deleteHandler = async () => {
+      try {
+        const mod = await import('@tauri-apps/api/tauri');
+        const tauri = mod.default || mod;
+        await tauri.invoke('settings_delete_google_credentials');
+        if (keyInput) keyInput.value = '';
+        if (calInput) calInput.value = '';
+        alert('Deleted');
+      } catch (e) { console.warn('delete failed', e); alert('Delete failed'); }
+    };
+
+    const oauthHandler = async () => {
+      try {
+        if (!clientIdInput || !clientSecretInput) return;
+        const clientId = clientIdInput.value.trim();
+        const clientSecret = clientSecretInput.value.trim();
+        if (!clientId || !clientSecret) {
+          alert('Please enter client_id and client_secret');
+          return;
+        }
+        const mod = await import('@tauri-apps/api/tauri');
+        const tauri = mod.default || mod;
+        if (oauthStatus) oauthStatus.textContent = 'Starting OAuth...';
+        await tauri.invoke('calendar_start_oauth', { client_id: clientId, client_secret: clientSecret });
+        // refresh token display
+        const tok = await tauri.invoke('calendar_get_oauth_tokens');
+        if (oauthStatus) oauthStatus.textContent = tok && Object.keys(tok).length ? 'Connected' : 'Not connected';
+        alert('OAuth flow completed (tokens stored).');
+      } catch (e) { console.warn('oauth failed', e); alert('OAuth failed'); if (oauthStatus) oauthStatus.textContent = 'Error'; }
+    };
+
+    loadBtn?.addEventListener('click', loadHandler);
+    saveBtn?.addEventListener('click', saveHandler);
+    deleteBtn?.addEventListener('click', deleteHandler);
+    oauthBtn?.addEventListener('click', oauthHandler);
+    // auto-load on mount
+    loadHandler();
+
+    return () => {
+      loadBtn?.removeEventListener('click', loadHandler);
+      saveBtn?.removeEventListener('click', saveHandler);
+      deleteBtn?.removeEventListener('click', deleteHandler);
+      oauthBtn?.removeEventListener('click', oauthHandler);
+    };
   }, [theme]);
 
   const handleThemeChange = (newTheme: 'dark-neon' | 'dark' | 'light') => {
@@ -79,12 +167,8 @@ export default function Settings() {
         <div className="settings-section">
           <h2>システム設定</h2>
           <div className="setting-item">
-            <label className="setting-label">自動更新間隔</label>
-            <select className="setting-select">
-              <option value="5">5秒ごと</option>
-              <option value="10">10秒ごと</option>
-              <option value="30">30秒ごと</option>
-            </select>
+            <label className="setting-label">自動更新間隔（分）</label>
+            <input id="sync-interval" className="setting-input" placeholder="例: 30" />
           </div>
           <div className="setting-item">
             <label className="setting-label">更新確認</label>
@@ -98,6 +182,34 @@ export default function Settings() {
             <p><strong>バージョン</strong></p>
             <p>URMS v4.0 - 統合資産管理システム</p>
             <p>© 2026 URMS Team</p>
+          </div>
+        </div>
+        <div className="settings-section">
+          <h2>Google Calendar 設定</h2>
+          <div className="setting-item">
+            <label className="setting-label">API Key</label>
+            <input id="google-api-key" className="setting-input" placeholder="Enter API key" />
+          </div>
+          <div className="setting-item">
+            <label className="setting-label">Calendar ID</label>
+            <input id="google-calendar-id" className="setting-input" placeholder="primary or your email" />
+          </div>
+          <div className="setting-item">
+            <button className="setting-button" id="save-google-settings">保存</button>
+            <button className="setting-button" id="load-google-settings">読み込み</button>
+            <button className="setting-button" id="delete-google-settings">削除</button>
+          </div>
+          <div className="setting-item">
+            <label className="setting-label">OAuth Client ID</label>
+            <input id="google-client-id" className="setting-input" placeholder="Enter OAuth client_id" />
+          </div>
+          <div className="setting-item">
+            <label className="setting-label">OAuth Client Secret</label>
+            <input id="google-client-secret" className="setting-input" placeholder="Enter client_secret" />
+          </div>
+          <div className="setting-item">
+            <button className="setting-button" id="start-google-oauth">Google OAuth 認可</button>
+            <span id="oauth-status" style={{marginLeft:12}}>Unknown</span>
           </div>
         </div>
       </main>

@@ -1,0 +1,7 @@
+INFO [urms_lib] logger initialized
+INFO [urms_lib] Found local dist at "D:\\GitHub\\URMS\\dist"; no TAURI dev env vars set
+INFO [urms_lib] Frontend ping server listening on 127.0.0.1:8765
+INFO [urms_lib] Received frontend HTTP ping: {
+  "msg": "manual-test",
+  "ts": "2026/02/03 火曜日 6:38:48"
+}

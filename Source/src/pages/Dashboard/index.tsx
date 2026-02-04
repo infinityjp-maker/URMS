@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./style.css";
 import FloatingCard from "../../components/FloatingCard";
 import Sparkline from "../../components/Sparkline";
+import WeatherCalendarCard from '../../components/cards/WeatherCalendarCard';
 import { getSystemInfo, getNetworkInfo } from "../../utils/systemInfo";
 
 export default function Dashboard() {
@@ -209,6 +210,16 @@ export default function Dashboard() {
             <li>モード <span>{settingsStats.mode}</span></li>
             <li>更新 <span>{settingsStats.updated}</span></li>
           </ul>
+        </FloatingCard>
+
+        <FloatingCard
+          title="Weather + Calendar"
+          variant="default"
+          accent="#60a5fa"
+          size="lg"
+          onClick={() => handleCardClick("")}
+        >
+          <WeatherCalendarCard />
         </FloatingCard>
       </div>
     </div>

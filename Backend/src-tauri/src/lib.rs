@@ -4,6 +4,7 @@ pub mod error;
 pub mod core;
 pub mod system;
 pub mod subsystems;
+use base64::Engine;
 
 // Single instance mutex for Windows
 #[cfg(target_os = "windows")]
@@ -61,6 +62,18 @@ fn check_single_instance() -> bool {
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+// Receives frontend console messages and logs them server-side
+#[tauri::command]
+fn frontend_log(level: &str, msg: &str) {
+    match level {
+        "error" => log::error!("[frontend] {}", msg),
+        "warn" => log::warn!("[frontend] {}", msg),
+        "info" => log::info!("[frontend] {}", msg),
+        "debug" => log::debug!("[frontend] {}", msg),
+        _ => log::info!("[frontend] {}", msg),
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -195,6 +208,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             greet,
+            frontend_log,
             system::commands::get_system_info,
             system::commands::get_network_info,
             subsystems::asset::commands::asset_manager_add_asset,
@@ -222,6 +236,16 @@ pub fn run() {
             subsystems::schedule::commands::schedule_manager_update_schedule,
             subsystems::schedule::commands::schedule_manager_delete_schedule,
             subsystems::schedule::commands::schedule_manager_get_upcoming_schedules
+            ,
+            subsystems::weather::commands::get_weather,
+            subsystems::calendar::commands::calendar_sync_with_google,
+            subsystems::calendar::commands::calendar_get_events,
+            subsystems::calendar::commands::calendar_start_oauth,
+            subsystems::calendar::commands::calendar_get_oauth_tokens,
+            subsystems::calendar::commands::calendar_sync_with_oauth
+            ,
+            subsystems::settings::commands::settings_set_google_credentials,
+            subsystems::settings::commands::settings_get_google_credentials
         ])
         .setup(|app| {
             use tauri::Manager;
@@ -233,6 +257,7 @@ pub fn run() {
                     let _ = window.set_focus();
                 }
             }
+            
             // Spawn a background async task to emit system and network updates periodically.
             // Use an interval and run heavy collectors in blocking threads in parallel,
             // with a longer interval to reduce CPU/io pressure and avoid overlapping work.
@@ -261,6 +286,47 @@ pub fn run() {
                         if let Ok(net_res) = net_future.await {
                             let _ = app_handle.emit("network:update", &net_res);
                         }
+                    }
+                });
+            }
+
+            // Spawn a background task to perform periodic calendar sync using OAuth tokens.
+            {
+                use std::time::Duration;
+                let app_handle = app.handle().clone();
+                tauri::async_runtime::spawn(async move {
+                    loop {
+                        // read desired sync interval
+                        let mins = match crate::subsystems::settings::commands::settings_get_sync_interval() {
+                            Ok(v) => v.get("sync_interval_minutes").and_then(|n| n.as_u64()).unwrap_or(0),
+                            Err(_) => 0,
+                        };
+                        if mins == 0 {
+                            // sleep short and retry
+                            tokio::time::sleep(Duration::from_secs(60)).await;
+                            continue;
+                        }
+
+                        // load calendar id from settings
+                        let cal_id = match crate::subsystems::settings::commands::settings_get_google_credentials() {
+                            Ok(v) => v.get("google_calendar_id").and_then(|s| s.as_str()).map(|s| s.to_string()),
+                            Err(_) => None,
+                        };
+
+                        if let Some(calendar_id) = cal_id {
+                            // attempt sync with OAuth tokens; ignore errors but emit on success
+                            match crate::subsystems::calendar::commands::calendar_sync_with_oauth(calendar_id.clone(), Some(10)).await {
+                                Ok(events) => {
+                                    let _ = app_handle.emit("calendar:updated", &events);
+                                    log::info!("Periodic calendar sync succeeded: {} events", events.len());
+                                }
+                                Err(e) => {
+                                    log::warn!("Periodic calendar sync failed: {}", e);
+                                }
+                            }
+                        }
+
+                        tokio::time::sleep(Duration::from_secs(mins * 60)).await;
                     }
                 });
             }
@@ -306,6 +372,299 @@ pub fn run() {
                     }
                 });
             }
+
+            // Post-setup: schedule a small eval to test frontend console forwarding and direct invoke availability
+            if let Some(win) = app.get_webview_window("main") {
+                // Also ensure window is shown/focused (best-effort)
+                let _ = win.show();
+                let _ = win.set_focus();
+
+                let script = r#"
+                  setTimeout(() => {
+                    try {
+                      if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
+                        window.__TAURI__.invoke('frontend_log', { level: 'info', msg: 'frontend: direct __TAURI__ invoke test' });
+                        return;
+                      }
+                      if (window.__TAURI__ && window.__TAURI__.tauri && typeof window.__TAURI__.tauri.invoke === 'function') {
+                        window.__TAURI__.tauri.invoke('frontend_log', { level: 'info', msg: 'frontend: direct __TAURI__.tauri invoke test' });
+                        return;
+                      }
+                      if (typeof window.invoke === 'function') {
+                        window.invoke('frontend_log', { level: 'info', msg: 'frontend: direct global invoke test' });
+                        return;
+                      }
+                      console.log('URMS: no __TAURI__ bridge found');
+                    } catch (e) {
+                      console.log('URMS: eval direct invoke failed', e && e.toString());
+                    }
+                  }, 1200);
+                "#;
+                let _ = win.eval(script);
+
+                // Additional aggressive test: try dynamic import inside webview to call the tauri module directly
+                                let script2 = r#"
+                                    setTimeout(() => {
+                                        try {
+                                            (import('@tauri-apps/api/tauri')
+                                                .then((m) => {
+                                                    if (m && typeof m.invoke === 'function') {
+                                                        return m.invoke('frontend_log', { level: 'info', msg: 'frontend: eval import->invoke test' });
+                                                    }
+                                                    console.log('URMS: eval import present but no invoke');
+                                                })
+                                                .catch((e) => console.log('URMS: eval import failed', e && e.toString())));
+                                        } catch (e) {
+                                            console.log('URMS: eval import exception', e && e.toString());
+                                        }
+                                    }, 1600);
+                                "#;
+                let _ = win.eval(script2);
+
+                                // Inject a fetch wrapper to capture outgoing request bodies and POST them to local ping server
+                                let script_capture_fetch = r#"
+                                    (function(){
+                                        try {
+                                            const orig = window.fetch.bind(window);
+                                            window.fetch = function(input, init){
+                                                try {
+                                                    // Avoid capturing the capture-post itself
+                                                    const url = (input && input.url) ? input.url : String(input);
+                                                    if (typeof url === 'string' && url.indexOf('127.0.0.1:8765/ux-ping') !== -1) {
+                                                        return orig.apply(this, arguments);
+                                                    }
+
+                                                    // Try to obtain body synchronously where possible
+                                                    const sendCaptured = (s) => {
+                                                        try {
+                                                            orig('http://127.0.0.1:8765/ux-ping', {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ captured: s, url: url })
+                                                            }).catch(()=>{});
+                                                        } catch(e){}
+                                                    };
+
+                                                    if (init && init.body) {
+                                                        try {
+                                                            if (typeof init.body === 'string') {
+                                                                sendCaptured(init.body);
+                                                            } else if (init.body instanceof Blob) {
+                                                                init.body.text().then(t => sendCaptured(t)).catch(()=>{});
+                                                            } else if (init.body instanceof FormData) {
+                                                                // serialize FormData
+                                                                const obj = {};
+                                                                for (const p of init.body.entries()) { obj[p[0]] = p[1]; }
+                                                                sendCaptured(JSON.stringify(obj));
+                                                            } else {
+                                                                try { sendCaptured(JSON.stringify(init.body)); } catch(e){ sendCaptured(String(init.body)); }
+                                                            }
+                                                        } catch(e){}
+                                                    } else if (input && input instanceof Request) {
+                                                        try {
+                                                            const req = input;
+                                                            // clone and read
+                                                            req.clone().text().then(t => sendCaptured(t)).catch(()=>{});
+                                                        } catch(e){}
+                                                    }
+                                                } catch(e) {}
+                                                return orig.apply(this, arguments);
+                                            };
+                                            console.log('URMS: fetch wrapped for body capture');
+                                        } catch(e) {
+                                            console.log('URMS: fetch wrap failed', e && e.toString());
+                                        }
+                                    })();
+                                "#;
+                                let _ = win.eval(script_capture_fetch);
+                                // Also log webview location/origin for diagnostics
+                                let script_loc = r#"
+                                    setTimeout(() => {
+                                        try {
+                                            const o = { href: window.location.href, origin: window.location.origin, baseURI: document.baseURI };
+                                            try {
+                                                if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
+                                                    window.__TAURI__.invoke('frontend_log', { level: 'info', msg: 'webview-location: ' + JSON.stringify(o) });
+                                                } else {
+                                                    console.log('webview-location: ' + JSON.stringify(o));
+                                                }
+                                            } catch (e) {
+                                                console.log('webview-location-ex', e && e.toString());
+                                            }
+                                        } catch (e) {
+                                            console.log('webview-location-ex-top', e && e.toString());
+                                        }
+                                    }, 500);
+                                "#;
+                                let _ = win.eval(script_loc);
+                                // If the webview loaded a dev server (localhost), try several fallbacks:
+                                // 1) eval navigation to bundled file
+                                // 2) inject data: URL
+                                // 3) as a last resort, create a new window that loads the app bundle (tauri App URL) and close the failing main window
+                                if let Some(dist_path) = {
+                                        // try to compute dist absolute path again
+                                        if let Ok(exe) = std::env::current_exe() {
+                                                if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
+                                                        for _ in 0..4 { if let Some(pp) = p.parent() { p = pp.to_path_buf(); } }
+                                                        let dist = p.join("dist");
+                                                        if dist.exists() { Some(dist) } else { None }
+                                                } else { None }
+                                        } else { None }
+                                } {
+                                        if let Some(dist_str) = dist_path.to_str() {
+                                                        // Windows file url must have forward slashes: file:///D:/path
+                                                        let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
+                                                        // create a script that will attempt navigation multiple times to overcome timing issues
+                                                                                        let mut nav_script = String::new();
+                                                                                        nav_script.push_str("(function(){const target='");
+                                                                                        nav_script.push_str(&file_url);
+                                                                                        nav_script.push_str("';for (let i=0;i<6;i++){setTimeout(function(){try{const origin=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:'';if(typeof origin==='string'&&origin.indexOf('localhost')!==-1){try{if(window.__TAURI__&&typeof window.__TAURI__.invoke==='function')window.__TAURI__.invoke('frontend_log',{level:'info',msg:'forcing-navigation-attempt:'+target+' (attempt '+i+')'}).catch(()=>{});}catch(e){}try{window.location.replace(target);}catch(e){try{window.location.href=target;}catch(e){}}}else{try{if(window.__TAURI__&&typeof window.__TAURI__.invoke==='function')window.__TAURI__.invoke('frontend_log',{level:'info',msg:'origin-ok:'+origin}).catch(()=>{});}catch(e){}}}catch(e){try{console.log('nav-ex',e&&e.toString());}catch(_){} }},400*i);} }})();");
+                                                                                        let _ = win.eval(&nav_script);
+
+                                                        // As a stronger fallback, attempt to load the bundled index.html as a data: URL
+                                                        // Read dist/index.html and inject base64-encoded content into the webview
+                                                        if let Ok(index_path) = std::path::Path::new(dist_str).join("index.html").canonicalize() {
+                                                            if let Ok(html) = std::fs::read_to_string(&index_path) {
+                                                                // base64-encode the HTML
+                                                                let encoded = base64::engine::general_purpose::STANDARD.encode(html.as_bytes());
+                                                                let data_url = format!("data:text/html;base64,{}", encoded);
+                                                                let mut inject = String::new();
+                                                                inject.push_str("(function(){try{window.location.replace('");
+                                                                inject.push_str(&data_url);
+                                                                inject.push_str("');}catch(e){} })();");
+                                                                let _ = win.eval(&inject);
+                                                            }
+
+                                                            // WindowBuilder-based fallback disabled on this build; log and skip creating a new window.
+                                                            log::warn!("WindowBuilder fallback disabled; skipping creation of new window.");
+                                                        }
+                                                }
+                                }
+            }
+
+            // Spawn a tiny HTTP ping server on localhost to detect frontend JS execution
+            std::thread::spawn(|| {
+                use std::net::{TcpListener, TcpStream};
+                use std::io::{Read, Write};
+
+                if let Ok(listener) = TcpListener::bind(("127.0.0.1", 8765)) {
+                    log::info!("Frontend ping server listening on 127.0.0.1:8765");
+                    for stream in listener.incoming() {
+                            match stream {
+                                Ok(mut s) => {
+                                    use std::time::Duration;
+                                    // set a short read timeout so slow clients don't block the thread
+                                    let _ = s.set_read_timeout(Some(Duration::from_millis(500)));
+
+                                    // Read initial chunk containing headers (and maybe body)
+                                    let mut buf = Vec::new();
+                                    let mut tmp = [0u8; 4096];
+                                    let mut header_str = String::new();
+                                    let mut content_len: usize = 0;
+                                    // Read until we see CRLFCRLF or timeout
+                                    loop {
+                                        match s.read(&mut tmp) {
+                                            Ok(0) => break,
+                                            Ok(n) => {
+                                                buf.extend_from_slice(&tmp[..n]);
+                                                if let Ok(as_str) = std::str::from_utf8(&buf) {
+                                                    if let Some(pos) = as_str.find("\r\n\r\n") {
+                                                        header_str = as_str[..pos].to_string();
+                                                        // attempt to parse Content-Length
+                                                        for line in header_str.lines() {
+                                                            if let Some(idx) = line.to_ascii_lowercase().find("content-length:") {
+                                                                if let Ok(v) = line[idx+15..].trim().parse::<usize>() {
+                                                                    content_len = v;
+                                                                }
+                                                            }
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                                // if buffer grows too large, stop trying to parse headers
+                                                if buf.len() > 64 * 1024 { break; }
+                                            }
+                                            Err(_) => break,
+                                        }
+                                    }
+
+                                    // extract any body bytes already read after headers
+                                    let mut body_bytes = Vec::new();
+                                    if !header_str.is_empty() {
+                                        if let Ok(as_str) = std::str::from_utf8(&buf) {
+                                            if let Some(pos) = as_str.find("\r\n\r\n") {
+                                                let body_start = pos + 4;
+                                                if body_start < buf.len() {
+                                                    body_bytes.extend_from_slice(&buf[body_start..]);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // If we expect more body bytes, read until we have them or timeout
+                                    if content_len > body_bytes.len() {
+                                        let mut remaining = content_len - body_bytes.len();
+                                        while remaining > 0 {
+                                            match s.read(&mut tmp) {
+                                                Ok(0) => break,
+                                                Ok(n) => {
+                                                    let take = std::cmp::min(n, remaining);
+                                                    body_bytes.extend_from_slice(&tmp[..take]);
+                                                    remaining = remaining.saturating_sub(take);
+                                                }
+                                                Err(_) => break,
+                                            }
+                                        }
+                                    }
+
+                                    // Convert body bytes to string for logging
+                                    let body_str = match String::from_utf8(body_bytes.clone()) {
+                                        Ok(b) => b,
+                                        Err(_) => String::new(),
+                                    };
+                                    if body_str.is_empty() {
+                                        log::info!("Received frontend HTTP ping: ");
+                                    } else {
+                                        log::info!("Received frontend HTTP ping: {}", body_str);
+                                    }
+
+                                    let resp = "HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK";
+                                    let _ = s.write_all(resp.as_bytes());
+                                }
+                                Err(e) => {
+                                    log::warn!("Ping server accept error: {:?}", e);
+                                }
+                            }
+                        }
+                } else {
+                    log::warn!("Failed to bind frontend ping server on 127.0.0.1:8765");
+                }
+            });
+
+                        // As a fallback, ask the WebView to open DevTools via common host bridges (Edge WebView2 / chrome.webview)
+                        if let Some(win) = app.get_webview_window("main") {
+                                let script3 = r#"
+                                    setTimeout(() => {
+                                        try {
+                                            if (window.chrome && window.chrome.webview && typeof window.chrome.webview.openDevTools === 'function') {
+                                                window.chrome.webview.openDevTools();
+                                                console.log('URMS: requested chrome.webview.openDevTools');
+                                                return;
+                                            }
+                                            if (window.externalHost && typeof window.externalHost.openDevTools === 'function') {
+                                                window.externalHost.openDevTools();
+                                                console.log('URMS: requested externalHost.openDevTools');
+                                                return;
+                                            }
+                                            console.log('URMS: no known webview openDevTools bridge available');
+                                        } catch (e) {
+                                            console.log('URMS: openDevTools attempt failed', e && e.toString());
+                                        }
+                                    }, 1800);
+                                "#;
+                                let _ = win.eval(script3);
+                        }
+
             Ok(())
         })
         .run(tauri::generate_context!())

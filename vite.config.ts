@@ -8,6 +8,7 @@ const host = process.env.TAURI_DEV_HOST;
 // https://vite.dev/config/
 export default defineConfig(async () => ({
   plugins: [react()],
+  base: './',
   
   build: {
     outDir: './dist',
@@ -15,6 +16,8 @@ export default defineConfig(async () => ({
     sourcemap: false,
     brotliSize: true,
     rollupOptions: {
+      // Do not try to bundle or resolve Tauri runtime modules; keep them external
+      external: [/^@tauri-apps\/api(\/.*)?$/],
       output: {
         manualChunks(id: string) {
           if (id.includes('node_modules')) {

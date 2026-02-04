@@ -24,5 +24,104 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/Source/src/main.tsx"></script>
+    <!-- Console capture: attempt to persist frontend console to logs/frontend_console.log via Tauri fs or fallback to invoke -->
+    <script>
+      (function () {
+        function safeStringify(v) {
+          try { return typeof v === 'string' ? v : JSON.stringify(v); } catch { return String(v); }
+        }
+
+        // Helper to perform dynamic import without exposing literal import() targets to bundlers
+        const dynamicImport = new Function('m', 'return import(m)');
+
+        async function tryWriteLog(line) {
+          try {
+            // runtime dynamic import to avoid bundler resolution (use Function to hide from bundler)
+            const fsMod = await dynamicImport('@tauri-apps/api/fs');
+            const pathMod = await dynamicImport('@tauri-apps/api/path');
+            const appDir = await pathMod.appLocalDataDir();
+            const full = appDir + 'urms-frontend.log';
+            // append by reading existing then writing back
+            try {
+              const existing = await fsMod.readTextFile(full).catch(()=>'');
+              await fsMod.writeFile({ path: full, contents: existing + line + '\n' });
+            } catch (e) {
+              // If file ops fail, fall back to invoke
+              await tryInvoke(line);
+            }
+          } catch (e) {
+            await tryInvoke(line);
+          }
+        }
+
+        async function tryInvoke(line) {
+          try {
+            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
+              window.__TAURI__.invoke('frontend_log', { level: 'info', msg: line });
+              return;
+            }
+            // runtime import fallback
+            const tauri = await dynamicImport('@tauri-apps/api/tauri').catch(()=>null);
+            if (tauri && typeof tauri.invoke === 'function') {
+              await tauri.invoke('frontend_log', { level: 'info', msg: line });
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        ['log','info','warn','error','debug'].forEach((lvl)=>{
+          const orig = console[lvl];
+          console[lvl] = function(...args){
+            try {
+              const line = '[' + lvl + '] ' + args.map(safeStringify).join(' ');
+              // fire-and-forget
+              tryWriteLog(line);
+            } catch(e){}
+            if (orig) orig.apply(console, args);
+          };
+        });
+
+        // startup ping
+        setTimeout(()=>{ tryWriteLog('frontend: console-capture initialized'); }, 1000);
+
+        // Also try repeated HTTP POST pings to the host (backend listens on 127.0.0.1:8765)
+        (function(){
+          const attempts = 12;
+          const intervalMs = 800;
+          for (let i = 0; i < attempts; i++) {
+            setTimeout(async () => {
+              const payload = { msg: 'frontend: http ping', attempt: i, ts: Date.now() };
+              try {
+                await fetch('http://127.0.0.1:8765/ux-ping', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                tryWriteLog('[http-ping] ' + JSON.stringify(payload));
+              } catch (e) {
+                // ignore network errors; tryWriteLog will also attempt file/invoke
+                tryWriteLog('[http-ping-failed] ' + JSON.stringify(payload));
+              }
+            }, i * intervalMs);
+          }
+        })();
+        // Image-based GET pings as a fallback (triggers even if JS fetch or Tauri APIs fail)
+        (function(){
+          const attempts = 8;
+          const intervalMs = 1200;
+          const img = document.createElement('img');
+          img.style.display = 'none';
+          document.body.appendChild(img);
+          for (let i=0;i<attempts;i++){
+            setTimeout(()=>{
+              try{
+                img.src = 'http://127.0.0.1:8765/ux-ping?img=1&attempt=' + i + '&ts=' + Date.now();
+              }catch(e){}
+            }, i*intervalMs + 200);
+          }
+        })();
+      })();
+    </script>
   </body>
 </html>

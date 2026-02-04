@@ -28,6 +28,13 @@ sysinfo = "0.32"
 winapi = { version = "0.3", features = ["winnt", "handleapi", "synchapi", "processthreadsapi", "winbase"] }
 simplelog = "0.12"
 flexi_logger = "0.22"
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
+chrono = { version = "0.4", features = ["serde"] }
+urlencoding = "2"
+keyring = "1.0"
+base64 = "0.21"
+oauth2 = "4"
+webbrowser = "0.6"
 
 [profile.release]
 opt-level = 3

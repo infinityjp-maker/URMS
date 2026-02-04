@@ -1,0 +1,2 @@
+WARN [tao::platform_impl::platform::event_loop::runner] NewEvents emitted without explicit RedrawEventsCleared
+WARN [tao::platform_impl::platform::event_loop::runner] RedrawEventsCleared emitted without explicit MainEventsCleared
