@@ -133,11 +133,16 @@ export interface ProgressTask {
   remainingTime: number
   
   /** タスク状態 */
-  status: 'running' | 'success' | 'error'
+  status: 'running' | 'success' | 'error' | 'completed'
   
   /** エラーメッセージ（エラー時） */
   errorMessage?: string
   
+  /** 互換性フィールド: 外部コードが期待する別名 */
+  id?: string
+  progress?: number
+  estimatedRemainingTime?: number
+
   /** 開始時刻 */
   startedAt?: number
 }
