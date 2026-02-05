@@ -1,8 +1,5 @@
 name: Release (tag)
 
-name: Release (tag)
-name: Release (tag)
-
 on:
   push:
     tags:
