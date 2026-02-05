@@ -192,6 +192,7 @@ export class NetworkManager extends BaseManager implements INetworkManager {
       id: 'network-manager-card',
       title: 'Network Manager',
       manager: 'NetworkManager',
+      managerId: 'NetworkManager',
       status: 'normal',
       content: [
         { label: 'Devices Online', value: stats.devicesOnline },

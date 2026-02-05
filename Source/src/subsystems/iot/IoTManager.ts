@@ -30,7 +30,7 @@ export interface IoTDevice {
  */
 export interface IIoTManager {
   discoverDevices(): Promise<IoTDevice[]>
-  controlDevice(deviceId: string, command: string): Promise<void>
+  controlDevice(deviceId: string, command: string): Promise<{ success: boolean; details?: any }>
   getDeviceStatus(deviceId: string): Promise<IoTDevice>
   getIoTCard(): Promise<DashboardCard>
 }
@@ -160,7 +160,7 @@ export class IoTManager extends BaseManager implements IIoTManager {
   /**
    * デバイス制御
    */
-  async controlDevice(deviceId: string, command: string): Promise<void> {
+  async controlDevice(deviceId: string, command: string): Promise<{ success: boolean; details?: any }> {
     this.checkInitialized()
     return await this.executeTask(`Control: ${deviceId}`, async () => {
       const device = this.devices.get(deviceId)
@@ -183,7 +183,8 @@ export class IoTManager extends BaseManager implements IIoTManager {
         `Sent command to ${device.name}: ${command}`
       )
 
-      // no return value (interface expects Promise<void>)
+      // Return a result object for compatibility with tests
+      return { success: true, details: { id: deviceId, powered: device.powered } }
     })
   }
 
@@ -225,6 +226,7 @@ export class IoTManager extends BaseManager implements IIoTManager {
       id: 'iot-manager-card',
       title: 'IoT Manager',
       manager: 'IoTManager',
+      managerId: 'IoTManager',
       status: errorCount > 0 ? 'warn' : 'normal',
       content: [
         { label: 'Total Devices', value: devices.length },

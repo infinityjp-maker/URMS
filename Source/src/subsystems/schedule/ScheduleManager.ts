@@ -194,6 +194,7 @@ export class ScheduleManager extends BaseManager implements IScheduleManager {
       id: 'schedule-manager-card',
       title: 'Schedule Manager',
       manager: 'ScheduleManager',
+      managerId: 'ScheduleManager',
       status: upcoming.length > 0 ? 'normal' : 'warn',
       content: [
         { label: 'Total Schedules', value: this.schedules.size },

@@ -263,6 +263,7 @@ export class FileManager extends BaseManager implements IFileManager {
       id: 'file-manager-card',
       title: 'File Manager',
       manager: 'FileManager',
+      managerId: 'FileManager',
       status: usagePercent > 80 ? 'warn' : 'normal',
       content: [
         { label: 'Total Files', value: stats.fileCount },

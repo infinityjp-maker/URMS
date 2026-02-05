@@ -167,6 +167,7 @@ export class LogManager extends BaseManager implements ILogManager {
   getStats(): {
     total: number
     byLevel: { info: number; warn: number; error: number }
+    managers: string[]
   } {
     this.checkInitialized()
 
@@ -177,6 +178,7 @@ export class LogManager extends BaseManager implements ILogManager {
         warn: this.logs.filter(l => l.level === 'WARN').length,
         error: this.logs.filter(l => l.level === 'ERROR').length,
       },
+      managers: Array.from(new Set(this.logs.map(l => l.manager)))
     }
 
     return stats

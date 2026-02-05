@@ -89,7 +89,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
 
     await this.logManager.info(
       this.managerName,
-      `Dashboard initialized with ${this.getTheme()} theme`
+      `Dashboard initialized with ${this._theme} theme`
     )
   }
 
@@ -203,6 +203,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
       id,
       title: 'Warning',
       manager: this.managerName,
+      managerId: this.managerName,
       content: [{ label: 'Message', value: message }],
       status: 'warn',
       actions: [],
@@ -227,6 +228,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
       id,
       title: 'Error',
       manager: this.managerName,
+      managerId: this.managerName,
       content: [{ label: 'Message', value: message }],
       status: 'error',
       actions: [],
