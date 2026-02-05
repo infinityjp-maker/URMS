@@ -77,7 +77,7 @@ export class CalendarManager extends BaseManager implements ICalendarManager {
   async getCalendarCard(): Promise<DashboardCard> {
     this.checkInitialized()
     const events = await this.getEvents(5)
-    return {
+        return {
       id: 'weather-calendar-card',
       title: 'Weather & Calendar',
       manager: 'CalendarManager',

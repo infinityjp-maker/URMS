@@ -190,7 +190,7 @@ export class ScheduleManager extends BaseManager implements IScheduleManager {
     const upcoming = await this.getUpcomingSchedules(7)
     const highPriority = upcoming.filter(s => s.priority === 'high').length
 
-    return {
+        return {
       id: 'schedule-manager-card',
       title: 'Schedule Manager',
       manager: 'ScheduleManager',
