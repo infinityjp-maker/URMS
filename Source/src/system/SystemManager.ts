@@ -1,10 +1,10 @@
 /**
  * SystemManager.ts
  * URMS v4.0 - System Manager
- * 
+ *
  * CPU/RAM/Disk/Network のシステムリソース監視
  * BaseManager を継承し、Log/Progress を統合
- * 
+ *
  * Version: v4.0
  */
 
@@ -48,7 +48,7 @@ export interface ISystemManager {
 
 /**
  * System Manager 実装
- * 
+ *
  * 責務:
  * - システムリソース監視
  * - CPU/メモリ/ディスク/ネットワーク情報取得
@@ -170,7 +170,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
         this.managerName,
         'Monitoring already running'
       )
-      return
+      return this.monitoringTaskId ?? 'monitoring'
     }
 
     await this.logManager.info(
@@ -219,6 +219,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
         )
       }
     }, intervalMs)
+
     // monitoringInterval stored internally; return monitoring task id if available
     return this.monitoringTaskId ?? 'monitoring'
   }
@@ -343,8 +344,4 @@ export class SystemManager extends BaseManager implements ISystemManager {
     }
     this.monitoring = false
   }
-
-  /**
-   * プライベート: システムステータス更新（重複削除）
-   */
 }

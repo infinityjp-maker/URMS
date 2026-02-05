@@ -87,10 +87,10 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
     // Future Mode テーマを設定
     this._theme = 'Future'
 
-    await this.logManager.info(
+        await this.logManager.info(
       this.managerName,
       `Dashboard initialized with ${this._theme} theme`
-    )
+        )
   }
 
   /**
@@ -199,7 +199,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
     this.checkInitialized()
 
     const id = `notification-${Date.now()}`
-    const updatedCard: DashboardCard = {
+        const updatedCard: DashboardCard = {
       id,
       title: 'Warning',
       manager: this.managerName,
@@ -224,7 +224,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
     this.checkInitialized()
 
     const id = `notification-${Date.now()}`
-    const updatedCard: DashboardCard = {
+        const updatedCard: DashboardCard = {
       id,
       title: 'Error',
       manager: this.managerName,
