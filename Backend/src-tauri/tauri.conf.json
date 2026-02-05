@@ -19,11 +19,10 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.open-meteo.com https://www.googleapis.com"
     }
   },
   "bundle": {
-    "active": false,
-    "targets": "all"
+    "active": false
   }
 }

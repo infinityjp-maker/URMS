@@ -17,6 +17,8 @@ export interface DashboardCard {
   
   /** 管理元 Manager 名 */
   manager: string
+  /** 互換性用: 管理元 ID (一部テストが `managerId` を期待しているため追加) */
+  managerId?: string
   
   /** 状態: normal | warn | error */
   status: 'normal' | 'warn' | 'error'

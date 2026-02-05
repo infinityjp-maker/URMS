@@ -184,7 +184,6 @@ mod tests {
         manager.scan_network("192.168.1").await.unwrap();
         
         assert!(manager.stats.devices_online > 0);
-        assert!(manager.stats.devices_offline >= 0);
     }
 
     #[tokio::test]

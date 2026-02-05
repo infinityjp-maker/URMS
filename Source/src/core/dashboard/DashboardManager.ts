@@ -31,14 +31,14 @@ export interface SystemStats {
  * Dashboard Manager インターフェース
  */
 export interface IDashboardManager {
-  registerCard(card: DashboardCard): Promise<void>
-  unregisterCard(cardId: string): Promise<void>
-  getCards(): Promise<DashboardCard[]>
-  reorderCards(cardIds: string[]): Promise<void>
-  setTheme(theme: 'future' | 'dark' | 'light'): Promise<void>
-  getTheme(): Promise<'future' | 'dark' | 'light'>
-  notifyWarning(card: DashboardCard, message: string): Promise<void>
-  notifyError(card: DashboardCard, message: string): Promise<void>
+  registerCard(card: DashboardCard): void
+  unregisterCard(cardId: string): void
+  getCards(): DashboardCard[]
+  reorderCards(cardIds: string[]): void
+  setTheme(theme: 'Future' | 'Dark' | 'Light'): void
+  getTheme(): 'Future' | 'Dark' | 'Light'
+  notifyWarning(message: string): void
+  notifyError(message: string): void
   getSystemStats(): Promise<SystemStats>
   getNetworkStats(): Promise<any>
   getStorageStats(): Promise<any>
@@ -55,7 +55,7 @@ export interface IDashboardManager {
  */
 export class DashboardManager extends BaseManager implements IDashboardManager {
   private cards: Map<string, DashboardCard> = new Map()
-  private theme: 'future' | 'dark' | 'light' = 'future'
+  public _theme: 'Future' | 'Dark' | 'Light' = 'Future'
   private config: ManagerConfig
 
   constructor(
@@ -85,11 +85,11 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
     )
 
     // Future Mode テーマを設定
-    this.theme = 'future'
+    this._theme = 'Future'
 
     await this.logManager.info(
       this.managerName,
-      `Dashboard initialized with ${this.theme} theme`
+      `Dashboard initialized with ${this._theme} theme`
     )
   }
 
@@ -109,17 +109,17 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
    * 
    * @param card - 登録するカード
    */
-  async registerCard(card: DashboardCard): Promise<void> {
+  registerCard(card: DashboardCard): void {
     this.checkInitialized()
 
-    await this.logManager.info(
+    void this.logManager.info(
       this.managerName,
       `Registering card: ${card.title} (${card.manager})`
     )
 
     this.cards.set(card.id, card)
 
-    await this.logManager.info(
+    void this.logManager.info(
       this.managerName,
       `Card registered: ${card.title}`
     )
@@ -128,13 +128,13 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
   /**
    * ダッシュボードカード削除
    */
-  async unregisterCard(cardId: string): Promise<void> {
+  unregisterCard(cardId: string): void {
     this.checkInitialized()
 
     const card = this.cards.get(cardId)
     if (card) {
       this.cards.delete(cardId)
-      await this.logManager.info(
+      void this.logManager.info(
         this.managerName,
         `Card unregistered: ${card.title}`
       )
@@ -144,7 +144,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
   /**
    * 全カード取得
    */
-  async getCards(): Promise<DashboardCard[]> {
+  getCards(): DashboardCard[] {
     this.checkInitialized()
     return Array.from(this.cards.values()).sort((a, b) => b.priority - a.priority)
   }
@@ -152,7 +152,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
   /**
    * カード順序変更
    */
-  async reorderCards(cardIds: string[]): Promise<void> {
+  reorderCards(cardIds: string[]): void {
     this.checkInitialized()
 
     // 新しい順序でカードを再構成
@@ -165,7 +165,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
     }
 
     this.cards = reorderedCards
-    await this.logManager.info(
+    void this.logManager.info(
       this.managerName,
       `Cards reordered: ${cardIds.length} items`
     )
@@ -174,11 +174,11 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
   /**
    * テーマ設定
    */
-  async setTheme(theme: 'future' | 'dark' | 'light'): Promise<void> {
+  setTheme(theme: 'Future' | 'Dark' | 'Light'): void {
     this.checkInitialized()
 
-    this.theme = theme
-    await this.logManager.info(
+    this._theme = theme
+    void this.logManager.info(
       this.managerName,
       `Theme changed to: ${theme}`
     )
@@ -187,38 +187,58 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
   /**
    * テーマ取得
    */
-  async getTheme(): Promise<'future' | 'dark' | 'light'> {
+  getTheme(): 'Future' | 'Dark' | 'Light' {
     this.checkInitialized()
-    return this.theme
+    return this._theme
   }
 
   /**
    * 警告通知
    */
-  async notifyWarning(card: DashboardCard, message: string): Promise<void> {
+  notifyWarning(message: string): void {
     this.checkInitialized()
 
-    const updatedCard = { ...card, status: 'warn' as const }
-    await this.registerCard(updatedCard)
+    const id = `notification-${Date.now()}`
+    const updatedCard: DashboardCard = {
+      id,
+      title: 'Warning',
+      manager: this.managerName,
+      managerId: this.managerName,
+      content: [{ label: 'Message', value: message }],
+      status: 'warn',
+      actions: [],
+      priority: 1,
+    }
 
-    await this.logManager.warn(
+    this.registerCard(updatedCard)
+    void this.logManager.warn(
       this.managerName,
-      `Warning in ${card.title}: ${message}`
+      `Warning: ${message}`
     )
   }
 
   /**
    * エラー通知
    */
-  async notifyError(card: DashboardCard, message: string): Promise<void> {
+  notifyError(message: string): void {
     this.checkInitialized()
 
-    const updatedCard = { ...card, status: 'error' as const }
-    await this.registerCard(updatedCard)
+    const id = `notification-${Date.now()}`
+    const updatedCard: DashboardCard = {
+      id,
+      title: 'Error',
+      manager: this.managerName,
+      managerId: this.managerName,
+      content: [{ label: 'Message', value: message }],
+      status: 'error',
+      actions: [],
+      priority: 1,
+    }
 
-    await this.logManager.error(
+    this.registerCard(updatedCard)
+    void this.logManager.error(
       this.managerName,
-      `Error in ${card.title}: ${message}`
+      `Error: ${message}`
     )
   }
 

@@ -42,7 +42,7 @@ export interface SystemStatus {
 export interface ISystemManager {
   getSystemStatus(): Promise<SystemStatus>
   getResourceAlert(): Promise<DashboardCard>
-  monitorResources(): Promise<void>
+  monitorResources(intervalMs?: number): Promise<string>
   setThreshold(type: string, value: number): Promise<void>
 }
 
@@ -56,6 +56,13 @@ export interface ISystemManager {
  * - Dashboard との連携
  */
 export class SystemManager extends BaseManager implements ISystemManager {
+  private thresholds = {
+    cpu: 80,
+    memory: 85,
+    disk: 90,
+    network: 1000, // Mbps
+  }
+
   private status: SystemStatus = {
     cpu: this.createResourceTemplate('CPU', 'cpu'),
     memory: this.createResourceTemplate('Memory', 'memory'),
@@ -64,15 +71,9 @@ export class SystemManager extends BaseManager implements ISystemManager {
     lastUpdate: Date.now(),
   }
 
-  private thresholds = {
-    cpu: 80,
-    memory: 85,
-    disk: 90,
-    network: 1000, // Mbps
-  }
-
   private monitoring: boolean = false
   private monitoringInterval: ReturnType<typeof setInterval> | null = null
+  private monitoringTaskId: string | null = null
 
   constructor(
     logManager: ILogManager,
@@ -107,11 +108,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
    */
   protected async onShutdown(): Promise<void> {
     // モニタリング停止
-    if (this.monitoringInterval) {
-      clearInterval(this.monitoringInterval)
-      this.monitoringInterval = null
-    }
-    this.monitoring = false
+    this.stopMonitoring()
 
     await this.logManager.info(
       this.managerName,
@@ -144,6 +141,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
       id: 'system-resource-alert',
       title: 'System Resources',
       manager: 'SystemManager',
+      managerId: 'SystemManager',
       status: alerts.length > 0 ? 'warn' : 'normal',
       content: [
         { label: 'CPU', value: `${status.cpu.usage.toFixed(1)}%` },
@@ -164,7 +162,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
   /**
    * リソース監視開始
    */
-  async monitorResources(): Promise<void> {
+  async monitorResources(intervalMs: number = 5000): Promise<string> {
     this.checkInitialized()
 
     if (this.monitoring) {
@@ -182,7 +180,17 @@ export class SystemManager extends BaseManager implements ISystemManager {
 
     this.monitoring = true
 
-    // 5秒ごとにリソース情報更新
+    // Start a progress task for monitoring
+    try {
+      this.monitoringTaskId = await this.progressManager.startTask(
+        'System Resource Monitoring',
+        intervalMs
+      )
+    } catch (err) {
+      await this.logManager.warn(this.managerName, 'Failed to start monitoring task')
+    }
+
+    // 指定間隔ごとにリソース情報更新
     this.monitoringInterval = setInterval(async () => {
       try {
         await this.updateSystemStatus()
@@ -195,13 +203,24 @@ export class SystemManager extends BaseManager implements ISystemManager {
             `Resource alert: ${alerts.join(', ')}`
           )
         }
+        // 更新があるたびに簡易的な進捗更新を通知
+        if (this.monitoringTaskId) {
+          try {
+            const percent = Math.floor((Date.now() / 1000) % 100)
+            await this.progressManager.updateProgress(this.monitoringTaskId, percent)
+          } catch (e) {
+            // ignore progress update failures
+          }
+        }
       } catch (error) {
         await this.logManager.error(
           this.managerName,
           `Monitoring error: ${this.formatError(error)}`
         )
       }
-    }, 5000)
+    }, intervalMs)
+    // monitoringInterval stored internally; return monitoring task id if available
+    return this.monitoringTaskId ?? 'monitoring'
   }
 
   /**
@@ -307,6 +326,22 @@ export class SystemManager extends BaseManager implements ISystemManager {
       status: 'normal',
       timestamp: Date.now(),
     }
+  }
+
+  /**
+   * 停止用（テストから private にアクセスして利用される想定）
+   */
+  private stopMonitoring(): void {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval)
+      this.monitoringInterval = null
+    }
+    // complete progress task if one was started
+    if (this.monitoringTaskId) {
+      void this.progressManager.completeTask(this.monitoringTaskId).catch(() => {})
+      this.monitoringTaskId = null
+    }
+    this.monitoring = false
   }
 
   /**

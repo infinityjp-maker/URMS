@@ -15,12 +15,12 @@ import type { DashboardCard } from '@core/types/ManagerTypes'
  * 支出記録
  */
 export interface ExpenseRecord {
-  id: string
-  date: string
-  category: 'food' | 'transport' | 'utilities' | 'entertainment' | 'other'
+  id?: string
+  date?: string
+  category: string
   amount: number
-  currency: string
-  description: string
+  currency?: string
+  description?: string
   tags?: string[]
 }
 
@@ -29,7 +29,7 @@ export interface ExpenseRecord {
  */
 export interface Budget {
   category: string
-  monthlyLimit: number
+  limit: number
   spent: number
   currency: string
 }
@@ -38,8 +38,8 @@ export interface Budget {
  * Finance Manager インターフェース
  */
 export interface IFinanceManager {
-  recordExpense(expense: ExpenseRecord): Promise<void>
-  setBudget(category: string, limit: number): Promise<void>
+  recordExpense(manager: string, description: string, amount: number, category: string, currency?: string): Promise<ExpenseRecord>
+  setBudget(category: string, limit: number, currency?: string): Promise<Budget>
   getBudgets(): Promise<Budget[]>
   getFinanceCard(): Promise<DashboardCard>
   getMonthlyReport(): Promise<FinanceReport>
@@ -50,7 +50,8 @@ export interface IFinanceManager {
  */
 export interface FinanceReport {
   month: string
-  totalExpense: number
+  year: number
+  totalSpent: number
   byCategory: Record<string, number>
   budgetStatus: Record<string, { spent: number; limit: number; percentage: number }>
 }
@@ -109,50 +110,61 @@ export class FinanceManager extends BaseManager implements IFinanceManager {
   /**
    * 支出記録
    */
-  async recordExpense(expense: Omit<ExpenseRecord, 'id'>): Promise<void> {
+  async recordExpense(_manager: string, description: string, amount: number, category: string, currency = 'USD'): Promise<ExpenseRecord> {
     this.checkInitialized()
 
-    await this.executeTask(`Record Expense: ${expense.category}`, async () => {
+    return await this.executeTask(`Record Expense: ${category}`, async () => {
+      const id = `expense_${this.nextId++}`
+      const date = new Date().toISOString()
       const newExpense: ExpenseRecord = {
-        ...expense,
-        id: `expense_${this.nextId++}`,
+        id,
+        date,
+        category,
+        amount,
+        currency,
+        description,
       }
-      this.expenses.set(newExpense.id, newExpense)
+
+      this.expenses.set(id, newExpense)
 
       // 予算チェック
-      const budget = this.budgets.get(expense.category)
+      const budget = this.budgets.get(category)
       if (budget) {
-        budget.spent += expense.amount
+        budget.spent += amount
       }
 
       await this.logManager.info(
         this.managerName,
-        `Expense recorded: ${expense.category} ${expense.currency}${expense.amount}`
+        `Expense recorded: ${category} ${currency}${amount}`
       )
+
+      return newExpense
     })
   }
 
   /**
    * 予算設定
    */
-  async setBudget(category: string, limit: number): Promise<void> {
+  async setBudget(category: string, limit: number, currency = 'USD'): Promise<Budget> {
     this.checkInitialized()
 
-    await this.executeTask(`Set Budget: ${category}`, async () => {
+    return await this.executeTask(`Set Budget: ${category}`, async () => {
       const existing = this.budgets.get(category) || {
         category,
-        monthlyLimit: limit,
+        limit,
         spent: 0,
-        currency: 'USD',
+        currency,
       }
 
-      existing.monthlyLimit = limit
+      existing.limit = limit
       this.budgets.set(category, existing)
 
       await this.logManager.info(
         this.managerName,
         `Budget set: ${category} ${existing.currency}${limit}`
       )
+
+      return existing
     })
   }
 
@@ -174,16 +186,17 @@ export class FinanceManager extends BaseManager implements IFinanceManager {
     this.checkInitialized()
 
     const report = await this.getMonthlyReport()
-    const totalBudget = Array.from(this.budgets.values()).reduce((sum, b) => sum + b.monthlyLimit, 0)
-    const percentageUsed = totalBudget > 0 ? (report.totalExpense / totalBudget) * 100 : 0
+    const totalBudget = Array.from(this.budgets.values()).reduce((sum, b) => sum + b.limit, 0)
+    const percentageUsed = totalBudget > 0 ? (report.totalSpent / totalBudget) * 100 : 0
 
     return {
-      id: 'finance-overview',
-      title: 'Finance',
+      id: 'finance-manager-card',
+      title: 'Finance Manager',
       manager: 'FinanceManager',
+      managerId: 'FinanceManager',
       status: percentageUsed > 80 ? 'warn' : 'normal',
       content: [
-        { label: 'Total Expenses (Month)', value: `USD$${report.totalExpense.toFixed(2)}` },
+        { label: 'Total Expenses (Month)', value: `USD$${report.totalSpent.toFixed(2)}` },
         { label: 'Budget Limit', value: `USD$${totalBudget.toFixed(2)}` },
         { label: 'Usage %', value: `${percentageUsed.toFixed(1)}%` },
       ],
@@ -208,30 +221,31 @@ export class FinanceManager extends BaseManager implements IFinanceManager {
       const now = new Date()
       const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
-      const monthExpenses = Array.from(this.expenses.values()).filter(e =>
-        e.date.startsWith(currentMonth)
-      )
+      const monthExpenses = Array.from(this.expenses.values()).filter(e => (e.date || '').startsWith(currentMonth))
 
       const byCategory: Record<string, number> = {}
       let totalExpense = 0
 
       for (const expense of monthExpenses) {
-        byCategory[expense.category] = (byCategory[expense.category] || 0) + expense.amount
-        totalExpense += expense.amount
+        byCategory[expense.category] = (byCategory[expense.category] || 0) + (expense.amount || 0)
+        totalExpense += expense.amount || 0
       }
 
       const budgetStatus: Record<string, any> = {}
       for (const [category, budget] of this.budgets) {
+        const limit = budget.limit || 0
+        const spent = byCategory[category] || 0
         budgetStatus[category] = {
-          spent: byCategory[category] || 0,
-          limit: budget.monthlyLimit,
-          percentage: ((byCategory[category] || 0) / budget.monthlyLimit) * 100,
+          spent,
+          limit,
+          percentage: limit > 0 ? (spent / limit) * 100 : 0,
         }
       }
 
       return {
         month: currentMonth,
-        totalExpense,
+        year: now.getFullYear(),
+        totalSpent: totalExpense,
         byCategory,
         budgetStatus,
       }
@@ -252,7 +266,7 @@ export class FinanceManager extends BaseManager implements IFinanceManager {
     for (const { category, limit } of defaultBudgets) {
       this.budgets.set(category, {
         category,
-        monthlyLimit: limit,
+        limit,
         spent: 0,
         currency: 'USD',
       })

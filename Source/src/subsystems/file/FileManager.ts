@@ -31,7 +31,7 @@ export interface FileInfo {
  */
 export interface IFileManager {
   scanDirectory(path: string): Promise<FileInfo[]>
-  classifyFile(file: FileInfo): Promise<string>
+  classifyFile(fileOrName: FileInfo | string): string
   getStorageStats(): Promise<StorageStats>
   getFileCard(): Promise<DashboardCard>
 }
@@ -157,22 +157,65 @@ export class FileManager extends BaseManager implements IFileManager {
   /**
    * ファイル分類
    */
-  async classifyFile(file: FileInfo): Promise<string> {
+  classifyFile(fileOrName: FileInfo | string): string {
     this.checkInitialized()
 
-    return await this.executeTask(`Classify: ${file.name}`, async () => {
-      const category = this.determineCategory(file.mimeType)
+    // Accept either FileInfo or filename string
+    let name: string
+    let mimeType: string | undefined
+    if (typeof fileOrName === 'string') {
+      name = fileOrName
+      // infer by extension
+      const ext = name.split('.').pop()?.toLowerCase() || ''
+      switch (ext) {
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+          mimeType = 'image/' + ext
+          break
+        case 'mp4':
+        case 'mkv':
+        case 'mov':
+          mimeType = 'video/' + ext
+          break
+        case 'mp3':
+        case 'wav':
+          mimeType = 'audio/' + ext
+          break
+        case 'pdf':
+        case 'doc':
+        case 'docx':
+        case 'txt':
+        case 'ppt':
+        case 'pptx':
+          mimeType = 'application/' + ext
+          break
+        case 'zip':
+        case 'rar':
+        case '7z':
+          mimeType = 'application/zip'
+          break
+        default:
+          mimeType = 'application/octet-stream'
+      }
+    } else {
+      name = fileOrName.name
+      mimeType = fileOrName.mimeType
+    }
 
-      const updated = { ...file, category: category as any }
-      this.fileIndex.set(file.id, updated)
+    const category = this.determineCategory(mimeType)
 
-      await this.logManager.info(
-        this.managerName,
-        `File classified: ${file.name} → ${category}`
-      )
+    // update index if we have an id
+    if (typeof fileOrName !== 'string' && fileOrName.id) {
+      const updated = { ...fileOrName, category: category as any }
+      this.fileIndex.set(fileOrName.id, updated)
+    }
 
-      return category
-    })
+    // log synchronously (fire-and-forget)
+    this.logManager.info(this.managerName, `File classified: ${name} → ${category}`)
+
+    return category
   }
 
   /**
@@ -190,10 +233,15 @@ export class FileManager extends BaseManager implements IFileManager {
         breakdown[file.category] = (breakdown[file.category] || 0) + file.size
       }
 
+      // If no files indexed, assume a default total capacity (1TB)
+      const capacity = 1099511627776
+      const used = totalSize
+      const free = Math.max(0, capacity - used)
+
       this.storageStats = {
-        totalSize,
-        usedSize: totalSize,
-        freeSize: Math.max(0, 1099511627776 - totalSize), // 1TB
+        totalSize: capacity,
+        usedSize: used,
+        freeSize: free,
         fileCount: this.fileIndex.size,
         categoryBreakdown: breakdown,
       }
@@ -212,9 +260,10 @@ export class FileManager extends BaseManager implements IFileManager {
     const usagePercent = (stats.usedSize / 1099511627776) * 100
 
     return {
-      id: 'file-storage',
-      title: 'File Management',
+      id: 'file-manager-card',
+      title: 'File Manager',
       manager: 'FileManager',
+      managerId: 'FileManager',
       status: usagePercent > 80 ? 'warn' : 'normal',
       content: [
         { label: 'Total Files', value: stats.fileCount },
@@ -236,15 +285,15 @@ export class FileManager extends BaseManager implements IFileManager {
   /**
    * プライベート: MIME タイプからカテゴリを決定
    */
-  private determineCategory(mimeType: string): string {
-    if (mimeType.startsWith('image/')) return 'media'
-    if (mimeType.startsWith('video/')) return 'media'
-    if (mimeType.startsWith('audio/')) return 'media'
+  private determineCategory(mimeType?: string): string {
+    if (!mimeType || typeof mimeType !== 'string') return 'other'
+    if (mimeType.startsWith('image/')) return 'image'
+    if (mimeType.startsWith('video/')) return 'video'
+    if (mimeType.startsWith('audio/')) return 'audio'
     if (mimeType === 'application/pdf') return 'document'
     if (mimeType.includes('word') || mimeType.includes('document')) return 'document'
-    if (mimeType.includes('compressed') || mimeType.includes('archive')) return 'archive'
-    if (mimeType.startsWith('application/x-') || mimeType === 'application/octet-stream')
-      return 'system'
+    if (mimeType.includes('compressed') || mimeType.includes('archive') || mimeType === 'application/zip') return 'archive'
+    if (mimeType.startsWith('application/x-') || mimeType === 'application/octet-stream') return 'system'
     return 'other'
   }
 }

@@ -1,0 +1,2 @@
+[build]
+target-dir = "Backend/src-tauri/target"

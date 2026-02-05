@@ -103,67 +103,58 @@ export class LogManager extends BaseManager implements ILogManager {
   /**
    * 最新ログ取得
    */
-  async getRecent(limit: number): Promise<LogEntry[]> {
+  getRecent(limit: number): Array<Record<string, any>> {
     this.checkInitialized()
-    return this.logs.slice(-limit)
+    return this.logs.slice(-limit).map(l => this.mapEntry(l))
   }
 
   /**
    * ログ検索
    */
-  async search(filter: LogFilter): Promise<LogEntry[]> {
+  // search は文字列キーワードまたは LogFilter を受け取る
+  search(filterOrKeyword: string | LogFilter): Array<Record<string, any>> {
     this.checkInitialized()
 
     let results = [...this.logs]
 
-    // Manager でフィルタ
-    if (filter.manager) {
-      results = results.filter(l => l.manager === filter.manager)
+    if (typeof filterOrKeyword === 'string') {
+      const keyword = filterOrKeyword.toLowerCase()
+      results = results.filter(l => l.message.toLowerCase().includes(keyword) || l.manager.toLowerCase().includes(keyword))
+    } else {
+      const filter = filterOrKeyword
+      if (filter.manager) results = results.filter(l => l.manager === filter.manager)
+      if (filter.level) results = results.filter(l => l.level === filter.level)
+      if (filter.startDate) {
+        const startTime = new Date(filter.startDate).getTime()
+        results = results.filter(l => new Date(l.timestamp).getTime() >= startTime)
+      }
+      if (filter.endDate) {
+        const endTime = new Date(filter.endDate).getTime()
+        results = results.filter(l => new Date(l.timestamp).getTime() <= endTime)
+      }
+      if (filter.keyword) {
+        const kw = filter.keyword.toLowerCase()
+        results = results.filter(l => l.message.toLowerCase().includes(kw) || l.manager.toLowerCase().includes(kw))
+      }
     }
 
-    // ログレベルでフィルタ
-    if (filter.level) {
-      results = results.filter(l => l.level === filter.level)
-    }
-
-    // 日付でフィルタ
-    if (filter.startDate) {
-      const startTime = new Date(filter.startDate).getTime()
-      results = results.filter(l => new Date(l.timestamp).getTime() >= startTime)
-    }
-
-    if (filter.endDate) {
-      const endTime = new Date(filter.endDate).getTime()
-      results = results.filter(l => new Date(l.timestamp).getTime() <= endTime)
-    }
-
-    // キーワード検索
-    if (filter.keyword) {
-      const keyword = filter.keyword.toLowerCase()
-      results = results.filter(
-        l =>
-          l.message.toLowerCase().includes(keyword) ||
-          l.manager.toLowerCase().includes(keyword)
-      )
-    }
-
-    return results
+    return results.map(l => this.mapEntry(l))
   }
 
   /**
    * Manager 別ログ取得
    */
-  async getByManager(manager: string, limit: number): Promise<LogEntry[]> {
+  getByManager(manager: string, limit?: number): Array<Record<string, any>> {
     this.checkInitialized()
-    return this.logs
-      .filter(l => l.manager === manager)
-      .slice(-limit)
+    const filtered = this.logs.filter(l => l.manager === manager)
+    const sliced = typeof limit === 'number' ? filtered.slice(-limit) : filtered
+    return sliced.map(l => this.mapEntry(l))
   }
 
   /**
    * ログクリア
    */
-  async clear(): Promise<void> {
+  clear(): void {
     this.checkInitialized()
     const count = this.logs.length
     this.logs = []
@@ -173,24 +164,38 @@ export class LogManager extends BaseManager implements ILogManager {
   /**
    * ログ統計
    */
-  async getStats(): Promise<{
+  getStats(): {
     total: number
-    info: number
-    warn: number
-    error: number
+    byLevel: { info: number; warn: number; error: number }
     managers: string[]
-  }> {
+  } {
     this.checkInitialized()
 
     const stats = {
       total: this.logs.length,
-      info: this.logs.filter(l => l.level === 'INFO').length,
-      warn: this.logs.filter(l => l.level === 'WARN').length,
-      error: this.logs.filter(l => l.level === 'ERROR').length,
-      managers: [...new Set(this.logs.map(l => l.manager))],
+      byLevel: {
+        info: this.logs.filter(l => l.level === 'INFO').length,
+        warn: this.logs.filter(l => l.level === 'WARN').length,
+        error: this.logs.filter(l => l.level === 'ERROR').length,
+      },
+      managers: Array.from(new Set(this.logs.map(l => l.manager)))
     }
 
     return stats
+  }
+
+  /**
+   * 内部 LogEntry をテストが期待する形に変換して返す
+   */
+  private mapEntry(l: LogEntry): Record<string, any> {
+    return {
+      id: l.id,
+      timestamp: l.timestamp,
+      level: l.level.toLowerCase(),
+      managerId: l.manager,
+      message: l.message,
+      metadata: l.metadata,
+    }
   }
 
   /**

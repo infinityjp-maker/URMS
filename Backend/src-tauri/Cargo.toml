@@ -35,6 +35,11 @@ keyring = "1.0"
 base64 = "0.21"
 oauth2 = "4"
 webbrowser = "0.6"
+futures = "0.3"
+httpmock = { version = "0.6", optional = true }
+
+[dev-dependencies]
+httpmock = "0.6"
 
 [profile.release]
 opt-level = 3
