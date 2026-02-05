@@ -188,7 +188,7 @@ export class NetworkManager extends BaseManager implements INetworkManager {
 
     const stats = await this.getNetworkStats()
 
-    return {
+        return {
       id: 'network-manager-card',
       title: 'Network Manager',
       manager: 'NetworkManager',
