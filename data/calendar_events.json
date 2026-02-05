@@ -1,0 +1,172 @@
+[
+  {
+    "created": "2013-11-16T04:10:14.000Z",
+    "creator": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "end": {
+      "dateTime": "2013-11-30T17:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "etag": "\"2769150028870000\"",
+    "eventType": "default",
+    "htmlLink": "https://www.google.com/calendar/event?eid=cjBkYmdicWduOHNwZHJoamc3MjQxb3R0M3MgaW5maW5pdHkuanBAbQ",
+    "iCalUID": "r0dbgbqgn8spdrhjg7241ott3s@google.com",
+    "id": "r0dbgbqgn8spdrhjg7241ott3s",
+    "kind": "calendar#event",
+    "organizer": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "reminders": {
+      "useDefault": true
+    },
+    "sequence": 1,
+    "start": {
+      "dateTime": "2013-11-30T14:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "status": "tentative",
+    "summary": "セキスイハイム [!]",
+    "updated": "2013-11-16T04:10:14.435Z"
+  },
+  {
+    "created": "2013-11-27T22:53:18.000Z",
+    "creator": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "end": {
+      "dateTime": "2013-11-28T20:30:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "etag": "\"2771185597952000\"",
+    "eventType": "default",
+    "htmlLink": "https://www.google.com/calendar/event?eid=aGhobWE1dTMzNnV1MnJtNDVjbjJmYzFiNzAgaW5maW5pdHkuanBAbQ",
+    "iCalUID": "hhhma5u336uu2rm45cn2fc1b70@google.com",
+    "id": "hhhma5u336uu2rm45cn2fc1b70",
+    "kind": "calendar#event",
+    "organizer": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "reminders": {
+      "useDefault": true
+    },
+    "sequence": 0,
+    "start": {
+      "dateTime": "2013-11-28T18:30:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "status": "confirmed",
+    "summary": "一風堂",
+    "updated": "2013-11-27T22:53:18.976Z"
+  },
+  {
+    "created": "2013-11-27T22:53:58.000Z",
+    "creator": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "end": {
+      "dateTime": "2013-11-27T19:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "etag": "\"2771185677760000\"",
+    "eventType": "default",
+    "htmlLink": "https://www.google.com/calendar/event?eid=bThjbTI1OGM1ZDNicHFxZ21ua3E1bmF0bzAgaW5maW5pdHkuanBAbQ",
+    "iCalUID": "m8cm258c5d3bpqqgmnkq5nato0@google.com",
+    "id": "m8cm258c5d3bpqqgmnkq5nato0",
+    "kind": "calendar#event",
+    "organizer": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "reminders": {
+      "useDefault": true
+    },
+    "sequence": 0,
+    "start": {
+      "dateTime": "2013-11-27T18:30:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "status": "confirmed",
+    "summary": "通夜",
+    "updated": "2013-11-27T22:53:58.880Z"
+  },
+  {
+    "created": "2013-11-27T22:54:25.000Z",
+    "creator": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "end": {
+      "dateTime": "2013-11-27T22:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "etag": "\"2771185730466000\"",
+    "eventType": "default",
+    "htmlLink": "https://www.google.com/calendar/event?eid=c25mcjM4ZnQxanNldGtydWQyY2hpbzdpc2MgaW5maW5pdHkuanBAbQ",
+    "iCalUID": "snfr38ft1jsetkrud2chio7isc@google.com",
+    "id": "snfr38ft1jsetkrud2chio7isc",
+    "kind": "calendar#event",
+    "organizer": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "reminders": {
+      "useDefault": true
+    },
+    "sequence": 0,
+    "start": {
+      "dateTime": "2013-11-27T19:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "status": "confirmed",
+    "summary": "送別会",
+    "updated": "2013-11-27T22:54:25.233Z"
+  },
+  {
+    "created": "2013-12-08T04:02:57.000Z",
+    "creator": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "end": {
+      "dateTime": "2013-12-08T19:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "etag": "\"2772950755924000\"",
+    "eventType": "default",
+    "htmlLink": "https://www.google.com/calendar/event?eid=MzJtOHJhNmhtMmVjYnFub2szMG9sNGdicW8gaW5maW5pdHkuanBAbQ",
+    "iCalUID": "32m8ra6hm2ecbqnok30ol4gbqo@google.com",
+    "id": "32m8ra6hm2ecbqnok30ol4gbqo",
+    "kind": "calendar#event",
+    "organizer": {
+      "displayName": "阿部拓也",
+      "email": "infinity.jp@gmail.com",
+      "self": true
+    },
+    "reminders": {
+      "useDefault": true
+    },
+    "sequence": 1,
+    "start": {
+      "dateTime": "2013-12-08T18:00:00+09:00",
+      "timeZone": "Asia/Tokyo"
+    },
+    "status": "tentative",
+    "summary": "セキスイハイム [!]",
+    "updated": "2013-12-08T04:02:57.962Z"
+  }
+]

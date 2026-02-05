@@ -15,13 +15,14 @@ import type { DashboardCard } from '@core/types/ManagerTypes'
  * 資産情報
  */
 export interface Asset {
-  id: string
+  id?: string
   name: string
-  type: 'device' | 'software' | 'license'
+  type: 'device' | 'software' | 'license' | string
+  model?: string
   location?: string
-  purchaseDate?: string
-  warranty?: string
-  status: 'active' | 'inactive' | 'maintenance'
+  purchaseDate?: Date | string
+  warrantyExpiry?: Date | string
+  status: 'active' | 'inactive' | 'maintenance' | string
   metadata?: Record<string, any>
 }
 
@@ -30,9 +31,9 @@ export interface Asset {
  */
 export interface IAssetManager {
   getAssets(): Promise<Asset[]>
-  addAsset(asset: Asset): Promise<void>
-  updateAsset(id: string, asset: Partial<Asset>): Promise<void>
-  deleteAsset(id: string): Promise<void>
+  addAsset(asset: Partial<Asset>): Promise<Asset>
+  updateAsset(id: string, asset: Partial<Asset>): Promise<Asset>
+  deleteAsset(id: string): Promise<boolean>
   getAssetCard(): Promise<DashboardCard>
 }
 
@@ -99,27 +100,38 @@ export class AssetManager extends BaseManager implements IAssetManager {
   /**
    * 資産追加
    */
-  async addAsset(asset: Asset): Promise<void> {
+  async addAsset(asset: Partial<Asset>): Promise<Asset> {
     this.checkInitialized()
 
-    await this.executeTask(`Add Asset: ${asset.name}`, async () => {
-      if (this.assets.has(asset.id)) {
-        throw new Error(`Asset with ID ${asset.id} already exists`)
+    return await this.executeTask(`Add Asset: ${asset.name || 'unnamed'}`, async () => {
+      const id = asset.id || `asset_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
+      const record: Asset = {
+        id,
+        name: asset.name || 'Unnamed',
+        type: asset.type || 'device',
+        model: asset.model,
+        location: asset.location,
+        purchaseDate: asset.purchaseDate,
+        warrantyExpiry: asset.warrantyExpiry,
+        status: asset.status || 'active',
+        metadata: asset.metadata,
       }
 
-      this.assets.set(asset.id, asset)
+      this.assets.set(id, record)
 
       await this.logManager.info(
         this.managerName,
-        `Asset added: ${asset.name} (${asset.type})`
+        `Asset added: ${record.name} (${record.type})`
       )
+
+      return record
     })
   }
 
   /**
    * 資産更新
    */
-  async updateAsset(id: string, updates: Partial<Asset>): Promise<void> {
+  async updateAsset(id: string, updates: Partial<Asset>): Promise<Asset> {
     this.checkInitialized()
 
     await this.executeTask(`Update Asset: ${id}`, async () => {
@@ -135,13 +147,16 @@ export class AssetManager extends BaseManager implements IAssetManager {
         this.managerName,
         `Asset updated: ${updated.name}`
       )
+      return updated
     })
+    // executeTask returns the updated asset
+    return this.assets.get(id) as Asset
   }
 
   /**
    * 資産削除
    */
-  async deleteAsset(id: string): Promise<void> {
+  async deleteAsset(id: string): Promise<boolean> {
     this.checkInitialized()
 
     await this.executeTask(`Delete Asset: ${id}`, async () => {
@@ -157,6 +172,7 @@ export class AssetManager extends BaseManager implements IAssetManager {
         `Asset deleted: ${asset.name}`
       )
     })
+    return !this.assets.has(id)
   }
 
   /**
@@ -170,8 +186,8 @@ export class AssetManager extends BaseManager implements IAssetManager {
     const maintenanceCount = assets.filter(a => a.status === 'maintenance').length
 
     return {
-      id: 'asset-status',
-      title: 'Asset Management',
+      id: 'asset-manager-card',
+      title: 'Asset Manager',
       manager: 'AssetManager',
       status: maintenanceCount > 0 ? 'warn' : 'normal',
       content: [

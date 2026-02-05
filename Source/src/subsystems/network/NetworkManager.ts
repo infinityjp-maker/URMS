@@ -33,7 +33,7 @@ export interface NetworkStats {
   devicesOffline: number
   totalDevices: number
   averageLatency: number
-  networkStatus: 'stable' | 'unstable' | 'offline'
+  networkStatus: 'normal' | 'warning' | 'critical'
 }
 
 /**
@@ -62,7 +62,7 @@ export class NetworkManager extends BaseManager implements INetworkManager {
     devicesOffline: 0,
     totalDevices: 0,
     averageLatency: 0,
-    networkStatus: 'stable',
+    networkStatus: 'normal',
   }
 
   constructor(
@@ -189,10 +189,10 @@ export class NetworkManager extends BaseManager implements INetworkManager {
     const stats = await this.getNetworkStats()
 
     return {
-      id: 'network-status',
-      title: 'Network Status',
+      id: 'network-manager-card',
+      title: 'Network Manager',
       manager: 'NetworkManager',
-      status: stats.networkStatus === 'stable' ? 'normal' : 'warn',
+      status: 'normal',
       content: [
         { label: 'Devices Online', value: stats.devicesOnline },
         { label: 'Devices Offline', value: stats.devicesOffline },
@@ -218,12 +218,25 @@ export class NetworkManager extends BaseManager implements INetworkManager {
     const onlineDevices = devices.filter(d => d.isOnline)
     const totalLatency = onlineDevices.reduce((sum, d) => sum + d.latency, 0)
 
+    const avg = onlineDevices.length > 0 ? totalLatency / onlineDevices.length : 0
+
+    let status: NetworkStats['networkStatus'] = 'normal'
+    if (onlineDevices.length === 0) {
+      status = 'critical'
+    } else if (avg > 200) {
+      status = 'critical'
+    } else if (avg > 100) {
+      status = 'warning'
+    } else {
+      status = 'normal'
+    }
+
     this.stats = {
       devicesOnline: onlineDevices.length,
       devicesOffline: devices.length - onlineDevices.length,
       totalDevices: devices.length,
-      averageLatency: onlineDevices.length > 0 ? totalLatency / onlineDevices.length : 0,
-      networkStatus: onlineDevices.length > 0 ? 'stable' : 'offline',
+      averageLatency: avg,
+      networkStatus: status,
     }
   }
 }

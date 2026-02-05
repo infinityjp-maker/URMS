@@ -56,19 +56,19 @@ export interface ISystemManager {
  * - Dashboard との連携
  */
 export class SystemManager extends BaseManager implements ISystemManager {
+  private thresholds = {
+    cpu: 80,
+    memory: 85,
+    disk: 90,
+    network: 1000, // Mbps
+  }
+
   private status: SystemStatus = {
     cpu: this.createResourceTemplate('CPU', 'cpu'),
     memory: this.createResourceTemplate('Memory', 'memory'),
     disk: this.createResourceTemplate('Disk', 'disk'),
     network: this.createResourceTemplate('Network', 'network'),
     lastUpdate: Date.now(),
-  }
-
-  private thresholds = {
-    cpu: 80,
-    memory: 85,
-    disk: 90,
-    network: 1000, // Mbps
   }
 
   private monitoring: boolean = false
@@ -107,11 +107,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
    */
   protected async onShutdown(): Promise<void> {
     // モニタリング停止
-    if (this.monitoringInterval) {
-      clearInterval(this.monitoringInterval)
-      this.monitoringInterval = null
-    }
-    this.monitoring = false
+    this.stopMonitoring()
 
     await this.logManager.info(
       this.managerName,
@@ -164,7 +160,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
   /**
    * リソース監視開始
    */
-  async monitorResources(): Promise<void> {
+  async monitorResources(intervalMs: number = 5000): Promise<void> {
     this.checkInitialized()
 
     if (this.monitoring) {
@@ -182,7 +178,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
 
     this.monitoring = true
 
-    // 5秒ごとにリソース情報更新
+    // 指定間隔ごとにリソース情報更新
     this.monitoringInterval = setInterval(async () => {
       try {
         await this.updateSystemStatus()
@@ -201,7 +197,9 @@ export class SystemManager extends BaseManager implements ISystemManager {
           `Monitoring error: ${this.formatError(error)}`
         )
       }
-    }, 5000)
+    }, intervalMs)
+    // monitoringInterval stored internally; no value returned to satisfy interface
+    return
   }
 
   /**
@@ -307,6 +305,17 @@ export class SystemManager extends BaseManager implements ISystemManager {
       status: 'normal',
       timestamp: Date.now(),
     }
+  }
+
+  /**
+   * 停止用（テストから private にアクセスして利用される想定）
+   */
+  private stopMonitoring(): void {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval)
+      this.monitoringInterval = null
+    }
+    this.monitoring = false
   }
 
   /**

@@ -19,8 +19,8 @@ export interface ScheduleItem {
   title: string
   description?: string
   startTime: string // ISO 8601
-  endTime: string
-  recurrence?: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  endTime?: string
+  recurrence?: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'once'
   status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
   priority: 'low' | 'medium' | 'high'
   tags?: string[]
@@ -30,9 +30,9 @@ export interface ScheduleItem {
  * Schedule Manager インターフェース
  */
 export interface IScheduleManager {
-  createSchedule(item: ScheduleItem): Promise<void>
-  updateSchedule(id: string, item: Partial<ScheduleItem>): Promise<void>
-  deleteSchedule(id: string): Promise<void>
+  createSchedule(managerId: string, title: string, startTime: Date | string, recurrence?: string, priority?: string): Promise<ScheduleItem>
+  updateSchedule(id: string, item: Partial<ScheduleItem>): Promise<ScheduleItem>
+  deleteSchedule(id: string): Promise<boolean>
   getUpcomingSchedules(days: number): Promise<ScheduleItem[]>
   getScheduleCard(): Promise<DashboardCard>
 }
@@ -86,49 +86,64 @@ export class ScheduleManager extends BaseManager implements IScheduleManager {
   /**
    * スケジュール作成
    */
-  async createSchedule(item: ScheduleItem): Promise<void> {
+  async createSchedule(_managerId: string, title: string, startTime: Date | string, recurrence: string = 'once', priority: string = 'medium'): Promise<ScheduleItem> {
     this.checkInitialized()
 
-    await this.executeTask(`Create Schedule: ${item.title}`, async () => {
-      const newItem = { ...item, id: `schedule_${this.nextId++}` }
-      this.schedules.set(newItem.id, newItem)
+    return await this.executeTask(`Create Schedule: ${title}`, async () => {
+      const id = `schedule_${this.nextId++}`
+      const start = (startTime instanceof Date) ? startTime.toISOString() : String(startTime)
+
+      const newItem: ScheduleItem = {
+        id,
+        title,
+        startTime: start,
+        recurrence: recurrence as any,
+        priority: priority as any,
+        status: 'scheduled',
+      }
+
+      this.schedules.set(id, newItem)
 
       await this.logManager.info(
         this.managerName,
-        `Schedule created: ${item.title}`
+        `Schedule created: ${title}`
       )
+
+      return newItem
     })
   }
 
   /**
    * スケジュール更新
    */
-  async updateSchedule(id: string, updates: Partial<ScheduleItem>): Promise<void> {
+  async updateSchedule(id: string, updates: Partial<ScheduleItem>): Promise<ScheduleItem> {
     this.checkInitialized()
 
-    await this.executeTask(`Update Schedule: ${id}`, async () => {
+    return await this.executeTask(`Update Schedule: ${id}`, async () => {
       const item = this.schedules.get(id)
       if (!item) {
         throw new Error(`Schedule ${id} not found`)
       }
 
-      const updated = { ...item, ...updates }
+      const updated: ScheduleItem = { ...item, ...updates }
       this.schedules.set(id, updated)
 
       await this.logManager.info(
         this.managerName,
         `Schedule updated: ${updated.title}`
       )
+
+      return updated
     })
   }
 
   /**
    * スケジュール削除
    */
-  async deleteSchedule(id: string): Promise<void> {
+  async deleteSchedule(id: string): Promise<boolean> {
     this.checkInitialized()
 
-    await this.executeTask(`Delete Schedule: ${id}`, async () => {
+    return await this.executeTask(`Delete Schedule: ${id}`, async () => {
       const item = this.schedules.get(id)
       if (!item) {
         throw new Error(`Schedule ${id} not found`)
@@ -140,6 +155,8 @@ export class ScheduleManager extends BaseManager implements IScheduleManager {
         this.managerName,
         `Schedule deleted: ${item.title}`
       )
+
+      return true
     })
   }
 
@@ -174,10 +191,10 @@ export class ScheduleManager extends BaseManager implements IScheduleManager {
     const highPriority = upcoming.filter(s => s.priority === 'high').length
 
     return {
-      id: 'schedule-overview',
-      title: 'Schedule',
+      id: 'schedule-manager-card',
+      title: 'Schedule Manager',
       manager: 'ScheduleManager',
-      status: highPriority > 0 ? 'warn' : 'normal',
+      status: upcoming.length > 0 ? 'normal' : 'warn',
       content: [
         { label: 'Total Schedules', value: this.schedules.size },
         { label: 'Upcoming (7 days)', value: upcoming.length },

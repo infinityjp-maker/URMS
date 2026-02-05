@@ -6,7 +6,7 @@ use std::io::Write;
 
 fn settings_path() -> std::path::PathBuf {
     let dir = std::path::Path::new("data");
-    let _ = std::fs::create_dir_all(dir);
+    let _ = fs::create_dir_all(dir);
     dir.join("settings.json")
 }
 
@@ -21,7 +21,7 @@ pub fn settings_set_google_credentials(api_key: String, calendar_id: String) -> 
     // persist non-secret calendar_id in settings file
     let p = settings_path();
     let mut settings = if p.exists() {
-        match std::fs::read_to_string(&p) {
+        match fs::read_to_string(&p) {
             Ok(s) => serde_json::from_str::<Value>(&s).unwrap_or(json!({})),
             Err(_) => json!({}),
         }
@@ -66,7 +66,7 @@ pub fn settings_get_google_credentials() -> Result<Value, String> {
     // read calendar_id from settings file if present
     let p = settings_path();
     if p.exists() {
-        match std::fs::read_to_string(&p) {
+        match fs::read_to_string(&p) {
             Ok(s) => match serde_json::from_str::<Value>(&s) {
                 Ok(v) => {
                     if let Some(cal) = v.get("google_calendar_id") {
@@ -91,7 +91,7 @@ pub fn settings_delete_google_credentials() -> Result<(), String> {
     // remove google_calendar_id from settings.json
     let p = settings_path();
     if p.exists() {
-        match std::fs::read_to_string(&p) {
+        match fs::read_to_string(&p) {
             Ok(s) => match serde_json::from_str::<Value>(&s) {
                 Ok(mut v) => {
                     v.as_object_mut().map(|m| m.remove("google_calendar_id"));

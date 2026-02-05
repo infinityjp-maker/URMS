@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import SystemEventListener from "./components/SystemEventListener";
+import ToastProvider from './components/common/Toast'
 import Dashboard from "./pages/Dashboard";
 import Environment from "./pages/Environment";
 import ResourceDetail from "./pages/Environment/ResourceDetail";
@@ -45,6 +46,8 @@ function HeaderClock() {
 }
 
 function App() {
+  const [overlayVisible, setOverlayVisible] = useState(true);
+
   // Apply saved theme on app load
   useEffect(() => {
     const savedTheme = localStorage.getItem('urms-theme');
@@ -55,11 +58,34 @@ function App() {
     } else {
       document.body.className = '';
     }
+    // DEBUG: temporarily force red background to make UI visible in packaged builds
+    const prevBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = 'red';
+    return () => { document.body.style.backgroundColor = prevBg };
   }, []);
+
+  // Auto-hide overlay after a short timeout to avoid blocking normal use.
+  useEffect(() => {
+    if (!overlayVisible) return;
+    const t = setTimeout(() => setOverlayVisible(false), 8000);
+    return () => clearTimeout(t);
+  }, [overlayVisible]);
 
   return (
     <Router>
-      <SystemEventListener />
+      <ToastProvider>
+        <SystemEventListener />
+        {/* DEBUG: high-contrast full-screen overlay for packaged-build verification */}
+        {overlayVisible && (
+          <div style={{ position: 'fixed', inset: 0, background: '#ffea00', color: '#000', zIndex: 2147483647, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 24 }}>
+            <div style={{ fontSize: 36, fontWeight: 900, marginBottom: 12 }}>UI RENDERED — PACKAGED BUILD</div>
+            <div style={{ fontSize: 18, marginBottom: 18 }}>This is a visible debug overlay to confirm the WebView rendered React.</div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setOverlayVisible(false)} style={{ padding: '10px 16px', fontSize: 16, fontWeight: 700 }}>Dismiss</button>
+              <button onClick={() => alert('Press F12 (or Ctrl+Shift+I) to open DevTools') } style={{ padding: '10px 16px', fontSize: 16 }}>How to open DevTools</button>
+            </div>
+          </div>
+        )}
       <header style={{
         padding: '12px 20px',
         background: 'linear-gradient(135deg, rgba(6,182,212,0.1), rgba(124,58,237,0.05))',
@@ -78,7 +104,7 @@ function App() {
         </div>
         <HeaderClock />
       </header>
-      <Routes>
+        <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/Environment" element={<Environment />} />
@@ -90,7 +116,8 @@ function App() {
         <Route path="/Security" element={<Security />} />
         <Route path="/Settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+        </Routes>
+      </ToastProvider>
     </Router>
   );
 }

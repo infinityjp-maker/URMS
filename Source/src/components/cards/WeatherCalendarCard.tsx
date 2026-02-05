@@ -133,12 +133,34 @@ export default function WeatherCalendarCard() {
         const evtMod = await import('@tauri-apps/api/event');
         const unlisten = await evtMod.listen('calendar:updated', (e: any) => {
           try {
-            if (e && e.payload && Array.isArray(e.payload)) {
-              setEvents(e.payload as EventItem[]);
-              setRecentlyUpdated(true);
-              setShowToast(true);
-              setTimeout(() => setShowToast(false), 3000);
-              setTimeout(() => setRecentlyUpdated(false), 4000);
+              if (e && e.payload && Array.isArray(e.payload)) {
+                setEvents(e.payload as EventItem[]);
+                setRecentlyUpdated(true);
+                setShowToast(true);
+                // add a temporary class to card for stronger visual pop
+                try { (document.querySelector('.weather-calendar-card') as HTMLElement | null)?.classList.add('update-flash'); } catch(_) {}
+                setTimeout(() => setShowToast(false), 3000);
+                setTimeout(() => {
+                  setRecentlyUpdated(false);
+                  try { (document.querySelector('.weather-calendar-card') as HTMLElement | null)?.classList.remove('update-flash'); } catch(_) {}
+                }, 4000);
+
+              // Log that frontend received the update so backend logs can confirm delivery
+              try {
+                import('@tauri-apps/api/tauri').then((m) => {
+                  const tauri = (m as any).default || m;
+                  try { tauri.invoke('frontend_log', { level: 'info', msg: `frontend: calendar:update received (${(e.payload||[]).length} items)` }); } catch (_) {}
+                }).catch(() => {});
+              } catch (_) {}
+
+              // As a more robust fallback, POST a small JSON to the local ping server (lib.rs will log it)
+              try {
+                fetch('http://127.0.0.1:8765/ux-ping', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ msg: 'frontend: calendar:update received', count: (e.payload||[]).length })
+                }).catch(()=>{});
+              } catch (_) {}
             }
           } catch (err) { console.warn('calendar:updated handler error', err); }
         });
@@ -169,13 +191,16 @@ export default function WeatherCalendarCard() {
       const tauri = mod.default || mod;
       await tauri.invoke('calendar_sync_with_google', { api_key: apiKey, calendar_id: calendarId, max_results: 10 });
       await fetchEvents();
-    } catch (e) {
-      console.warn('sync failed', e);
-      alert('Sync failed: ' + (e && e.toString()));
+      } catch (e) {
+        console.warn('sync failed', e);
+        alert('Sync failed: ' + (e && e.toString()));
     } finally {
       setSyncing(false);
     }
   };
+
+  // helper to show toast via window event (fallback safe for current codebase)
+  // (kept minimal; use `urms:toast` CustomEvent elsewhere)
 
   return (
     <div className="weather-calendar-card">

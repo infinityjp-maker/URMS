@@ -59,6 +59,7 @@ export default function Settings() {
     };
 
     const deleteBtn = document.getElementById('delete-google-settings');
+    const disconnectOauthBtn = document.getElementById('disconnect-google-oauth');
     const oauthBtn = document.getElementById('start-google-oauth');
     const clientIdInput = document.getElementById('google-client-id') as HTMLInputElement | null;
     const clientSecretInput = document.getElementById('google-client-secret') as HTMLInputElement | null;
@@ -73,6 +74,16 @@ export default function Settings() {
         if (calInput) calInput.value = '';
         alert('Deleted');
       } catch (e) { console.warn('delete failed', e); alert('Delete failed'); }
+    };
+
+    const disconnectOauthHandler = async () => {
+      try {
+        const mod = await import('@tauri-apps/api/tauri');
+        const tauri = mod.default || mod;
+        await tauri.invoke('calendar_disconnect_oauth');
+        if (oauthStatus) oauthStatus.textContent = 'Disconnected';
+        alert('OAuth tokens removed');
+      } catch (e) { console.warn('disconnect oauth failed', e); alert('Disconnect failed'); }
     };
 
     const oauthHandler = async () => {
@@ -98,6 +109,7 @@ export default function Settings() {
     loadBtn?.addEventListener('click', loadHandler);
     saveBtn?.addEventListener('click', saveHandler);
     deleteBtn?.addEventListener('click', deleteHandler);
+    disconnectOauthBtn?.addEventListener('click', disconnectOauthHandler);
     oauthBtn?.addEventListener('click', oauthHandler);
     // auto-load on mount
     loadHandler();
@@ -106,6 +118,7 @@ export default function Settings() {
       loadBtn?.removeEventListener('click', loadHandler);
       saveBtn?.removeEventListener('click', saveHandler);
       deleteBtn?.removeEventListener('click', deleteHandler);
+      disconnectOauthBtn?.removeEventListener('click', disconnectOauthHandler);
       oauthBtn?.removeEventListener('click', oauthHandler);
     };
   }, [theme]);
@@ -209,6 +222,7 @@ export default function Settings() {
           </div>
           <div className="setting-item">
             <button className="setting-button" id="start-google-oauth">Google OAuth 認可</button>
+            <button className="setting-button" id="disconnect-google-oauth" style={{marginLeft:8}}>OAuth 切断</button>
             <span id="oauth-status" style={{marginLeft:12}}>Unknown</span>
           </div>
         </div>
