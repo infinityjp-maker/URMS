@@ -81,6 +81,7 @@ export class CalendarManager extends BaseManager implements ICalendarManager {
       id: 'weather-calendar-card',
       title: 'Weather & Calendar',
       manager: 'CalendarManager',
+      managerId: 'CalendarManager',
       status: events.length > 0 ? 'normal' : 'warn',
       content: [
         { label: 'Upcoming', value: events.length },

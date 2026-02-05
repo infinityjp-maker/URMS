@@ -189,6 +189,7 @@ export class AssetManager extends BaseManager implements IAssetManager {
       id: 'asset-manager-card',
       title: 'Asset Manager',
       manager: 'AssetManager',
+      managerId: 'AssetManager',
       status: maintenanceCount > 0 ? 'warn' : 'normal',
       content: [
         { label: 'Total Assets', value: assets.length },

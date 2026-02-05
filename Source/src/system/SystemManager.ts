@@ -1,10 +1,10 @@
 /**
  * SystemManager.ts
  * URMS v4.0 - System Manager
- * 
+ *
  * CPU/RAM/Disk/Network のシステムリソース監視
  * BaseManager を継承し、Log/Progress を統合
- * 
+ *
  * Version: v4.0
  */
 
@@ -42,13 +42,13 @@ export interface SystemStatus {
 export interface ISystemManager {
   getSystemStatus(): Promise<SystemStatus>
   getResourceAlert(): Promise<DashboardCard>
-  monitorResources(): Promise<void>
+  monitorResources(intervalMs?: number): Promise<string>
   setThreshold(type: string, value: number): Promise<void>
 }
 
 /**
  * System Manager 実装
- * 
+ *
  * 責務:
  * - システムリソース監視
  * - CPU/メモリ/ディスク/ネットワーク情報取得
@@ -73,6 +73,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
 
   private monitoring: boolean = false
   private monitoringInterval: ReturnType<typeof setInterval> | null = null
+  private monitoringTaskId: string | null = null
 
   constructor(
     logManager: ILogManager,
@@ -140,6 +141,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
       id: 'system-resource-alert',
       title: 'System Resources',
       manager: 'SystemManager',
+      managerId: 'SystemManager',
       status: alerts.length > 0 ? 'warn' : 'normal',
       content: [
         { label: 'CPU', value: `${status.cpu.usage.toFixed(1)}%` },
@@ -160,7 +162,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
   /**
    * リソース監視開始
    */
-  async monitorResources(intervalMs: number = 5000): Promise<void> {
+  async monitorResources(intervalMs: number = 5000): Promise<string> {
     this.checkInitialized()
 
     if (this.monitoring) {
@@ -168,7 +170,7 @@ export class SystemManager extends BaseManager implements ISystemManager {
         this.managerName,
         'Monitoring already running'
       )
-      return
+      return this.monitoringTaskId ?? 'monitoring'
     }
 
     await this.logManager.info(
@@ -177,6 +179,16 @@ export class SystemManager extends BaseManager implements ISystemManager {
     )
 
     this.monitoring = true
+
+    // Start a progress task for monitoring
+    try {
+      this.monitoringTaskId = await this.progressManager.startTask(
+        'System Resource Monitoring',
+        intervalMs
+      )
+    } catch (err) {
+      await this.logManager.warn(this.managerName, 'Failed to start monitoring task')
+    }
 
     // 指定間隔ごとにリソース情報更新
     this.monitoringInterval = setInterval(async () => {
@@ -191,6 +203,15 @@ export class SystemManager extends BaseManager implements ISystemManager {
             `Resource alert: ${alerts.join(', ')}`
           )
         }
+        // 更新があるたびに簡易的な進捗更新を通知
+        if (this.monitoringTaskId) {
+          try {
+            const percent = Math.floor((Date.now() / 1000) % 100)
+            await this.progressManager.updateProgress(this.monitoringTaskId, percent)
+          } catch (e) {
+            // ignore progress update failures
+          }
+        }
       } catch (error) {
         await this.logManager.error(
           this.managerName,
@@ -198,8 +219,9 @@ export class SystemManager extends BaseManager implements ISystemManager {
         )
       }
     }, intervalMs)
-    // monitoringInterval stored internally; no value returned to satisfy interface
-    return
+
+    // monitoringInterval stored internally; return monitoring task id if available
+    return this.monitoringTaskId ?? 'monitoring'
   }
 
   /**
@@ -315,10 +337,11 @@ export class SystemManager extends BaseManager implements ISystemManager {
       clearInterval(this.monitoringInterval)
       this.monitoringInterval = null
     }
+    // complete progress task if one was started
+    if (this.monitoringTaskId) {
+      void this.progressManager.completeTask(this.monitoringTaskId).catch(() => {})
+      this.monitoringTaskId = null
+    }
     this.monitoring = false
   }
-
-  /**
-   * プライベート: システムステータス更新（重複削除）
-   */
 }

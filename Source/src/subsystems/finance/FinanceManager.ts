@@ -193,6 +193,7 @@ export class FinanceManager extends BaseManager implements IFinanceManager {
       id: 'finance-manager-card',
       title: 'Finance Manager',
       manager: 'FinanceManager',
+      managerId: 'FinanceManager',
       status: percentageUsed > 80 ? 'warn' : 'normal',
       content: [
         { label: 'Total Expenses (Month)', value: `USD$${report.totalSpent.toFixed(2)}` },
