@@ -247,6 +247,28 @@ pub fn run() {
             subsystems::settings::commands::settings_set_google_credentials,
             subsystems::settings::commands::settings_get_google_credentials
         ])
+        .on_page_load(|window, _payload| {
+            // If a local `dist` exists relative to the executable, attempt to
+            // redirect the webview to the file:// URL as early as possible.
+            // Using on_page_load lets us intercept the initial load and
+            // avoid a visible race where the webview briefly shows localhost.
+            if let Ok(exe) = std::env::current_exe() {
+                if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
+                    for _ in 0..4 {
+                        if let Some(pp) = p.parent() { p = pp.to_path_buf(); }
+                    }
+                    let dist = p.join("dist");
+                    if dist.exists() {
+                        if let Some(dist_str) = dist.to_str() {
+                            let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
+                            let script = format!("(function(){{try{{const o=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:''; if(typeof o==='string' && o.indexOf('localhost')!==-1) {{ try {{ window.location.replace('{}'); }} catch(e) {{ try {{ window.location.href='{}'; }} catch(_) {{}} }} }} }}catch(e){{}} }})();", file_url, file_url);
+                            let _ = window.eval(&script);
+                            log::info!("on_page_load attempted navigation to {}", file_url);
+                        }
+                    }
+                }
+            }
+        })
         .setup(|app| {
             use tauri::Manager;
             use tauri::Emitter;
@@ -591,6 +613,31 @@ pub fn run() {
                                 log::warn!("WindowBuilder fallback disabled; skipping creation of new window.");
                             }
                         }
+
+                    // Additionally, always attempt a forced navigation to the local `dist` if present.
+                    // This helps avoid the WebView briefly showing the dev server (localhost) error
+                    // when static files are available. Run this regardless of `URMS_DEV`.
+                    if let Some(win) = app.get_webview_window("main") {
+                        if let Some(dist_path) = {
+                            if let Ok(exe) = std::env::current_exe() {
+                                if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
+                                    for _ in 0..4 { if let Some(pp) = p.parent() { p = pp.to_path_buf(); } }
+                                    let dist = p.join("dist");
+                                    if dist.exists() { Some(dist) } else { None }
+                                } else { None }
+                            } else { None }
+                        } {
+                            if let Some(dist_str) = dist_path.to_str() {
+                                let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
+                                let mut nav_script = String::new();
+                                nav_script.push_str("(function(){const target='");
+                                nav_script.push_str(&file_url);
+                                nav_script.push_str("';for (let i=0;i<6;i++){setTimeout(function(){try{const origin=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:'';if(typeof origin==='string'&&origin.indexOf('localhost')!==-1){try{window.location.replace(target);}catch(e){try{window.location.href=target;}catch(e){}}}else{} }catch(e){} },400*i);} }})();");
+                                let _ = win.eval(&nav_script);
+                                log::info!("Attempted forced navigation to local dist: {}", file_url);
+                            }
+                        }
+                    }
                     }
                 }
 
