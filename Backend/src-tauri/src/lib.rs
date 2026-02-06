@@ -619,25 +619,36 @@ pub fn run() {
                     // when static files are available. Run this regardless of `URMS_DEV`.
                     if let Some(win) = app.get_webview_window("main") {
                         if let Some(dist_path) = {
-                            if let Ok(exe) = std::env::current_exe() {
-                                if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
-                                    for _ in 0..4 { if let Some(pp) = p.parent() { p = pp.to_path_buf(); } }
-                                    let dist = p.join("dist");
-                                    if dist.exists() { Some(dist) } else { None }
+                                if let Ok(exe) = std::env::current_exe() {
+                                    if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
+                                        for _ in 0..4 { if let Some(pp) = p.parent() { p = pp.to_path_buf(); } }
+                                        let dist = p.join("dist");
+                                        if dist.exists() { Some(dist) } else { None }
+                                    } else { None }
                                 } else { None }
-                            } else { None }
-                        } {
-                            if let Some(dist_str) = dist_path.to_str() {
-                                let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
-                                let mut nav_script = String::new();
-                                nav_script.push_str("(function(){const target='");
-                                nav_script.push_str(&file_url);
-                                nav_script.push_str("';for (let i=0;i<6;i++){setTimeout(function(){try{const origin=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:'';if(typeof origin==='string'&&origin.indexOf('localhost')!==-1){try{window.location.replace(target);}catch(e){try{window.location.href=target;}catch(e){}}}else{} }catch(e){} },400*i);} }})();");
-                                let _ = win.eval(&nav_script);
-                                log::info!("Attempted forced navigation to local dist: {}", file_url);
+                            } {
+                                if let Some(dist_str) = dist_path.to_str() {
+                                    let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
+                                    // More robust: explicitly try to navigate to index.html repeatedly
+                                    // from a background thread until success. This reduces race
+                                    // where the webview shows a dev-server error before eval runs.
+                                    let index_url = format!("{}/index.html", file_url.trim_end_matches('/'));
+                                    let idx = index_url.clone();
+                                    let w = win.clone();
+                                    std::thread::spawn(move || {
+                                        for attempt in 0..12 {
+                                            let script = format!("(function(){{try{{window.location.replace('{}');}}catch(e){{try{{window.location.href='{}';}}catch(_){{}}}}}})();", idx, idx);
+                                            match w.eval(&script) {
+                                                Ok(_) => log::info!("nav-attempt success to {} (attempt {})", idx, attempt),
+                                                Err(e) => log::warn!("nav-attempt failed (attempt {}): {}", attempt, e),
+                                            }
+                                            std::thread::sleep(std::time::Duration::from_millis(250));
+                                        }
+                                        log::info!("nav-attempts finished for {}", idx);
+                                    });
+                                }
                             }
                         }
-                    }
                     }
                 }
 
