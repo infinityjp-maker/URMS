@@ -53,7 +53,9 @@ jobs:
           }
 
       - name: Run future-mode capture (apply_future_mode.cjs)
-        run: node Tests/playwright/apply_future_mode.cjs
+        shell: powershell
+        run: |
+          $env:URL='http://tauri.localhost/'; node Tests/playwright/apply_future_mode.cjs
 
       - name: Run smoke capture (smoke.cjs)
         shell: powershell
