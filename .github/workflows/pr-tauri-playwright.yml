@@ -1,0 +1,73 @@
+name: PR Tauri Playwright Smoke
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  build-and-playwright:
+    name: Build Tauri (Windows) and Run Playwright via WebView CDP
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Build Tauri release
+        run: npm run tauri:build
+
+      - name: Start urms.exe with WebView2 CDP enabled
+        shell: powershell
+        run: |
+          $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS='--remote-debugging-port=9222'
+          Start-Process -FilePath "${{ github.workspace }}\Backend\src-tauri\target\release\urms.exe" -PassThru
+
+      - name: Wait for WebView2 CDP /json/list
+        shell: powershell
+        run: |
+          $max=60
+          for ($i=0;$i -lt $max;$i++){
+            try{
+              $r = Invoke-RestMethod -Uri http://127.0.0.1:9222/json/list -TimeoutSec 2
+              if ($r){ Write-Output 'CDP_AVAILABLE'; break }
+            } catch { Start-Sleep -Seconds 2 }
+            if ($i -eq ($max-1)) { Write-Error 'Timeout waiting for CDP'; exit 1 }
+          }
+
+      - name: Run future-mode capture (apply_future_mode.cjs)
+        run: node Tests/playwright/apply_future_mode.cjs
+
+      - name: Run smoke capture (smoke.cjs)
+        shell: powershell
+        run: |
+          $env:URL='http://tauri.localhost/'; node Tests/playwright/smoke.cjs
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: builds/screenshots/*.png
+
+      - name: Stop urms.exe
+        if: always()
+        shell: powershell
+        run: |
+          Try { Stop-Process -Name urms -ErrorAction SilentlyContinue } Catch { }
