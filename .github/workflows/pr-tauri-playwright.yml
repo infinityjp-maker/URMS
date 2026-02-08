@@ -40,15 +40,15 @@ jobs:
           $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS='--remote-debugging-port=9222'
           Start-Process -FilePath "${{ github.workspace }}\Backend\src-tauri\target\release\urms.exe" -PassThru
 
-      - name: Wait for WebView2 CDP /json/list
+      - name: Wait for WebView2 CDP /json/list (extended + debug)
         shell: powershell
         run: |
-          $max=60
+          $max=120
           for ($i=0;$i -lt $max;$i++){
             try{
               $r = Invoke-RestMethod -Uri http://127.0.0.1:9222/json/list -TimeoutSec 2
-              if ($r){ Write-Output 'CDP_AVAILABLE'; break }
-            } catch { Start-Sleep -Seconds 2 }
+              if ($r){ Write-Output 'CDP_AVAILABLE'; Write-Output ($r | ConvertTo-Json -Depth 4); break }
+            } catch { Write-Output "CDP attempt $i failed: $_"; Start-Sleep -Seconds 2 }
             if ($i -eq ($max-1)) { Write-Error 'Timeout waiting for CDP'; exit 1 }
           }
 
