@@ -5,85 +5,22 @@ pub mod core;
 pub mod system;
 pub mod subsystems;
 use base64::Engine;
+#[tauri::command]
+fn greet(name: String) -> String {
+    format!("Hello, {}!", name)
+}
 
-// Single instance mutex for Windows
-                    if dist.exists() {
-                        if let Some(dist_str) = dist.to_str() {
-                            let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
-                            let script = format!("(function(){{try{{const o=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:''; if(typeof o==='string' && o.indexOf('localhost')!==-1) {{ try {{ window.location.replace('{}'); }} catch(e) {{ try {{ window.location.href='{}'; }} catch(_) {{}} }} }} }}catch(e){{}} }})();", file_url, file_url);
-                            let _ = window.eval(&script);
-                            log::info!("on_page_load attempted navigation to {}", file_url);
-                        }
-
-                // Emit a rich DOM / environment snapshot to backend logs and also
-                // attempt multiple delivery paths so diagnostics reach native side
-                // even when the usual Tauri JS bridge is not present.
-                let _ = window.eval(r#"(function(){
-                    try {
-                        function safeJSON(o){ try { return JSON.stringify(o); } catch(e) { return String(o); } }
-
-                        var payload = {
-                            inlineAttr: document.documentElement.getAttribute('data-urms-inline-entry') || null,
-                            bundleAttr: document.documentElement.getAttribute('data-urms-bundle-entry') || null,
-                            inlineTs: (window.__URMS_INLINE_ENTRY_TS !== undefined) ? window.__URMS_INLINE_ENTRY_TS : null,
-                            bundleTs: (window.__URMS_BUNDLE_ENTRY_TS !== undefined) ? window.__URMS_BUNDLE_ENTRY_TS : null,
-                            readyFlag: !!window.__URMS_READY,
-                            tauriPresent: !!(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function'),
-                            scripts: Array.prototype.slice.call(document.scripts || []).map(function(s){ return { src: s.src||null, type: s.type||null, nomodule: !!s.noModule }; }),
-                            dashboardExists: !!document.querySelector('.dashboard-grid'),
-                            cardCount: (document.querySelectorAll ? document.querySelectorAll('.floating-card').length : 0),
-                            userAgent: (navigator && navigator.userAgent) ? navigator.userAgent : null
-                        };
-
-                        var json = safeJSON(payload);
-                        try { document.documentElement.setAttribute('data-urms-inject', json); } catch(e) {}
-
-                        // Try multiple channels to deliver diagnostics to native/test harness
-                        try {
-                            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
-                                window.__TAURI__.invoke('frontend_log', { level: 'info', msg: JSON.stringify({ type: 'webview-diagnostics', payload: payload }) });
-                            } else if (window.chrome && chrome.webview && typeof chrome.webview.postMessage === 'function') {
-                                try { chrome.webview.postMessage({ type: 'webview-diagnostics', payload: payload }); } catch(e) {}
-                            } else if (console && console.log) {
-                                try { console.log('URMS_INJECT:' + json); } catch(e) {}
-                            } else {
-                                try { document.title = 'URMS_INJECT:' + (json && json.substr ? json.substr(0, 1200) : json); } catch(e) {}
-                            }
-                        } catch(e) {}
-
-                        // Set a short ready flag to help polling clients
-                        try { window.__URMS_READY = !!window.__URMS_READY || true; } catch(e) {}
-
-                        // Also preserve the previous light-weight delayed ready event
-                        try {
-                            setTimeout(function(){ try { window.__URMS_READY = true; window.dispatchEvent(new Event('urms-ready')); } catch(e) {} }, 800);
-                        } catch(e) {}
-
-                    } catch(e) {}
-                })();"#);
-                // Attempt a direct dynamic import of the first module script to surface import errors
-                let _ = window.eval(r#"(function(){
-                    try {
-                        var scripts = Array.prototype.slice.call(document.querySelectorAll('script[type="module"][src]')).map(function(s){ return s.src || null; }).filter(Boolean);
-                        if (scripts && scripts.length) {
-                            var p = scripts[0];
-                            import(p).then(function(){
-                                try { document.documentElement.setAttribute('data-urms-import-passed', '1'); } catch(e) {}
-                                try { if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') window.__TAURI__.invoke('frontend_log', { level: 'info', msg: 'import-ok:' + p }); } catch(e) {}
-                                try { console && console.log && console.log('URMS_IMPORT_OK:' + p); } catch(e) {}
-                            }).catch(function(err){
-                                try { document.documentElement.setAttribute('data-urms-import-error', (err && (err.stack || err.message)) ? String(err.stack || err.message) : String(err)); } catch(e) {}
-                                try { if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') window.__TAURI__.invoke('frontend_log', { level: 'error', msg: 'import-failed:' + String(err && (err.stack || err.message) || err) }); } catch(e) {}
-                                try { console && console.error && console.error('URMS_IMPORT_ERR:' + String(err && (err.stack || err.message) || err)); } catch(e) {}
-                            });
-                        }
-                    } catch(e) {}
-                })();"#);
-        if !check_single_instance() {
-            eprintln!("URMS is already running!");
-            return;
-        }
+#[tauri::command]
+fn frontend_log(level: String, msg: String) {
+    match level.as_str() {
+        "debug" => log::debug!("{}", msg),
+        "warn" => log::warn!("{}", msg),
+        "error" => log::error!("{}", msg),
+        _ => log::info!("{}", msg),
     }
+}
+
+pub fn run() {
 
     // Initialize logging with rotation: console + rotating file `logs/urms.log`.
     {
@@ -281,7 +218,6 @@ use base64::Engine;
                         }
                     }
                 }
-<<<<<<< HEAD
                 // Emit a rich DOM / environment snapshot to backend logs and also
                 // attempt multiple delivery paths so diagnostics reach native side
                 // even when the usual Tauri JS bridge is not present.
