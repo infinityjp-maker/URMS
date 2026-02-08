@@ -7,80 +7,78 @@ pub mod subsystems;
 use base64::Engine;
 
 // Single instance mutex for Windows
-#[cfg(target_os = "windows")]
-static SINGLE_INSTANCE: std::sync::OnceLock<()> = std::sync::OnceLock::new();
+                    if dist.exists() {
+                        if let Some(dist_str) = dist.to_str() {
+                            let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
+                            let script = format!("(function(){{try{{const o=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:''; if(typeof o==='string' && o.indexOf('localhost')!==-1) {{ try {{ window.location.replace('{}'); }} catch(e) {{ try {{ window.location.href='{}'; }} catch(_) {{}} }} }} }}catch(e){{}} }})();", file_url, file_url);
+                            let _ = window.eval(&script);
+                            log::info!("on_page_load attempted navigation to {}", file_url);
+                        }
 
-#[cfg(target_os = "windows")]
-fn check_single_instance() -> bool {
-    use winapi::um::synchapi::{CreateMutexW, CreateEventW, OpenEventW, SetEvent};
-    use winapi::um::handleapi::CloseHandle;
-    use winapi::shared::minwindef::FALSE;
-    use winapi::um::winnt::EVENT_MODIFY_STATE;
-    use std::ffi::OsStr;
-    use std::os::windows::ffi::OsStrExt;
-    
-    unsafe {
-        let mutex_name: Vec<u16> = OsStr::new("URMS_APP_MUTEX")
-            .encode_wide()
-            .chain(Some(0))
-            .collect();
-        let event_name: Vec<u16> = OsStr::new("URMS_INSTANCE_EVENT")
-            .encode_wide()
-            .chain(Some(0))
-            .collect();
-        
-        let handle = CreateMutexW(std::ptr::null_mut(), FALSE, mutex_name.as_ptr() as *const _);
-        if handle.is_null() {
-            return false; // Failed to create mutex handle
-        }
+                // Emit a rich DOM / environment snapshot to backend logs and also
+                // attempt multiple delivery paths so diagnostics reach native side
+                // even when the usual Tauri JS bridge is not present.
+                let _ = window.eval(r#"(function(){
+                    try {
+                        function safeJSON(o){ try { return JSON.stringify(o); } catch(e) { return String(o); } }
 
-        let last_error = std::io::Error::last_os_error().raw_os_error().unwrap_or(0);
-        if last_error == 183 { // ERROR_ALREADY_EXISTS
-            // Notify the existing instance to bring its window to front by signaling the named event.
-            let ev = OpenEventW(EVENT_MODIFY_STATE, FALSE, event_name.as_ptr() as *const _);
-            if !ev.is_null() {
-                let _ = SetEvent(ev);
-                let _ = CloseHandle(ev);
-            }
+                        var payload = {
+                            inlineAttr: document.documentElement.getAttribute('data-urms-inline-entry') || null,
+                            bundleAttr: document.documentElement.getAttribute('data-urms-bundle-entry') || null,
+                            inlineTs: (window.__URMS_INLINE_ENTRY_TS !== undefined) ? window.__URMS_INLINE_ENTRY_TS : null,
+                            bundleTs: (window.__URMS_BUNDLE_ENTRY_TS !== undefined) ? window.__URMS_BUNDLE_ENTRY_TS : null,
+                            readyFlag: !!window.__URMS_READY,
+                            tauriPresent: !!(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function'),
+                            scripts: Array.prototype.slice.call(document.scripts || []).map(function(s){ return { src: s.src||null, type: s.type||null, nomodule: !!s.noModule }; }),
+                            dashboardExists: !!document.querySelector('.dashboard-grid'),
+                            cardCount: (document.querySelectorAll ? document.querySelectorAll('.floating-card').length : 0),
+                            userAgent: (navigator && navigator.userAgent) ? navigator.userAgent : null
+                        };
 
-            // Close our mutex handle and exit
-            let _ = CloseHandle(handle);
-            return false; // Already running
-        }
+                        var json = safeJSON(payload);
+                        try { document.documentElement.setAttribute('data-urms-inject', json); } catch(e) {}
 
-        // Create a named event that other instances can signal to request focus.
-        let _ev_handle = CreateEventW(std::ptr::null_mut(), FALSE, FALSE, event_name.as_ptr() as *const _);
+                        // Try multiple channels to deliver diagnostics to native/test harness
+                        try {
+                            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
+                                window.__TAURI__.invoke('frontend_log', { level: 'info', msg: JSON.stringify({ type: 'webview-diagnostics', payload: payload }) });
+                            } else if (window.chrome && chrome.webview && typeof chrome.webview.postMessage === 'function') {
+                                try { chrome.webview.postMessage({ type: 'webview-diagnostics', payload: payload }); } catch(e) {}
+                            } else if (console && console.log) {
+                                try { console.log('URMS_INJECT:' + json); } catch(e) {}
+                            } else {
+                                try { document.title = 'URMS_INJECT:' + (json && json.substr ? json.substr(0, 1200) : json); } catch(e) {}
+                            }
+                        } catch(e) {}
 
-        // Keep handle alive for the lifetime of the application
-        let _ = SINGLE_INSTANCE.set(());
-        let _ = handle;
-        true
-    }
-}
+                        // Set a short ready flag to help polling clients
+                        try { window.__URMS_READY = !!window.__URMS_READY || true; } catch(e) {}
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+                        // Also preserve the previous light-weight delayed ready event
+                        try {
+                            setTimeout(function(){ try { window.__URMS_READY = true; window.dispatchEvent(new Event('urms-ready')); } catch(e) {} }, 800);
+                        } catch(e) {}
 
-// Receives frontend console messages and logs them server-side
-#[tauri::command]
-fn frontend_log(level: &str, msg: &str) {
-    match level {
-        "error" => log::error!("[frontend] {}", msg),
-        "warn" => log::warn!("[frontend] {}", msg),
-        "info" => log::info!("[frontend] {}", msg),
-        "debug" => log::debug!("[frontend] {}", msg),
-        _ => log::info!("[frontend] {}", msg),
-    }
-}
-
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
-    // Check for single instance on Windows
-    #[cfg(target_os = "windows")]
-    {
+                    } catch(e) {}
+                })();"#);
+                // Attempt a direct dynamic import of the first module script to surface import errors
+                let _ = window.eval(r#"(function(){
+                    try {
+                        var scripts = Array.prototype.slice.call(document.querySelectorAll('script[type="module"][src]')).map(function(s){ return s.src || null; }).filter(Boolean);
+                        if (scripts && scripts.length) {
+                            var p = scripts[0];
+                            import(p).then(function(){
+                                try { document.documentElement.setAttribute('data-urms-import-passed', '1'); } catch(e) {}
+                                try { if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') window.__TAURI__.invoke('frontend_log', { level: 'info', msg: 'import-ok:' + p }); } catch(e) {}
+                                try { console && console.log && console.log('URMS_IMPORT_OK:' + p); } catch(e) {}
+                            }).catch(function(err){
+                                try { document.documentElement.setAttribute('data-urms-import-error', (err && (err.stack || err.message)) ? String(err.stack || err.message) : String(err)); } catch(e) {}
+                                try { if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') window.__TAURI__.invoke('frontend_log', { level: 'error', msg: 'import-failed:' + String(err && (err.stack || err.message) || err) }); } catch(e) {}
+                                try { console && console.error && console.error('URMS_IMPORT_ERR:' + String(err && (err.stack || err.message) || err)); } catch(e) {}
+                            });
+                        }
+                    } catch(e) {}
+                })();"#);
         if !check_single_instance() {
             eprintln!("URMS is already running!");
             return;
@@ -283,6 +281,7 @@ pub fn run() {
                         }
                     }
                 }
+<<<<<<< HEAD
                 // Emit a rich DOM / environment snapshot to backend logs and also
                 // attempt multiple delivery paths so diagnostics reach native side
                 // even when the usual Tauri JS bridge is not present.
@@ -347,6 +346,8 @@ pub fn run() {
                         }
                     } catch(e) {}
                 })();"#);
+=======
+>>>>>>> origin/main
             }
         })
         .setup(|app| {
@@ -699,6 +700,7 @@ pub fn run() {
                     // when static files are available. Run this regardless of `URMS_DEV`.
                     if let Some(win) = app.get_webview_window("main") {
                         if let Some(dist_path) = {
+<<<<<<< HEAD
                                 if let Ok(exe) = std::env::current_exe() {
                                     if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
                                         for _ in 0..4 { if let Some(pp) = p.parent() { p = pp.to_path_buf(); } }
@@ -729,6 +731,27 @@ pub fn run() {
                                 }
                             }
                         }
+=======
+                            if let Ok(exe) = std::env::current_exe() {
+                                if let Some(mut p) = exe.parent().map(|s| s.to_path_buf()) {
+                                    for _ in 0..4 { if let Some(pp) = p.parent() { p = pp.to_path_buf(); } }
+                                    let dist = p.join("dist");
+                                    if dist.exists() { Some(dist) } else { None }
+                                } else { None }
+                            } else { None }
+                        } {
+                            if let Some(dist_str) = dist_path.to_str() {
+                                let file_url = format!("file:///{}", dist_str.replace('\\', "/").trim_start_matches('/'));
+                                let mut nav_script = String::new();
+                                nav_script.push_str("(function(){const target='");
+                                nav_script.push_str(&file_url);
+                                nav_script.push_str("';for (let i=0;i<6;i++){setTimeout(function(){try{const origin=(window.location&&window.location.origin)?window.location.origin:(window.location&&window.location.href)?window.location.href:'';if(typeof origin==='string'&&origin.indexOf('localhost')!==-1){try{window.location.replace(target);}catch(e){try{window.location.href=target;}catch(e){}}}else{} }catch(e){} },400*i);} }})();");
+                                let _ = win.eval(&nav_script);
+                                log::info!("Attempted forced navigation to local dist: {}", file_url);
+                            }
+                        }
+                    }
+>>>>>>> origin/main
                     }
                 }
 
