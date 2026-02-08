@@ -60,6 +60,9 @@ jobs:
         run: |
           $env:URL='http://tauri.localhost/'; node Tests/playwright/smoke.cjs
 
+      - name: Compare screenshots (pixel diff + structural checks)
+        run: node Tests/playwright/compare_screenshots.cjs
+
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:

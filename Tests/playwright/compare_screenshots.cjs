@@ -1,0 +1,133 @@
+const fs = require('fs');
+const path = require('path');
+const child_process = require('child_process');
+const { PNG } = require('pngjs');
+const pixelmatch = require('pixelmatch');
+
+function runSmoke() {
+  return new Promise((resolve, reject) => {
+    const env = Object.assign({}, process.env);
+    const cp = child_process.spawn('node', ['Tests/playwright/smoke.cjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
+    let out = '';
+    cp.stdout.on('data', (d) => out += d.toString());
+    cp.stderr.on('data', (d) => process.stderr.write(d));
+    cp.on('close', (code) => {
+      if (code !== 0) return reject(new Error('smoke.cjs exited with ' + code));
+      try {
+        const j = JSON.parse(out);
+        resolve(j);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  });
+}
+
+function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true }); }
+
+(async ()=>{
+  try{
+    const baselineDir = path.join('Tests','playwright','baseline');
+    ensureDir(baselineDir);
+
+    const screenshotsDir = path.join('builds','screenshots');
+    const names = ['playwright-smoke.png','playwright-future-mode.png'];
+
+    // run smoke to obtain structural info
+    const smoke = await runSmoke();
+
+    // baseline metadata file
+    const metaPath = path.join(baselineDir,'baseline.json');
+    let baselineMeta = null;
+    if (fs.existsSync(metaPath)) {
+      baselineMeta = JSON.parse(fs.readFileSync(metaPath,'utf8'));
+    }
+
+    // if baseline metadata missing, create baseline from current screenshots + smoke output
+    let createdBaseline = false;
+    for(const name of names){
+      const cur = path.join(screenshotsDir,name);
+      const base = path.join(baselineDir,name);
+      if(!fs.existsSync(cur)){
+        console.error('Missing current screenshot:', cur);
+        process.exit(2);
+      }
+      if(!fs.existsSync(base)){
+        fs.copyFileSync(cur, base);
+        console.warn('Baseline created for', name);
+        createdBaseline = true;
+      }
+    }
+    if(!baselineMeta){
+      const meta = {
+        cardCount: smoke.cardCount || null,
+        headings: smoke.headings || null,
+        titleColor: smoke.titleColor || null
+      };
+      fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2));
+      console.warn('Baseline metadata created at', metaPath);
+      createdBaseline = true;
+    }
+
+    if(createdBaseline){
+      console.log('Baseline was created from current screenshots. On next runs comparisons will be performed.');
+      process.exit(0);
+    }
+
+    // perform comparisons
+    let failed = false;
+    // compare structural info
+    if (baselineMeta.cardCount !== smoke.cardCount){
+      console.error('cardCount mismatch. baseline:', baselineMeta.cardCount, 'current:', smoke.cardCount);
+      failed = true;
+    }
+    const baselineHeadings = baselineMeta.headings || [];
+    const curHeadings = smoke.headings || [];
+    if (JSON.stringify(baselineHeadings) !== JSON.stringify(curHeadings)){
+      console.error('headings mismatch. baseline:', baselineHeadings, 'current:', curHeadings);
+      failed = true;
+    }
+    if (baselineMeta.titleColor && smoke.titleColor && baselineMeta.titleColor !== smoke.titleColor){
+      console.error('titleColor mismatch. baseline:', baselineMeta.titleColor, 'current:', smoke.titleColor);
+      failed = true;
+    }
+
+    // pixel diffs
+    for(const name of names){
+      const curPath = path.join(screenshotsDir,name);
+      const basePath = path.join(baselineDir,name);
+      const diffPath = path.join(screenshotsDir, 'diff-' + name);
+      const curBuf = fs.readFileSync(curPath);
+      const baseBuf = fs.readFileSync(basePath);
+      const curP = PNG.sync.read(curBuf);
+      const baseP = PNG.sync.read(baseBuf);
+      if(curP.width !== baseP.width || curP.height !== baseP.height){
+        console.error('Size mismatch for', name, 'baseline:', baseP.width+'x'+baseP.height, 'current:', curP.width+'x'+curP.height);
+        failed = true;
+        continue;
+      }
+      const {width,height} = curP;
+      const diff = new PNG({width,height});
+      const diffPixels = pixelmatch(baseP.data, curP.data, diff.data, width, height, {threshold: 0.1});
+      fs.writeFileSync(diffPath, PNG.sync.write(diff));
+      console.log(name, 'diff pixels:', diffPixels, 'diff image:', diffPath);
+      const maxAllowed = Math.max(10, Math.floor(width*height*0.001)); // allow small changes
+      if(diffPixels > maxAllowed){
+        console.error(name, 'exceeded allowed diff pixels:', diffPixels, '>', maxAllowed);
+        failed = true;
+      }
+    }
+
+    if(failed){
+      console.error('Screenshot comparisons failed. See diffs in builds/screenshots/');
+      process.exit(1);
+    }
+
+    console.log('All screenshot comparisons passed');
+    process.exit(0);
+
+  }catch(err){
+    console.error('compare_screenshots error', err);
+    process.exit(2);
+  }
+})();
