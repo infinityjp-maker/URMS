@@ -1,4 +1,4 @@
-name: Playwright Smoke (PR)
+﻿name: Playwright Smoke (PR)
 
 on:
   pull_request:
@@ -41,6 +41,9 @@ jobs:
 
       - name: Run smoke capture
         run: node Tests/playwright/smoke.cjs
+
+      - name: Compare screenshots (pixel diff + structural checks)
+        run: node Tests/playwright/compare_screenshots.cjs
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
