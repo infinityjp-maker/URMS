@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "smoke:dev": "node Tests/playwright/smoke_dev_debug.cjs",
     "smoke:dist": "node Tests/playwright/smoke_http_debug.cjs || node Tests/playwright/smoke_file_debug.cjs",
+    "smoke:ci": "node Tests/playwright/smoke.cjs",
     "type-check": "tsc --noEmit",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
