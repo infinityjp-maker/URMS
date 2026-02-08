@@ -1,9 +1,11 @@
 name: Release (tag)
 
+# Only run release workflow for tag pushes or manual dispatch.
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch: {}
 
 jobs:
   release:

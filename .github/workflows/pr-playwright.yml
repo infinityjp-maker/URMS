@@ -1,0 +1,48 @@
+name: Playwright Smoke (PR)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ main ]
+
+jobs:
+  playwright:
+    name: Playwright Smoke + Future Mode Capture
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Start dev server
+        run: |
+          nohup npm run dev &>/dev/null &
+          # wait for server to respond on port 1420
+          for i in $(seq 1 60); do
+            if curl -sS http://localhost:1420/ >/dev/null 2>&1; then
+              echo "dev server ready"; break
+            fi
+            sleep 1
+          done
+
+      - name: Run future-mode capture
+        run: node Tests/playwright/apply_future_mode.cjs
+
+      - name: Run smoke capture
+        run: node Tests/playwright/smoke.cjs
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: builds/screenshots/*.png
