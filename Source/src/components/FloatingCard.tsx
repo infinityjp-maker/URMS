@@ -31,10 +31,22 @@ export default function FloatingCard({
     // No transform cleanup needed
   }
 
+  // map known accent colors to classes to avoid inline styles
+  const accentMap: Record<string, string> = {
+    '#06b6d4': 'accent-cyan',
+    '#22c55e': 'accent-green',
+    '#f59e0b': 'accent-amber',
+    '#ef4444': 'accent-red',
+    '#14b8a6': 'accent-teal',
+    '#a855f7': 'accent-purple',
+    '#60a5fa': 'accent-blue'
+  };
+  const accentClass = accentMap[accent.toLowerCase()] || '';
+
   return (
     <div
-      className={cls}
-      style={{ '--accent': accent } as React.CSSProperties}
+      className={[cls, accentClass].filter(Boolean).join(' ')}
+      {...(accentClass ? {} : { style: { ['--accent' as any]: accent } as React.CSSProperties })}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       onClick={onClick}

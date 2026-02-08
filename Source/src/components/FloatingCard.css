@@ -16,6 +16,15 @@
   flex-direction:column;
 }
 
+/* known accent classes to avoid inline style usage */
+.accent-cyan { --accent: #06b6d4; }
+.accent-green { --accent: #22c55e; }
+.accent-amber { --accent: #f59e0b; }
+.accent-red { --accent: #ef4444; }
+.accent-teal { --accent: #14b8a6; }
+.accent-purple { --accent: #a855f7; }
+.accent-blue { --accent: #60a5fa; }
+
 .card-inner{
   position: relative;
   z-index: 2;

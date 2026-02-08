@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import SystemEventListener from "./components/SystemEventListener";
 import ToastProvider from './components/common/Toast'
+import ThemeProvider from './theme/ThemeProvider'
 import Dashboard from "./pages/Dashboard";
 import Environment from "./pages/Environment";
 import ResourceDetail from "./pages/Environment/ResourceDetail";
@@ -39,7 +40,7 @@ function HeaderClock() {
   }, []);
 
   return (
-    <div style={{ fontSize: '13px', opacity: 0.9 }}>
+    <div className="header-clock">
       {currentTime} JST
     </div>
   );
@@ -48,21 +49,7 @@ function HeaderClock() {
 function App() {
   const [overlayVisible, setOverlayVisible] = useState(true);
 
-  // Apply saved theme on app load
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('urms-theme');
-    if (savedTheme === 'light') {
-      document.body.className = 'light-theme';
-    } else if (savedTheme === 'dark') {
-      document.body.className = 'dark-theme';
-    } else {
-      document.body.className = '';
-    }
-    // DEBUG: temporarily force red background to make UI visible in packaged builds
-    const prevBg = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = 'red';
-    return () => { document.body.style.backgroundColor = prevBg };
-  }, []);
+  // theme handled by ThemeProvider
 
   // Auto-hide overlay after a short timeout to avoid blocking normal use.
   useEffect(() => {
@@ -71,39 +58,32 @@ function App() {
     return () => clearTimeout(t);
   }, [overlayVisible]);
 
+  const isDev = import.meta.env.MODE !== 'production';
+
   return (
-    <Router>
-      <ToastProvider>
-        <SystemEventListener />
-        {/* DEBUG: high-contrast full-screen overlay for packaged-build verification */}
-        {overlayVisible && (
-          <div style={{ position: 'fixed', inset: 0, background: '#ffea00', color: '#000', zIndex: 2147483647, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 24 }}>
-            <div style={{ fontSize: 36, fontWeight: 900, marginBottom: 12 }}>UI RENDERED — PACKAGED BUILD</div>
-            <div style={{ fontSize: 18, marginBottom: 18 }}>This is a visible debug overlay to confirm the WebView rendered React.</div>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button onClick={() => setOverlayVisible(false)} style={{ padding: '10px 16px', fontSize: 16, fontWeight: 700 }}>Dismiss</button>
-              <button onClick={() => alert('Press F12 (or Ctrl+Shift+I) to open DevTools') } style={{ padding: '10px 16px', fontSize: 16 }}>How to open DevTools</button>
+    <ThemeProvider>
+      <Router>
+        <ToastProvider>
+          <SystemEventListener />
+          {/* DEBUG: high-contrast full-screen overlay for packaged-build verification (dev-only) */}
+          {isDev && overlayVisible && (
+            <div className="debug-overlay">
+              <div className="debug-overlay-title">UI RENDERED — PACKAGED BUILD</div>
+              <div className="debug-overlay-sub">This is a visible debug overlay to confirm the WebView rendered React.</div>
+              <div className="debug-overlay-actions">
+                <button className="debug-btn" onClick={() => setOverlayVisible(false)}>Dismiss</button>
+                <button className="debug-btn" onClick={() => alert('Press F12 (or Ctrl+Shift+I) to open DevTools')}>How to open DevTools</button>
+              </div>
             </div>
-          </div>
-        )}
-      <header style={{
-        padding: '12px 20px',
-        background: 'linear-gradient(135deg, rgba(6,182,212,0.1), rgba(124,58,237,0.05))',
-        borderBottom: '1px solid rgba(6,182,212,0.2)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        color: '#06b6d4',
-        fontWeight: 600,
-        fontSize: '14px',
-        letterSpacing: '1px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span>{URMS_ICON}</span>
-          <span>URMS v4.0</span>
-        </div>
-        <HeaderClock />
-      </header>
+          )}
+
+          <header className="app-header">
+            <div className="app-header-left">
+              <span className="app-icon">{URMS_ICON}</span>
+              <span className="app-title">URMS v4.0</span>
+            </div>
+            <HeaderClock />
+          </header>
         <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/Dashboard" element={<Dashboard />} />
@@ -119,6 +99,7 @@ function App() {
         </Routes>
       </ToastProvider>
     </Router>
+    </ThemeProvider>
   );
 }
 

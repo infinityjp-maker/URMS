@@ -91,7 +91,7 @@ export default function Security() {
               height={320}
               itemHeight={72}
               renderItem={(name: any, idx: number) => (
-                <div key={name} className="device-card device-online" style={{ padding: '10px' }}>
+                <div key={name} className="device-card device-online device-card--padded">
                   <div className="device-header">
                     <span className="device-id">IF-{String(idx + 1).padStart(3, '0')}</span>
                     <span className="device-status online">🟢 オンライン</span>

@@ -89,7 +89,7 @@ export class DashboardManager extends BaseManager implements IDashboardManager {
 
     await this.logManager.info(
       this.managerName,
-      `Dashboard initialized with ${this.getTheme()} theme`
+      `Dashboard initialized with ${this._theme} theme`
     )
   }
 

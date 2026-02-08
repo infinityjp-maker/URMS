@@ -228,17 +228,18 @@ export default function ResourceDetail() {
           <h2>グラフ（過去10分）</h2>
           <div className="chart-container">
             <div className="sparkline-bars">
-              {data.history.map((value: number, idx: number) => (
-                <div
-                  key={idx}
-                  className="bar"
-                  style={{
-                    height: `${Math.max(10, (value / 100) * 150)}px`,
-                    backgroundColor: value > 80 ? '#ef4444' : value > 50 ? '#f59e0b' : '#22c55e'
-                  }}
-                  title={`${value}%`}
-                />
-              ))}
+              {data.history.map((value: number, idx: number) => {
+                const cls = value > 80 ? 'bar bar--high' : value > 50 ? 'bar bar--mid' : 'bar bar--low';
+                const height = `${Math.max(10, (value / 100) * 150)}px`;
+                return (
+                  <div
+                    key={idx}
+                    className={cls}
+                    style={{ ['--bar-height' as any]: height }}
+                    title={`${value}%`}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

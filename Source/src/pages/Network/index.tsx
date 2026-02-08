@@ -95,7 +95,7 @@ export default function Network() {
               height={240}
               itemHeight={40}
               renderItem={(name: any) => (
-                <div key={name} style={{ padding: '6px 8px' }}>
+                <div key={name} className="list-item-padding">
                   <strong>{name}</strong> - インターフェース
                 </div>
               )}

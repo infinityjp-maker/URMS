@@ -156,9 +156,9 @@ export default function Splash({ hidden = false }: Props) {
         </div>
         <div className="splash-sub">Initializing systems</div>
         <div className="splash-progress" aria-hidden="true">
-          <span className="dot" style={{ ['--i' as any]: 0 }} />
-          <span className="dot" style={{ ['--i' as any]: 1 }} />
-          <span className="dot" style={{ ['--i' as any]: 2 }} />
+          <span className="dot dot--i-0" />
+          <span className="dot dot--i-1" />
+          <span className="dot dot--i-2" />
         </div>
         <label className="splash-skip">
           <input type="checkbox" checked={dontShow} onChange={onSkipChange} /> Don't show again

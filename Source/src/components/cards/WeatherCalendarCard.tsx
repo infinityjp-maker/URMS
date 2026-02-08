@@ -207,7 +207,7 @@ export default function WeatherCalendarCard() {
       <div className={`card-header ${recentlyUpdated ? 'wc-header-highlight' : ''}`}>
         <h3>Weather & Calendar</h3>
         {recentlyUpdated && (
-          <span style={{marginLeft:12, color:'#0a0', fontWeight:600}}>Updated</span>
+          <span className="wc-updated">Updated</span>
         )}
         <div className="card-actions">
           <button onClick={() => { fetchWeather(); fetchEvents(); }}>Refresh</button>

@@ -166,6 +166,22 @@ pub fn run() {
         }
     }
 
+    // Ensure WebView2 remote debugging port is exposed when requested: set env var
+    // This helps automated tools attach via CDP (e.g., http://127.0.0.1:9222).
+    #[cfg(target_os = "windows")]
+    {
+        use log::info;
+        use std::env;
+        // Only set if not already present (allow override)
+        if env::var_os("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").is_none() {
+            // Use a conservative default port 9222 for remote debugging
+            env::set_var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--remote-debugging-port=9222");
+            info!("Set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222");
+        } else {
+            info!("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS already set");
+        }
+    }
+
     // If a local `dist` folder exists in the repository root, prefer loading bundled assets
     // and avoid accidentally pointing the runtime to a dev server. This unsets TAURI dev
     // related env vars when a usable `dist` is available to prevent "localhost" connection errors.
@@ -267,6 +283,70 @@ pub fn run() {
                         }
                     }
                 }
+                // Emit a rich DOM / environment snapshot to backend logs and also
+                // attempt multiple delivery paths so diagnostics reach native side
+                // even when the usual Tauri JS bridge is not present.
+                let _ = window.eval(r#"(function(){
+                    try {
+                        function safeJSON(o){ try { return JSON.stringify(o); } catch(e) { return String(o); } }
+
+                        var payload = {
+                            inlineAttr: document.documentElement.getAttribute('data-urms-inline-entry') || null,
+                            bundleAttr: document.documentElement.getAttribute('data-urms-bundle-entry') || null,
+                            inlineTs: (window.__URMS_INLINE_ENTRY_TS !== undefined) ? window.__URMS_INLINE_ENTRY_TS : null,
+                            bundleTs: (window.__URMS_BUNDLE_ENTRY_TS !== undefined) ? window.__URMS_BUNDLE_ENTRY_TS : null,
+                            readyFlag: !!window.__URMS_READY,
+                            tauriPresent: !!(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function'),
+                            scripts: Array.prototype.slice.call(document.scripts || []).map(function(s){ return { src: s.src||null, type: s.type||null, nomodule: !!s.noModule }; }),
+                            dashboardExists: !!document.querySelector('.dashboard-grid'),
+                            cardCount: (document.querySelectorAll ? document.querySelectorAll('.floating-card').length : 0),
+                            userAgent: (navigator && navigator.userAgent) ? navigator.userAgent : null
+                        };
+
+                        var json = safeJSON(payload);
+                        try { document.documentElement.setAttribute('data-urms-inject', json); } catch(e) {}
+
+                        // Try multiple channels to deliver diagnostics to native/test harness
+                        try {
+                            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
+                                window.__TAURI__.invoke('frontend_log', { level: 'info', msg: JSON.stringify({ type: 'webview-diagnostics', payload: payload }) });
+                            } else if (window.chrome && chrome.webview && typeof chrome.webview.postMessage === 'function') {
+                                try { chrome.webview.postMessage({ type: 'webview-diagnostics', payload: payload }); } catch(e) {}
+                            } else if (console && console.log) {
+                                try { console.log('URMS_INJECT:' + json); } catch(e) {}
+                            } else {
+                                try { document.title = 'URMS_INJECT:' + (json && json.substr ? json.substr(0, 1200) : json); } catch(e) {}
+                            }
+                        } catch(e) {}
+
+                        // Set a short ready flag to help polling clients
+                        try { window.__URMS_READY = !!window.__URMS_READY || true; } catch(e) {}
+
+                        // Also preserve the previous light-weight delayed ready event
+                        try {
+                            setTimeout(function(){ try { window.__URMS_READY = true; window.dispatchEvent(new Event('urms-ready')); } catch(e) {} }, 800);
+                        } catch(e) {}
+
+                    } catch(e) {}
+                })();"#);
+                // Attempt a direct dynamic import of the first module script to surface import errors
+                let _ = window.eval(r#"(function(){
+                    try {
+                        var scripts = Array.prototype.slice.call(document.querySelectorAll('script[type="module"][src]')).map(function(s){ return s.src || null; }).filter(Boolean);
+                        if (scripts && scripts.length) {
+                            var p = scripts[0];
+                            import(p).then(function(){
+                                try { document.documentElement.setAttribute('data-urms-import-passed', '1'); } catch(e) {}
+                                try { if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') window.__TAURI__.invoke('frontend_log', { level: 'info', msg: 'import-ok:' + p }); } catch(e) {}
+                                try { console && console.log && console.log('URMS_IMPORT_OK:' + p); } catch(e) {}
+                            }).catch(function(err){
+                                try { document.documentElement.setAttribute('data-urms-import-error', (err && (err.stack || err.message)) ? String(err.stack || err.message) : String(err)); } catch(e) {}
+                                try { if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') window.__TAURI__.invoke('frontend_log', { level: 'error', msg: 'import-failed:' + String(err && (err.stack || err.message) || err) }); } catch(e) {}
+                                try { console && console.error && console.error('URMS_IMPORT_ERR:' + String(err && (err.stack || err.message) || err)); } catch(e) {}
+                            });
+                        }
+                    } catch(e) {}
+                })();"#);
             }
         })
         .setup(|app| {

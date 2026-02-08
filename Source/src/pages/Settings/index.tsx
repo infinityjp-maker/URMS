@@ -222,8 +222,8 @@ export default function Settings() {
           </div>
           <div className="setting-item">
             <button className="setting-button" id="start-google-oauth">Google OAuth 認可</button>
-            <button className="setting-button" id="disconnect-google-oauth" style={{marginLeft:8}}>OAuth 切断</button>
-            <span id="oauth-status" style={{marginLeft:12}}>Unknown</span>
+            <button className="setting-button ml-8" id="disconnect-google-oauth">OAuth 切断</button>
+            <span id="oauth-status" className="ml-12">Unknown</span>
           </div>
         </div>
       </main>
