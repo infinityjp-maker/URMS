@@ -17,13 +17,26 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    // Apply body class for theme
-    document.body.classList.remove('dark-theme', 'light-theme');
-    if (theme === 'dark') document.body.classList.add('dark-theme');
-    else if (theme === 'light') document.body.classList.add('light-theme');
+    // Apply body classes for theme (keep backward compatibility)
+    const classesToRemove = ['dark-theme', 'light-theme', 'theme-dark', 'theme-light', 'theme-neon', 'future-theme'];
+    classesToRemove.forEach(c => document.body.classList.remove(c));
+
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+      document.body.classList.add('theme-dark');
+    } else if (theme === 'light') {
+      document.body.classList.add('light-theme');
+      document.body.classList.add('theme-light');
+    } else if (theme === 'future') {
+      // 'future' maps to neon/holographic look
+      document.body.classList.add('theme-neon');
+      document.body.classList.add('future-theme');
+      // new canonical future class
+      document.body.classList.add('theme-future');
+    }
 
     try {
-      localStorage.setItem('urms-theme', theme === 'future' ? '' : theme);
+      localStorage.setItem('urms-theme', theme);
     } catch (e) {
       // ignore
     }

@@ -20,7 +20,7 @@ export default function FloatingCard({
   headerRight,
   onClick,
 }: Props) {
-  const cls = ['floating-card', variant, size].join(' ');
+  const cls = ['floating-card', 'card', variant, size].join(' ');
   const innerRef = useRef<HTMLDivElement | null>(null);
 
   function onMove() {
@@ -60,7 +60,7 @@ export default function FloatingCard({
     >
       <div className="card-inner" ref={innerRef}>
         <div className="card-header">
-          <h3>{title}</h3>
+          <h3 className="card-title">{title}</h3>
           {headerRight && <div className="header-right">{headerRight}</div>}
         </div>
         <div className="card-body">{children}</div>

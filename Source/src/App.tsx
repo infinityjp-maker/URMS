@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import "./theme/theme-future.css";
 import SystemEventListener from "./components/SystemEventListener";
 import ToastProvider from './components/common/Toast'
 import ThemeProvider from './theme/ThemeProvider'
+import ThemeToggle from './theme/ThemeToggle'
 import Dashboard from "./pages/Dashboard";
 import Environment from "./pages/Environment";
 import ResourceDetail from "./pages/Environment/ResourceDetail";
@@ -82,7 +84,10 @@ function App() {
               <span className="app-icon">{URMS_ICON}</span>
               <span className="app-title">URMS v4.0</span>
             </div>
-            <HeaderClock />
+            <div style={{display:'flex', alignItems:'center', gap:12}}>
+              <HeaderClock />
+              <ThemeToggle />
+            </div>
           </header>
         <Routes>
         <Route path="/" element={<Dashboard />} />
