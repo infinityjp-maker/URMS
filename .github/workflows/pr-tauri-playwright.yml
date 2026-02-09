@@ -69,6 +69,7 @@ jobs:
       - name: Compare screenshots (pixel diff + structural checks)
         env:
           SKIP_RUN_SMOKE: '1'
+          COMPARE_CROP: '1'
         run: node Tests/playwright/compare_screenshots.cjs
 
       - name: Upload screenshots
