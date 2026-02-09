@@ -15,26 +15,45 @@ function fetchJson(url){
 async function getTargetWebSocket() {
   const listUrl = process.env.CDP || 'http://127.0.0.1:9222/json/list';
   const prefer = process.env.URL || null;
-  const items = await fetchJson(listUrl);
-  if (!Array.isArray(items) || items.length === 0) throw new Error('no cdp targets');
-  let found = null;
-  if (prefer) found = items.find(i => (i.url||'').includes(prefer));
-  if (!found) found = items[0];
-  return { ws: (found.webSocketDebuggerUrl || found.webSocketUrl || null), targetUrl: (found.url || null) };
+  try {
+    const items = await fetchJson(listUrl);
+    if (!Array.isArray(items) || items.length === 0) return null;
+    let found = null;
+    if (prefer) found = items.find(i => (i.url||'').includes(prefer));
+    if (!found) found = items[0];
+    return { ws: (found.webSocketDebuggerUrl || found.webSocketUrl || null), targetUrl: (found.url || null) };
+  } catch (err) {
+    // If CDP list fetch fails (ECONNREFUSED, network issue, etc.), return null
+    // so caller can fall back to launching a local Playwright Chromium.
+    return null;
+  }
 }
 
 (async () => {
   console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP });
-  try{
+    try{
     const res = await getTargetWebSocket();
     const wsUrl = res && res.ws;
-    if (!wsUrl) throw new Error('webSocketDebuggerUrl not found');
     if (res && res.targetUrl) process.env.URL = res.targetUrl;
-    // try connecting with ws url first, fall back to http endpoint
-    let browser;
-    // prefer connecting to the http CDP root (works more reliably for WebView2)
-    const httpBase = wsUrl.replace(/^ws:/, 'http:').replace(/\/devtools\/page.*$/, '');
-    browser = await chromium.connectOverCDP(httpBase);
+    let browser = null;
+    if (wsUrl) {
+      // try connecting to CDP; if it fails, we'll fall back to launching local chromium
+      try {
+        const httpBase = wsUrl.replace(/^ws:/, 'http:').replace(/\/devtools\/page.*$/, '');
+        browser = await chromium.connectOverCDP(httpBase);
+      } catch (e) {
+        console.warn('CDP connect failed, falling back to local chromium:', e && e.message || e);
+        browser = null;
+      }
+    }
+    // If we couldn't obtain a CDP-connected browser, launch a local Playwright chromium
+    if (!browser) {
+      try {
+        browser = await chromium.launch({ args: ['--no-sandbox'] });
+      } catch (e) {
+        throw new Error('could not obtain browser (CDP failed and local launch failed): ' + (e && e.message || e));
+      }
+    }
 
     const host = (process.env.URL || 'http://tauri.localhost/').replace(/https?:\/\//, '');
     const tryPages = () => {
