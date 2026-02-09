@@ -29,7 +29,13 @@ async function getTargetWebSocket(){
   try {
     let url = process.env.URL || 'http://localhost:1420/';
     const preferUrl = process.env.URL || 'http://tauri.localhost/';
-    const res = await getTargetWebSocket();
+    // attempt to discover a CDP target, but continue if unavailable (fallback to local launch)
+    let res;
+    try {
+      res = await getTargetWebSocket();
+    } catch (e) {
+      res = undefined;
+    }
     const wsUrl = res && res.ws;
     // if the CDP target exposes a URL, prefer that as our canonical URL
     if (res && res.targetUrl) url = res.targetUrl;
@@ -102,6 +108,10 @@ async function getTargetWebSocket(){
     // screenshot for visual inspection
     const screenshotPath = 'builds/screenshots/playwright-smoke.png';
     try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
+    // wait a bit for paints and fonts
+    await page.waitForTimeout(500);
+    try { await page.evaluate(() => document.fonts.ready); } catch (e) { }
+    try { await page.addStyleTag({ content: `* { transition: none !important; animation: none !important; caret-color: transparent !important; }` }); } catch (e) { }
     await page.screenshot({ path: screenshotPath, fullPage: true });
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
