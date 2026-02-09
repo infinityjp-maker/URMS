@@ -1,5 +1,7 @@
 const { chromium } = require('playwright');
+(function(){})();
 const fs = require('fs');
+const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
 (async () => {
   const url = 'http://127.0.0.1:5173/';
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
@@ -14,27 +16,8 @@ const fs = require('fs');
     await page.goto(url, { waitUntil: 'load', timeout: 30000 });
     // wait for client mount and async loads
     await page.waitForTimeout(2500);
-    // wait for fonts to be ready to avoid font-substitution diffs
-    try { await page.evaluate(() => document.fonts.ready); } catch (e) { }
-    // short extra paint wait to let rendering settle (helps avoid flicker/subpixel diffs)
-    await page.waitForTimeout(80);
-    // disable animations/transitions which cause transient differences
-    try { await page.addStyleTag({ content: `* { transition: none !important; animation: none !important; caret-color: transparent !important; }` }); } catch (e) { }
-    // normalize viewport to baseline size to minimize diff due to viewport width/height
-    try { await page.setViewportSize({ width: 800, height: 1236 }); } catch (e) { }
-
-    // check devicePixelRatio and normalize if needed by applying a compensating zoom
-    try {
-      const dpr = await page.evaluate(() => {
-        const d = window.devicePixelRatio || 1;
-        if (d !== 1) {
-          console.warn('playwright: devicePixelRatio != 1, applying zoom to normalize', d);
-          try { document.documentElement.style.zoom = String(1 / d); } catch (e) { }
-        }
-        return d;
-      });
-      if (dpr !== 1) console.warn('Normalized page DPR to 1 (applied zoom) — DPR was ' + dpr);
-    } catch (e) { }
+    // run centralized stabilization steps (viewport, fonts, DPR, disable animations)
+    try { await stabilizePage(page); } catch (e) { }
 
     const checks = await page.evaluate(() => {
       const bodyStyle = getComputedStyle(document.body);
@@ -55,7 +38,7 @@ const fs = require('fs');
     });
 
     fs.mkdirSync('builds/screenshots', { recursive: true });
-    await page.screenshot({ path: 'builds/screenshots/playwright-dev.png', clip: { x: 0, y: 0, width: 800, height: 1236 } });
+    await page.screenshot({ path: 'builds/screenshots/playwright-dev.png', clip: CLIP });
 
     const result = { url, checks, consoleEvents, pageErrors };
     console.log(JSON.stringify(result, null, 2));
