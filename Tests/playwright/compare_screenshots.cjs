@@ -4,6 +4,16 @@ const child_process = require('child_process');
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
 
+// Crop configuration to focus comparisons on the stable central UI area.
+// Enable via env var COMPARE_CROP=1 to apply cropping, otherwise full-page compare.
+const CROP = {
+  enabled: !!process.env.COMPARE_CROP,
+  x: 0,
+  y: 120,
+  width: 800,
+  height: 980
+};
+
 function runSmoke() {
   return new Promise((resolve, reject) => {
     // If the workflow already ran smoke.cjs earlier and wrote a result file, use it
@@ -109,8 +119,29 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
       const diffPath = path.join(screenshotsDir, 'diff-' + name);
       const curBuf = fs.readFileSync(curPath);
       const baseBuf = fs.readFileSync(basePath);
-      const curP = PNG.sync.read(curBuf);
-      const baseP = PNG.sync.read(baseBuf);
+      let curP = PNG.sync.read(curBuf);
+      let baseP = PNG.sync.read(baseBuf);
+
+      // Optional cropping to reduce noise from dynamic header/footer areas
+      if (CROP.enabled) {
+        const cropRect = (png, x, y, w, h) => {
+          const out = new PNG({width: w, height: h});
+          for (let row = 0; row < h; row++) {
+            const srcStart = ((y + row) * png.width + x) * 4;
+            const dstStart = row * w * 4;
+            png.data.copy(out.data, dstStart, srcStart, srcStart + w * 4);
+          }
+          return out;
+        };
+        const x = Math.max(0, CROP.x);
+        const y = Math.max(0, CROP.y);
+        const w = Math.min(CROP.width, Math.min(curP.width, baseP.width) - x);
+        const h = Math.min(CROP.height, Math.min(curP.height, baseP.height) - y);
+        if (w > 0 && h > 0) {
+          curP = cropRect(curP, x, y, w, h);
+          baseP = cropRect(baseP, x, y, w, h);
+        }
+      }
       // If dimensions differ but widths match, crop the taller image to the shorter height
       if (curP.width === baseP.width && curP.height !== baseP.height) {
         const targetH = Math.min(curP.height, baseP.height);
