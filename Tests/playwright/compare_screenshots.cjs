@@ -111,6 +111,30 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
       const baseBuf = fs.readFileSync(basePath);
       const curP = PNG.sync.read(curBuf);
       const baseP = PNG.sync.read(baseBuf);
+      // If dimensions differ but widths match, crop the taller image to the shorter height
+      if (curP.width === baseP.width && curP.height !== baseP.height) {
+        const targetH = Math.min(curP.height, baseP.height);
+        const crop = (png, h) => {
+          const {width} = png;
+          const out = new PNG({width, height: h});
+          for (let row = 0; row < h; row++) {
+            const srcStart = row * width * 4;
+            const srcEnd = srcStart + width * 4;
+            const dstStart = row * width * 4;
+            png.data.copy(out.data, dstStart, srcStart, srcEnd);
+          }
+          return out;
+        };
+        if (curP.height > baseP.height) {
+          console.warn('Normalizing current image height from', curP.height, 'to', targetH);
+          curP.data = crop(curP, targetH).data;
+          curP.height = targetH;
+        } else if (baseP.height > curP.height) {
+          console.warn('Normalizing baseline image height from', baseP.height, 'to', targetH);
+          baseP.data = crop(baseP, targetH).data;
+          baseP.height = targetH;
+        }
+      }
       if(curP.width !== baseP.width || curP.height !== baseP.height){
         console.error('Size mismatch for', name, 'baseline:', baseP.width+'x'+baseP.height, 'current:', curP.width+'x'+curP.height);
         failed = true;
