@@ -119,14 +119,14 @@ async function getTargetWebSocket(){
           fontsStatus: (window.document && document.fonts) ? document.fonts.status : 'no-font-api'
         };
       });
-      console.log('PAGE_METRICS', JSON.stringify(pageMetrics));
-    } catch (e) { console.log('PAGE_METRICS_ERROR', e && e.message); }
+      console.error('PAGE_METRICS', JSON.stringify(pageMetrics));
+    } catch (e) { console.error('PAGE_METRICS_ERROR', e && e.message); }
 
     // run centralized stabilization steps (viewport, fonts, DPR, disable animations)
     try { await stabilizePage(page); } catch (e) { }
 
     // log the clip info we will use
-    try { console.log('CLIP', JSON.stringify(CLIP)); } catch (e) {}
+    try { console.error('CLIP', JSON.stringify(CLIP)); } catch (e) {}
 
     // take screenshot as buffer so we can inspect PNG header for size
     let buf;
@@ -142,12 +142,12 @@ async function getTargetWebSocket(){
       if (buf && buf.length > 24 && buf.slice(0,8).toString('hex') === '89504e470d0a1a0a'){
         const width = buf.readUInt32BE(16);
         const height = buf.readUInt32BE(20);
-        console.log('SCREENSHOT_PNG_SIZE', width, height);
+        console.error('SCREENSHOT_PNG_SIZE', width, height);
       } else {
-        console.log('SCREENSHOT_PNG_SIZE', 'not-png-or-too-small');
+        console.error('SCREENSHOT_PNG_SIZE', 'not-png-or-too-small');
       }
-      try { const stat = fs.statSync(screenshotPath); console.log('SCREENSHOT_FILE_BYTES', stat.size); } catch(e){}
-    } catch (e) { console.log('PNG_PROBE_ERROR', e && e.message); }
+      try { const stat = fs.statSync(screenshotPath); console.error('SCREENSHOT_FILE_BYTES', stat.size); } catch(e){}
+    } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
     console.log(JSON.stringify(result, null, 2));
