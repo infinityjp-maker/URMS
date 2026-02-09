@@ -4,9 +4,22 @@ on:
   push:
     branches: [ main, feature/** ]
   pull_request:
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
+  validate-workflow:
+    name: Validate workflow (smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Sanity: print repo root files
+        run: |
+          echo "=== WORKFLOW VALIDATION ==="
+          uname -a || true
+          echo "List top-level files:"; ls -la || true
+          echo "List workflow files:"; ls -la .github/workflows || true
+
   smoke-compare:
     runs-on: ubuntu-latest
     timeout-minutes: 20
