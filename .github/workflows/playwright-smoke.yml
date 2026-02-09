@@ -42,7 +42,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
-          path: builds/screenshots/**
+          path: |
+            builds/screenshots/**
+            dist/index.html
+      - name: List screenshot files
+        run: |
+          echo "=== builds/screenshots ==="
+          ls -la builds/screenshots || true
+          echo "=== dist/index.html ==="
+          ls -la dist/index.html || true
 name: Playwright Smoke
 
 on:

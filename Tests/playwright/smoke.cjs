@@ -109,9 +109,45 @@ async function getTargetWebSocket(){
     // screenshot for visual inspection
     const screenshotPath = 'builds/screenshots/playwright-smoke.png';
     try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
+
+    // gather some page metrics for debugging: scroll/client heights and font loading state
+    try {
+      const pageMetrics = await page.evaluate(() => {
+        return {
+          scrollHeight: document.body ? document.body.scrollHeight : null,
+          clientHeight: document.documentElement ? document.documentElement.clientHeight : (document.body ? document.body.clientHeight : null),
+          fontsStatus: (window.document && document.fonts) ? document.fonts.status : 'no-font-api'
+        };
+      });
+      console.log('PAGE_METRICS', JSON.stringify(pageMetrics));
+    } catch (e) { console.log('PAGE_METRICS_ERROR', e && e.message); }
+
     // run centralized stabilization steps (viewport, fonts, DPR, disable animations)
     try { await stabilizePage(page); } catch (e) { }
-    await page.screenshot({ path: screenshotPath, clip: CLIP });
+
+    // log the clip info we will use
+    try { console.log('CLIP', JSON.stringify(CLIP)); } catch (e) {}
+
+    // take screenshot as buffer so we can inspect PNG header for size
+    let buf;
+    try {
+      buf = await page.screenshot({ clip: CLIP });
+      fs.writeFileSync(screenshotPath, buf);
+    } catch (e) {
+      console.error('SCREENSHOT_ERROR', e && e.message);
+    }
+
+    // quick PNG size probe (reads width/height from IHDR)
+    try {
+      if (buf && buf.length > 24 && buf.slice(0,8).toString('hex') === '89504e470d0a1a0a'){
+        const width = buf.readUInt32BE(16);
+        const height = buf.readUInt32BE(20);
+        console.log('SCREENSHOT_PNG_SIZE', width, height);
+      } else {
+        console.log('SCREENSHOT_PNG_SIZE', 'not-png-or-too-small');
+      }
+      try { const stat = fs.statSync(screenshotPath); console.log('SCREENSHOT_FILE_BYTES', stat.size); } catch(e){}
+    } catch (e) { console.log('PNG_PROBE_ERROR', e && e.message); }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
     console.log(JSON.stringify(result, null, 2));
