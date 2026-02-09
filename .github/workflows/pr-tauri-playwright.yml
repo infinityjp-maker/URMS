@@ -57,11 +57,11 @@ jobs:
         run: |
           $env:URL='http://tauri.localhost/'; node Tests/playwright/apply_future_mode.cjs
 
-      - name: Run smoke capture (smoke.cjs) and save result
-        shell: powershell
+      - name: Run smoke capture (exec wrapper) and save result
+        shell: cmd
         run: |
-          New-Item -ItemType Directory -Force -Path builds/screenshots | Out-Null
-          $env:URL='http://tauri.localhost/'; node Tests/playwright/smoke.cjs > builds/screenshots/smoke-result.json
+          mkdir builds\screenshots 2>nul
+          node Tests/playwright/exec_smoke_save.cjs
 
       - name: Compare screenshots (pixel diff + structural checks)
         env:
