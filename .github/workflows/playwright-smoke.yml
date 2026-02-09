@@ -45,6 +45,8 @@ jobs:
           head -n 200 dist/index.html || true
 
       - name: Compare screenshots
+        env:
+          SKIP_RUN_SMOKE: '1'
         run: npm run smoke:diff
 
       - name: Upload screenshots and diffs
