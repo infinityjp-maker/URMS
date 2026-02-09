@@ -1,5 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
+const { CLIP } = require('./stability_helpers.cjs');
 
 (async () => {
   const url = process.env.URL || 'http://localhost:1420/';
@@ -29,7 +30,11 @@ const fs = require('fs');
     // screenshot for visual inspection
     const screenshotPath = 'builds/screenshots/playwright-smoke.png';
     try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
-    await page.screenshot({ path: screenshotPath, fullPage: true });
+    if (process.env.ENFORCE_CLIP === '1' && CLIP) {
+      await page.screenshot({ path: screenshotPath, clip: CLIP });
+    } else {
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+    }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
     console.log(JSON.stringify(result, null, 2));

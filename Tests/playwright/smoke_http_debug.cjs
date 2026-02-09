@@ -21,7 +21,12 @@ const fs = require('fs');
     });
     const result = { url, gridInfo, consoleEvents, pageErrors };
     fs.mkdirSync('builds/screenshots', { recursive: true });
-    await page.screenshot({ path: 'builds/screenshots/playwright-smoke-http-debug.png', fullPage: true });
+    const dbgShot = 'builds/screenshots/playwright-smoke-http-debug.png';
+    if (process.env.ENFORCE_CLIP === '1' && require('./stability_helpers.cjs').CLIP) {
+      await page.screenshot({ path: dbgShot, clip: require('./stability_helpers.cjs').CLIP });
+    } else {
+      await page.screenshot({ path: dbgShot, fullPage: true });
+    }
     console.log(JSON.stringify(result, null, 2));
     await browser.close();
     process.exit(0);

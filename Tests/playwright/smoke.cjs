@@ -168,13 +168,24 @@ async function getTargetWebSocket(){
       fs.writeFileSync(screenshotPath, buf);
     } catch (e) {
       console.error('SCREENSHOT_CLIP_ERROR', e && e.message);
-      // fallback: try fullPage and then rely on CLIP being applied if Playwright supports it
-      try {
-        buf = await page.screenshot({ fullPage: true });
-        fs.writeFileSync(screenshotPath, buf);
-        console.error('SCREENSHOT_FALLBACK_FULLPAGE');
-      } catch (e2) {
-        console.error('SCREENSHOT_ERROR', e2 && e2.message);
+      // If ENFORCE_CLIP is set, re-attempt using clip (some playwright builds may fail first time)
+      if (process.env.ENFORCE_CLIP === '1' && CLIP) {
+        try {
+          buf = await page.screenshot({ clip: CLIP });
+          fs.writeFileSync(screenshotPath, buf);
+          console.error('SCREENSHOT_FALLBACK_CLIP');
+        } catch (e2) {
+          console.error('SCREENSHOT_CLIP_FALLBACK_ERROR', e2 && e2.message);
+        }
+      } else {
+        // fallback: try fullPage then
+        try {
+          buf = await page.screenshot({ fullPage: true });
+          fs.writeFileSync(screenshotPath, buf);
+          console.error('SCREENSHOT_FALLBACK_FULLPAGE');
+        } catch (e2) {
+          console.error('SCREENSHOT_ERROR', e2 && e2.message);
+        }
       }
     }
 

@@ -1,19 +1,8 @@
 {
-  "url": "http://localhost:1420/",
-  "gridInfo": {
-    "exists": true,
-    "display": "grid"
-  },
+  "url": "http://localhost:5173/",
+  "gridInfo": { "exists": true, "display": "grid" },
   "cardCount": 7,
-  "headings": [
-    "システム",
-    "ネットワーク",
-    "ログ",
-    "セキュリティ",
-    "サブシステム",
-    "設定",
-    "Weather + Calendar"
-  ],
+  "headings": ["システム", "ネットワーク", "ログ", "セキュリティ", "サブシステム", "設定", "Weather + Calendar"],
   "titleColor": "rgba(255, 255, 255, 0.95)",
   "screenshot": "builds/screenshots/playwright-smoke.png",
   "consoleMessages": []
