@@ -1,4 +1,5 @@
 const { chromium } = require('playwright');
+const { CLIP } = require('./stability_helpers.cjs');
 const http = require('http');
 function fetchJson(url){
   return new Promise((resolve,reject)=>{
@@ -113,14 +114,30 @@ async function getTargetWebSocket() {
 
     const outPath = 'builds/screenshots/playwright-future-mode.png';
     try { require('fs').mkdirSync('builds/screenshots', { recursive: true }); } catch(e){}
-    // ensure we capture the full document height in contexts where fullPage may be constrained
+    // enforce fixed viewport and document height so CI captures are stable
     try{
-      const scrollHeight = await page.evaluate(() => Math.max(document.documentElement.scrollHeight || 0, document.body.scrollHeight || 0));
-      if (scrollHeight && typeof page.setViewportSize === 'function'){
-        await page.setViewportSize({ width: 800, height: Math.max(600, scrollHeight) });
+      if (typeof page.setViewportSize === 'function'){
+        await page.setViewportSize(VIEWPORT || { width: 800, height: 1236 });
       }
+      try {
+        await page.evaluate((w,h) => {
+          try {
+            document.documentElement.style.width = w + 'px';
+            document.documentElement.style.height = h + 'px';
+            document.body.style.width = w + 'px';
+            document.body.style.height = h + 'px';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+          } catch(e){}
+        }, VIEWPORT.width, VIEWPORT.height);
+      } catch (e) {}
     }catch(e){}
-    await page.screenshot({ path: outPath, fullPage: true });
+    // use explicit clip to guarantee output dimensions
+    try {
+      await page.screenshot({ path: outPath, clip: CLIP });
+    } catch (e) {
+      await page.screenshot({ path: outPath, fullPage: false });
+    }
     console.log(JSON.stringify({ url: page.url(), applied: 'theme-future', screenshot: outPath }));
     try{ await browser.close(); }catch(e){}
     process.exit(0);

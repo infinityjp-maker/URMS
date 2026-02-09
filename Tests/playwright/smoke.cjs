@@ -126,16 +126,56 @@ async function getTargetWebSocket(){
     // run centralized stabilization steps (viewport, fonts, DPR, disable animations)
     try { await stabilizePage(page); } catch (e) { }
 
+    // Optional: force platform font if requested (helpful for CI font-diff experiments)
+    if (process.env.FORCE_SYSTEM_UI === '1'){
+      try {
+        await page.evaluate(() => {
+          if (document && document.body && document.body.classList) document.body.classList.add('debug-force-system-ui');
+        });
+        console.error('FORCE_SYSTEM_UI: applied debug-force-system-ui class to body');
+      } catch(e) { console.error('FORCE_SYSTEM_UI_ERROR', e && e.message); }
+    }
+
     // log the clip info we will use
     try { console.error('CLIP', JSON.stringify(CLIP)); } catch (e) {}
+
+    // Enforce viewport and fixed document height to avoid variable capture heights
+    try {
+      if (typeof page.setViewportSize === 'function') {
+        try { await page.setViewportSize(VIEWPORT); console.error('VIEWPORT_SET', JSON.stringify(VIEWPORT)); } catch (e) {}
+      }
+      // force html/body sizes and hide overflow so clip is stable
+      try {
+        await page.evaluate((w,h) => {
+          try {
+            document.documentElement.style.width = w + 'px';
+            document.documentElement.style.height = h + 'px';
+            document.body.style.width = w + 'px';
+            document.body.style.height = h + 'px';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+          } catch(e){}
+        }, VIEWPORT.width, VIEWPORT.height);
+        console.error('FORCED_DOC_SIZE', VIEWPORT.width, VIEWPORT.height);
+      } catch (e) {}
+    } catch (e) { console.error('ENFORCE_VIEWPORT_ERROR', e && e.message); }
 
     // take screenshot as buffer so we can inspect PNG header for size
     let buf;
     try {
+      // primary: use explicit clip
       buf = await page.screenshot({ clip: CLIP });
       fs.writeFileSync(screenshotPath, buf);
     } catch (e) {
-      console.error('SCREENSHOT_ERROR', e && e.message);
+      console.error('SCREENSHOT_CLIP_ERROR', e && e.message);
+      // fallback: try fullPage and then rely on CLIP being applied if Playwright supports it
+      try {
+        buf = await page.screenshot({ fullPage: true });
+        fs.writeFileSync(screenshotPath, buf);
+        console.error('SCREENSHOT_FALLBACK_FULLPAGE');
+      } catch (e2) {
+        console.error('SCREENSHOT_ERROR', e2 && e2.message);
+      }
     }
 
     // quick PNG size probe (reads width/height from IHDR)
