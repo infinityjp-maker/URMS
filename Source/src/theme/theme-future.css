@@ -3,7 +3,7 @@
    and text color tokens. These rules are guarded by `body.theme-future` so importing
    globally is safe — they only apply when the theme class is present. */
 
-@import url('/src/theme/local-fonts.css');
+@import url('./local-fonts.css');
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
 
 body.theme-future {
