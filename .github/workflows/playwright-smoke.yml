@@ -33,10 +33,13 @@ jobs:
           npx http-server dist -p 1420 -c-1 &
           npx wait-on http://localhost:1420
 
-      - name: Run smoke capture (CI)
+      - name: Run smoke capture (CI) and save stdout
         env:
           FORCE_SYSTEM_UI: '1'
-        run: npm run smoke:ci
+        run: |
+          mkdir -p builds/screenshots
+          # Capture stdout only to smoke-result.json so debug logs on stderr don't corrupt JSON
+          node Tests/playwright/smoke.cjs > builds/screenshots/smoke-result.json
 
       - name: Debug: list screenshot metadata and dist head
         run: |
@@ -96,11 +99,13 @@ jobs:
           npx wait-on http://localhost:1420
         shell: bash
 
-      - name: Run Playwright smoke
+      - name: Run Playwright smoke and save stdout
         env:
           URL: http://localhost:1420
           ENFORCE_CLIP: '1'
-        run: npm run smoke:ci
+        run: |
+          mkdir -p builds/screenshots
+          node Tests/playwright/smoke.cjs > builds/screenshots/smoke-result.json
 
       - name: Upload artifacts
         if: ${{ always() }}
