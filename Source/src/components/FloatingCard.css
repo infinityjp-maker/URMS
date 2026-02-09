@@ -166,7 +166,7 @@
   box-shadow: 0 28px 100px rgba(0,0,0,0.78);
 }
 .dashboard-grid.neon-grid > .floating-card.lg::before{
-  filter: blur(26px);
+  filter: blur(28px);
   opacity: 1;
 }
 
