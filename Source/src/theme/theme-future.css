@@ -25,7 +25,7 @@ html[data-theme="future"], body.theme-future {
 html[data-theme="future"] .card, body.theme-future .card {
   background: linear-gradient(180deg, var(--color-surface-start), var(--color-surface-end));
   border: 1px solid rgba(255,255,255,0.03);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--card-shadow-main);
   backdrop-filter: blur(var(--backdrop-blur));
   -webkit-backdrop-filter: blur(var(--backdrop-blur));
   position: relative;
@@ -44,7 +44,7 @@ html[data-theme="future"] .card::before, body.theme-future .card::before {
   z-index: 0;
   border-radius: inherit;
   background: linear-gradient(135deg,
-              rgba(var(--glow-color-rgb), calc(var(--glow-strength) * 0.8) ),
+              var(--card-glow),
               rgba(102,102,255, calc(var(--glow-strength) * 0.35) ));
   filter: blur(18px);
   pointer-events: none;
