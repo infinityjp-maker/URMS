@@ -82,3 +82,21 @@ html[data-theme="future"] .label, body.theme-future .label { color: inherit; }
 @media (min-width: 1100px) {
   html[data-theme="future"] .card-title, body.theme-future .card-title { font-size: 1.12rem; }
 }
+
+/* Focus styles for accessibility (apply to common interactive controls) */
+html[data-theme="future"] button:focus-visible,
+html[data-theme="future"] a:focus-visible,
+html[data-theme="future"] [role="button"]:focus-visible,
+html[data-theme="future"] input:focus-visible,
+html[data-theme="future"] select:focus-visible,
+html[data-theme="future"] textarea:focus-visible,
+body.theme-future button:focus-visible,
+body.theme-future a:focus-visible,
+body.theme-future [role="button"]:focus-visible,
+body.theme-future input:focus-visible,
+body.theme-future select:focus-visible,
+body.theme-future textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+  border-radius: var(--radius-sm);
+}
