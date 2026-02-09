@@ -46,3 +46,51 @@ jobs:
           path: |
             builds/**
             dist/index.html
+name: Playwright Smoke
+
+on:
+  push:
+    branches: [ "main", "master", "fix/*" ]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Start static server
+        run: |
+          npx http-server ./dist -p 1420 -c-1 &
+          # wait for server to be available
+          npx wait-on http://localhost:1420
+        shell: bash
+
+      - name: Run Playwright smoke and save stdout
+        env:
+          URL: http://localhost:1420
+          ENFORCE_CLIP: '1'
+        run: |
+          mkdir -p builds/screenshots
+          node Tests/playwright/smoke.cjs > builds/screenshots/smoke-result.json
+
+      - name: Upload artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            builds/**
+            dist/index.html
