@@ -399,6 +399,13 @@ header {
 /* muted text */
 .muted-text { opacity: 0.85; color: var(--text-primary); }
 
+/* DEBUG: Temporary font override for CI/font-diff troubleshooting.
+   Apply `system-ui` to force platform-default font and help determine
+   whether visual diffs are caused by font rendering differences. */
+body.debug-force-system-ui {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
 /* splash dot helper classes */
 .dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--accent-1); margin:0 6px; opacity:0.9; transform:translateY(0); }
 .dot--i-0 { --i:0; }
