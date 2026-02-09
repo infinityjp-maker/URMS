@@ -25,6 +25,9 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Bundle fonts for deterministic rendering
+        run: node Tests/playwright/fetch_fonts.cjs
+
       - name: Setup Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
