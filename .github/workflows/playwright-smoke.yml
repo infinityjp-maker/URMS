@@ -12,6 +12,7 @@ jobs:
     timeout-minutes: 20
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
+      ENFORCE_CLIP: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -98,6 +99,7 @@ jobs:
       - name: Run Playwright smoke
         env:
           URL: http://localhost:1420
+          ENFORCE_CLIP: '1'
         run: npm run smoke:ci
 
       - name: Upload artifacts
