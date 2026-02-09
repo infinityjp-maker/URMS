@@ -37,7 +37,10 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --elevation-1: 0 1px 3px rgba(0,0,0,0.25);
-  --card-shadow: 0 28px 60px rgba(0,0,0,0.7), 0 0 30px rgba(var(--glow-color-rgb), var(--glow-strength));
+  /* Card shadow split into main shadow + neon glow for finer control */
+  --card-shadow-main: 0 18px 60px rgba(0,0,0,0.6);
+  --card-glow: rgba(var(--glow-color-rgb), calc(var(--glow-strength) * 1));
+  --card-shadow: var(--card-shadow-main);
 
   /* Backdrop / glass */
   --backdrop-blur: 12px;
