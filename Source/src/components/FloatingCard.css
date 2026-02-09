@@ -161,6 +161,15 @@
 .floating-card.md{ padding:calc(var(--space-2,10px) + 4px); min-height:110px; }
 .floating-card.lg{ padding:var(--space-3,24px); min-height:240px; font-size: 15px; }
 
+/* Emphasize large (central) panels subtly: slightly stronger shadow and glow */
+.dashboard-grid.neon-grid > .floating-card.lg {
+  box-shadow: 0 28px 100px rgba(0,0,0,0.78);
+}
+.dashboard-grid.neon-grid > .floating-card.lg::before{
+  filter: blur(26px);
+  opacity: 1;
+}
+
 /* sparkline */
 .sparkline{ display:block; width:100%; height:34px; margin-top:8px; }
 
