@@ -1,3 +1,46 @@
+name: Playwright Smoke Compare
+
+on:
+  push:
+    branches: [ main, feature/** ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke-compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Serve dist (background)
+        run: npx http-server dist -p 1420 --silent & sleep 2
+
+      - name: Run smoke capture (CI)
+        run: npm run smoke:ci
+
+      - name: Compare screenshots
+        run: npm run smoke:diff
+
+      - name: Upload screenshots and diffs
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: builds/screenshots/**
 name: Playwright Smoke
 
 on:
