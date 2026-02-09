@@ -6,6 +6,16 @@ const pixelmatch = require('pixelmatch');
 
 function runSmoke() {
   return new Promise((resolve, reject) => {
+    // If the workflow already ran smoke.cjs earlier and wrote a result file, use it
+    if (process.env.SKIP_RUN_SMOKE === '1') {
+      const path = 'builds/screenshots/smoke-result.json';
+      try {
+        const j = JSON.parse(fs.readFileSync(path, 'utf8'));
+        return resolve(j);
+      } catch (e) {
+        return reject(new Error('failed to read smoke-result.json: ' + e.message));
+      }
+    }
     const env = Object.assign({}, process.env);
     const cp = child_process.spawn('node', ['Tests/playwright/smoke.cjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
     let out = '';
