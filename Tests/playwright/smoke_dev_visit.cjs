@@ -55,7 +55,7 @@ const fs = require('fs');
     });
 
     fs.mkdirSync('builds/screenshots', { recursive: true });
-    await page.screenshot({ path: 'builds/screenshots/playwright-dev.png', fullPage: true });
+    await page.screenshot({ path: 'builds/screenshots/playwright-dev.png', clip: { x: 0, y: 0, width: 800, height: 1236 } });
 
     const result = { url, checks, consoleEvents, pageErrors };
     console.log(JSON.stringify(result, null, 2));
