@@ -71,7 +71,7 @@ async function getTargetWebSocket() {
       page = pages.find(p => (p.url()||'').includes(host) || (p.url()||'').includes('tauri.localhost')) || pages[0];
     }
 
-    const VIEWPORT = { width: 800, height: 1236 };
+    const VIEWPORT = { width: CLIP.width || 800, height: CLIP.height || 1257 };
     const DSF = 1;
     let context = (browser.contexts() && browser.contexts()[0]) || null;
     if (!page) {

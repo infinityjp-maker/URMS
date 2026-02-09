@@ -1,7 +1,8 @@
-const CLIP = { x: 0, y: 0, width: 800, height: 1236 };
+// Use the tallest baseline height to keep all CI screenshots consistent
+const CLIP = { x: 0, y: 0, width: 800, height: 1257 };
 
 async function stabilizePage(page) {
-  try { await page.setViewportSize({ width: 800, height: 1236 }); } catch (e) { }
+  try { await page.setViewportSize({ width: CLIP.width, height: CLIP.height }); } catch (e) { }
   // ensure fonts loaded
   try { await page.evaluate(() => document.fonts.ready); } catch (e) { }
   // short extra paint wait

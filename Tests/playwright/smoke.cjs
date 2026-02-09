@@ -61,7 +61,7 @@ async function getTargetWebSocket(){
     let pages = tryPages();
     let page = pages.find(p => (p.url()||'').includes(host) || (p.url()||'').includes('tauri.localhost')) || pages[0];
     let context = (browser.contexts() && browser.contexts()[0]) || null;
-    const VIEWPORT = { width: 800, height: 1236 };
+    const VIEWPORT = { width: CLIP.width, height: CLIP.height };
     const DSF = 1;
     if (!page){
       // Prefer creating a fresh context with fixed viewport when possible (even if browser has existing contexts)
