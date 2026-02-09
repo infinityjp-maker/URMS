@@ -33,17 +33,34 @@ async function main(){
   const urls = Array.from(css.matchAll(/https:\/\/fonts\.gstatic\.com\/[^)"']+/g)).map(m=>m[0]);
   const fontsDir = path.join('Source','src','assets','fonts');
   fs.mkdirSync(fontsDir, { recursive: true });
-  const localPaths = {};
+  // We'll embed fonts as data URIs to avoid runtime fetch/packaging issues
   for(const u of urls){
     const fname = path.basename(u.split('?')[0]);
     const dest = path.join(fontsDir, fname);
     console.log('Downloading', u, '->', dest);
-    await download(u, dest);
-    localPaths[u] = '/src/assets/fonts/' + fname;
-  }
-  // replace urls in css with local paths
-  for(const [remote, local] of Object.entries(localPaths)){
-    css = css.split(remote).join(local);
+    // download into memory first
+    const buf = await (async ()=>{
+      return new Promise((resolve,reject)=>{
+        https.get(u, res => {
+          if (res.statusCode !== 200) return reject(new Error('download failed ' + res.statusCode));
+          const chunks = [];
+          res.on('data', c=>chunks.push(c));
+          res.on('end', ()=>resolve(Buffer.concat(chunks)));
+        }).on('error', err => reject(err));
+      });
+    })();
+    // write file for inspection
+    fs.writeFileSync(dest, buf);
+    // detect mime by magic bytes
+    const magic = buf.slice(0,4).toString('ascii');
+    let mime = 'application/octet-stream';
+    if (magic === '\u0000\u0001\u0000\u0000') mime = 'font/ttf';
+    else if (magic === 'wOFF') mime = 'font/woff';
+    else if (magic === 'wOF2') mime = 'font/woff2';
+    // create data uri
+    const b64 = buf.toString('base64');
+    const dataUri = `data:${mime};base64,${b64}`;
+    css = css.split(u).join(dataUri);
   }
   const outCssPath = path.join('Source','src','theme','local-fonts.css');
   fs.writeFileSync(outCssPath, css, 'utf8');
