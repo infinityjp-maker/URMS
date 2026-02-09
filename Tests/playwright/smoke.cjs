@@ -111,7 +111,21 @@ async function getTargetWebSocket(){
     // wait a bit for paints and fonts
     await page.waitForTimeout(500);
     try { await page.evaluate(() => document.fonts.ready); } catch (e) { }
+    // short extra paint wait to let rendering settle (helps avoid flicker/subpixel diffs)
+    await page.waitForTimeout(80);
     try { await page.addStyleTag({ content: `* { transition: none !important; animation: none !important; caret-color: transparent !important; }` }); } catch (e) { }
+    // check devicePixelRatio and normalize if needed by applying a compensating zoom
+    try {
+      const dpr = await page.evaluate(() => {
+        const d = window.devicePixelRatio || 1;
+        if (d !== 1) {
+          console.warn('playwright: devicePixelRatio != 1, applying zoom to normalize', d);
+          try { document.documentElement.style.zoom = String(1 / d); } catch (e) { }
+        }
+        return d;
+      });
+      if (dpr !== 1) console.warn('Normalized page DPR to 1 (applied zoom) — DPR was ' + dpr);
+    } catch (e) { }
     await page.screenshot({ path: screenshotPath, fullPage: true });
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
