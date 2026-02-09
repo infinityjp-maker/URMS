@@ -16,10 +16,25 @@ const fs = require('fs');
     await page.waitForTimeout(2500);
     // wait for fonts to be ready to avoid font-substitution diffs
     try { await page.evaluate(() => document.fonts.ready); } catch (e) { }
+    // short extra paint wait to let rendering settle (helps avoid flicker/subpixel diffs)
+    await page.waitForTimeout(80);
     // disable animations/transitions which cause transient differences
     try { await page.addStyleTag({ content: `* { transition: none !important; animation: none !important; caret-color: transparent !important; }` }); } catch (e) { }
     // normalize viewport to baseline size to minimize diff due to viewport width/height
     try { await page.setViewportSize({ width: 800, height: 1236 }); } catch (e) { }
+
+    // check devicePixelRatio and normalize if needed by applying a compensating zoom
+    try {
+      const dpr = await page.evaluate(() => {
+        const d = window.devicePixelRatio || 1;
+        if (d !== 1) {
+          console.warn('playwright: devicePixelRatio != 1, applying zoom to normalize', d);
+          try { document.documentElement.style.zoom = String(1 / d); } catch (e) { }
+        }
+        return d;
+      });
+      if (dpr !== 1) console.warn('Normalized page DPR to 1 (applied zoom) — DPR was ' + dpr);
+    } catch (e) { }
 
     const checks = await page.evaluate(() => {
       const bodyStyle = getComputedStyle(document.body);
