@@ -16,23 +16,30 @@ function fetchJson(url){
 
 async function getTargetWebSocket(){
   const listUrl = process.env.CDP || 'http://127.0.0.1:9222/json/list';
-  const prefer = process.env.URL || 'http://tauri.localhost/';
+  const prefer = process.env.URL || null;
   const items = await fetchJson(listUrl);
   if (!Array.isArray(items) || items.length === 0) throw new Error('no cdp targets');
-  let found = items.find(i => (i.url||'').includes(prefer)) || items[0];
-  return found.webSocketDebuggerUrl || found.webSocketUrl || null;
+  let found = null;
+  if (prefer) found = items.find(i => (i.url||'').includes(prefer));
+  if (!found) found = items[0];
+  return { ws: (found.webSocketDebuggerUrl || found.webSocketUrl || null), targetUrl: (found.url || null) };
 }
 
 (async () => {
   try {
     let url = process.env.URL || 'http://localhost:1420/';
-    const wsUrl = await getTargetWebSocket();
+    const preferUrl = process.env.URL || 'http://tauri.localhost/';
+    const res = await getTargetWebSocket();
+    const wsUrl = res && res.ws;
+    // if the CDP target exposes a URL, prefer that as our canonical URL
+    if (res && res.targetUrl) url = res.targetUrl;
     let browser;
-      // connect to http CDP root for WebView2
-      if (wsUrl) {
-        const httpBase = wsUrl.replace(/^ws:/,'http:').replace(/\/devtools\/page.*$/, '');
-        try { browser = await chromium.connectOverCDP(httpBase); } catch(e) { browser = undefined; }
-      }
+    let connectedOverCDP = false;
+    // connect to http CDP root for WebView2
+    if (wsUrl) {
+      const httpBase = wsUrl.replace(/^ws:/,'http:').replace(/\/devtools\/page.*$/, '');
+      try { browser = await chromium.connectOverCDP(httpBase); connectedOverCDP = true; } catch(e) { browser = undefined; }
+    }
     if (!browser) browser = await chromium.launch({ args: ['--no-sandbox'] });
 
     // find or create a page in the connected browser that matches our URL
@@ -47,17 +54,28 @@ async function getTargetWebSocket(){
     let pages = tryPages();
     let page = pages.find(p => (p.url()||'').includes(host) || (p.url()||'').includes('tauri.localhost')) || pages[0];
     let context = (browser.contexts() && browser.contexts()[0]) || null;
+    const VIEWPORT = { width: 800, height: 1236 };
+    const DSF = 1;
     if (!page){
-      if (!context && typeof browser.newContext === 'function') context = await browser.newContext();
+      // Prefer creating a fresh context with fixed viewport when possible (even if browser has existing contexts)
+      if (typeof browser.newContext === 'function') context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
       if (context){
         pages = (typeof context.pages === 'function') ? context.pages() : [];
-        page = pages[0] || (typeof context.newPage === 'function' ? await context.newPage() : null);
+        page = pages[0] || null;
       }
     }
+
+    // If we have a CDP-connected browser and no existing page, create one in that browser and navigate
+    if (!page && connectedOverCDP && context && typeof context.newPage === 'function'){
+      page = await context.newPage();
+      try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e) {}
+    }
+
     if (!page){
       // fallback: create a local browser page and navigate
       const local = await chromium.launch({ args: ['--no-sandbox'] });
-      page = await local.newPage();
+      const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
+      page = await localCtx.newPage();
       await page.goto(url, { waitUntil: 'networkidle' , timeout: 30000});
     }
 

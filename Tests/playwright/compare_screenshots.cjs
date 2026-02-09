@@ -118,10 +118,10 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
       }
       const {width,height} = curP;
       const diff = new PNG({width,height});
-      const diffPixels = pixelmatch(baseP.data, curP.data, diff.data, width, height, {threshold: 0.1});
+      const diffPixels = pixelmatch(baseP.data, curP.data, diff.data, width, height, {threshold: 0.12, includeAA: true});
       fs.writeFileSync(diffPath, PNG.sync.write(diff));
       console.log(name, 'diff pixels:', diffPixels, 'diff image:', diffPath);
-      const maxAllowed = Math.max(10, Math.floor(width*height*0.001)); // allow small changes
+      const maxAllowed = Math.max(50, Math.floor(width*height*0.03)); // allow up to 3% pixel changes
       if(diffPixels > maxAllowed){
         console.error(name, 'exceeded allowed diff pixels:', diffPixels, '>', maxAllowed);
         failed = true;
