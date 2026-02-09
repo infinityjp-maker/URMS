@@ -20,7 +20,31 @@ function runSmoke() {
     if (process.env.SKIP_RUN_SMOKE === '1') {
       const path = 'builds/screenshots/smoke-result.json';
       try {
-        const j = JSON.parse(fs.readFileSync(path, 'utf8'));
+        let raw = fs.readFileSync(path, 'utf8');
+        // Robust JSON extraction:
+        // - Try to parse whole file first.
+        // - If that fails, scan for JSON object starts ('{') and attempt parsing
+        //   from the last '{' backwards to find the most recent valid JSON blob.
+        const tryParse = (s) => { try { return JSON.parse(s); } catch (e) { return null } };
+        let j = tryParse(raw);
+        if (!j) {
+          const starts = [];
+          for (let i = 0; i < raw.length; i++) if (raw[i] === '{') starts.push(i);
+          for (let k = starts.length - 1; k >= 0; k--) {
+            const sub = raw.slice(starts[k]);
+            // try full tail
+            j = tryParse(sub);
+            if (j) break;
+            // try trimming to last closing brace in the tail
+            const lastR = sub.lastIndexOf('}');
+            if (lastR !== -1) {
+              const sub2 = sub.slice(0, lastR + 1);
+              j = tryParse(sub2);
+              if (j) break;
+            }
+          }
+        }
+        if (!j) throw new Error('no valid JSON object found in smoke-result.json');
         return resolve(j);
       } catch (e) {
         return reject(new Error('failed to read smoke-result.json: ' + e.message));
