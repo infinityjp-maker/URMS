@@ -39,6 +39,7 @@ jobs:
         run: npm run smoke:diff
 
       - name: Upload screenshots and diffs
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
@@ -89,7 +90,10 @@ jobs:
         run: npm run smoke:ci
 
       - name: Upload artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-artifacts
-          path: builds/
+          path: |
+            builds/**
+            dist/index.html
