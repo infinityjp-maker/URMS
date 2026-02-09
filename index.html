@@ -23,6 +23,17 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      (function(){
+        try{
+          const ts = Date.now();
+          try{ document.documentElement && document.documentElement.setAttribute('data-urms-inline-entry', String(ts)); }catch(e){}
+          try{ window.__URMS_INLINE_ENTRY_TS = ts; }catch(e){}
+          try{ console.log('[inline-bundle-entry]', ts); }catch(e){}
+          try{ if(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') { window.__TAURI__.invoke('frontend_log',{level:'info', msg:'[inline-bundle-entry]'+ts}).catch(()=>{}); } }catch(e){}
+        }catch(e){}
+      })();
+    </script>
     <script type="module" src="/Source/src/main.tsx"></script>
     <!-- Console capture: attempt to persist frontend console to logs/frontend_console.log via Tauri fs or fallback to invoke -->
     <script>

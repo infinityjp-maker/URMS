@@ -154,7 +154,7 @@ export default function Environment() {
               height={240}
               itemHeight={40}
               renderItem={(p: any, idx: number) => (
-                <div key={idx} style={{ padding: '6px 8px' }}>
+                <div key={idx} className="list-item-padding">
                   <strong>{p.name}</strong> (PID: {p.pid}) - {p.cpu_usage.toFixed(1)}% CPU | {p.memory_mb} MB メモリ
                 </div>
               )}

@@ -1,0 +1,26 @@
+{
+  "target": {
+    "description": "",
+    "devtoolsFrontendUrl": "https://aka.ms/docs-landing-page/serve_rev/@4ee501a4f64e61182fd7c660df020a8c7e59655a/inspector.html?ws=127.0.0.1:9222/devtools/page/4A16058F8BF8311BCB3F0A6D5F133117",
+    "faviconUrl": "http://tauri.localhost/vite.svg",
+    "id": "4A16058F8BF8311BCB3F0A6D5F133117",
+    "title": "URMS v4.0",
+    "type": "page",
+    "url": "http://tauri.localhost/",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9222/devtools/page/4A16058F8BF8311BCB3F0A6D5F133117"
+  },
+  "info": {
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0",
+    "scripts": [
+      {
+        "src": "./assets/index-HQEE_lXd.js",
+        "type": "module"
+      },
+      {
+        "src": null,
+        "type": null
+      }
+    ],
+    "moduleTest": null
+  }
+}

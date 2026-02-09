@@ -1,0 +1,89 @@
+name: PR Tauri Playwright Smoke
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  build-and-playwright:
+    name: Build Tauri (Windows) and Run Playwright via WebView CDP
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Bundle fonts for deterministic rendering
+        run: node Tests/playwright/fetch_fonts.cjs
+
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Build Tauri release
+        run: npm run tauri:build
+
+      - name: Start urms.exe with WebView2 CDP enabled
+        shell: powershell
+        run: |
+          $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS='--remote-debugging-port=9222'
+          Start-Process -FilePath "${{ github.workspace }}\Backend\src-tauri\target\release\urms.exe" -PassThru
+
+      - name: Wait for WebView2 CDP /json/list (extended + debug)
+        shell: powershell
+        run: |
+          $max=120
+          for ($i=0;$i -lt $max;$i++){
+            try{
+              $r = Invoke-RestMethod -Uri http://127.0.0.1:9222/json/list -TimeoutSec 2
+              if ($r){ Write-Output 'CDP_AVAILABLE'; Write-Output ($r | ConvertTo-Json -Depth 4); break }
+            } catch { Write-Output "CDP attempt $i failed: $_"; Start-Sleep -Seconds 2 }
+            if ($i -eq ($max-1)) { Write-Error 'Timeout waiting for CDP'; exit 1 }
+          }
+
+      - name: Run future-mode capture (apply_future_mode.cjs)
+        shell: powershell
+        run: |
+          $env:URL='http://tauri.localhost/'; node Tests/playwright/apply_future_mode.cjs
+
+      - name: Run smoke capture (exec wrapper) and save result
+        shell: cmd
+        run: |
+          mkdir builds\screenshots 2>nul
+          node Tests/playwright/exec_smoke_save.cjs
+
+      - name: Compare screenshots (pixel diff + structural checks)
+        env:
+          SKIP_RUN_SMOKE: '1'
+          COMPARE_CROP: '1'
+        run: node Tests/playwright/compare_screenshots.cjs
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: |
+            builds/screenshots/*.png
+            builds/screenshots/*.json
+            builds/screenshots/diff-*.png
+
+      - name: Stop urms.exe
+        if: always()
+        shell: powershell
+        run: |
+          Try { Stop-Process -Name urms -ErrorAction SilentlyContinue } Catch { }

@@ -29,6 +29,7 @@ export default function Dashboard() {
   });
 
   const systemFetchInFlight = useRef(false);
+  const readyEmittedRef = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -51,6 +52,15 @@ export default function Dashboard() {
           const changed = JSON.stringify(prev) !== JSON.stringify(netInfo);
           return changed ? netInfo : prev;
         });
+
+        // If this is the first successful data fetch, emit a dashboard-ready flag for external tests
+        try {
+          if (!readyEmittedRef.current) {
+            readyEmittedRef.current = true;
+            try { (window as any).__URMS_DASHBOARD_READY = true; } catch (e) {}
+            try { window.dispatchEvent(new Event('urms-dashboard-ready')); } catch (e) {}
+          }
+        } catch (e) {}
       } finally {
         systemFetchInFlight.current = false;
       }
@@ -115,6 +125,60 @@ export default function Dashboard() {
     navigate(`/${cardType}`);
   }, [navigate]);
 
+  // Emit a global ready flag for external testers (CDP/Playwright)
+  useEffect(() => {
+    let mounted = true;
+    const setReady = () => {
+      try {
+        // mark ready when dashboard-grid exists
+        if (mounted && typeof window !== 'undefined') {
+          // prefer explicit flag
+          // @ts-ignore
+          (window as any).__URMS_READY = !!document.querySelector('.dashboard-grid');
+          // also emit an event for listeners
+          try { window.dispatchEvent(new Event('urms-ready')); } catch(e){}
+        }
+      } catch (e) {}
+    };
+    // initial delayed set to allow hydration/render
+    const t = setTimeout(setReady, 500);
+    // watch for DOM changes in case grid loads async
+    const obs = new MutationObserver(() => setReady());
+    obs.observe(document.documentElement || document.body, { childList: true, subtree: true });
+
+    return () => {
+      mounted = false;
+      clearTimeout(t);
+      try { obs.disconnect(); } catch (e) {}
+      try { (window as any).__URMS_READY = false; } catch (e) {}
+    };
+  }, []);
+
+  // Observe for actual floating-card elements and set a stronger 'dashboard fully ready' flag
+  useEffect(() => {
+    let obs: MutationObserver | null = null;
+    let mounted = true;
+    const checkAndSet = () => {
+      try {
+        if (!mounted) return;
+        const cards = document.querySelectorAll('.floating-card');
+        if (cards && cards.length > 0) {
+          try { (window as any).__URMS_DASHBOARD_FULLY_READY = true; } catch(e) {}
+          try { window.dispatchEvent(new Event('urms-dashboard-fully-ready')); } catch(e) {}
+        }
+      } catch(e) {}
+    };
+    // initial check
+    checkAndSet();
+    obs = new MutationObserver(() => checkAndSet());
+    try { obs.observe(document.documentElement || document.body, { childList: true, subtree: true }); } catch(e) {}
+    return () => {
+      mounted = false;
+      try { if (obs) obs.disconnect(); } catch(e) {}
+      try { (window as any).__URMS_DASHBOARD_FULLY_READY = false; } catch(e) {}
+    };
+  }, []);
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -130,12 +194,12 @@ export default function Dashboard() {
           onClick={() => handleCardClick("Environment")}
         >
           <ul className="stat-list">
-            <li>CPU <span style={{ fontWeight: "bold", color: "#06b6d4" }}>{systemStats.cpu_usage.toFixed(1)}%</span></li>
-            <li>RAM <span style={{ fontWeight: "bold", color: "#06b6d4" }}>{systemStats.memory_usage.toFixed(1)}%</span></li>
-            <li>DISK ({systemStats.disks?.[0]?.device_name || systemStats.disk_name}) <span style={{ fontWeight: "bold", color: "#06b6d4" }}>{systemStats.disk_usage.toFixed(1)}%</span></li>
-            <li>GPU <span style={{ fontWeight: "bold", color: "#06b6d4" }}>{gpuUsage}</span></li>
-            <li>NAS ({nasLabel}) <span style={{ fontWeight: "bold", color: "#06b6d4" }}>{nasUsage}%</span></li>
-            <li>NET <span style={{ fontWeight: "bold", color: "#06b6d4" }}>{networkStats.network_status}</span></li>
+            <li>CPU <span className="stat-value stat-value--bold">{systemStats.cpu_usage.toFixed(1)}%</span></li>
+            <li>RAM <span className="stat-value stat-value--bold">{systemStats.memory_usage.toFixed(1)}%</span></li>
+            <li>DISK ({systemStats.disks?.[0]?.device_name || systemStats.disk_name}) <span className="stat-value stat-value--bold">{systemStats.disk_usage.toFixed(1)}%</span></li>
+            <li>GPU <span className="stat-value stat-value--bold">{gpuUsage}</span></li>
+            <li>NAS ({nasLabel}) <span className="stat-value stat-value--bold">{nasUsage}%</span></li>
+            <li>NET <span className="stat-value stat-value--bold">{networkStats.network_status}</span></li>
           </ul>
           <Sparkline data={sparkData} accent="#06b6d4" />
         </FloatingCard>

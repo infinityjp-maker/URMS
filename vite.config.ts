@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import legacy from '@vitejs/plugin-legacy';
 import path from "path";
 
 // @ts-expect-error process is a nodejs global
@@ -7,7 +8,14 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
 export default defineConfig(async () => ({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Provide a legacy (nomodule) build fallback for older or restricted WebView environments
+    legacy({
+      targets: ["defaults", "not IE 11"],
+      additionalLegacyPolyfills: ["regenerator-runtime/runtime"]
+    })
+  ],
   base: './',
   
   build: {
@@ -16,8 +24,6 @@ export default defineConfig(async () => ({
     sourcemap: false,
     brotliSize: true,
     rollupOptions: {
-      // Do not try to bundle or resolve Tauri runtime modules; keep them external
-      external: [/^@tauri-apps\/api(\/.*)?$/],
       output: {
         manualChunks(id: string) {
           if (id.includes('node_modules')) {
@@ -26,6 +32,9 @@ export default defineConfig(async () => ({
         }
       }
     }
+      // Note: previously @tauri-apps/api was marked external which left bare
+      // import specifiers in the build. Remove `external` so the package is
+      // bundled into `dist` and works from file:// when packaged by Tauri.
   },
   
   resolve: {
@@ -38,6 +47,9 @@ export default defineConfig(async () => ({
       "@utils": path.resolve(__dirname, "./Source/src/utils"),
       "@styles": path.resolve(__dirname, "./Source/src/styles"),
       "@pages": path.resolve(__dirname, "./Source/src/pages"),
+      // Vite dev-time aliases to make @tauri-apps subpath imports resolvable
+      "@tauri-apps/api/tauri": path.resolve(__dirname, "./node_modules/@tauri-apps/api/index.js"),
+      "@tauri-apps/api/event": path.resolve(__dirname, "./node_modules/@tauri-apps/api/event.js"),
     },
   },
 

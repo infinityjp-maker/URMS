@@ -16,6 +16,15 @@
   flex-direction:column;
 }
 
+/* known accent classes to avoid inline style usage */
+.accent-cyan { --accent: #06b6d4; }
+.accent-green { --accent: #22c55e; }
+.accent-amber { --accent: #f59e0b; }
+.accent-red { --accent: #ef4444; }
+.accent-teal { --accent: #14b8a6; }
+.accent-purple { --accent: #a855f7; }
+.accent-blue { --accent: #60a5fa; }
+
 .card-inner{
   position: relative;
   z-index: 2;
@@ -125,6 +134,23 @@
 
 .floating-card.neon .card-inner{ position:relative; z-index:2; transition: transform 220ms cubic-bezier(.2,.9,.3,1); transform-style: preserve-3d; }
 .floating-card.neon .card-header h3{ font-size:14px; letter-spacing:1px; text-transform:uppercase; color: var(--card-title); text-shadow: var(--card-title-shadow); }
+
+.floating-card.neon::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  box-shadow: 0 0 30px rgba(0,200,255,0.12), inset 0 0 18px rgba(170,60,200,0.06);
+  z-index:1;
+  pointer-events:none;
+}
+
+.floating-card.neon { border-radius:14px; }
+
+/* stronger neon outer glow and beveled border */
+.floating-card.neon { background: linear-gradient(180deg, rgba(6,8,16,0.72), rgba(8,6,20,0.7)); border: 1px solid rgba(255,255,255,0.02); }
+.floating-card.neon::before { inset: -6px; border-radius: 16px; filter: blur(16px); opacity: 0.95; }
+.floating-card.neon .card-ghost { opacity:0.7; filter: blur(12px); }
 
 /* tilt enabled */
 .floating-card.tilt-enabled{ perspective:700px; }

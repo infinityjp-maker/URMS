@@ -1,6 +1,24 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
+// Immediate bundle entry marker: set a DOM attribute and a global flag so external
+// diagnostics can detect that the frontend bundle has executed.
+(function () {
+  try {
+    const ts = Date.now();
+    try { document.documentElement && document.documentElement.setAttribute('data-urms-bundle-entry', String(ts)); } catch (e) {}
+    try { (window as any).__URMS_BUNDLE_ENTRY_TS = ts; } catch (e) {}
+    try { console.log('[bundle] entry', ts); } catch (e) {}
+    // best-effort: notify backend via tauri invoke if available
+    try {
+      const dynamicImport = new Function('m', 'return import(m)');
+      dynamicImport('@tauri-apps/api/tauri').then((tauriMod:any) => {
+        try { (tauriMod && tauriMod.invoke) && tauriMod.invoke('frontend_log', { level: 'info', msg: '[bundle] entry ' + ts }).catch(()=>{}); } catch(e){}
+      }).catch(()=>{});
+    } catch (e) {}
+  } catch (e) {}
+})();
+
 // Always try to forward console messages to backend when running in Tauri
 import "./utils/console-forward";
 
@@ -109,3 +127,12 @@ setTimeout(async () => {
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <App />
 );
+
+// Ensure an application-level ready flag is set shortly after initial render.
+setTimeout(() => {
+  try {
+    (window as any).__URMS_READY = true;
+    try { window.dispatchEvent(new Event('urms-ready')); } catch (e) {}
+    console.log('[frontend] __URMS_READY set');
+  } catch (e) {}
+}, 500);

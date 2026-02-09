@@ -203,11 +203,11 @@ export default function WeatherCalendarCard() {
   // (kept minimal; use `urms:toast` CustomEvent elsewhere)
 
   return (
-    <div className="weather-calendar-card">
+    <div className="weather-calendar-card card">
       <div className={`card-header ${recentlyUpdated ? 'wc-header-highlight' : ''}`}>
-        <h3>Weather & Calendar</h3>
+        <h3 className="card-title">Weather & Calendar</h3>
         {recentlyUpdated && (
-          <span style={{marginLeft:12, color:'#0a0', fontWeight:600}}>Updated</span>
+          <span className="wc-updated">Updated</span>
         )}
         <div className="card-actions">
           <button onClick={() => { fetchWeather(); fetchEvents(); }}>Refresh</button>

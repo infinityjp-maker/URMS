@@ -25,7 +25,7 @@ export default function SubsystemDetail() {
       <main className="page-content">
         <div className="section-card">
           <h2>概要</h2>
-          <p style={{ opacity: 0.85 }}>{data.description}</p>
+          <p className="muted-text">{data.description}</p>
         </div>
 
         <div className="section-card">

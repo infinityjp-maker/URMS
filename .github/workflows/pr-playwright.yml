@@ -1,4 +1,4 @@
-﻿name: Playwright Smoke (PR)
+name: Playwright Smoke (PR)
 
 on:
   pull_request:

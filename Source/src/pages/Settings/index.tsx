@@ -1,25 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
+import { useTheme } from '../../theme/ThemeProvider';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState<'dark-neon' | 'dark' | 'light'>(() => {
-    const saved = localStorage.getItem('urms-theme');
-    if (saved === 'light') return 'light';
-    if (saved === 'dark') return 'dark';
-    return 'dark-neon';
-  });
+  const { theme: currentTheme, setTheme } = useTheme();
+  // map ThemeProvider theme ('future'|'dark'|'light') to local select values
+  const mapToLocal = (t: string) => (t === 'light' ? 'light' : t === 'dark' ? 'dark' : 'dark-neon');
+  const mapFromLocal = (t: 'dark-neon' | 'dark' | 'light') => (t === 'light' ? 'light' : t === 'dark' ? 'dark' : 'future');
+  const [theme, setThemeLocal] = useState<'dark-neon' | 'dark' | 'light'>(() => mapToLocal(currentTheme));
 
   useEffect(() => {
-    // Apply theme on mount and when it changes
-    if (theme === 'light') {
-      document.body.className = 'light-theme';
-    } else if (theme === 'dark') {
-      document.body.className = 'dark-theme';
-    } else {
-      document.body.className = '';
-    }
+    // keep local select in sync if global theme changes elsewhere
+    setThemeLocal(mapToLocal(currentTheme));
+  }, [currentTheme]);
+
+  useEffect(() => {
     // hook up settings load/save buttons
     const loadBtn = document.getElementById('load-google-settings');
     const saveBtn = document.getElementById('save-google-settings');
@@ -121,18 +118,12 @@ export default function Settings() {
       disconnectOauthBtn?.removeEventListener('click', disconnectOauthHandler);
       oauthBtn?.removeEventListener('click', oauthHandler);
     };
-  }, [theme]);
+  }, []);
 
   const handleThemeChange = (newTheme: 'dark-neon' | 'dark' | 'light') => {
-    setTheme(newTheme);
-    localStorage.setItem('urms-theme', newTheme);
-    if (newTheme === 'light') {
-      document.body.className = 'light-theme';
-    } else if (newTheme === 'dark') {
-      document.body.className = 'dark-theme';
-    } else {
-      document.body.className = '';
-    }
+    setThemeLocal(newTheme);
+    // persist via ThemeProvider
+    setTheme(mapFromLocal(newTheme) as any);
   };
 
   return (
@@ -222,8 +213,8 @@ export default function Settings() {
           </div>
           <div className="setting-item">
             <button className="setting-button" id="start-google-oauth">Google OAuth 認可</button>
-            <button className="setting-button" id="disconnect-google-oauth" style={{marginLeft:8}}>OAuth 切断</button>
-            <span id="oauth-status" style={{marginLeft:12}}>Unknown</span>
+            <button className="setting-button ml-8" id="disconnect-google-oauth">OAuth 切断</button>
+            <span id="oauth-status" className="ml-12">Unknown</span>
           </div>
         </div>
       </main>

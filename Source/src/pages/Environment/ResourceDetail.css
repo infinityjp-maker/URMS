@@ -46,11 +46,16 @@
 .bar {
   flex: 1;
   background: linear-gradient(180deg, #06b6d4, #0891b2);
+  height: var(--bar-height, 24px);
   border-radius: 4px 4px 0 0;
   transition: all 0.3s ease;
   cursor: pointer;
   min-width: 8px;
 }
+
+.bar--high { background: linear-gradient(180deg, #ef4444, #dc2626); }
+.bar--mid { background: linear-gradient(180deg, #f59e0b, #f97316); }
+.bar--low { background: linear-gradient(180deg, #22c55e, #16a34a); }
 
 .bar:hover {
   filter: brightness(1.2);
