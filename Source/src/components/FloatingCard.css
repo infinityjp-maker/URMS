@@ -124,7 +124,7 @@
   position:absolute;
   inset: calc(var(--space-1,6px) * -1);
   border-radius: var(--radius-md, 14px);
-  background: radial-gradient(60% 40% at 10% 10%, color-mix(in srgb, var(--accent) 36%, transparent), transparent);
+  background: radial-gradient(60% 40% at 10% 10%, color-mix(in srgb, var(--accent) 38%, transparent), transparent);
   filter: blur(16px);
   opacity:0.97;
   z-index:0;
@@ -166,6 +166,7 @@
   box-shadow: 0 28px 100px rgba(0,0,0,0.78);
 }
 .dashboard-grid.neon-grid > .floating-card.lg::before{
+  background: radial-gradient(60% 40% at 10% 10%, color-mix(in srgb, var(--accent) 38%, transparent), transparent);
   filter: blur(28px);
   opacity: 0.99;
 }
