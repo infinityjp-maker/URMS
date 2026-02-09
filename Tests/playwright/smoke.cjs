@@ -112,13 +112,14 @@ async function getTargetWebSocket(){
 
     // gather some page metrics for debugging: scroll/client heights and font loading state
     try {
-      const pageMetrics = await page.evaluate(() => {
-        return {
-          scrollHeight: document.body ? document.body.scrollHeight : null,
-          clientHeight: document.documentElement ? document.documentElement.clientHeight : (document.body ? document.body.clientHeight : null),
-          fontsStatus: (window.document && document.fonts) ? document.fonts.status : 'no-font-api'
-        };
-      });
+        const pageMetrics = await page.evaluate(() => {
+          return {
+            scrollHeight: document.body ? document.body.scrollHeight : null,
+            clientHeight: document.documentElement ? document.documentElement.clientHeight : (document.body ? document.body.clientHeight : null),
+            fontsStatus: (window.document && document.fonts) ? document.fonts.status : 'no-font-api',
+            devicePixelRatio: window.devicePixelRatio || 1
+          };
+        });
       console.error('PAGE_METRICS', JSON.stringify(pageMetrics));
     } catch (e) { console.error('PAGE_METRICS_ERROR', e && e.message); }
 

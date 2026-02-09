@@ -35,6 +35,13 @@ jobs:
       - name: Run smoke capture (CI)
         run: npm run smoke:ci
 
+      - name: Debug: list screenshot metadata and dist head
+        run: |
+          echo "=== Screenshot metadata (name width height bytes) ==="
+          node -e "const fs=require('fs');const p='builds/screenshots'; if(fs.existsSync(p)){ for(const f of fs.readdirSync(p)){ if(!f.toLowerCase().endsWith('.png')) continue; const buf=fs.readFileSync(p+'/'+f); let w='?'; let h='?'; if(buf.length>24 && buf.slice(0,8).toString('hex')==='89504e470d0a1a0a'){ w=buf.readUInt32BE(16); h=buf.readUInt32BE(20); } const s=fs.statSync(p+'/'+f).size; console.log(f,w,h,s); } } else console.log('NO_SCREENSHOTS');"
+          echo "=== dist/index.html head (200 lines) ==="
+          head -n 200 dist/index.html || true
+
       - name: Compare screenshots
         run: npm run smoke:diff
 
