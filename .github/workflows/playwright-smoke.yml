@@ -28,7 +28,9 @@ jobs:
         run: npm run build
 
       - name: Serve dist (background)
-        run: npx http-server dist -p 1420 --silent & sleep 2
+        run: |
+          npx http-server dist -p 1420 -c-1 &
+          npx wait-on http://localhost:1420
 
       - name: Run smoke capture (CI)
         run: npm run smoke:ci
