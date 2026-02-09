@@ -6,8 +6,9 @@
 */
 :root {
   /* Colors */
-  --color-bg-start: #04040a;
-  --color-bg-end: #06102a;
+  --color-bg-start: #031023; /* deeper navy */
+  --color-bg-end: #001026;   /* deep blue-black */
+  --color-bg: linear-gradient(180deg, var(--color-bg-start), var(--color-bg-end));
   --color-surface-start: rgba(10,12,20,0.7);
   --color-surface-end: rgba(6,8,18,0.6);
   --color-panel-bg: rgba(6,8,18,0.64);
@@ -18,27 +19,27 @@
   --color-text-muted: rgba(255,255,255,0.86);
 
   /* Glow (store RGB separately for alpha math) */
-  --glow-color-rgb: 0,200,255;
-  --glow-strength: 0.18;
+  --glow-color-rgb: 64,200,255;
+  --glow-strength: 0.26;
 
   /* Typography */
-  --font-family-base: Inter, "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
-  --font-family-title: 'Orbitron', 'Rajdhani', Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-family-base: 'Rajdhani', 'Inter', system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+  --font-family-title: 'Orbitron', 'Rajdhani', 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-size-base: 14px;
   --line-height-base: 1.4;
 
   /* Spacing */
-  --space-1: 4px;
-  --space-2: 8px;
+  --space-1: 6px;
+  --space-2: 10px;
   --space-3: 24px;
-  --space-4: 24px;
+  --space-4: 28px;
 
   /* Radii / Elevation */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --elevation-1: 0 1px 3px rgba(0,0,0,0.25);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --elevation-1: 0 2px 6px rgba(0,0,0,0.32);
   /* Card shadow split into main shadow + neon glow for finer control */
-  --card-shadow-main: 0 18px 60px rgba(0,0,0,0.6);
+  --card-shadow-main: 0 24px 90px rgba(0,0,0,0.72);
   --card-glow: rgba(var(--glow-color-rgb), calc(var(--glow-strength) * 1));
   --card-shadow: var(--card-shadow-main);
 
@@ -60,6 +61,6 @@ html[data-theme="future"], body.theme-future {
 
 /* Focus ring tokens for accessibility */
 :root {
-  --focus-ring-color: rgba(110,231,183,0.9);
+  --focus-ring-color: rgba(0,160,255,0.95);
   --focus-ring-width: 3px;
 }
