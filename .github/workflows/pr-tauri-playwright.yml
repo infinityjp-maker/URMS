@@ -72,10 +72,14 @@ jobs:
         run: node Tests/playwright/compare_screenshots.cjs
 
       - name: Upload screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
-          path: builds/screenshots/*.png
+          path: |
+            builds/screenshots/*.png
+            builds/screenshots/*.json
+            builds/screenshots/diff-*.png
 
       - name: Stop urms.exe
         if: always()
