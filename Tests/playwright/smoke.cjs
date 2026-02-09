@@ -126,7 +126,7 @@ async function getTargetWebSocket(){
       });
       if (dpr !== 1) console.warn('Normalized page DPR to 1 (applied zoom) — DPR was ' + dpr);
     } catch (e) { }
-    await page.screenshot({ path: screenshotPath, fullPage: true });
+    await page.screenshot({ path: screenshotPath, clip: { x: 0, y: 0, width: 800, height: 1236 } });
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
     console.log(JSON.stringify(result, null, 2));
