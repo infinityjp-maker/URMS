@@ -178,18 +178,38 @@ async function getTargetWebSocket(){
       } catch(e) { console.error('FORCE_SYSTEM_UI_ERROR', e && e.message); }
     }
 
-    // If forcing system UI, inject explicit font-family CSS to prefer the
-    // system fonts we install on CI. This reduces font fallback differences.
+    // If forcing system UI, aggressively disable loading of external webfonts
+    // and inject an overriding font-family using common system fonts. This
+    // attempts to eliminate font-file differences between CI runners.
     if (process.env.FORCE_SYSTEM_UI === '1') {
       try {
-        await page.addStyleTag({ content: `
-          .debug-force-system-ui, .debug-force-system-ui * {
-            font-family: 'Noto Sans', 'DejaVu Sans', 'Liberation Sans', 'Arial', sans-serif !important;
-            -webkit-font-smoothing: antialiased !important;
-            text-rendering: optimizeLegibility !important;
-          }
-        ` });
-        console.error('FORCE_SYSTEM_UI: injected font-family override CSS');
+        await page.evaluate(() => {
+          try {
+            // Remove <link rel=preload as=font> and font file links
+            Array.from(document.querySelectorAll('link[rel="preload"][as="font"], link[href$=".woff"], link[href$=".woff2"]')).forEach(n => n.remove());
+          } catch (e) {}
+          try {
+            // Attempt to remove @font-face rules from same-origin stylesheets
+            for (const ss of Array.from(document.styleSheets || [])){
+              try {
+                const rules = ss.cssRules || ss.rules;
+                if (!rules) continue;
+                for (let i = rules.length - 1; i >= 0; i--) {
+                  const r = rules[i];
+                  // 5 === CSSRule.FONT_FACE_RULE in most browsers
+                  if (r && (r.type === 5 || (r.constructor && String(r.constructor).includes('FontFaceRule')))) {
+                    try { ss.deleteRule(i); } catch(e) { /* ignore */ }
+                  }
+                }
+              } catch (e) { /* ignore cross-origin or otherwise inaccessible sheets */ }
+            }
+          } catch (e) {}
+          // Add a high-specificity override to force a stable system font stack.
+          const css = `:root.debug-force-system-ui, :root.debug-force-system-ui * { font-family: Segoe UI, Roboto, \"Helvetica Neue\", \"Noto Sans\", Arial, sans-serif !important; -webkit-font-smoothing: antialiased !important; text-rendering: optimizeLegibility !important; }`;
+          const s = document.createElement('style'); s.setAttribute('data-debug','force-system-ui'); s.textContent = css;
+          (document.head || document.documentElement).appendChild(s);
+        });
+        console.error('FORCE_SYSTEM_UI: removed webfont links, attempted to strip @font-face, and injected font override');
       } catch(e) { console.error('FORCE_SYSTEM_UI_CSS_ERROR', e && e.message); }
     }
 
