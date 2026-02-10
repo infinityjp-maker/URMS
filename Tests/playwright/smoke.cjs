@@ -254,6 +254,20 @@ async function getTargetWebSocket(){
     // Force URL from ENV to ensure CI-consistent output
     try {
       if (process.env.URL) result.url = process.env.URL;
+      // Ensure DPR and viewport are present; try one more time before writing
+      try {
+        const dpr2 = await page.evaluate(() => window.devicePixelRatio || 1);
+        const vp2 = await page.evaluate(() => ({ width: window.innerWidth, height: window.innerHeight }));
+        if (dpr2) result.devicePixelRatio = dpr2;
+        if (vp2) result.viewport = vp2;
+      } catch (e) {}
+      // If we have the screenshot buffer, probe PNG IHDR for exact pixel dims
+      try {
+        if (buf && buf.length > 24 && buf.slice(0,8).toString('hex') === '89504e470d0a1a0a'){
+          result.pngWidth = buf.readUInt32BE(16);
+          result.pngHeight = buf.readUInt32BE(20);
+        }
+      } catch(e) {}
       try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
       // Write both the standard smoke-result.json (used by normalization) and
       // a full metadata file that will not be rewritten by normalization.
