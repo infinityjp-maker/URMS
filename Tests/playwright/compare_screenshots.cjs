@@ -190,10 +190,15 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
           baseP = cropRect(baseP, x, y, w, h);
         }
       }
-      // If dimensions differ but widths match, crop the taller image to the shorter height
+      // If dimensions differ but widths match, either crop the taller image to the
+      // shorter height or pad the shorter to match the taller, depending on
+      // environment settings. Set COMPARE_PAD=1 to pad (preferred for CI
+      // stability) or COMPARE_TARGET_HEIGHT to force a fixed height.
       if (curP.width === baseP.width && curP.height !== baseP.height) {
-        const targetH = Math.min(curP.height, baseP.height);
-        const crop = (png, h) => {
+        const envTarget = parseInt(process.env.COMPARE_TARGET_HEIGHT || '0', 10) || 0;
+        const targetH = envTarget || Math.max(curP.height, baseP.height);
+
+        const cropTo = (png, h) => {
           const {width} = png;
           const out = new PNG({width, height: h});
           for (let row = 0; row < h; row++) {
@@ -204,14 +209,50 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
           }
           return out;
         };
-        if (curP.height > baseP.height) {
-          console.warn('Normalizing current image height from', curP.height, 'to', targetH);
-          curP.data = crop(curP, targetH).data;
-          curP.height = targetH;
-        } else if (baseP.height > curP.height) {
-          console.warn('Normalizing baseline image height from', baseP.height, 'to', targetH);
-          baseP.data = crop(baseP, targetH).data;
-          baseP.height = targetH;
+
+        const padTo = (png, h) => {
+          const {width, height} = png;
+          const out = new PNG({width, height: h});
+          // copy existing rows
+          for (let row = 0; row < Math.min(height, h); row++) {
+            const srcStart = row * width * 4;
+            const dstStart = row * width * 4;
+            png.data.copy(out.data, dstStart, srcStart, srcStart + width * 4);
+          }
+          // fill extra rows with the last row's pixels to reduce visual seam
+          if (h > height) {
+            const lastRowStart = (height - 1) * width * 4;
+            for (let row = height; row < h; row++) {
+              const dstStart = row * width * 4;
+              out.data.set(out.data.slice(lastRowStart, lastRowStart + width * 4), dstStart);
+            }
+          }
+          return out;
+        };
+
+        if (process.env.COMPARE_PAD === '1') {
+          // pad shorter image(s) up to targetH
+          if (curP.height < targetH) {
+            console.warn('Padding current image height from', curP.height, 'to', targetH);
+            const padded = padTo(curP, targetH);
+            curP.data = padded.data; curP.height = targetH;
+          }
+          if (baseP.height < targetH) {
+            console.warn('Padding baseline image height from', baseP.height, 'to', targetH);
+            const padded = padTo(baseP, targetH);
+            baseP.data = padded.data; baseP.height = targetH;
+          }
+        } else {
+          // default: crop to the smaller height to avoid introducing padding
+          const cropTarget = Math.min(curP.height, baseP.height);
+          if (curP.height > cropTarget) {
+            console.warn('Normalizing current image height from', curP.height, 'to', cropTarget);
+            curP.data = cropTo(curP, cropTarget).data; curP.height = cropTarget;
+          }
+          if (baseP.height > cropTarget) {
+            console.warn('Normalizing baseline image height from', baseP.height, 'to', cropTarget);
+            baseP.data = cropTo(baseP, cropTarget).data; baseP.height = cropTarget;
+          }
         }
       }
       if(curP.width !== baseP.width || curP.height !== baseP.height){
