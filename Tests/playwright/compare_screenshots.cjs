@@ -195,7 +195,17 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
       // environment settings. Set COMPARE_PAD=1 to pad (preferred for CI
       // stability) or COMPARE_TARGET_HEIGHT to force a fixed height.
       if (curP.width === baseP.width && curP.height !== baseP.height) {
-        const envTarget = parseInt(process.env.COMPARE_TARGET_HEIGHT || '0', 10) || 0;
+        // Determine target height: prefer env var, else read file written by smoke.cjs, else derive
+        let envTarget = parseInt(process.env.COMPARE_TARGET_HEIGHT || '0', 10) || 0;
+        if (!envTarget) {
+          try {
+            const fh = path.join('builds','COMPARE_TARGET_HEIGHT');
+            if (fs.existsSync(fh)) {
+              const v = fs.readFileSync(fh,'utf8').trim();
+              envTarget = parseInt(v,10) || 0;
+            }
+          } catch(e) { /* ignore */ }
+        }
         const targetH = envTarget || Math.max(curP.height, baseP.height);
 
         const cropTo = (png, h) => {

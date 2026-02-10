@@ -337,6 +337,7 @@ async function getTargetWebSocket(){
       try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){}
       try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){}
       try { fs.writeFileSync('builds/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.full.json'); } catch(e){}
+      try { fs.writeFileSync('builds/COMPARE_TARGET_HEIGHT', String(CLIP.height), 'utf8'); console.error('WROTE', 'builds/COMPARE_TARGET_HEIGHT', CLIP.height); } catch(e){}
       // Emit compact metrics to stderr so exec wrapper can always pick them up
       try { console.error('RESULT_META', JSON.stringify({ devicePixelRatio: result.devicePixelRatio, viewport: result.viewport })); } catch(e){}
     } catch(e){}
