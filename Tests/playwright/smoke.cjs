@@ -223,6 +223,13 @@ async function getTargetWebSocket(){
     } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
+    // Force URL from ENV to ensure CI-consistent output
+    try {
+      if (process.env.URL) result.url = process.env.URL;
+      try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
+      try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){}
+      try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){}
+    } catch(e){}
     console.log(JSON.stringify(result, null, 2));
     try { await browser.close(); } catch(e){}
     process.exit(0);
