@@ -50,6 +50,7 @@ jobs:
         env:
           FORCE_SYSTEM_UI: '1'
           DISABLE_CDP: '1'
+          URL: 'http://localhost:1420/'
         run: |
           mkdir -p builds/screenshots
           # Use exec wrapper to capture stdout/stderr separately and write smoke-result.json safely
