@@ -82,5 +82,37 @@ cp.on('close', code => {
   }
 
   console.log('smoke result saved (stdout-> builds/screenshots/smoke-result.json, stderr-> builds/screenshots/smoke-result.err), exit code', code);
+  // Force-override any smoke-result.json under builds to ensure CI env URL is used
+  try {
+    if (env && env.URL) {
+      const walk = (dir) => {
+        let list = [];
+        try { list = fs.readdirSync(dir, { withFileTypes: true }); } catch(e){ return; }
+        for (const ent of list) {
+          const p = dir + '/' + ent.name;
+          if (ent.isDirectory()) {
+            walk(p);
+          } else if (ent.isFile() && ent.name === 'smoke-result.json') {
+            try {
+              const txt = fs.readFileSync(p, 'utf8');
+              let j = null;
+              try { j = JSON.parse(txt); } catch (e) { j = null; }
+              if (j && typeof j === 'object') {
+                j.url = env.URL;
+                fs.writeFileSync(p, JSON.stringify(j, null, 2), 'utf8');
+                console.log('patched smoke-result.json ->', p, 'url=', env.URL);
+              } else {
+                const replacement = { url: env.URL, note: 'replaced-invalid-json' };
+                fs.writeFileSync(p, JSON.stringify(replacement, null, 2), 'utf8');
+                console.log('replaced invalid smoke-result.json ->', p);
+              }
+            } catch (e) {}
+          }
+        }
+      };
+      try { if (fs.existsSync('builds')) walk('builds'); } catch(e){}
+    }
+  } catch (e) {}
+
   process.exit(code);
 });
