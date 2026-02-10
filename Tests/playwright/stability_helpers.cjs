@@ -23,7 +23,20 @@ async function stabilizePage(page) {
         el.style.height = h + 'px'; el.style.minHeight = h + 'px';
         bd.style.width = w + 'px'; bd.style.minWidth = w + 'px';
         bd.style.height = h + 'px'; bd.style.minHeight = h + 'px';
-        el.style.overflow = 'hidden'; bd.style.overflow = 'hidden';
+        // Force a consistent vertical scrollbar and reserve its width so
+        // presence/absence doesn't shift layout between runs.
+        // Compute native scrollbar width and apply as right padding.
+        try {
+          const sb = window.innerWidth - document.documentElement.clientWidth;
+          el.style.overflowY = 'scroll';
+          bd.style.overflowY = 'scroll';
+          if (sb > 0) {
+            // use CSS variable so authorship can override if needed
+            document.documentElement.style.setProperty('--ci-scrollbar-width', sb + 'px');
+            // apply padding to body to keep content width stable
+            bd.style.paddingRight = sb + 'px';
+          }
+        } catch (e) { /* ignore */ }
         window.scrollTo(0,0);
       } catch(e){}
     }, CLIP.width, CLIP.height);
