@@ -9,6 +9,15 @@ async function stabilizePage(page) {
   try { await page.waitForTimeout(80); } catch (e) { }
   // disable animations
   try { await page.addStyleTag({ content: `* { transition: none !important; animation: none !important; caret-color: transparent !important; }` }); } catch (e) { }
+  // hide common dynamic elements (live badges, clocks, counters, toasts, animated svgs)
+  try {
+    await page.addStyleTag({ content: `
+      /* dynamic UI suppression for CI captures */
+      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+      /* ensure animations/transitions are disabled globally */
+      * { transition: none !important; animation: none !important; }
+    `});
+  } catch (e) { }
   // Force document height/overflow/margins to the CLIP to avoid variable page heights
   try {
     await page.evaluate((w,h) => {
@@ -42,6 +51,22 @@ async function stabilizePage(page) {
     }, CLIP.width, CLIP.height);
     try { await page.waitForTimeout(60); } catch(e){}
   } catch(e){}
+  // clear timers and cancel RAFs to stop live updates
+  try {
+    await page.evaluate(() => {
+      try {
+        // clear intervals/timeouts by iterating to a high id
+        const maxInterval = setInterval(() => {}, 1000);
+        for (let i = 1; i <= maxInterval; i++) try { clearInterval(i); } catch (e) {}
+        const maxTimeout = setTimeout(() => {}, 1000);
+        for (let i = 1; i <= maxTimeout; i++) try { clearTimeout(i); } catch (e) {}
+        // cancel rAFs
+        try { const raf = requestAnimationFrame(() => {}); for (let i = 0; i <= raf; i++) try { cancelAnimationFrame(i); } catch(e) {} } catch(e) {}
+        // override scheduling functions to no-op
+        try { window.setInterval = () => 0; window.setTimeout = () => 0; window.requestAnimationFrame = () => 0; } catch(e) {}
+      } catch (e) {}
+    });
+  } catch (e) { }
   // normalize DPR by applying zoom if needed
   try {
     const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
