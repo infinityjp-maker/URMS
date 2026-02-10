@@ -16,8 +16,9 @@ async function stabilizePage(page) {
       .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status] { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
       /* ensure animations/transitions are disabled globally */
       * { transition: none !important; animation: none !important; }
-      /* prefer stable system UI fonts to avoid webfont variability */
-      * { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; }
+      /* prefer stable system UI fonts to avoid webfont variability (include common JP system fonts) */
+      :root { --ci-system-fonts: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; }
+      * { font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; -webkit-font-smoothing: antialiased !important; -moz-osx-font-smoothing: grayscale !important; }
     `});
   } catch (e) { }
   // observe DOM mutations and hide matching dynamic elements continuously
@@ -60,13 +61,28 @@ async function stabilizePage(page) {
           });
           // remove style blocks containing @font-face
           document.querySelectorAll('style').forEach(s => { try { if (/@font-face/.test(s.textContent)) s.remove(); } catch(e){} });
-          // attempt to neutralize FontFace API so webfonts don't load
-          try { window.FontFace && (window.FontFace = function(){ return { load: () => Promise.resolve() }; }); } catch(e){}
+          // attempt to neutralize FontFace API so webfonts don't load (replace with no-op class)
+          try {
+            window.FontFace = function(){ return { load: () => Promise.resolve() }; };
+            window.FontFace.prototype = { load: () => Promise.resolve() };
+          } catch(e){}
+          // remove any @font-face rules from all stylesheets
+          try {
+            for (const ss of Array.from(document.styleSheets)) {
+              try {
+                const rules = ss.cssRules || ss.rules || [];
+                for (let i = rules.length - 1; i >= 0; i--) {
+                  try { if (rules[i] && rules[i].cssText && /@font-face/.test(rules[i].cssText)) ss.deleteRule(i); } catch(e){}
+                }
+              } catch(e){}
+            }
+          } catch(e){}
           // enforce system font styles to further reduce font variability
           try {
             const sys = document.createElement('style');
-            sys.textContent = '*{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; }';
+            sys.textContent = ':root{ --ci-system-fonts: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif !important; } *{ font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; }';
             document.documentElement.appendChild(sys);
+            try { document.documentElement.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--ci-system-fonts') || 'sans-serif'; } catch(e){}
           } catch(e){}
         } catch(e){}
       } catch(e){}
