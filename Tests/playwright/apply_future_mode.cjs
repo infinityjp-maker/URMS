@@ -138,7 +138,8 @@ async function getTargetWebSocket() {
     } catch (e) {
       await page.screenshot({ path: outPath, fullPage: false });
     }
-    console.log(JSON.stringify({ url: page.url(), applied: 'theme-future', screenshot: outPath }));
+    const savedUrl = process.env.URL || (page && typeof page.url === 'function' ? page.url() : null);
+    console.log(JSON.stringify({ url: savedUrl, applied: 'theme-future', screenshot: outPath }));
     try{ await browser.close(); }catch(e){}
     process.exit(0);
   }catch(e){ console.error('ERROR', e && e.message || e); process.exit(1); }
