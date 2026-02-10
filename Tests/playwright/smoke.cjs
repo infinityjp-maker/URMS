@@ -255,8 +255,14 @@ async function getTargetWebSocket(){
     try {
       if (process.env.URL) result.url = process.env.URL;
       try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
+      // Write both the standard smoke-result.json (used by normalization) and
+      // a full metadata file that will not be rewritten by normalization.
       try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){}
       try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){}
+      try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){}
+      try { fs.writeFileSync('builds/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.full.json'); } catch(e){}
+      // Emit compact metrics to stderr so exec wrapper can always pick them up
+      try { console.error('RESULT_META', JSON.stringify({ devicePixelRatio: result.devicePixelRatio, viewport: result.viewport })); } catch(e){}
     } catch(e){}
     console.log(JSON.stringify(result, null, 2));
     try { await browser.close(); } catch(e){}
