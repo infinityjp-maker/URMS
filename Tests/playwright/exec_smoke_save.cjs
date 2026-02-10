@@ -5,7 +5,8 @@ try {
   fs.mkdirSync('builds/screenshots', { recursive: true });
 } catch (e) {}
 
-const env = Object.assign({}, process.env, { URL: 'http://tauri.localhost/' });
+// Prefer an explicit localhost dev server URL in CI; allow overriding via ENV
+const env = Object.assign({}, process.env, { URL: process.env.URL || 'http://localhost:1420/' });
 const cp = spawn(process.execPath, ['Tests/playwright/smoke.cjs'], { env });
 let out = '';
 let errOut = '';
