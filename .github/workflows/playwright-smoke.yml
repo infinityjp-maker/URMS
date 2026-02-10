@@ -49,10 +49,11 @@ jobs:
       - name: Run smoke capture (CI) and save stdout
         env:
           FORCE_SYSTEM_UI: '1'
+          DISABLE_CDP: '1'
         run: |
           mkdir -p builds/screenshots
-          # Capture stdout only to smoke-result.json so debug logs on stderr don't corrupt JSON
-          node Tests/playwright/smoke.cjs > builds/screenshots/smoke-result.json
+          # Use exec wrapper to capture stdout/stderr separately and write smoke-result.json safely
+          node Tests/playwright/exec_smoke_save.cjs
 
       - name: Debug: list screenshot metadata and dist head
         run: |

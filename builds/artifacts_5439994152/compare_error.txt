@@ -1,0 +1,11 @@
+compare_screenshots error Error: failed to read smoke-result.json: Unexpected non-whitespace character after JSON at position 8 (line 2 column 8)
+    at D:\GitHub\URMS\Tests\playwright\compare_screenshots.cjs:37:23
+    at new Promise (<anonymous>)
+    at runSmoke (D:\GitHub\URMS\Tests\playwright\compare_screenshots.cjs:18:10)
+    at D:\GitHub\URMS\Tests\playwright\compare_screenshots.cjs:68:25
+    at Object.<anonymous> (D:\GitHub\URMS\Tests\playwright\compare_screenshots.cjs:209:3)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14)
+    at Object..js (node:internal/modules/cjs/loader:1893:10)
+    at Module.load (node:internal/modules/cjs/loader:1481:32)
+    at Module._load (node:internal/modules/cjs/loader:1300:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)

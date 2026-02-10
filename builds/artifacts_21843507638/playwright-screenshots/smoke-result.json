@@ -1,0 +1,33 @@
+{
+  "url": "http://tauri.localhost/",
+  "gridInfo": {
+    "exists": true,
+    "display": "grid"
+  },
+  "cardCount": 7,
+  "headings": [
+    "システム",
+    "ネットワーク",
+    "ログ",
+    "セキュリティ",
+    "サブシステム",
+    "設定",
+    "Weather + Calendar"
+  ],
+  "titleColor": "rgba(255, 255, 255, 0.95)",
+  "screenshot": "builds/screenshots/playwright-smoke.png",
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "Applying inline style violates the following Content Security Policy directive 'style-src 'self' 'unsafe-inline' https://fonts.googleapis.com 'nonce-13310412208154332377''. Note that 'unsafe-inline' is ignored if either a hash or nonce value is present in the source list. The action has been blocked."
+    },
+    {
+      "type": "log",
+      "text": "[frontend-periodic-ping] {msg: frontend: periodic ping, attempt: 2, ts: 1770677377602}"
+    },
+    {
+      "type": "error",
+      "text": "Connecting to 'http://127.0.0.1:8765/ux-ping' violates the following Content Security Policy directive: \"connect-src 'self' https://api.open-meteo.com https://www.googleapis.com\". The action has been blocked."
+    }
+  ]
+}

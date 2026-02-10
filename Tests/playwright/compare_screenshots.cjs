@@ -21,29 +21,29 @@ function runSmoke() {
       const path = 'builds/screenshots/smoke-result.json';
       try {
         let raw = fs.readFileSync(path, 'utf8');
-        // Robust JSON extraction:
-        // - Try to parse whole file first.
-        // - If that fails, scan for JSON object starts ('{') and attempt parsing
-        //   from the last '{' backwards to find the most recent valid JSON blob.
-        const tryParse = (s) => { try { return JSON.parse(s); } catch (e) { return null } };
-        let j = tryParse(raw);
-        if (!j) {
+        // Enhanced JSON extraction: find the last balanced JSON object by
+        // scanning from each '{' (from the end) and matching braces. This
+        // is tolerant to leading/trailing noise and interleaved logs.
+        const extractLastJson = (s) => {
           const starts = [];
-          for (let i = 0; i < raw.length; i++) if (raw[i] === '{') starts.push(i);
-          for (let k = starts.length - 1; k >= 0; k--) {
-            const sub = raw.slice(starts[k]);
-            // try full tail
-            j = tryParse(sub);
-            if (j) break;
-            // try trimming to last closing brace in the tail
-            const lastR = sub.lastIndexOf('}');
-            if (lastR !== -1) {
-              const sub2 = sub.slice(0, lastR + 1);
-              j = tryParse(sub2);
-              if (j) break;
+          for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);
+          for (let idx = starts.length - 1; idx >= 0; idx--) {
+            let i = starts[idx];
+            let depth = 0;
+            for (let j = i; j < s.length; j++) {
+              const ch = s[j];
+              if (ch === '{') depth++;
+              else if (ch === '}') depth--;
+              if (depth === 0) {
+                const candidate = s.slice(i, j + 1);
+                try { return JSON.parse(candidate); } catch (e) { break; }
+              }
             }
           }
-        }
+          return null;
+        };
+        let j = null;
+        try { j = JSON.parse(raw); } catch (e) { j = extractLastJson(raw); }
         if (!j) throw new Error('no valid JSON object found in smoke-result.json');
         return resolve(j);
       } catch (e) {
@@ -58,7 +58,31 @@ function runSmoke() {
     cp.on('close', (code) => {
       if (code !== 0) return reject(new Error('smoke.cjs exited with ' + code));
       try {
-        const j = JSON.parse(out);
+        // Try parse full stdout JSON first, then fallback to robust extraction
+        // using the same balanced-brace approach.
+        let j = null;
+        try { j = JSON.parse(out); } catch (e) {
+          const extractLastJson = (s) => {
+            const starts = [];
+            for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);
+            for (let idx = starts.length - 1; idx >= 0; idx--) {
+              let i = starts[idx];
+              let depth = 0;
+              for (let j = i; j < s.length; j++) {
+                const ch = s[j];
+                if (ch === '{') depth++;
+                else if (ch === '}') depth--;
+                if (depth === 0) {
+                  const candidate = s.slice(i, j + 1);
+                  try { return JSON.parse(candidate); } catch (e) { break; }
+                }
+              }
+            }
+            return null;
+          };
+          j = extractLastJson(out);
+        }
+        if (!j) throw new Error('no valid JSON object found on stdout from smoke.cjs');
         resolve(j);
       } catch (e) {
         reject(e);

@@ -3,7 +3,7 @@ name: PR Tauri Playwright Smoke
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   build-and-playwright:

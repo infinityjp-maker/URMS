@@ -1,0 +1,29 @@
+PAGE_METRICS {"scrollHeight":1257,"clientHeight":1201,"fontsStatus":"loaded","devicePixelRatio":1}
+CLIP {"x":0,"y":0,"width":800,"height":1236}
+SCREENSHOT_PNG_SIZE 800 1236
+SCREENSHOT_FILE_BYTES 392441
+{
+  "url": "http://tauri.localhost/",
+  "gridInfo": {
+    "exists": true,
+    "display": "grid"
+  },
+  "cardCount": 7,
+  "headings": [
+    "システム",
+    "ネットワーク",
+    "ログ",
+    "セキュリティ",
+    "サブシステム",
+    "設定",
+    "Weather + Calendar"
+  ],
+  "titleColor": "rgba(255, 255, 255, 0.95)",
+  "screenshot": "builds/screenshots/playwright-smoke.png",
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "Applying inline style violates the following Content Security Policy directive 'style-src 'self' 'unsafe-inline' https://fonts.googleapis.com 'nonce-14834457564326173793''. Note that 'unsafe-inline' is ignored if either a hash or nonce value is present in the source list. The action has been blocked."
+    }
+  ]
+}

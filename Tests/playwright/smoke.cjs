@@ -32,10 +32,16 @@ async function getTargetWebSocket(){
     const preferUrl = process.env.URL || 'http://tauri.localhost/';
     // attempt to discover a CDP target, but continue if unavailable (fallback to local launch)
     let res;
-    try {
-      res = await getTargetWebSocket();
-    } catch (e) {
+    const disableCdp = process.env.DISABLE_CDP === '1';
+    if (!disableCdp) {
+      try {
+        res = await getTargetWebSocket();
+      } catch (e) {
+        res = undefined;
+      }
+    } else {
       res = undefined;
+      console.error('DISABLE_CDP=1, skipping CDP discovery');
     }
     const wsUrl = res && res.ws;
     // if the CDP target exposes a URL, prefer that as our canonical URL

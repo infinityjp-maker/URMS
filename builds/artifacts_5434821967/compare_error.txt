@@ -1,0 +1,1 @@
+Normalizing baseline image height from 1257 to 1236

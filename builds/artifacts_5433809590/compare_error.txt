@@ -1,0 +1,1 @@
+Normalizing current image height from 1292 to 1257

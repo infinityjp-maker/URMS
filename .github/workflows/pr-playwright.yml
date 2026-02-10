@@ -40,7 +40,9 @@ jobs:
         run: node Tests/playwright/apply_future_mode.cjs
 
       - name: Run smoke capture
-        run: node Tests/playwright/smoke.cjs
+        env:
+          DISABLE_CDP: '1'
+        run: node Tests/playwright/exec_smoke_save.cjs
 
       - name: Compare screenshots (pixel diff + structural checks)
         run: node Tests/playwright/compare_screenshots.cjs

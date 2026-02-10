@@ -1,0 +1,26 @@
+{
+  "path": "D:\\GitHub\\URMS\\builds\\screenshots\\diff-playwright-smoke.png",
+  "width": 800,
+  "height": 1236,
+  "nonZeroPixels": 988800,
+  "bbox": [
+    0,
+    0,
+    799,
+    1235
+  ],
+  "pct": "100.0000"
+}
+{
+  "path": "D:\\GitHub\\URMS\\builds\\screenshots\\diff-playwright-future-mode.png",
+  "width": 800,
+  "height": 1257,
+  "nonZeroPixels": 1005600,
+  "bbox": [
+    0,
+    0,
+    799,
+    1256
+  ],
+  "pct": "100.0000"
+}
