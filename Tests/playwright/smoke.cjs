@@ -205,30 +205,57 @@ async function getTargetWebSocket(){
     // take screenshot as buffer so we can inspect PNG header for size
     let buf;
     try {
-      // primary: use explicit clip
-      buf = await page.screenshot({ clip: CLIP });
-      fs.writeFileSync(screenshotPath, buf);
-    } catch (e) {
-      console.error('SCREENSHOT_CLIP_ERROR', e && e.message);
-      // If ENFORCE_CLIP is set, re-attempt using clip (some playwright builds may fail first time)
-      if (process.env.ENFORCE_CLIP === '1' && CLIP) {
+      // ensure viewport and forced document size before capture
+      try { await page.setViewportSize(VIEWPORT); } catch (e) {}
+      try {
+        await page.evaluate((w,h) => {
+          try {
+            document.documentElement.style.width = w + 'px';
+            document.documentElement.style.height = h + 'px';
+            document.body.style.width = w + 'px';
+            document.body.style.height = h + 'px';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.documentElement.style.boxSizing = 'border-box';
+            document.body.style.boxSizing = 'border-box';
+          } catch (e) {}
+        }, CLIP.width, CLIP.height);
+      } catch(e){}
+      await page.waitForTimeout(120);
+
+      // Try clip capture up to 3 times to avoid intermittent failures; do not
+      // fall back to fullPage when ENFORCE_CLIP=1 to keep height deterministic.
+      let attempts = 0;
+      while (attempts < 3) {
         try {
           buf = await page.screenshot({ clip: CLIP });
           fs.writeFileSync(screenshotPath, buf);
-          console.error('SCREENSHOT_FALLBACK_CLIP');
-        } catch (e2) {
-          console.error('SCREENSHOT_CLIP_FALLBACK_ERROR', e2 && e2.message);
-        }
-      } else {
-        // fallback: try fullPage then
-        try {
-          buf = await page.screenshot({ fullPage: true });
-          fs.writeFileSync(screenshotPath, buf);
-          console.error('SCREENSHOT_FALLBACK_FULLPAGE');
-        } catch (e2) {
-          console.error('SCREENSHOT_ERROR', e2 && e2.message);
+          break;
+        } catch (e) {
+          attempts++;
+          console.error('SCREENSHOT_CLIP_ATTEMPT_ERROR', attempts, e && (e.message || e));
+          try { await page.waitForTimeout(200 + attempts * 100); } catch(e){}
+          try { await page.setViewportSize(VIEWPORT); } catch(e){}
         }
       }
+
+      if (!buf) {
+        if (process.env.ENFORCE_CLIP === '1') {
+          console.error('SCREENSHOT_CLIP_FAILED_ENFORCE');
+        } else {
+          try {
+            buf = await page.screenshot({ fullPage: true });
+            fs.writeFileSync(screenshotPath, buf);
+            console.error('SCREENSHOT_FALLBACK_FULLPAGE');
+          } catch (e2) {
+            console.error('SCREENSHOT_ERROR', e2 && e2.message);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('SCREENSHOT_EXCEPTION', e && e.message);
     }
 
     // quick PNG size probe (reads width/height from IHDR)
