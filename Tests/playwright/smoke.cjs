@@ -131,21 +131,31 @@ async function getTargetWebSocket(){
     const screenshotPath = 'builds/screenshots/playwright-smoke.png';
     try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
 
-    // gather some page metrics for debugging: scroll/client heights and font loading state
+    // ensure page is fully loaded and fonts are ready before metrics/screenshot
     try {
-        const pageMetrics = await page.evaluate(() => {
-          return {
-            scrollHeight: document.body ? document.body.scrollHeight : null,
-            clientHeight: document.documentElement ? document.documentElement.clientHeight : (document.body ? document.body.clientHeight : null),
-            fontsStatus: (window.document && document.fonts) ? document.fonts.status : 'no-font-api',
-            devicePixelRatio: window.devicePixelRatio || 1
-          };
-        });
+      try { await page.waitForLoadState('networkidle'); } catch (e) {}
+      try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) {}
+      // small pause to let rendering settle
+      try { await page.waitForTimeout(200); } catch (e) {}
+      const pageMetrics = await page.evaluate(() => {
+        return {
+          scrollHeight: document.body ? document.body.scrollHeight : null,
+          clientHeight: document.documentElement ? document.documentElement.clientHeight : (document.body ? document.body.clientHeight : null),
+          fontsStatus: (window.document && document.fonts) ? document.fonts.status : 'no-font-api',
+          devicePixelRatio: window.devicePixelRatio || 1,
+          viewport: { width: window.innerWidth, height: window.innerHeight }
+        };
+      });
       console.error('PAGE_METRICS', JSON.stringify(pageMetrics));
     } catch (e) { console.error('PAGE_METRICS_ERROR', e && e.message); }
 
     // run centralized stabilization steps (viewport, fonts, DPR, disable animations)
     try { await stabilizePage(page); } catch (e) { }
+
+    // after stabilization, ensure network and fonts are settled before capture
+    try { await page.waitForLoadState('networkidle'); } catch (e) {}
+    try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) {}
+    try { await page.waitForTimeout(200); } catch (e) {}
 
     // Optional: force platform font if requested (helpful for CI font-diff experiments)
     if (process.env.FORCE_SYSTEM_UI === '1'){
@@ -223,6 +233,13 @@ async function getTargetWebSocket(){
     } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
+    // include DPR and viewport info for debugging
+    try {
+      const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
+      const vp = await page.evaluate(() => ({ width: window.innerWidth, height: window.innerHeight }));
+      result.devicePixelRatio = dpr;
+      result.viewport = vp;
+    } catch (e) {}
     // Force URL from ENV to ensure CI-consistent output
     try {
       if (process.env.URL) result.url = process.env.URL;
