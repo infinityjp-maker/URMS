@@ -13,11 +13,58 @@ async function stabilizePage(page) {
   try {
     await page.addStyleTag({ content: `
       /* dynamic UI suppression for CI captures */
-      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
       /* ensure animations/transitions are disabled globally */
       * { transition: none !important; animation: none !important; }
     `});
   } catch (e) { }
+  // observe DOM mutations and hide matching dynamic elements continuously
+  try {
+    await page.evaluate(() => {
+      try {
+        const DYN = [
+          '.live-badge','.badge--live','.clock','.time','.now','.status-dot','.pulse','.ticker','.animated','svg.animate','.count','.notification','.toast','.marquee',
+          '.count-badge','.kpi-value','.uptime','.live-indicator','.blink','.spinner','.loader','.progress','.progress-bar'
+        ];
+        const hide = (el) => {
+          try { el.style.visibility = 'hidden'; el.style.opacity = '0'; el.style.pointerEvents = 'none'; el.setAttribute('data-ci-hidden','1'); } catch(e){}
+        };
+        DYN.forEach(s => {
+          try { document.querySelectorAll(s).forEach(hide); } catch(e){}
+        });
+        const mo = new MutationObserver(records => {
+          for (const r of records) {
+            if (r.addedNodes) for (const n of r.addedNodes) {
+              try {
+                if (n.nodeType === 1) {
+                  for (const s of DYN) if (n.matches && n.matches(s)) hide(n);
+                  // also hide descendants
+                  for (const s of DYN) try { n.querySelectorAll && n.querySelectorAll(s).forEach(hide); } catch(e){}
+                }
+              } catch(e){}
+            }
+            if (r.type === 'attributes' && r.target) {
+              try { DYN.forEach(s => { if (r.target.matches && r.target.matches(s)) hide(r.target); }); } catch(e){}
+            }
+          }
+        });
+        mo.observe(document.documentElement || document, { childList: true, subtree: true, attributes: true, attributeFilter: ['class','style'] });
+
+        // proactively remove webfont/link/style that declare @font-face or Google Fonts
+        try {
+          document.querySelectorAll('link[rel="preload"][as="font"],link[href*="fonts.googleapis.com"],link[href*="fonts.gstatic"],style').forEach(n => {
+            try {
+              if (n.tagName === 'STYLE') {
+                if (/@font-face/.test(n.textContent)) n.remove();
+              } else {
+                n.remove();
+              }
+            } catch(e){}
+          });
+        } catch(e){}
+      } catch(e){}
+    });
+  } catch(e){}
   // Force document height/overflow/margins to the CLIP to avoid variable page heights
   try {
     await page.evaluate((w,h) => {
