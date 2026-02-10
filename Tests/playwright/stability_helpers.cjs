@@ -9,6 +9,26 @@ async function stabilizePage(page) {
   try { await page.waitForTimeout(80); } catch (e) { }
   // disable animations
   try { await page.addStyleTag({ content: `* { transition: none !important; animation: none !important; caret-color: transparent !important; }` }); } catch (e) { }
+  // Force document height/overflow/margins to the CLIP to avoid variable page heights
+  try {
+    await page.evaluate((w,h) => {
+      try {
+        const el = document.documentElement;
+        const bd = document.body;
+        el.style.boxSizing = 'border-box';
+        bd.style.boxSizing = 'border-box';
+        el.style.margin = '0'; el.style.padding = '0';
+        bd.style.margin = '0'; bd.style.padding = '0';
+        el.style.width = w + 'px'; el.style.minWidth = w + 'px';
+        el.style.height = h + 'px'; el.style.minHeight = h + 'px';
+        bd.style.width = w + 'px'; bd.style.minWidth = w + 'px';
+        bd.style.height = h + 'px'; bd.style.minHeight = h + 'px';
+        el.style.overflow = 'hidden'; bd.style.overflow = 'hidden';
+        window.scrollTo(0,0);
+      } catch(e){}
+    }, CLIP.width, CLIP.height);
+    try { await page.waitForTimeout(60); } catch(e){}
+  } catch(e){}
   // normalize DPR by applying zoom if needed
   try {
     const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
