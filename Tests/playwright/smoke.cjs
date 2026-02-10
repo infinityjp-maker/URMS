@@ -71,26 +71,37 @@ async function getTargetWebSocket(){
     }
 
     // find or create a page in the connected browser that matches our URL
-    const host = (process.env.URL || url).replace(/https?:\/\//, '');
-    const tryPages = () => {
-      const pages = [];
-      for (const ctx of (browser.contexts() || [])){
-        if (typeof ctx.pages === 'function') pages.push(...ctx.pages());
-      }
-      return pages;
-    };
-    let pages = tryPages();
-    let page = pages.find(p => (p.url()||'').includes(host) || (p.url()||'').includes('tauri.localhost')) || pages[0];
-    let context = (browser.contexts() && browser.contexts()[0]) || null;
+    // Prefer creating a fresh context with a fixed viewport/deviceScaleFactor
     const VIEWPORT = { width: CLIP.width, height: CLIP.height };
     const DSF = 1;
-    if (!page){
-      // Prefer creating a fresh context with fixed viewport when possible (even if browser has existing contexts)
-      if (typeof browser.newContext === 'function') context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
-      if (context){
-        pages = (typeof context.pages === 'function') ? context.pages() : [];
-        page = pages[0] || null;
+    let context = null;
+    let page = null;
+    try {
+      if (typeof browser.newContext === 'function') {
+        context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
+        if (context && typeof context.newPage === 'function') {
+          page = await context.newPage();
+          try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e){}
+        }
       }
+    } catch(e) {
+      console.error('NEW_CONTEXT_ERROR', e && (e.message || e));
+      context = null;
+      page = null;
+    }
+    // fallback: try to reuse existing pages if we couldn't create a fresh context/page
+    if (!page) {
+      const host = (process.env.URL || url).replace(/https?:\/\//, '');
+      const tryPages = () => {
+        const pages = [];
+        for (const ctx of (browser.contexts() || [])){
+          if (typeof ctx.pages === 'function') pages.push(...ctx.pages());
+        }
+        return pages;
+      };
+      let pages = tryPages();
+      page = pages.find(p => (p.url()||'').includes(host) || (p.url()||'').includes('tauri.localhost')) || pages[0] || null;
+      context = (browser.contexts() && browser.contexts()[0]) || context;
     }
 
     // If we have a CDP-connected browser and no existing page, create one in that browser and navigate
