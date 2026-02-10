@@ -44,7 +44,16 @@ cp.on('close', code => {
     fs.writeFileSync('builds/screenshots/smoke-result.json', raw, 'utf8');
   };
   writeJsonSafe(out);
-  if (errOut && errOut.length) fs.writeFileSync('builds/screenshots/smoke-result.err', errOut, 'utf8');
+  if (errOut && errOut.length) {
+    try { fs.writeFileSync('builds/screenshots/smoke-result.err', errOut, 'utf8'); } catch(e){}
+    try {
+      console.error('--- SMOKE STDERR BEGIN ---');
+      // limit output to avoid extremely large logs
+      const outChunk = errOut.length > 20000 ? errOut.slice(0,20000) + '\n--- TRUNCATED ---' : errOut;
+      console.error(outChunk);
+      console.error('--- SMOKE STDERR END ---');
+    } catch(e){}
+  }
   console.log('smoke result saved (stdout-> builds/screenshots/smoke-result.json, stderr-> builds/screenshots/smoke-result.err), exit code', code);
   process.exit(code);
 });
