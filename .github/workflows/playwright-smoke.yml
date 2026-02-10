@@ -85,6 +85,8 @@ jobs:
       - name: Compare screenshots
         env:
           SKIP_RUN_SMOKE: '1'
+          COMPARE_PAD: '1'
+          COMPARE_TARGET_HEIGHT: '1257'
         run: npm run smoke:diff
 
       - name: Upload screenshots and diffs

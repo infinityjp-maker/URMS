@@ -178,6 +178,21 @@ async function getTargetWebSocket(){
       } catch(e) { console.error('FORCE_SYSTEM_UI_ERROR', e && e.message); }
     }
 
+    // If forcing system UI, inject explicit font-family CSS to prefer the
+    // system fonts we install on CI. This reduces font fallback differences.
+    if (process.env.FORCE_SYSTEM_UI === '1') {
+      try {
+        await page.addStyleTag({ content: `
+          .debug-force-system-ui, .debug-force-system-ui * {
+            font-family: 'Noto Sans', 'DejaVu Sans', 'Liberation Sans', 'Arial', sans-serif !important;
+            -webkit-font-smoothing: antialiased !important;
+            text-rendering: optimizeLegibility !important;
+          }
+        ` });
+        console.error('FORCE_SYSTEM_UI: injected font-family override CSS');
+      } catch(e) { console.error('FORCE_SYSTEM_UI_CSS_ERROR', e && e.message); }
+    }
+
     // log the clip info we will use
     try { console.error('CLIP', JSON.stringify(CLIP)); } catch (e) {}
 
