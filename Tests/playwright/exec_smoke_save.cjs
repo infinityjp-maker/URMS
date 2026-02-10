@@ -39,7 +39,11 @@ cp.on('close', code => {
     let parsed = null;
     try { parsed = JSON.parse(raw); } catch (e) { parsed = extractLastJson(raw); }
     if (parsed) {
-      try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(parsed, null, 2), 'utf8'); return; } catch (e) {}
+      try {
+        if (env && env.URL) parsed.url = env.URL;
+        fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(parsed, null, 2), 'utf8');
+        return;
+      } catch (e) {}
     }
     // fallback: write raw content
     fs.writeFileSync('builds/screenshots/smoke-result.json', raw, 'utf8');
@@ -69,6 +73,7 @@ cp.on('close', code => {
     const fallback = {
       error: 'smoke-run-failed-or-no-json',
       exitCode: code,
+      url: env && env.URL ? env.URL : null,
       stderrPreview: errOut ? (errOut.length > 10000 ? errOut.slice(0,10000) + '\n--- TRUNCATED ---' : errOut) : null,
       stdoutPreview: out ? (out.length > 10000 ? out.slice(0,10000) + '\n--- TRUNCATED ---' : out) : null,
       timestamp: (new Date()).toISOString()
