@@ -48,12 +48,33 @@ cp.on('close', code => {
     try { fs.writeFileSync('builds/screenshots/smoke-result.err', errOut, 'utf8'); } catch(e){}
     try {
       console.error('--- SMOKE STDERR BEGIN ---');
-      // limit output to avoid extremely large logs
       const outChunk = errOut.length > 20000 ? errOut.slice(0,20000) + '\n--- TRUNCATED ---' : errOut;
       console.error(outChunk);
       console.error('--- SMOKE STDERR END ---');
     } catch(e){}
   }
+
+  // If child exited non-zero or produced no/invalid JSON, write a fallback JSON
+  // so downstream compare logic always has a JSON file to inspect.
+  let safeJsonOk = false;
+  try {
+    const txt = fs.readFileSync('builds/screenshots/smoke-result.json', 'utf8');
+    if (txt && txt.trim()) {
+      try { JSON.parse(txt); safeJsonOk = true; } catch(e) { safeJsonOk = false; }
+    }
+  } catch (e) { safeJsonOk = false; }
+
+  if (!safeJsonOk) {
+    const fallback = {
+      error: 'smoke-run-failed-or-no-json',
+      exitCode: code,
+      stderrPreview: errOut ? (errOut.length > 10000 ? errOut.slice(0,10000) + '\n--- TRUNCATED ---' : errOut) : null,
+      stdoutPreview: out ? (out.length > 10000 ? out.slice(0,10000) + '\n--- TRUNCATED ---' : out) : null,
+      timestamp: (new Date()).toISOString()
+    };
+    try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(fallback, null, 2), 'utf8'); } catch(e){}
+  }
+
   console.log('smoke result saved (stdout-> builds/screenshots/smoke-result.json, stderr-> builds/screenshots/smoke-result.err), exit code', code);
   process.exit(code);
 });

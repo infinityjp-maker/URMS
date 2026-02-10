@@ -35,9 +35,10 @@ async function getTargetWebSocket(){
     const disableCdp = process.env.DISABLE_CDP === '1';
     if (!disableCdp) {
       try {
-        res = await getTargetWebSocket();
+          res = await getTargetWebSocket();
       } catch (e) {
-        res = undefined;
+          res = undefined;
+          try { console.error('CDP_DISCOVERY_FAILED', e && (e.message || e)); } catch(ex){}
       }
     } else {
       res = undefined;
@@ -51,9 +52,23 @@ async function getTargetWebSocket(){
     // connect to http CDP root for WebView2
     if (wsUrl) {
       const httpBase = wsUrl.replace(/^ws:/,'http:').replace(/\/devtools\/page.*$/, '');
-      try { browser = await chromium.connectOverCDP(httpBase); connectedOverCDP = true; } catch(e) { browser = undefined; }
+      try {
+        browser = await chromium.connectOverCDP(httpBase);
+        connectedOverCDP = true;
+      } catch(e) {
+        browser = undefined;
+        try { console.error('CDP_CONNECT_ERROR', e && (e.message || e)); } catch(ex){}
+      }
     }
-    if (!browser) browser = await chromium.launch({ args: ['--no-sandbox'] });
+    if (!browser) {
+      try {
+        browser = await chromium.launch({ args: ['--no-sandbox'] });
+      } catch (e) {
+        try { console.error('BROWSER_LAUNCH_ERROR', e && (e.message || e)); } catch(ex){}
+        try { console.error('BROWSER_LAUNCH_STACK', (e && e.stack || '').slice(0,2000)); } catch(ex){}
+        throw e;
+      }
+    }
 
     // find or create a page in the connected browser that matches our URL
     const host = (process.env.URL || url).replace(/https?:\/\//, '');
@@ -212,7 +227,13 @@ async function getTargetWebSocket(){
     try { await browser.close(); } catch(e){}
     process.exit(0);
   } catch (err) {
-    console.error('ERROR', err && err.message || err);
+    try { console.error('ERROR', err && (err.message || err)); } catch(e){}
+    try { console.error('ERROR_STACK', (err && err.stack || '').slice(0,2000)); } catch(e){}
+    // emit a small JSON to stderr as a last-resort diagnostic
+    try {
+      const diag = { error: 'smoke-exception', message: (err && err.message) || String(err), code: err && err.code ? err.code : null };
+      console.error('ERROR_JSON', JSON.stringify(diag));
+    } catch(e){}
     process.exit(2);
   }
 })();
