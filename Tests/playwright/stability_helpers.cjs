@@ -209,7 +209,43 @@ async function stabilizePage(page) {
           } catch(e){}
         } catch (e) { /* ignore */ }
         // also clamp any elements that overflow the forced height
-        try { document.querySelectorAll('body *').forEach(n => { n.style.maxHeight = h + 'px'; n.style.overflow = 'hidden'; }); } catch(e){}
+        try { document.querySelectorAll('body *').forEach(n => { n.style.maxHeight = h + 'px'; n.style.overflow = 'hidden'; n.style.minHeight = '0'; n.style.boxSizing = 'border-box'; }); } catch(e){}
+
+        // inject a persistent style to aggressively constrain layout and media
+        try {
+          const clampStyle = document.createElement('style');
+          clampStyle.setAttribute('data-ci-clamp','1');
+          clampStyle.textContent = `html,body{height:${h}px !important;min-height:${h}px !important;overflow:hidden !important;} body *{max-height:${h}px !important;overflow:hidden !important;min-height:0 !important;box-sizing:border-box !important;} img,video,iframe,picture,svg{max-width:100% !important;max-height:${h}px !important;object-fit:cover !important;} *{min-height:0 !important;}`;
+          document.documentElement.appendChild(clampStyle);
+        } catch(e){}
+
+        // observe new nodes and ensure they don't grow past the clamp
+        try {
+          const clampNode = (n) => {
+            try {
+              if (n && n.style) {
+                n.style.maxHeight = h + 'px';
+                n.style.overflow = 'hidden';
+                n.style.minHeight = '0';
+                n.style.boxSizing = 'border-box';
+              }
+            } catch(e){}
+          };
+          const clampMo = new MutationObserver(records => {
+            for (const r of records) {
+              if (r.addedNodes) for (const n of r.addedNodes) {
+                try {
+                  if (n.nodeType === 1) {
+                    clampNode(n);
+                    try { n.querySelectorAll && n.querySelectorAll('*').forEach(clampNode); } catch(e){}
+                  }
+                } catch(e){}
+              }
+            }
+          });
+          clampMo.observe(document.documentElement || document, { childList: true, subtree: true });
+        } catch(e){}
+
         window.scrollTo(0,0);
       } catch(e){}
     }, CLIP.width, CLIP.height);
