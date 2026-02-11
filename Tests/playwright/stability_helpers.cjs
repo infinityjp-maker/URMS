@@ -1,7 +1,42 @@
 // Use the tallest baseline height to keep all CI screenshots consistent
 const CLIP = { x: 0, y: 0, width: 800, height: 1257 };
+// attempt to embed a bundled woff2 (if available) or fetch a remote fallback
+const { readFileSync, existsSync } = require('fs');
+const { resolve } = require('path');
+
+async function _prepareEmbeddedFont() {
+  try {
+    // path relative to this helper file: Source/assets/fonts/NotoSansJP-Regular.woff2
+    const candidate = resolve(__dirname, '..', '..', 'Source', 'assets', 'fonts', 'NotoSansJP-Regular.woff2');
+    if (existsSync(candidate)) {
+      const buf = readFileSync(candidate);
+      return buf.toString('base64');
+    }
+    // fallback: try to fetch a known public WOFF2 if network available
+    if (typeof fetch === 'function') {
+      try {
+        const url = 'https://github.com/googlefonts/noto-cjk/raw/main/Sans/WOFF2/NotoSansJP-Regular.woff2';
+        const res = await fetch(url);
+        if (res && res.ok) {
+          const ab = await res.arrayBuffer();
+          const b = Buffer.from(ab);
+          return b.toString('base64');
+        }
+      } catch (e) {
+        // ignore fetch failures
+      }
+    }
+  } catch (e) {
+    // ignore any failures and return undefined
+  }
+  return undefined;
+}
 
 async function stabilizePage(page) {
+  // prepare embedded font (base64) and, if found, inject before other font scrub steps
+  let _embeddedBase64 = undefined;
+  try { _embeddedBase64 = await _prepareEmbeddedFont(); } catch(e){}
+
   try { await page.setViewportSize({ width: CLIP.width, height: CLIP.height }); } catch (e) { }
   // ensure fonts loaded
   try { await page.evaluate(() => document.fonts.ready); } catch (e) { }
@@ -56,37 +91,84 @@ async function stabilizePage(page) {
 
         // proactively remove webfont/link/style that declare @font-face or Google Fonts
         try {
-          document.querySelectorAll('link[rel="preload"][as="font"],link[href*="fonts.googleapis.com"],link[href*="fonts.gstatic"],link[rel="stylesheet"]').forEach(n => {
-            try { n.remove(); } catch(e){}
-          });
-          // remove style blocks containing @font-face
+          // remove preload/google/style links
+          document.querySelectorAll('link[rel="preload"][as="font"],link[href*="fonts.googleapis.com"],link[href*="fonts.gstatic"],link[rel="stylesheet"]').forEach(n => { try { n.remove(); } catch(e){} });
+          // remove inline style blocks containing @font-face
           document.querySelectorAll('style').forEach(s => { try { if (/@font-face/.test(s.textContent)) s.remove(); } catch(e){} });
-          // attempt to neutralize FontFace API so webfonts don't load (replace with no-op class)
+
+          // attempt to neutralize FontFace API so webfonts don't load
           try {
-            window.FontFace = function(){ return { load: () => Promise.resolve() }; };
-            window.FontFace.prototype = { load: () => Promise.resolve() };
+            // preserve original if present
+            const RealFontFace = window.FontFace;
+            try { window.FontFace = function(){ return { load: () => Promise.resolve() }; }; } catch(e){}
+            try { if (RealFontFace && RealFontFace.prototype) RealFontFace.prototype.load = () => Promise.resolve(); } catch(e){}
+            try { if (window.FontFace && window.FontFace.prototype) window.FontFace.prototype.load = () => Promise.resolve(); } catch(e){}
           } catch(e){}
-          // remove any @font-face rules from all stylesheets
+
+          // neutralize document.fonts APIs to avoid waiting for or loading webfonts
           try {
-            for (const ss of Array.from(document.styleSheets)) {
+            if (document.fonts) {
+              try { document.fonts.load = (..._) => Promise.resolve([]); } catch(e){}
+              try { Object.defineProperty(document.fonts, 'ready', { value: Promise.resolve(document.fonts), configurable: true }); } catch(e){}
+            }
+          } catch(e){}
+
+          // remove any @font-face rules from all stylesheets and watch for added rules
+          try {
+            const scrubRules = (ss) => {
               try {
                 const rules = ss.cssRules || ss.rules || [];
                 for (let i = rules.length - 1; i >= 0; i--) {
                   try { if (rules[i] && rules[i].cssText && /@font-face/.test(rules[i].cssText)) ss.deleteRule(i); } catch(e){}
                 }
               } catch(e){}
-            }
+            };
+            for (const ss of Array.from(document.styleSheets)) scrubRules(ss);
+            // observe additions of style/link nodes and scrub
+            const styleObserver = new MutationObserver(records => {
+              for (const r of records) {
+                if (r.addedNodes) for (const n of r.addedNodes) {
+                  try {
+                    if (n.nodeType === 1) {
+                      if (n.tagName === 'STYLE') {
+                        try { if (/@font-face/.test(n.textContent)) n.remove(); } catch(e){}
+                      }
+                      if (n.tagName === 'LINK') {
+                        try { const href = n.getAttribute && n.getAttribute('href'); if (href && (/fonts.googleapis.com|fonts.gstatic|\.woff|\.woff2|\.ttf/i).test(href)) n.remove(); } catch(e){}
+                      }
+                      try { n.querySelectorAll && n.querySelectorAll('style').forEach(s => { if (/@font-face/.test(s.textContent)) s.remove(); }); } catch(e){}
+                    }
+                  } catch(e){}
+                }
+              }
+            });
+            styleObserver.observe(document.documentElement || document, { childList: true, subtree: true });
           } catch(e){}
-          // enforce system font styles to further reduce font variability
+
+          // enforce system font styles to further reduce font variability (apply to pseudo elements too)
           try {
             const sys = document.createElement('style');
-            sys.textContent = ':root{ --ci-system-fonts: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif !important; } *{ font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; }';
+            sys.setAttribute('data-ci-system-fonts','1');
+            // Add explicit scrollbar rules and gutter reservation to avoid layout shifts
+            sys.textContent = ':root{ --ci-system-fonts: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, "MS Gothic", sans-serif !important; --ci-scrollbar-width: 16px; }\n' +
+              '* , *::before, *::after { font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; -webkit-font-smoothing: antialiased !important; -moz-osx-font-smoothing: grayscale !important; }\n' +
+              'html, body { scrollbar-gutter: stable both-edges !important; }\n' +
+              '::-webkit-scrollbar { width: var(--ci-scrollbar-width) !important; height: var(--ci-scrollbar-width) !important; background: transparent !important; }\n' +
+              '::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18) !important; border-radius: 6px !important; }\n' +
+              '::-webkit-scrollbar-track { background: transparent !important; }';
             document.documentElement.appendChild(sys);
             try { document.documentElement.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--ci-system-fonts') || 'sans-serif'; } catch(e){}
           } catch(e){}
         } catch(e){}
       } catch(e){}
     });
+    // if Node side found an embedded font, inject it now (via base64 data URI)
+    if (_embeddedBase64) {
+      try {
+        const css = `@font-face{font-family: 'URMS-Embedded-JP'; src: url("data:font/woff2;base64,${_embeddedBase64}") format('woff2'); font-weight:400; font-style:normal; font-display:swap;} :root{ --ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, "MS Gothic", sans-serif !important; } * , *::before, *::after { font-family: var(--ci-system-fonts) !important; }`;
+        try { await page.addStyleTag({ content: css }); } catch(e){}
+      } catch(e){}
+    }
   } catch(e){}
   // Force document height/overflow/margins to the CLIP to avoid variable page heights
   try {
@@ -106,15 +188,25 @@ async function stabilizePage(page) {
         // presence/absence doesn't shift layout between runs.
         // Compute native scrollbar width and apply as right padding.
         try {
-          const sb = window.innerWidth - document.documentElement.clientWidth;
+          const sb = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+          // force scrollbars visible and reserve space
           el.style.overflowY = 'scroll';
           bd.style.overflowY = 'scroll';
+          try { el.style.scrollbarGutter = 'stable both-edges'; } catch(e){}
           if (sb > 0) {
             // use CSS variable so authorship can override if needed
             document.documentElement.style.setProperty('--ci-scrollbar-width', sb + 'px');
-            // apply padding to body to keep content width stable
+            // apply padding to body and html to keep content width stable
             bd.style.paddingRight = sb + 'px';
+            el.style.paddingRight = sb + 'px';
           }
+          // also ensure overlay scrollbars are given a consistent visual width
+          try {
+            const sbStyle = document.createElement('style');
+            sbStyle.setAttribute('data-ci-scrollbar','1');
+            sbStyle.textContent = `::-webkit-scrollbar{width:var(--ci-scrollbar-width)!important;height:var(--ci-scrollbar-width)!important}`;
+            document.documentElement.appendChild(sbStyle);
+          } catch(e){}
         } catch (e) { /* ignore */ }
         // also clamp any elements that overflow the forced height
         try { document.querySelectorAll('body *').forEach(n => { n.style.maxHeight = h + 'px'; n.style.overflow = 'hidden'; }); } catch(e){}
