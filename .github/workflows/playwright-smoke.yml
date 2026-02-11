@@ -49,19 +49,19 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
             fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji \
             fonts-dejavu-core fonts-liberation fonts-ipaexfont fonts-ipafont
-          # Try to fetch a canonical Noto Sans JP woff2 from Google Fonts and install
           sudo mkdir -p /usr/local/share/fonts/noto || true
           set -e
-          # fetch CSS and extract woff2 URLs (may yield multiple weights); attempt download
+          cat > /tmp/install_noto.sh <<'BASH'
           GF_CSS=$(mktemp)
-          curl -s -A "Mozilla/5.0" 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap' -o "$GF_CSS" || true
-          grep -o 'https://[^)\"\']*\.woff2' "$GF_CSS" | sort -u | while read -r url; do
+          curl -s -A "Mozilla/5.0" "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" -o "$GF_CSS" || true
+          grep -o "https://[^)\"']*\\.woff2" "$GF_CSS" | sort -u | while read -r url; do
             fname=/usr/local/share/fonts/noto/$(basename "$url")
             sudo curl -fL "$url" -o "$fname" || true
           done
           rm -f "$GF_CSS" || true
-          # Refresh font cache
           sudo fc-cache -f -v || true
+          BASH
+          sudo bash /tmp/install_noto.sh
         shell: bash
 
       - name: Build
