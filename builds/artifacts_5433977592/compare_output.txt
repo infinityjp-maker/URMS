@@ -1,3 +1,0 @@
-playwright-smoke.png diff pixels: 27958 diff image: builds\screenshots\diff-playwright-smoke.png
-playwright-future-mode.png diff pixels: 1212 diff image: builds\screenshots\diff-playwright-future-mode.png
-All screenshot comparisons passed
