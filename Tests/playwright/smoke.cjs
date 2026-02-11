@@ -374,6 +374,8 @@ async function getTargetWebSocket(){
     } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
+    // include collected DOM snapshot for diagnosis if available (bounded size)
+    try { if (domSnapshot) result.domSnapshot = domSnapshot; } catch(e) {}
     // include DPR and viewport info for debugging
     try {
       const dpr = await page.evaluate(() => window.devicePixelRatio || 1);
