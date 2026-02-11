@@ -199,6 +199,20 @@ async function stabilizePage(page) {
             // apply padding to body and html to keep content width stable
             bd.style.paddingRight = sb + 'px';
             el.style.paddingRight = sb + 'px';
+            // reduce layout width so content never shifts when scrollbar appears
+            try {
+              const contentW = Math.max(0, w - sb);
+              el.style.width = w + 'px';
+              bd.style.width = contentW + 'px';
+              bd.style.maxWidth = contentW + 'px';
+              // ensure direct children do not expand beyond reserved width
+              try {
+                const wrap = document.createElement('style');
+                wrap.setAttribute('data-ci-width-clamp','1');
+                wrap.textContent = `body > * { max-width: ${contentW}px !important; box-sizing: border-box !important; }`;
+                document.documentElement.appendChild(wrap);
+              } catch(e){}
+            } catch(e){}
           }
           // also ensure overlay scrollbars are given a consistent visual width
           try {
