@@ -176,7 +176,10 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
 
     // pixel diffs
     for(const name of names){
-      const curPath = path.join(screenshotsDir,name);
+      // prefer '-dist' variant if present in CI artifacts (built output), fall back to normal name
+      const distVariant = name.replace('.png','-dist.png');
+      const distPath = path.join(screenshotsDir, distVariant);
+      const curPath = fs.existsSync(distPath) ? distPath : path.join(screenshotsDir,name);
       const basePath = path.join(baselineDir,name);
       const diffPath = path.join(screenshotsDir, 'diff-' + name);
       const curBuf = fs.readFileSync(curPath);
