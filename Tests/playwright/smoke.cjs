@@ -1,5 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
+const { PNG } = require('pngjs');
 const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
 const http = require('http');
 
@@ -183,6 +184,30 @@ async function getTargetWebSocket(){
     try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) {}
     try { await page.waitForTimeout(200); } catch (e) {}
 
+    // Extract DOM snapshot and key computed styles to help CI-side diagnosis.
+    // Keep the payload bounded to avoid huge artifacts.
+    let domSnapshot = undefined;
+    try {
+      domSnapshot = await page.evaluate(() => {
+        const sel = ['header','nav','.site-header','.app-header','.toolbar','.banner','.promo','main','.dashboard-grid','.floating-card','footer','body','html'];
+        const elems = [];
+        for (const s of sel) {
+          try {
+            const list = Array.from(document.querySelectorAll(s));
+            for (const e of list) {
+              try {
+                const r = e.getBoundingClientRect();
+                const cs = window.getComputedStyle(e);
+                elems.push({ selector: s, tag: e.tagName, id: e.id || null, class: e.className || null, rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) }, computed: { display: cs.display, width: cs.width, height: cs.height, margin: cs.margin, padding: cs.padding, fontFamily: cs.fontFamily, fontSize: cs.fontSize, color: cs.color, background: cs.background }, outer: (e.outerHTML || '').slice(0,2000) });
+              } catch(e){}
+            }
+          } catch(e){}
+        }
+        const html = (document.documentElement && document.documentElement.outerHTML) ? document.documentElement.outerHTML.slice(0,200000) : null;
+        return { html, elems };
+      });
+    } catch(e) { }
+
     // Optional: force platform font if requested (helpful for CI font-diff experiments)
     if (process.env.FORCE_SYSTEM_UI === '1'){
       try {
@@ -253,7 +278,10 @@ async function getTargetWebSocket(){
     } catch (e) { console.error('ENFORCE_VIEWPORT_ERROR', e && e.message); }
 
     // take screenshot as buffer so we can inspect PNG header for size
+    // Enforce CLIP cropping by default to ensure deterministic screenshot size
+    // Set ENFORCE_CLIP=0 in env to allow fullPage fallback (not recommended for CI).
     let buf;
+    const enforceClip = (process.env.ENFORCE_CLIP === '0') ? false : true;
     try {
       // ensure viewport and forced document size before capture
       try { await page.setViewportSize(VIEWPORT); } catch (e) {}
@@ -292,7 +320,8 @@ async function getTargetWebSocket(){
       }
 
       if (!buf) {
-        if (process.env.ENFORCE_CLIP === '1') {
+        if (enforceClip) {
+          // If we must enforce CLIP, fail loudly so CI detects the issue.
           console.error('SCREENSHOT_CLIP_FAILED_ENFORCE');
         } else {
           try {
@@ -308,12 +337,36 @@ async function getTargetWebSocket(){
       console.error('SCREENSHOT_EXCEPTION', e && e.message);
     }
 
-    // quick PNG size probe (reads width/height from IHDR)
+      // quick PNG size probe (reads width/height from IHDR)
     try {
       if (buf && buf.length > 24 && buf.slice(0,8).toString('hex') === '89504e470d0a1a0a'){
-        const width = buf.readUInt32BE(16);
-        const height = buf.readUInt32BE(20);
+        let width = buf.readUInt32BE(16);
+        let height = buf.readUInt32BE(20);
         console.error('SCREENSHOT_PNG_SIZE', width, height);
+        // If PNG size doesn't match our CLIP, crop to CLIP to enforce deterministic height
+        try {
+          const targetW = CLIP.width;
+          const targetH = CLIP.height;
+          if (width !== targetW || height !== targetH) {
+            try {
+              const srcPng = PNG.sync.read(buf);
+              const dstPng = new PNG({ width: targetW, height: targetH });
+              for (let y = 0; y < targetH; y++) {
+                const srcStart = (y * srcPng.width) * 4;
+                const dstStart = (y * targetW) * 4;
+                // copy only the left-most targetW pixels from each row (top-left anchored)
+                srcPng.data.copy(dstPng.data, dstStart, srcStart, srcStart + targetW * 4);
+              }
+              const outBuf = PNG.sync.write(dstPng);
+              fs.writeFileSync(screenshotPath, outBuf);
+              buf = outBuf;
+              width = targetW; height = targetH;
+              console.error('SCREENSHOT_CROPPED_TO_CLIP', width, height);
+            } catch (cropErr) {
+              console.error('SCREENSHOT_CROP_FAILED', cropErr && cropErr.message);
+            }
+          }
+        } catch (e) { console.error('CROP_CHECK_ERROR', e && e.message); }
       } else {
         console.error('SCREENSHOT_PNG_SIZE', 'not-png-or-too-small');
       }
