@@ -50,44 +50,58 @@ function runSmoke() {
         return reject(new Error('failed to read smoke-result.json: ' + e.message));
       }
     }
-    const env = Object.assign({}, process.env);
-    const cp = child_process.spawn('node', ['Tests/playwright/smoke.cjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
-    let out = '';
-    cp.stdout.on('data', (d) => out += d.toString());
-    cp.stderr.on('data', (d) => process.stderr.write(d));
-    cp.on('close', (code) => {
-      if (code !== 0) return reject(new Error('smoke.cjs exited with ' + code));
-      try {
-        // Try parse full stdout JSON first, then fallback to robust extraction
-        // using the same balanced-brace approach.
-        let j = null;
-        try { j = JSON.parse(out); } catch (e) {
-          const extractLastJson = (s) => {
-            const starts = [];
-            for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);
-            for (let idx = starts.length - 1; idx >= 0; idx--) {
-              let i = starts[idx];
-              let depth = 0;
-              for (let j = i; j < s.length; j++) {
-                const ch = s[j];
-                if (ch === '{') depth++;
-                else if (ch === '}') depth--;
-                if (depth === 0) {
-                  const candidate = s.slice(i, j + 1);
-                  try { return JSON.parse(candidate); } catch (e) { break; }
+    // Attempt smoke.cjs up to 3 times to mitigate transient CDP/connection failures
+    const attemptsMax = 3;
+    let attempts = 0;
+    const runOnce = () => {
+      attempts++;
+      const env = Object.assign({}, process.env);
+      const cp = child_process.spawn('node', ['Tests/playwright/smoke.cjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
+      let out = '';
+      cp.stdout.on('data', (d) => out += d.toString());
+      cp.stderr.on('data', (d) => process.stderr.write(d));
+      cp.on('close', (code) => {
+        if (code !== 0) {
+          if (attempts < attemptsMax) {
+            console.error('smoke.cjs failed with', code, ' - retrying attempt', attempts + 1);
+            setTimeout(runOnce, 1000 * attempts);
+            return;
+          }
+          return reject(new Error('smoke.cjs exited with ' + code));
+        }
+        try {
+          // Try parse full stdout JSON first, then fallback to robust extraction
+          // using the same balanced-brace approach.
+          let j = null;
+          try { j = JSON.parse(out); } catch (e) {
+            const extractLastJson = (s) => {
+              const starts = [];
+              for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);
+              for (let idx = starts.length - 1; idx >= 0; idx--) {
+                let i = starts[idx];
+                let depth = 0;
+                for (let j = i; j < s.length; j++) {
+                  const ch = s[j];
+                  if (ch === '{') depth++;
+                  else if (ch === '}') depth--;
+                  if (depth === 0) {
+                    const candidate = s.slice(i, j + 1);
+                    try { return JSON.parse(candidate); } catch (e) { break; }
+                  }
                 }
               }
-            }
-            return null;
-          };
-          j = extractLastJson(out);
+              return null;
+            };
+            j = extractLastJson(out);
+          }
+          if (!j) throw new Error('no valid JSON object found on stdout from smoke.cjs');
+          resolve(j);
+        } catch (e) {
+          reject(e);
         }
-        if (!j) throw new Error('no valid JSON object found on stdout from smoke.cjs');
-        resolve(j);
-      } catch (e) {
-        reject(e);
-      }
-    });
+      });
+    };
+    runOnce();
   });
 }
 

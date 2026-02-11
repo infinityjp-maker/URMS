@@ -34,11 +34,20 @@ async function getTargetWebSocket(){
     let res;
     const disableCdp = process.env.DISABLE_CDP === '1';
     if (!disableCdp) {
-      try {
+      // retry CDP discovery a few times to tolerate transient CI timing issues
+      res = undefined;
+      for (let attempt = 1; attempt <= 6; attempt++) {
+        try {
           res = await getTargetWebSocket();
-      } catch (e) {
-          res = undefined;
-          try { console.error('CDP_DISCOVERY_FAILED', e && (e.message || e)); } catch(ex){}
+          if (res) break;
+        } catch (e) {
+          try { console.error('CDP_DISCOVERY_FAILED', attempt, e && (e.message || e)); } catch(ex){}
+        }
+        // backoff
+        await new Promise(r => setTimeout(r, 1000 * attempt));
+      }
+      if (!res) {
+        try { console.error('CDP_DISCOVERY_GAVE_UP'); } catch(e){}
       }
     } else {
       res = undefined;
@@ -52,13 +61,19 @@ async function getTargetWebSocket(){
     // connect to http CDP root for WebView2
     if (wsUrl) {
       const httpBase = wsUrl.replace(/^ws:/,'http:').replace(/\/devtools\/page.*$/, '');
-      try {
-        browser = await chromium.connectOverCDP(httpBase);
-        connectedOverCDP = true;
-      } catch(e) {
-        browser = undefined;
-        try { console.error('CDP_CONNECT_ERROR', e && (e.message || e)); } catch(ex){}
+      // attempt multiple connects to tolerate transient CDP start races
+      for (let ctry = 1; ctry <= 4; ctry++) {
+        try {
+          browser = await chromium.connectOverCDP(httpBase);
+          connectedOverCDP = true;
+          break;
+        } catch (e) {
+          try { console.error('CDP_CONNECT_ERROR', ctry, e && (e.message || e)); } catch(ex){}
+          browser = undefined;
+          await new Promise(r => setTimeout(r, 1000 * ctry));
+        }
       }
+      if (!browser) try { console.error('CDP_CONNECT_GAVE_UP'); } catch(e){}
     }
     if (!browser) {
       try {
