@@ -106,14 +106,14 @@ jobs:
           COMPARE_TARGET_HEIGHT: '1257'
         run: npm run smoke:diff
 
-      - name: Upload screenshots and diffs
+      - name: Upload screenshots and dist
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-screenshots
           path: |
             builds/screenshots/**
-            dist/index.html
+            dist/**
       - name: List screenshot files
         run: |
           echo "=== builds/screenshots ==="
