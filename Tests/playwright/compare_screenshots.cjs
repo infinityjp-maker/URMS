@@ -7,7 +7,7 @@ const pixelmatch = require('pixelmatch');
 // Crop configuration to focus comparisons on the stable central UI area.
 // Enable via env var COMPARE_CROP=1 to apply cropping, otherwise full-page compare.
 const CROP = {
-  enabled: !!process.env.COMPARE_CROP,
+  enabled: (process.env.COMPARE_CROP === undefined) ? true : !!process.env.COMPARE_CROP,
   x: 0,
   y: 120,
   width: 800,

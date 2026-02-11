@@ -48,9 +48,13 @@ async function stabilizePage(page) {
   try {
     await page.addStyleTag({ content: `
       /* dynamic UI suppression for CI captures */
-      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status] { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status], header, footer, .header, .site-header, .app-header, .topbar, .toolbar, .breadcrumbs, .banner, .promo, .dev-banner, .debug-banner { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
       /* ensure animations/transitions are disabled globally */
       * { transition: none !important; animation: none !important; }
+      /* hide common nav and user chrome that often changes between runs */
+      nav, .nav, .navbar, .user-menu, .account-menu, .clock-widget { visibility: hidden !important; opacity: 0 !important; }
+      /* reduce visual noise from images (replace with neutral background) */
+      img, picture, video, iframe { visibility: visible !important; opacity: 1 !important; object-fit: contain !important; filter: grayscale(1) blur(0px) !important; }
       /* prefer stable system UI fonts to avoid webfont variability (include common JP system fonts) */
       :root { --ci-system-fonts: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; }
       * { font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; -webkit-font-smoothing: antialiased !important; -moz-osx-font-smoothing: grayscale !important; }
@@ -156,7 +160,12 @@ async function stabilizePage(page) {
               '::-webkit-scrollbar { width: var(--ci-scrollbar-width) !important; height: var(--ci-scrollbar-width) !important; background: transparent !important; }\n' +
               '::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18) !important; border-radius: 6px !important; }\n' +
               '::-webkit-scrollbar-track { background: transparent !important; }';
-            document.documentElement.appendChild(sys);
+              document.documentElement.appendChild(sys);
+              // add an extra normalization style to hide variable chrome and enforce background
+              const norm = document.createElement('style');
+              norm.setAttribute('data-ci-normalize','1');
+              norm.textContent = `body, html { background: #ffffff !important; color: #222 !important; } header, footer, nav, .site-header, .app-header, .toolbar, .banner, .promo, .debug-banner { display: none !important; }`;
+              document.documentElement.appendChild(norm);
             try { document.documentElement.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--ci-system-fonts') || 'sans-serif'; } catch(e){}
           } catch(e){}
         } catch(e){}
