@@ -4,15 +4,20 @@ const { PNG } = require('pngjs');
 const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
 const http = require('http');
 
-function fetchJson(url){
+function fetchJson(url, timeoutMs = 5000){
   return new Promise((resolve,reject)=>{
-    http.get(url, res => {
+    const req = http.get(url, res => {
       let d = '';
       res.on('data', c => d += c);
       res.on('end', () => {
         try{ resolve(JSON.parse(d)); }catch(e){ reject(e); }
       });
-    }).on('error', reject);
+    });
+    req.on('error', reject);
+    req.setTimeout(timeoutMs, () => {
+      req.abort();
+      reject(new Error('fetchJson timeout'));
+    });
   });
 }
 
@@ -35,17 +40,19 @@ async function getTargetWebSocket(){
     let res;
     const disableCdp = process.env.DISABLE_CDP === '1';
     if (!disableCdp) {
-      // retry CDP discovery a few times to tolerate transient CI timing issues
+      // retry CDP discovery multiple times to tolerate transient CI timing issues
       res = undefined;
-      for (let attempt = 1; attempt <= 6; attempt++) {
+      for (let attempt = 1; attempt <= 12; attempt++) {
         try {
+          try { console.error('CDP_DISCOVERY_ATTEMPT', attempt, 'url=', process.env.CDP || 'http://127.0.0.1:9222/json/list'); } catch(e){}
+          // use a slightly larger timeout for the list fetch
           res = await getTargetWebSocket();
           if (res) break;
         } catch (e) {
           try { console.error('CDP_DISCOVERY_FAILED', attempt, e && (e.message || e)); } catch(ex){}
         }
-        // backoff
-        await new Promise(r => setTimeout(r, 1000 * attempt));
+        // backoff (increasing)
+        await new Promise(r => setTimeout(r, 1500 * attempt));
       }
       if (!res) {
         try { console.error('CDP_DISCOVERY_GAVE_UP'); } catch(e){}
@@ -63,8 +70,9 @@ async function getTargetWebSocket(){
     if (wsUrl) {
       const httpBase = wsUrl.replace(/^ws:/,'http:').replace(/\/devtools\/page.*$/, '');
       // attempt multiple connects to tolerate transient CDP start races
-      for (let ctry = 1; ctry <= 4; ctry++) {
+      for (let ctry = 1; ctry <= 8; ctry++) {
         try {
+          try { console.error('CDP_CONNECT_ATTEMPT', ctry, httpBase); } catch(e){}
           browser = await chromium.connectOverCDP(httpBase);
           connectedOverCDP = true;
           break;
