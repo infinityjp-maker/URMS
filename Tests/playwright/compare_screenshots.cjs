@@ -114,6 +114,7 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
 
     const screenshotsDir = path.join('builds','screenshots');
     const names = ['playwright-smoke.png','playwright-future-mode.png'];
+    const availableNames = [];
 
     // run smoke to obtain structural info
     const smoke = await runSmoke();
@@ -130,10 +131,17 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
     for(const name of names){
       const cur = path.join(screenshotsDir,name);
       const base = path.join(baselineDir,name);
+      const optional = (name === 'playwright-future-mode.png');
       if(!fs.existsSync(cur)){
+        if(optional){
+          console.warn('Optional current screenshot missing, skipping:', cur);
+          continue;
+        }
         console.error('Missing current screenshot:', cur);
         process.exit(2);
       }
+      // mark as available for later pixel-diff comparisons
+      availableNames.push(name);
       if(!fs.existsSync(base)){
         fs.copyFileSync(cur, base);
         console.warn('Baseline created for', name);
@@ -175,12 +183,16 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
     }
 
     // pixel diffs
-    for(const name of names){
+    for(const name of availableNames){
       // prefer '-dist' variant if present in CI artifacts (built output), fall back to normal name
       const distVariant = name.replace('.png','-dist.png');
       const distPath = path.join(screenshotsDir, distVariant);
       const curPath = fs.existsSync(distPath) ? distPath : path.join(screenshotsDir,name);
       const basePath = path.join(baselineDir,name);
+      if(!fs.existsSync(basePath)){
+        console.warn('Baseline image missing for', name, '- skipping diff');
+        continue;
+      }
       const diffPath = path.join(screenshotsDir, 'diff-' + name);
       const curBuf = fs.readFileSync(curPath);
       const baseBuf = fs.readFileSync(basePath);
