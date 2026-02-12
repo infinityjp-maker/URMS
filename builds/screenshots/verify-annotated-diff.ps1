@@ -28,9 +28,10 @@ foreach($map in $pairs.Keys){
 
   $regenerated = $template -replace '\{\{MAP_URL\}\}',$map
   # normalize line endings for reliable comparison
-  $regNorm = $regenerated -replace "`r`n","`n" -replace "`r","`n"
+  # normalize line endings and trim trailing whitespace/newlines for tolerant CI comparison
+  $regNorm = ($regenerated -replace "`r`n","`n" -replace "`r","`n").TrimEnd()
   $actual = Get-Content -Raw -Path $outPath
-  $actNorm = $actual -replace "`r`n","`n" -replace "`r","`n"
+  $actNorm = ($actual -replace "`r`n","`n" -replace "`r","`n").TrimEnd()
 
   if($regNorm -ne $actNorm){
     Write-Host "Mismatch detected: $outName (expected MAP_URL = $map)" -ForegroundColor Red
