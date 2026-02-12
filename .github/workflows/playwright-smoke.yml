@@ -75,10 +75,10 @@ jobs:
         # Lightweight CORS-enabled stub to satisfy frontend /ux-ping preflight and fetch.
         # Replace this step with your real backend start command if available.
         run: |
-          nohup node -e "const fs=require('fs');const http=require('http');const srv=http.createServer((req,res)=>{ const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'*','Access-Control-Allow-Headers':'*'}; Object.entries(headers).forEach(([k,v])=>res.setHeader(k,v)); try{ const ts=new Date().toISOString(); if(req.method==='OPTIONS'){ try{fs.appendFileSync('/tmp/ux-ping.log','PING '+ts+' OPTIONS\\n');}catch(_){} res.writeHead(204); return res.end(); } if(req.url && req.url.indexOf('/ux-ping')===0){ try{fs.appendFileSync('/tmp/ux-ping.log','PING '+ts+' GET\\n');}catch(_){} res.writeHead(200,{'Content-Type':'text/plain'}); res.end('ok'); } else { res.writeHead(404); res.end('not found'); } }catch(e){ try{res.writeHead(500);}catch(_){} try{res.end('err');}catch(_){} } }); srv.listen(8765,'127.0.0.1',()=>console.log('ping server listening on 127.0.0.1:8765'))" > /tmp/ux-ping.log 2>&1 &
+          nohup node .github/workflows/ping-server.js > /tmp/ux-ping.${{ github.run_id }}.log 2>&1 &
           npx wait-on http://127.0.0.1:8765/ux-ping
           # Give the stub server time to stabilize before the frontend starts pinging
-          sleep 5
+          sleep 10
 
       - name: Start real backend (placeholder)
         # Start the real backend in parallel to the stub (placeholder for now)
@@ -130,7 +130,7 @@ jobs:
           path: |
             builds/screenshots/**
             dist/**
-            /tmp/ux-ping.log
+            /tmp/ux-ping.${{ github.run_id }}.log
       - name: List screenshot files
         run: |
           echo "=== builds/screenshots ==="
