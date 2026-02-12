@@ -71,6 +71,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Start backend ping server (localhost:8765)
+        # Lightweight stub to satisfy frontend ux-ping during CI.
+        # Replace this step with your real backend start command if available.
+        run: |
+          nohup node -e "const http=require('http');const srv=http.createServer((req,res)=>{ try{ if(req.url && req.url.indexOf('/ux-ping')===0){ res.writeHead(200,{'Content-Type':'text/plain'}); res.end('ok'); } else { res.writeHead(404); res.end('not found'); } }catch(e){ try{res.writeHead(500);}catch(_){} try{res.end('err');}catch(_){} } }); srv.listen(8765,'127.0.0.1',()=>console.log('ping server listening on 127.0.0.1:8765'))" > /tmp/ux-ping.log 2>&1 &
+          npx wait-on http://127.0.0.1:8765/ux-ping
+
       - name: Serve dist (background)
         run: |
           npx http-server dist -p 1420 -c-1 &
@@ -104,6 +111,7 @@ jobs:
           SKIP_RUN_SMOKE: '1'
           COMPARE_PAD: '1'
           COMPARE_TARGET_HEIGHT: '1257'
+          DISABLE_CDP: '1'
         run: npm run smoke:diff
 
       - name: Upload screenshots and dist
