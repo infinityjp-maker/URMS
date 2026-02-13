@@ -16,17 +16,20 @@ function appendLog(line){
 }
 
 const server = http.createServer((req, res) => {
-  // Add strict CORS headers so fetch/sendBeacon from the frontend succeeds
+  // Add CORS headers. Reflect Origin when present to avoid wildcard-with-credentials issues
+  const origin = req.headers.origin || '*';
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true'
   };
   Object.entries(headers).forEach(([k,v])=>res.setHeader(k,v));
   const ts = new Date().toISOString();
   try {
     if (req.method === 'OPTIONS'){
       appendLog(`PING ${ts} OPTIONS`);
+      // ensure preflight response includes the CORS headers
       res.writeHead(204);
       return res.end();
     }
