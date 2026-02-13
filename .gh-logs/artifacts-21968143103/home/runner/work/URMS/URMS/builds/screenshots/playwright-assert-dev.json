@@ -1,0 +1,17 @@
+{
+  "url": "http://localhost:1420/",
+  "ok": true,
+  "cardCount": 7,
+  "headings": [
+    "システム",
+    "ネットワーク",
+    "ログ",
+    "セキュリティ",
+    "サブシステム",
+    "設定",
+    "Weather + Calendar",
+    "Weather & Calendar"
+  ],
+  "missing": [],
+  "screenshot": "builds/screenshots/playwright-assert-dev.png"
+}
