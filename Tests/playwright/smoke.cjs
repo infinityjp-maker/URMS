@@ -174,18 +174,27 @@ async function getTargetWebSocket(){
     });
 
     const consoleMessages = [];
-    page.on('console', msg => consoleMessages.push({ type: msg.type(), text: msg.text() }));
+    const pageErrors = [];
+    const internalErrors = [];
+    page.on('console', msg => {
+      try { consoleMessages.push({ type: msg.type(), text: msg.text(), location: msg.location ? msg.location() : null, ts: Date.now() }); } catch(e) { try { internalErrors.push(String(e && (e.message||e))); } catch(_){} }
+    });
+    page.on('pageerror', err => { try { pageErrors.push({ message: String(err && (err.message || err)), stack: (err && err.stack) ? String(err.stack).slice(0,2000) : null, ts: Date.now() }); } catch(e){ try{ internalErrors.push(String(e && (e.message||e))); }catch(_){} } );
 
     // screenshot for visual inspection
     const screenshotPath = 'builds/screenshots/playwright-smoke.png';
-    try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
+    try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) { try{ internalErrors.push(String(e && (e.message||e))); }catch(_){} }
 
     // ensure page is fully loaded and fonts are ready before metrics/screenshot
     try {
-      try { await page.waitForLoadState('networkidle'); } catch (e) {}
-      try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) {}
+      try { await page.waitForLoadState('domcontentloaded', { timeout: 5000 }); } catch (e) { try{ internalErrors.push('waitForLoadState(domcontentloaded): '+String(e && (e.message||e))); }catch(_){} }
+      try { await page.waitForLoadState('load', { timeout: 5000 }); } catch (e) { try{ internalErrors.push('waitForLoadState(load): '+String(e && (e.message||e))); }catch(_){} }
+      // retry networkidle a few times to increase stability
+      for (let ni = 0; ni < 3; ni++) {
+        try { await page.waitForLoadState('networkidle', { timeout: 2000 }); break; } catch (e) { try{ internalErrors.push('waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); }catch(_){} await page.waitForTimeout(500); }
+      try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) { try{ internalErrors.push('fonts.ready: '+String(e && (e.message||e))); }catch(_){} }
       // small pause to let rendering settle
-      try { await page.waitForTimeout(200); } catch (e) {}
+      try { await page.waitForTimeout(200); } catch (e) { try{ internalErrors.push('waitForTimeout(200): '+String(e && (e.message||e))); }catch(_){} }
       const pageMetrics = await page.evaluate(() => {
         return {
           scrollHeight: document.body ? document.body.scrollHeight : null,
@@ -196,15 +205,15 @@ async function getTargetWebSocket(){
         };
       });
       console.error('PAGE_METRICS', JSON.stringify(pageMetrics));
-    } catch (e) { console.error('PAGE_METRICS_ERROR', e && e.message); }
+    } catch (e) { try{ internalErrors.push('PAGE_METRICS_ERROR: '+String(e && (e.message||e))); }catch(_){} }
 
     // run centralized stabilization steps (viewport, fonts, DPR, disable animations)
-    try { await stabilizePage(page); } catch (e) { }
+    try { await stabilizePage(page); } catch (e) { try{ internalErrors.push('stabilizePage: '+String(e && (e.message||e))); }catch(_){} }
 
     // after stabilization, ensure network and fonts are settled before capture
-    try { await page.waitForLoadState('networkidle'); } catch (e) {}
-    try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) {}
-    try { await page.waitForTimeout(200); } catch (e) {}
+    try { await page.waitForLoadState('networkidle'); } catch (e) { try{ internalErrors.push('after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))); }catch(_){} }
+    try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) { try{ internalErrors.push('after-stabilize fonts.ready: '+String(e && (e.message||e))); }catch(_){} }
+    try { await page.waitForTimeout(200); } catch (e) { try{ internalErrors.push('after-stabilize waitForTimeout(200): '+String(e && (e.message||e))); }catch(_){} }
 
     // Extract DOM snapshot and key computed styles to help CI-side diagnosis.
     // Keep the payload bounded to avoid huge artifacts.
@@ -276,12 +285,12 @@ async function getTargetWebSocket(){
     }
 
     // log the clip info we will use
-    try { console.error('CLIP', JSON.stringify(CLIP)); } catch (e) {}
+    try { console.error('CLIP', JSON.stringify(CLIP)); } catch (e) { try{ internalErrors.push('CLIP log error: '+String(e && (e.message||e))); }catch(_){} }
 
     // Enforce viewport and fixed document height to avoid variable capture heights
     try {
       if (typeof page.setViewportSize === 'function') {
-        try { await page.setViewportSize(VIEWPORT); console.error('VIEWPORT_SET', JSON.stringify(VIEWPORT)); } catch (e) {}
+        try { await page.setViewportSize(VIEWPORT); console.error('VIEWPORT_SET', JSON.stringify(VIEWPORT)); } catch (e) { try{ internalErrors.push('setViewportSize VIEWPORT_SET: '+String(e && (e.message||e))); }catch(_){} }
       }
       // force html/body sizes and hide overflow so clip is stable
       try {
@@ -306,7 +315,7 @@ async function getTargetWebSocket(){
     const enforceClip = (process.env.ENFORCE_CLIP === '0') ? false : true;
     try {
       // ensure viewport and forced document size before capture
-      try { await page.setViewportSize(VIEWPORT); } catch (e) {}
+      try { await page.setViewportSize(VIEWPORT); } catch (e) { try{ internalErrors.push('setViewportSize before capture: '+String(e && (e.message||e))); }catch(_){} }
       try {
         await page.evaluate((w,h) => {
           try {
@@ -326,18 +335,18 @@ async function getTargetWebSocket(){
       await page.waitForTimeout(120);
 
       // Additional stabilization waits to reduce flaky captures
-      try { await page.waitForLoadState('networkidle'); } catch (e) {}
-      try { await page.waitForTimeout(1500); } catch (e) {}
-      try { await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: 2000 }); } catch (e) {}
+      try { await page.waitForLoadState('networkidle'); } catch (e) { try{ internalErrors.push('post-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))); }catch(_){} }
+      try { await page.waitForTimeout(1500); } catch (e) { try{ internalErrors.push('post-stabilize waitForTimeout(1500): '+String(e && (e.message||e))); }catch(_){} }
+      try { await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: 2000 }); } catch (e) { try{ internalErrors.push('waitForSelector .dashboard-grid: '+String(e && (e.message||e))); }catch(_){} }
       try {
         await page.evaluate(() => new Promise(r => (window.requestIdleCallback ? requestIdleCallback(r) : setTimeout(r, 0))));
-      } catch (e) {}
+      } catch (e) { try{ internalErrors.push('requestIdleCallback wait: '+String(e && (e.message||e))); }catch(_){} }
       // Wait for frontend to set window.__pingOk === true if present; ignore if not defined
       try {
         await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 5000 });
-      } catch (e) {}
+      } catch (e) { try{ internalErrors.push('waitForFunction(__pingOk): '+String(e && (e.message||e))); }catch(_){} }
       // Ensure DOM height is stable before screenshot
-      try { await waitForStableHeight(page); } catch (e) {}
+      try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
 
       // Try clip capture up to 3 times to avoid intermittent failures; do not
       // fall back to fullPage when ENFORCE_CLIP=1 to keep height deterministic.
@@ -410,6 +419,9 @@ async function getTargetWebSocket(){
     } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
     const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
+    // attach collected logs and internal errors
+    try { result.pageErrors = pageErrors; } catch(e){ try{ internalErrors.push('attach pageErrors: '+String(e && (e.message||e))); }catch(_){} }
+    try { result.internalErrors = internalErrors; } catch(e){ /* ignore */ }
     // include collected DOM snapshot for diagnosis if available (bounded size)
     try { if (domSnapshot) result.domSnapshot = domSnapshot; } catch(e) {}
     // include DPR and viewport info for debugging
@@ -436,13 +448,21 @@ async function getTargetWebSocket(){
           result.pngHeight = buf.readUInt32BE(20);
         }
       } catch(e) {}
-      try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) {}
+      try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) { try{ internalErrors.push('mkdir screenshots: '+String(e && (e.message||e))); }catch(_){} }
       // Write both the standard smoke-result.json (used by normalization) and
       // a full metadata file that will not be rewritten by normalization.
-      try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){}
-      try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){}
-      try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){}
-      try { fs.writeFileSync('builds/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.full.json'); } catch(e){}
+      // enrich result with pingOk / scrollHeight / timestamp
+      try { result.timestamp = Date.now(); } catch(e){}
+      try {
+        if (page) {
+          try { result.pingOk = await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>null); } catch(e) { result.pingOk = null; }
+          try { result.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { result.scrollHeight = null; }
+        }
+      } catch(e) { try{ internalErrors.push('probe pingOk/scrollHeight: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){ try{ internalErrors.push('write smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){ try{ internalErrors.push('write builds/smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('write smoke-result.full.json (screenshots): '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('write builds/smoke-result.full.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/COMPARE_TARGET_HEIGHT', String(CLIP.height), 'utf8'); console.error('WROTE', 'builds/COMPARE_TARGET_HEIGHT', CLIP.height); } catch(e){}
       // Emit compact metrics to stderr so exec wrapper can always pick them up
       try { console.error('RESULT_META', JSON.stringify({ devicePixelRatio: result.devicePixelRatio, viewport: result.viewport })); } catch(e){}
@@ -451,13 +471,23 @@ async function getTargetWebSocket(){
     try { await browser.close(); } catch(e){}
     process.exit(0);
   } catch (err) {
-    try { console.error('ERROR', err && (err.message || err)); } catch(e){}
-    try { console.error('ERROR_STACK', (err && err.stack || '').slice(0,2000)); } catch(e){}
-    // emit a small JSON to stderr as a last-resort diagnostic
+    try { console.error('ERROR', err && (err.message || err)); } catch(e){ try{ internalErrors.push('final catch console.error: '+String(e && (e.message||e))); }catch(_){} }
+    try { console.error('ERROR_STACK', (err && err.stack || '').slice(0,2000)); } catch(e){ try{ internalErrors.push('final catch stack log: '+String(e && (e.message||e))); }catch(_){} }
+    // assemble a best-effort result object to write to disk for CI analysis
     try {
-      const diag = { error: 'smoke-exception', message: (err && err.message) || String(err), code: err && err.code ? err.code : null };
-      console.error('ERROR_JSON', JSON.stringify(diag));
-    } catch(e){}
+      const failResult = { success: false, error: (err && (err.message || String(err))) , errorStack: (err && err.stack) ? (err.stack||'').slice(0,2000) : null, url: url || process.env.URL || null, consoleMessages: consoleMessages || [], pageErrors: pageErrors || [], internalErrors: internalErrors || [], timestamp: Date.now() };
+      try {
+        if (page) {
+          try { failResult.pingOk = await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>null); } catch(e) { failResult.pingOk = null; }
+          try { failResult.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { failResult.scrollHeight = null; }
+        }
+      } catch(e) { try{ internalErrors.push('final probe pingOk: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch(e){ try{ internalErrors.push('final mkdir: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(failResult, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('final write full.json: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/smoke-result.full.json', JSON.stringify(failResult, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('final write builds/smoke-result.full.json: '+String(e && (e.message||e))); }catch(_){} }
+      try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(failResult, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){ try{ internalErrors.push('final write smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
+    } catch (e) { try{ internalErrors.push('failed assembling final result: '+String(e && (e.message||e))); }catch(_){} }
+    try { await browser.close(); } catch(e){ try{ internalErrors.push('browser.close failed: '+String(e && (e.message||e))); }catch(_){} }
     process.exit(2);
   }
 })();
