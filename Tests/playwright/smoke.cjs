@@ -334,7 +334,7 @@ async function getTargetWebSocket(){
       } catch (e) {}
       // Wait for frontend to set window.__pingOk === true if present; ignore if not defined
       try {
-        await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 3000 });
+        await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 5000 });
       } catch (e) {}
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) {}

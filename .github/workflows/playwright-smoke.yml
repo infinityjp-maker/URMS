@@ -80,6 +80,20 @@ jobs:
           # Give the stub server time to stabilize before the frontend starts pinging
           sleep 10
 
+      - name: Wait for stub to return 200
+        run: |
+          for i in {1..20}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8765/ux-ping || true)
+            if [ "$code" = "200" ]; then
+              echo "Stub is ready"
+              exit 0
+            fi
+            echo "Stub not ready yet ($code), retrying..."
+            sleep 1
+          done
+          echo "Stub did not become ready"
+          exit 1
+
       - name: Start real backend (placeholder)
         # Start the real backend in parallel to the stub (placeholder for now)
         run: |
