@@ -192,6 +192,7 @@ async function getTargetWebSocket(){
       // retry networkidle a few times to increase stability
       for (let ni = 0; ni < 3; ni++) {
         try { await page.waitForLoadState('networkidle', { timeout: 2000 }); break; } catch (e) { try{ internalErrors.push('waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); }catch(_){} await page.waitForTimeout(500); }
+      }
       try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch (e) { try{ internalErrors.push('fonts.ready: '+String(e && (e.message||e))); }catch(_){} }
       // small pause to let rendering settle
       try { await page.waitForTimeout(200); } catch (e) { try{ internalErrors.push('waitForTimeout(200): '+String(e && (e.message||e))); }catch(_){} }
