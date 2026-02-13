@@ -380,9 +380,7 @@ async function getTargetWebSocket(){
         // Probe final pingOk value from the page (may be set by inline or bundle code)
         try { pingOk = await page.evaluate(() => !!(window && (window.__pingOk === true))).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.message||e))); }catch(_){} }
 
-        // Expose detection flags to result for CI analysis
-        try { result.domMarkerDetected = domMarkerDetected; } catch(e){ try{ internalErrors.push('attach domMarkerDetected: '+String(e && (e.message||e))); }catch(_){} }
-        try { result.consoleMarkerDetected = consoleMarkerDetected; } catch(e){ try{ internalErrors.push('attach consoleMarkerDetected: '+String(e && (e.message||e))); }catch(_){} }
+        // Expose detection flags to result for CI analysis: (deferred to final assembly)
       } catch (e) { try{ internalErrors.push('waitFor ping markers: '+String(e && (e.message||e))); }catch(_){} }
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
@@ -496,12 +494,15 @@ async function getTargetWebSocket(){
           if (page) {
             try { result.pingOk = pingOk === true ? true : await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>false); } catch(e) { result.pingOk = false; }
             try { result.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { result.scrollHeight = null; }
-            try { result.domMarkerDetected = (typeof result.domMarkerDetected !== 'undefined') ? result.domMarkerDetected : !!domMarkerDetected; } catch(e) { result.domMarkerDetected = !!domMarkerDetected; }
-            try { result.consoleMarkerDetected = (typeof result.consoleMarkerDetected !== 'undefined') ? result.consoleMarkerDetected : !!consoleMarkerDetected; } catch(e) { result.consoleMarkerDetected = !!consoleMarkerDetected; }
             try { result.pingPostReceived = (typeof result.pingPostReceived !== 'undefined') ? result.pingPostReceived : false; } catch(e) { result.pingPostReceived = false; }
           }
         } catch(e) { try{ internalErrors.push('probe pingOk/scrollHeight: '+String(e && (e.message||e))); }catch(_){} }
         try { result.success = true; } catch(e){}
+        // Ensure detection flags are present: derive from collected artifacts if variables are unreliable
+        try {
+          try { result.domMarkerDetected = !!(result.domSnapshot && result.domSnapshot.html && result.domSnapshot.html.indexOf('data-ux-ping="ok"') !== -1); } catch(e) { result.domMarkerDetected = false; }
+          try { result.consoleMarkerDetected = !!(Array.isArray(result.consoleMessages) && result.consoleMessages.some(m => (m && m.text && String(m.text).includes('[ux-ping-ok]')))); } catch(e) { result.consoleMarkerDetected = false; }
+        } catch(e) {}
       try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){ try{ internalErrors.push('write smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){ try{ internalErrors.push('write builds/smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('write smoke-result.full.json (screenshots): '+String(e && (e.message||e))); }catch(_){} }
