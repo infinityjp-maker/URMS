@@ -352,23 +352,37 @@ async function getTargetWebSocket(){
       try {
         await page.evaluate(() => new Promise(r => (window.requestIdleCallback ? requestIdleCallback(r) : setTimeout(r, 0))));
       } catch (e) { try{ internalErrors.push('requestIdleCallback wait: '+String(e && (e.message||e))); }catch(_){} }
-      // Wait for frontend to set window.__pingOk === true if present; ignore if not defined
+      // CI note: some runners block or do not surface POSTs to the local ping stub.
+      // Therefore we treat DOM marker and console log as the authoritative
+      // stability signals. POST arrival is not required for the smoke capture.
       let pingOk = false;
+      let domMarkerDetected = false;
+      let consoleMarkerDetected = false;
       try {
-        try { await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 5000 }); } catch (e) { try{ internalErrors.push('waitForFunction(__pingOk): '+String(e && (e.message||e))); }catch(_){} }
-        // Also wait for an explicit DOM marker that the frontend sets when ping succeeds
-        try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 7000 }); } catch (e) { try{ internalErrors.push('waitForSelector [data-ux-ping]: '+String(e && (e.message||e))); }catch(_){} }
-        // And wait for an actual /ux-ping response to be observed by Playwright
-        try { await page.waitForResponse(resp => resp.url().includes('/ux-ping') && resp.status() === 200, { timeout: 7000 }); } catch (e) { try{ internalErrors.push('waitForResponse(/ux-ping): '+String(e && (e.message||e))); }catch(_){} }
-        // Wait specifically for a POST /ux-ping response so we can mark POST arrival
-        let pingPostReceived = false;
+        // Wait briefly for explicit DOM marker set by frontend
         try {
-          await page.waitForResponse(r => r.url().includes('/ux-ping') && r.request && r.request().method && r.request().method() === 'POST' && r.status() === 200, { timeout: 7000 });
-          pingPostReceived = true;
-        } catch (e) { try{ internalErrors.push('waitForResponse(/ux-ping POST): '+String(e && (e.message||e))); }catch(_){} }
-        // Probe final pingOk value and scrollHeight for reporting
-        try { pingOk = await page.evaluate(() => (window && (window.__pingOk === true)) ).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.message||e))); }catch(_){} }
-        try { result.pingPostReceived = pingPostReceived; } catch(e){ try{ internalErrors.push('attach pingPostReceived: '+String(e && (e.message||e))); }catch(_){} }
+          await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 7000 });
+          domMarkerDetected = true;
+        } catch (e) {
+          try { internalErrors.push('waitForSelector [data-ux-ping]: '+String(e && (e.message||e))); } catch(_){}
+        }
+
+        // Wait for console marker '[ux-ping-ok]' which frontend logs on success
+        try {
+          await page.waitForEvent('console', { timeout: 7000 }, msg => {
+            try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; }
+          });
+          consoleMarkerDetected = true;
+        } catch (e) {
+          try { internalErrors.push('waitForEvent(console [ux-ping-ok]): '+String(e && (e.message||e))); } catch(_){}
+        }
+
+        // Probe final pingOk value from the page (may be set by inline or bundle code)
+        try { pingOk = await page.evaluate(() => !!(window && (window.__pingOk === true))).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.message||e))); }catch(_){} }
+
+        // Expose detection flags to result for CI analysis
+        try { result.domMarkerDetected = domMarkerDetected; } catch(e){ try{ internalErrors.push('attach domMarkerDetected: '+String(e && (e.message||e))); }catch(_){} }
+        try { result.consoleMarkerDetected = consoleMarkerDetected; } catch(e){ try{ internalErrors.push('attach consoleMarkerDetected: '+String(e && (e.message||e))); }catch(_){} }
       } catch (e) { try{ internalErrors.push('waitFor ping markers: '+String(e && (e.message||e))); }catch(_){} }
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
@@ -482,6 +496,8 @@ async function getTargetWebSocket(){
           if (page) {
             try { result.pingOk = pingOk === true ? true : await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>false); } catch(e) { result.pingOk = false; }
             try { result.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { result.scrollHeight = null; }
+            try { result.domMarkerDetected = (typeof result.domMarkerDetected !== 'undefined') ? result.domMarkerDetected : !!domMarkerDetected; } catch(e) { result.domMarkerDetected = !!domMarkerDetected; }
+            try { result.consoleMarkerDetected = (typeof result.consoleMarkerDetected !== 'undefined') ? result.consoleMarkerDetected : !!consoleMarkerDetected; } catch(e) { result.consoleMarkerDetected = !!consoleMarkerDetected; }
             try { result.pingPostReceived = (typeof result.pingPostReceived !== 'undefined') ? result.pingPostReceived : false; } catch(e) { result.pingPostReceived = false; }
           }
         } catch(e) { try{ internalErrors.push('probe pingOk/scrollHeight: '+String(e && (e.message||e))); }catch(_){} }
