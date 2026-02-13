@@ -2,6 +2,20 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const { PNG } = require('pngjs');
 const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
+
+// Wait for document body height to stabilize between checks
+async function waitForStableHeight(page, duration = 500) {
+  try {
+    const last = await page.evaluate(() => document.body ? document.body.scrollHeight : null);
+    await page.waitForTimeout(duration);
+    const next = await page.evaluate(() => document.body ? document.body.scrollHeight : null);
+    if (last !== next) {
+      await page.waitForTimeout(duration);
+    }
+  } catch (e) {
+    // ignore errors to avoid breaking the smoke flow
+  }
+}
 const http = require('http');
 
 function fetchJson(url, timeoutMs = 5000){
@@ -310,6 +324,20 @@ async function getTargetWebSocket(){
         }, CLIP.width, CLIP.height);
       } catch(e){}
       await page.waitForTimeout(120);
+
+      // Additional stabilization waits to reduce flaky captures
+      try { await page.waitForLoadState('networkidle'); } catch (e) {}
+      try { await page.waitForTimeout(1500); } catch (e) {}
+      try { await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: 2000 }); } catch (e) {}
+      try {
+        await page.evaluate(() => new Promise(r => (window.requestIdleCallback ? requestIdleCallback(r) : setTimeout(r, 0))));
+      } catch (e) {}
+      // Wait for frontend to set window.__pingOk === true if present; ignore if not defined
+      try {
+        await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 3000 });
+      } catch (e) {}
+      // Ensure DOM height is stable before screenshot
+      try { await waitForStableHeight(page); } catch (e) {}
 
       // Try clip capture up to 3 times to avoid intermittent failures; do not
       // fall back to fullPage when ENFORCE_CLIP=1 to keep height deterministic.
