@@ -179,7 +179,17 @@ async function getTargetWebSocket(){
     page.on('console', msg => {
       try { consoleMessages.push({ type: msg.type(), text: msg.text(), location: msg.location ? msg.location() : null, ts: Date.now() }); } catch(e) { try { internalErrors.push(String(e && (e.message||e))); } catch(_){} }
     });
-    page.on('pageerror', err => { try { pageErrors.push({ message: String(err && (err.message || err)), stack: (err && err.stack) ? String(err.stack).slice(0,2000) : null, ts: Date.now() }); } catch(e){ try{ internalErrors.push(String(e && (e.message||e))); }catch(_){} } );
+    page.on('pageerror', function(err) {
+      try {
+        pageErrors.push({
+          message: String(err && (err.message || err)),
+          stack: (err && err.stack) ? String(err.stack).slice(0,2000) : null,
+          ts: Date.now()
+        });
+      } catch (e) {
+        try { internalErrors.push(String(e && (e.message||e))); } catch (_) {}
+      }
+    });
 
     // screenshot for visual inspection
     const screenshotPath = 'builds/screenshots/playwright-smoke.png';
