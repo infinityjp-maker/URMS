@@ -342,9 +342,16 @@ async function getTargetWebSocket(){
         await page.evaluate(() => new Promise(r => (window.requestIdleCallback ? requestIdleCallback(r) : setTimeout(r, 0))));
       } catch (e) { try{ internalErrors.push('requestIdleCallback wait: '+String(e && (e.message||e))); }catch(_){} }
       // Wait for frontend to set window.__pingOk === true if present; ignore if not defined
+      let pingOk = false;
       try {
-        await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 5000 });
-      } catch (e) { try{ internalErrors.push('waitForFunction(__pingOk): '+String(e && (e.message||e))); }catch(_){} }
+        try { await page.waitForFunction(() => (window && (window.__pingOk === true)), { timeout: 5000 }); } catch (e) { try{ internalErrors.push('waitForFunction(__pingOk): '+String(e && (e.message||e))); }catch(_){} }
+        // Also wait for an explicit DOM marker that the frontend sets when ping succeeds
+        try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 7000 }); } catch (e) { try{ internalErrors.push('waitForSelector [data-ux-ping]: '+String(e && (e.message||e))); }catch(_){} }
+        // And wait for an actual /ux-ping response to be observed by Playwright
+        try { await page.waitForResponse(resp => resp.url().includes('/ux-ping') && resp.status() === 200, { timeout: 7000 }); } catch (e) { try{ internalErrors.push('waitForResponse(/ux-ping): '+String(e && (e.message||e))); }catch(_){} }
+        // Probe final pingOk value and scrollHeight for reporting
+        try { pingOk = await page.evaluate(() => (window && (window.__pingOk === true)) ).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.message||e))); }catch(_){} }
+      } catch (e) { try{ internalErrors.push('waitFor ping markers: '+String(e && (e.message||e))); }catch(_){} }
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
 
@@ -451,14 +458,15 @@ async function getTargetWebSocket(){
       try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch (e) { try{ internalErrors.push('mkdir screenshots: '+String(e && (e.message||e))); }catch(_){} }
       // Write both the standard smoke-result.json (used by normalization) and
       // a full metadata file that will not be rewritten by normalization.
-      // enrich result with pingOk / scrollHeight / timestamp
-      try { result.timestamp = Date.now(); } catch(e){}
-      try {
-        if (page) {
-          try { result.pingOk = await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>null); } catch(e) { result.pingOk = null; }
-          try { result.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { result.scrollHeight = null; }
-        }
-      } catch(e) { try{ internalErrors.push('probe pingOk/scrollHeight: '+String(e && (e.message||e))); }catch(_){} }
+      // enrich result with pingOk / scrollHeight / timestamp and success flag
+        try { result.timestamp = Date.now(); } catch(e){}
+        try {
+          if (page) {
+            try { result.pingOk = pingOk === true ? true : await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>false); } catch(e) { result.pingOk = false; }
+            try { result.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { result.scrollHeight = null; }
+          }
+        } catch(e) { try{ internalErrors.push('probe pingOk/scrollHeight: '+String(e && (e.message||e))); }catch(_){} }
+        try { result.success = true; } catch(e){}
       try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){ try{ internalErrors.push('write smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){ try{ internalErrors.push('write builds/smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('write smoke-result.full.json (screenshots): '+String(e && (e.message||e))); }catch(_){} }

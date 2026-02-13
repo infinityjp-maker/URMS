@@ -94,6 +94,20 @@ jobs:
           echo "Stub did not become ready"
           exit 1
 
+      - name: Wait for ping arrival in stub log
+        run: |
+          for i in {1..30}; do
+            if grep -q "PING" /tmp/ux-ping.${{ github.run_id }}.log 2>/dev/null; then
+              echo "Ping received in stub log"
+              exit 0
+            fi
+            echo "No ping yet, retrying... ($i)"
+            sleep 1
+          done
+          echo "Ping not received in stub log"
+          cat /tmp/ux-ping.${{ github.run_id }}.log || true
+          exit 1
+
       - name: Start real backend (placeholder)
         # Start the real backend in parallel to the stub (placeholder for now)
         run: |
