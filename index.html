@@ -104,11 +104,18 @@
             setTimeout(async () => {
               const payload = { msg: 'frontend: http ping', attempt: i, ts: Date.now() };
               try {
-                await fetch('http://127.0.0.1:8765/ux-ping', {
+                const resp = await fetch('http://127.0.0.1:8765/ux-ping', {
                   method: 'POST',
+                  mode: 'cors',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(payload)
                 });
+                // on success, set fast detection markers so Playwright can observe
+                if (resp && resp.ok) {
+                  try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}
+                  try { window.__pingOk = true; } catch(e){}
+                  try { console.log('[ux-ping-ok]', payload.attempt, payload.ts); } catch(e){}
+                }
                 tryWriteLog('[http-ping] ' + JSON.stringify(payload));
               } catch (e) {
                 // ignore network errors; tryWriteLog will also attempt file/invoke
@@ -123,6 +130,14 @@
           const intervalMs = 1200;
           const img = document.createElement('img');
           img.style.display = 'none';
+          // on successful image load, set marker for Playwright to observe
+          img.onload = function(){
+            try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}
+            try { window.__pingOk = true; } catch(e){}
+            try { console.log('[ux-ping-ok] img'); } catch(e){}
+            try { tryWriteLog('[http-ping-img-ok]'); } catch(e){}
+          };
+          img.onerror = function(){ try { tryWriteLog('[http-ping-img-error]'); } catch(e){} };
           document.body.appendChild(img);
           for (let i=0;i<attempts;i++){
             setTimeout(()=>{
