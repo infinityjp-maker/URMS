@@ -75,7 +75,7 @@ jobs:
         # Lightweight CORS-enabled stub to satisfy frontend /ux-ping preflight and fetch.
         # Replace this step with your real backend start command if available.
         run: |
-          nohup node .github/workflows/ping-server.js > /tmp/ux-ping.${{ github.run_id }}.log 2>&1 &
+          nohup node .github/workflows/ping-server.cjs > /tmp/ux-ping.${{ github.run_id }}.log 2>&1 &
           npx wait-on http://127.0.0.1:8765/ux-ping
           # Give the stub server time to stabilize before the frontend starts pinging
           sleep 10
