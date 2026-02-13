@@ -97,6 +97,7 @@ setTimeout(async () => {
       // Try fetch next
       await fetch('http://127.0.0.1:8765/ux-ping', {
         method: 'POST',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });

@@ -16,10 +16,11 @@ function appendLog(line){
 }
 
 const server = http.createServer((req, res) => {
+  // Add strict CORS headers so fetch/sendBeacon from the frontend succeeds
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': '*',
-    'Access-Control-Allow-Headers': '*'
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
   };
   Object.entries(headers).forEach(([k,v])=>res.setHeader(k,v));
   const ts = new Date().toISOString();
@@ -30,7 +31,11 @@ const server = http.createServer((req, res) => {
       return res.end();
     }
     if (req.url && req.url.indexOf('/ux-ping') === 0){
+      // Log method-specific lines; ensure POST is explicitly logged
       appendLog(`PING ${ts} ${req.method}`);
+      if (req.method === 'POST') {
+        console.log(`PING ${new Date().toISOString()} POST`);
+      }
       res.writeHead(200, {'Content-Type':'text/plain'});
       res.end('ok');
       return;

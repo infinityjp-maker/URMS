@@ -349,8 +349,15 @@ async function getTargetWebSocket(){
         try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 7000 }); } catch (e) { try{ internalErrors.push('waitForSelector [data-ux-ping]: '+String(e && (e.message||e))); }catch(_){} }
         // And wait for an actual /ux-ping response to be observed by Playwright
         try { await page.waitForResponse(resp => resp.url().includes('/ux-ping') && resp.status() === 200, { timeout: 7000 }); } catch (e) { try{ internalErrors.push('waitForResponse(/ux-ping): '+String(e && (e.message||e))); }catch(_){} }
+        // Wait specifically for a POST /ux-ping response so we can mark POST arrival
+        let pingPostReceived = false;
+        try {
+          await page.waitForResponse(r => r.url().includes('/ux-ping') && r.request && r.request().method && r.request().method() === 'POST' && r.status() === 200, { timeout: 7000 });
+          pingPostReceived = true;
+        } catch (e) { try{ internalErrors.push('waitForResponse(/ux-ping POST): '+String(e && (e.message||e))); }catch(_){} }
         // Probe final pingOk value and scrollHeight for reporting
         try { pingOk = await page.evaluate(() => (window && (window.__pingOk === true)) ).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.message||e))); }catch(_){} }
+        try { result.pingPostReceived = pingPostReceived; } catch(e){ try{ internalErrors.push('attach pingPostReceived: '+String(e && (e.message||e))); }catch(_){} }
       } catch (e) { try{ internalErrors.push('waitFor ping markers: '+String(e && (e.message||e))); }catch(_){} }
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
@@ -464,6 +471,7 @@ async function getTargetWebSocket(){
           if (page) {
             try { result.pingOk = pingOk === true ? true : await page.evaluate(() => (window && (window.__pingOk === true))).catch(()=>false); } catch(e) { result.pingOk = false; }
             try { result.scrollHeight = await page.evaluate(() => document.body ? document.body.scrollHeight : null).catch(()=>null); } catch(e) { result.scrollHeight = null; }
+            try { result.pingPostReceived = (typeof result.pingPostReceived !== 'undefined') ? result.pingPostReceived : false; } catch(e) { result.pingPostReceived = false; }
           }
         } catch(e) { try{ internalErrors.push('probe pingOk/scrollHeight: '+String(e && (e.message||e))); }catch(_){} }
         try { result.success = true; } catch(e){}
