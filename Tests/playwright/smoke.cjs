@@ -457,7 +457,7 @@ async function getTargetWebSocket(){
       try { const stat = fs.statSync(screenshotPath); console.error('SCREENSHOT_FILE_BYTES', stat.size); } catch(e){}
     } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
-    const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages };
+    const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages, domMarkerDetected: !!domMarkerDetected, consoleMarkerDetected: !!consoleMarkerDetected };
     // attach collected logs and internal errors
     try { result.pageErrors = pageErrors; } catch(e){ try{ internalErrors.push('attach pageErrors: '+String(e && (e.message||e))); }catch(_){} }
     try { result.internalErrors = internalErrors; } catch(e){ /* ignore */ }
