@@ -3,6 +3,18 @@ const fs = require('fs');
 const { PNG } = require('pngjs');
 const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
 
+/*
+  Stability spec (enforced by this smoke runner):
+  - Primary readiness signals (authoritative):
+    1) DOM marker: presence of `[data-ux-ping="ok"]` on <html> or element
+    2) Console marker: any console message that includes `[ux-ping-ok]`
+    3) Window marker: `window.__pingOk === true` observed by probe
+  - These signals are used to decide readiness for screenshot and diagnostic
+    capture. Network POST arrival to `/ux-ping` is NOT required and will NOT
+    be awaited; it is recorded if observed but treated as a best-effort
+    secondary signal only.
+*/
+
 // Wait for document body height to stabilize between checks
 async function waitForStableHeight(page, duration = 500) {
   try {
@@ -52,6 +64,7 @@ async function getTargetWebSocket(){
   let domMarkerDetected = false;
   let consoleMarkerDetected = false;
   let pingOk = false;
+  let pingPostReceived = false; // recorded if a POST to /ux-ping is observed; not awaited
   let result = {};
   try {
     let url = process.env.URL || 'http://localhost:1420/';
@@ -184,6 +197,16 @@ async function getTargetWebSocket(){
     const internalErrors = [];
     page.on('console', msg => {
       try { consoleMessages.push({ type: msg.type(), text: msg.text(), location: msg.location ? msg.location() : null, ts: Date.now() }); } catch(e) { try { internalErrors.push(String(e && (e.message||e))); } catch(_){} }
+    });
+    // Record network requests to help diagnose whether page attempted POSTs
+    page.on('request', req => {
+      try {
+        const u = String(req.url || req.url());
+        const m = (typeof req.method === 'function') ? req.method() : (req.method || null);
+        if (u.indexOf('/ux-ping') !== -1 && m === 'POST') pingPostReceived = true;
+      } catch (e) {
+        try { internalErrors.push('request-listener-error: ' + String(e && (e.message||e))); } catch(_) {}
+      }
     });
     page.on('pageerror', function(err) {
       try {
@@ -376,9 +399,9 @@ async function getTargetWebSocket(){
 
         // Wait for console marker '[ux-ping-ok]' which frontend logs on success
         try {
-          await page.waitForEvent('console', { timeout: 7000 }, msg => {
+          await page.waitForEvent('console', { timeout: 7000, predicate: msg => {
             try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; }
-          });
+          } });
           consoleMarkerDetected = true;
         } catch (e) {
           try { internalErrors.push('waitForEvent(console [ux-ping-ok]): '+String(e && (e.message||e))); } catch(_){}
@@ -462,7 +485,7 @@ async function getTargetWebSocket(){
       try { const stat = fs.statSync(screenshotPath); console.error('SCREENSHOT_FILE_BYTES', stat.size); } catch(e){}
     } catch (e) { console.error('PNG_PROBE_ERROR', e && e.message); }
 
-    const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages, domMarkerDetected: !!domMarkerDetected, consoleMarkerDetected: !!consoleMarkerDetected };
+    const result = { url, gridInfo, cardCount, headings, titleColor, screenshot: screenshotPath, consoleMessages, domMarkerDetected: !!domMarkerDetected, consoleMarkerDetected: !!consoleMarkerDetected, pingPostReceived: !!pingPostReceived };
     // attach collected logs and internal errors
     try { result.pageErrors = pageErrors; } catch(e){ try{ internalErrors.push('attach pageErrors: '+String(e && (e.message||e))); }catch(_){} }
     try { result.internalErrors = internalErrors; } catch(e){ /* ignore */ }
