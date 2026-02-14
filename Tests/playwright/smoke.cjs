@@ -47,6 +47,12 @@ async function getTargetWebSocket(){
 }
 
 (async () => {
+  // Initialize detection flags and result in the outer function scope
+  // to avoid temporal-dead-zone / "cannot access before initialization" errors
+  let domMarkerDetected = false;
+  let consoleMarkerDetected = false;
+  let pingOk = false;
+  let result = {};
   try {
     let url = process.env.URL || 'http://localhost:1420/';
     const preferUrl = process.env.URL || 'http://tauri.localhost/';
@@ -355,9 +361,10 @@ async function getTargetWebSocket(){
       // CI note: some runners block or do not surface POSTs to the local ping stub.
       // Therefore we treat DOM marker and console log as the authoritative
       // stability signals. POST arrival is not required for the smoke capture.
-      let pingOk = false;
-      let domMarkerDetected = false;
-      let consoleMarkerDetected = false;
+      // reuse outer-scope flags (avoid redeclaring with let)
+      pingOk = false;
+      domMarkerDetected = false;
+      consoleMarkerDetected = false;
       try {
         // Wait briefly for explicit DOM marker set by frontend
         try {
