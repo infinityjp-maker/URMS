@@ -1,0 +1,8 @@
+{
+  "error": "smoke-run-failed-or-no-json",
+  "exitCode": 1,
+  "url": "http://localhost:1420/",
+  "stderrPreview": "/home/runner/work/URMS/URMS/Tests/playwright/smoke.cjs:182\n    page.on('pageerror', err => { try { pageErrors.push({ message: String(err && (err.message || err)), stack: (err && err.stack) ? String(err.stack).slice(0,2000) : null, ts: Date.now() }); } catch(e){ try{ internalErrors.push(String(e && (e.message||e))); }catch(_){} } );\n                                                                                                                                                                                                                                                                                ^\n\nSyntaxError: Unexpected token ')'\n    at wrapSafe (node:internal/modules/cjs/loader:1472:18)\n    at Module._compile (node:internal/modules/cjs/loader:1501:20)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n    at Module.load (node:internal/modules/cjs/loader:1275:32)\n    at Module._load (node:internal/modules/cjs/loader:1096:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.19.0\n",
+  "stdoutPreview": null,
+  "timestamp": "2026-02-13T17:04:09.168Z"
+}

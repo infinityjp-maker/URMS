@@ -18,7 +18,27 @@
         display: flex;
         flex-direction: column;
       }
+      /* Force light color-scheme to avoid CI high-contrast/dark theming */
+      :root { color-scheme: light; }
     </style>
+    <link rel="stylesheet" href="/Source/assets/fonts/noto-local.css" />
+    <script>
+      // Override prefers-color-scheme detection in hostile CI environments (best-effort)
+      (function(){
+        try {
+          const realMM = window.matchMedia;
+          window.matchMedia = function(query){
+            try {
+              if (typeof query === 'string' && query.indexOf('prefers-color-scheme') !== -1) {
+                // return an object that reports dark=false, light=true
+                return { matches: false, media: query, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null };
+              }
+            } catch(e){}
+            return realMM.apply(this, arguments);
+          };
+        } catch(e){}
+      })();
+    </script>
   </head>
 
   <body>

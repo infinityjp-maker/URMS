@@ -1,0 +1,11 @@
+DISABLE_CDP=1, skipping CDP discovery
+PAGE_METRICS {"scrollHeight":1292,"clientHeight":1236,"fontsStatus":"loaded","devicePixelRatio":1,"viewport":{"width":800,"height":1236}}
+FORCE_SYSTEM_UI: applied debug-force-system-ui class to body
+FORCE_SYSTEM_UI: removed webfont links, attempted to strip @font-face, and injected font override
+CLIP {"x":0,"y":0,"width":800,"height":1236}
+VIEWPORT_SET {"width":800,"height":1236}
+SCREENSHOT_PNG_SIZE 800 1236
+SCREENSHOT_FILE_BYTES 67660
+ERROR domMarkerDetected is not defined
+ERROR_STACK ReferenceError: domMarkerDetected is not defined
+    at /home/runner/work/URMS/URMS/Tests/playwright/smoke.cjs:458:136
