@@ -17,12 +17,15 @@ function appendLog(line){
 
 const server = http.createServer((req, res) => {
   // Add CORS headers. Reflect Origin when present to avoid wildcard-with-credentials issues
+  // Reflect Origin when present; avoid wildcard '*' with credentials=true
+  const hasOrigin = !!req.headers.origin;
   const origin = req.headers.origin || '*';
   const headers = {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Credentials': 'true'
+    'Access-Control-Allow-Headers': req.headers['access-control-request-headers'] || 'Content-Type',
+    'Access-Control-Allow-Credentials': hasOrigin ? 'true' : 'false',
+    'Access-Control-Max-Age': '600'
   };
   Object.entries(headers).forEach(([k,v])=>res.setHeader(k,v));
   const ts = new Date().toISOString();
