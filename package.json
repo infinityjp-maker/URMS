@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node Tests/playwright/download_noto.cjs || true",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "smoke:dev": "node Tests/playwright/smoke_dev_debug.cjs",
