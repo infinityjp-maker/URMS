@@ -178,6 +178,32 @@ async function getTargetWebSocket(){
     // If we found/created a page from the WebView/CDP, prefer its URL for checks
     try { const purl = page.url && page.url(); if (purl) url = purl; } catch(e) {}
 
+    // Force-inject our bundled CI font CSS and normalize color/background to
+    // reduce rendering variability across CI runners. Use absolute URL based
+    // on the current page URL so this works both in dev and when served from dist.
+    try {
+      try {
+        const pageUrl = (typeof page.url === 'function') ? page.url() : (page.url || url);
+        const notoCssUrl = new URL('assets/fonts/noto-local.css', pageUrl).toString();
+        try { await page.addStyleTag({ url: notoCssUrl }); console.error('INJECT: added noto-local.css from', notoCssUrl); } catch(e) { console.error('INJECT_NOTE_ADD_FAILED', e && e.message); }
+        // Add a small normalization layer to force light scheme and stable BG/color
+        const normCss = `:root{color-scheme: light !important} html,body{background:#ffffff !important; color:#222 !important} *{ -webkit-font-smoothing:antialiased !important; text-rendering:optimizeLegibility !important; }`;
+        try { await page.addStyleTag({ content: normCss }); console.error('INJECT: added normalization CSS'); } catch(e) { console.error('INJECT_NORM_FAILED', e && e.message); }
+        // Remove theme classes that might flip colors (best-effort)
+        try {
+          await page.evaluate(() => {
+            try {
+              const html = document.documentElement;
+              if (html && html.className) html.className = html.className.split(/\s+/).filter(c => !/^theme-/.test(c)).join(' ');
+              // also ensure prefers-color-scheme queries see light
+              try { window.matchMedia = (q)=>({ matches: q.indexOf('prefers-color-scheme')!==-1 ? false : false, media: q, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null }); } catch(e){}
+            } catch(e) {}
+          });
+          console.error('INJECT: attempted to remove theme classes');
+        } catch(e) { console.error('INJECT_REMOVE_THEME_FAILED', e && e.message); }
+      } catch(e) { try { internalErrors.push('inject noto css top-level: '+String(e && (e.message||e))); }catch(_){} }
+    } catch(e) {}
+
     const gridInfo = await page.evaluate(() => {
       const g = document.querySelector('.dashboard-grid');
       return g ? { exists: true, display: getComputedStyle(g).display } : { exists: false };
