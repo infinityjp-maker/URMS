@@ -119,7 +119,7 @@ async function getTargetWebSocket(){
     }
     if (!browser) {
       try {
-        browser = await chromium.launch({ args: ['--no-sandbox'] });
+        browser = await chromium.launch({ args: ['--no-sandbox', `--force-device-scale-factor=${process.env.DSF ? Number(process.env.DSF) : 1}`] });
       } catch (e) {
         try { console.error('BROWSER_LAUNCH_ERROR', e && (e.message || e)); } catch(ex){}
         try { console.error('BROWSER_LAUNCH_STACK', (e && e.stack || '').slice(0,2000)); } catch(ex){}
@@ -130,12 +130,12 @@ async function getTargetWebSocket(){
     // find or create a page in the connected browser that matches our URL
     // Prefer creating a fresh context with a fixed viewport/deviceScaleFactor
     const VIEWPORT = { width: CLIP.width, height: CLIP.height };
-    const DSF = 1;
+    const DSF = process.env.DSF ? Number(process.env.DSF) : 1;
     let context = null;
     let page = null;
     try {
       if (typeof browser.newContext === 'function') {
-        context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
+        context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
         if (context && typeof context.newPage === 'function') {
           page = await context.newPage();
           try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e){}
@@ -169,8 +169,8 @@ async function getTargetWebSocket(){
 
     if (!page){
       // fallback: create a local browser page and navigate
-      const local = await chromium.launch({ args: ['--no-sandbox'] });
-      const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
+      const local = await chromium.launch({ args: ['--no-sandbox', `--force-device-scale-factor=${DSF}`] });
+      const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
       page = await localCtx.newPage();
       await page.goto(url, { waitUntil: 'networkidle' , timeout: 30000});
     }
@@ -187,7 +187,7 @@ async function getTargetWebSocket(){
         const notoCssUrl = new URL('assets/fonts/noto-local.css', pageUrl).toString();
         try { await page.addStyleTag({ url: notoCssUrl }); console.error('INJECT: added noto-local.css from', notoCssUrl); } catch(e) { console.error('INJECT_NOTE_ADD_FAILED', e && e.message); }
         // Add a small normalization layer to force light scheme and stable BG/color
-        const normCss = `:root{color-scheme: light !important} html,body{background:#ffffff !important; color:#222 !important} *{ -webkit-font-smoothing:antialiased !important; text-rendering:optimizeLegibility !important; }`;
+        const normCss = `:root{color-scheme: light !important} html,body{background:#ffffff !important; background-image: none !important; background-color: #ffffff !important; color:#222 !important} *{ -webkit-font-smoothing:antialiased !important; text-rendering:optimizeLegibility !important; -moz-osx-font-smoothing: grayscale !important; } img, picture, video, iframe { filter: grayscale(1) !important; opacity: 1 !important; }`;
         try { await page.addStyleTag({ content: normCss }); console.error('INJECT: added normalization CSS'); } catch(e) { console.error('INJECT_NORM_FAILED', e && e.message); }
         // Remove theme classes that might flip colors (best-effort)
         try {
@@ -201,6 +201,16 @@ async function getTargetWebSocket(){
           });
           console.error('INJECT: attempted to remove theme classes');
         } catch(e) { console.error('INJECT_REMOVE_THEME_FAILED', e && e.message); }
+        // Ensure normalization applied: wait for fonts and white background (best-effort)
+        try {
+          try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch(e){}
+          await page.waitForFunction(() => {
+            try {
+              const bg = getComputedStyle(document.documentElement).backgroundColor || getComputedStyle(document.body).backgroundColor || '';
+              return /rgb\(255,\s*255,\s*255\)/.test(bg) || /rgba\(255,\s*255,\s*255,\s*1/.test(bg);
+            } catch(e) { return false; }
+          }, { timeout: 2000 }).catch(()=>{});
+        } catch(e) { console.error('WAIT_NORMALIZE_FAILED', e && e.message); }
       } catch(e) { try { internalErrors.push('inject noto css top-level: '+String(e && (e.message||e))); }catch(_){} }
     } catch(e) {}
 
