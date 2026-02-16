@@ -497,34 +497,55 @@ async function getTargetWebSocket(){
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
 
-      // Pre-capture: force a synchronous reflow, aggressively overwrite backgrounds,
-      // and trigger a repaint to ensure normalization is applied before screenshot.
+      // Pre-capture: robustly apply a synchronous reflow, aggressively overwrite
+      // backgrounds, and trigger a repaint to ensure normalization is applied
+      // before screenshot. Wrap in retries because evaluate() can fail if a
+      // navigation or context reset occurs (Execution context was destroyed).
       try {
-        await page.evaluate(() => {
+        const maxAttempts = 3;
+        let applied = false;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
           try {
-            const id = 'ci-pre-capture-override';
-            if (!document.getElementById(id)) {
-              const s = document.createElement('style');
-              s.id = id;
-              s.setAttribute('data-ci', '1');
-              s.textContent = `
-                html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important}
-                *, *::before, *::after { transition: none !important; animation: none !important; }
-              `;
-              (document.head || document.documentElement).insertBefore(s, (document.head && document.head.firstChild));
-            }
-            // Force background overwrite on key containers (best-effort)
-            ['html', 'body', '#root', '.dashboard-container', '.dashboard-grid'].forEach(sel => {
-              try { const el = document.querySelector(sel); if (el) el.style.background = '#ffffff'; } catch (e) {}
+            // wait a short moment for any navigation to settle
+            try { await page.waitForLoadState('networkidle', { timeout: 1500 }); } catch(_) {}
+            await page.evaluate(() => {
+              try {
+                const id = 'ci-pre-capture-override';
+                if (!document.getElementById(id)) {
+                  const s = document.createElement('style');
+                  s.id = id;
+                  s.setAttribute('data-ci', '1');
+                  s.textContent = `
+                    html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important}
+                    *, *::before, *::after { transition: none !important; animation: none !important; }
+                  `;
+                  (document.head || document.documentElement).insertBefore(s, (document.head && document.head.firstChild));
+                }
+                ['html', 'body', '#root', '.dashboard-container', '.dashboard-grid'].forEach(sel => {
+                  try { const el = document.querySelector(sel); if (el) el.style.background = '#ffffff'; } catch (e) {}
+                });
+                // Force a synchronous reflow and a double RAF to ensure paint
+                void (document.body && document.body.offsetHeight);
+                return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+              } catch (e) { return null; }
             });
-            // Force a synchronous reflow and a double RAF to ensure paint
-            void (document.body && document.body.offsetHeight);
-            return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-          } catch (e) {}
-        });
-        await page.waitForTimeout(80);
-        console.error('PRE_CAPTURE_REPAINT_DONE');
-      } catch (e) { try { internalErrors.push('pre-capture repaint: ' + String(e && (e.message || e))); } catch (_) {} }
+            await page.waitForTimeout(80);
+            console.error('PRE_CAPTURE_REPAINT_DONE');
+            applied = true;
+            break;
+          } catch (e) {
+            const msg = String(e && (e.message || e));
+            if (msg && msg.indexOf('Execution context was destroyed') !== -1 && attempt < maxAttempts) {
+              // transient: wait and retry
+              await page.waitForTimeout(200 * attempt);
+              continue;
+            }
+            try { internalErrors.push('pre-capture repaint attempt failed: ' + msg); } catch(_) {}
+            break;
+          }
+        }
+        if (!applied) try { internalErrors.push('pre-capture repaint: not applied after retries'); } catch(_) {}
+      } catch (e) { try { internalErrors.push('pre-capture repaint fatal: ' + String(e && (e.message || e))); } catch (_) {} }
 
       // Try clip capture up to 3 times to avoid intermittent failures; do not
       // fall back to fullPage when ENFORCE_CLIP=1 to keep height deterministic.
