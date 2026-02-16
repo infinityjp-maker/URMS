@@ -135,11 +135,20 @@ async function getTargetWebSocket(){
     let page = null;
     try {
       if (typeof browser.newContext === 'function') {
-        context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
-        if (context && typeof context.newPage === 'function') {
-          page = await context.newPage();
-          try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e){}
-        }
+          context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
+          // Inject an init script at the context level so critical normalization
+          // styles are present before any page script runs (pre-first-paint).
+          try {
+            if (context && typeof context.addInitScript === 'function') {
+              const ciInitCss = `html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important} *{background-image:none!important;background-color:transparent!important} svg,svg *{fill:currentColor!important;stroke:currentColor!important} :root{--ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", Meiryo, sans-serif!important} *{font-family:var(--ci-system-fonts)!important;-webkit-font-smoothing:antialiased!important;text-rendering:optimizeLegibility!important}`;
+              await context.addInitScript({ content: `(() => { try { const css = ${JSON.stringify(ciInitCss)}; const s = document.createElement('style'); s.id = 'ci-init-style'; s.setAttribute('data-ci','1'); s.textContent = css; const h = document.head || document.documentElement; h.insertBefore(s, h.firstChild); try { Object.defineProperty(window, 'matchMedia', { value: (q)=>({ matches: q.indexOf('prefers-color-scheme') !== -1 ? false : false, media: q, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null }) }); } catch(e){} } catch(e){} })()` });
+              try { console.error('ADD_INIT_SCRIPT_CONTEXT'); } catch(e){}
+            }
+          } catch(e) { try { console.error('ADD_INIT_SCRIPT_FAILED', e && e.message); } catch(_){} }
+          if (context && typeof context.newPage === 'function') {
+            page = await context.newPage();
+            try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e){}
+          }
       }
     } catch(e) {
       console.error('NEW_CONTEXT_ERROR', e && (e.message || e));
@@ -171,6 +180,14 @@ async function getTargetWebSocket(){
       // fallback: create a local browser page and navigate
       const local = await chromium.launch({ args: ['--no-sandbox', `--force-device-scale-factor=${DSF}`] });
       const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
+      // ensure local contexts also get the init script prior to page creation
+      try {
+        if (localCtx && typeof localCtx.addInitScript === 'function') {
+          const ciInitCss = `html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important} *{background-image:none!important;background-color:transparent!important} svg,svg *{fill:currentColor!important;stroke:currentColor!important} :root{--ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", Meiryo, sans-serif!important} *{font-family:var(--ci-system-fonts)!important;-webkit-font-smoothing:antialiased!important;text-rendering:optimizeLegibility!important}`;
+          await localCtx.addInitScript({ content: `(() => { try { const css = ${JSON.stringify(ciInitCss)}; const s = document.createElement('style'); s.id = 'ci-init-style'; s.setAttribute('data-ci','1'); s.textContent = css; const h = document.head || document.documentElement; h.insertBefore(s, h.firstChild); } catch(e){} })()` });
+          try { console.error('ADD_INIT_SCRIPT_LOCAL_CTX'); } catch(e){}
+        }
+      } catch(e) { try { console.error('ADD_INIT_SCRIPT_LOCAL_FAILED', e && e.message); } catch(_){} }
       page = await localCtx.newPage();
       await page.goto(url, { waitUntil: 'networkidle' , timeout: 30000});
     }
