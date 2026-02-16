@@ -504,6 +504,11 @@ async function getTargetWebSocket(){
         try {
           buf = await page.screenshot({ clip: CLIP });
           fs.writeFileSync(screenshotPath, buf);
+          // Also save a full-page capture for debugging size/crop mismatches
+          try {
+            const fullBuf = await page.screenshot({ fullPage: true });
+            try { fs.writeFileSync('builds/screenshots/playwright-smoke-full.png', fullBuf); } catch(e){}
+          } catch(e) {}
           break;
         } catch (e) {
           attempts++;
