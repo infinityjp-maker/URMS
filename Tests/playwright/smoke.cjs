@@ -211,6 +211,35 @@ async function getTargetWebSocket(){
             } catch(e) { return false; }
           }, { timeout: 2000 }).catch(()=>{});
         } catch(e) { console.error('WAIT_NORMALIZE_FAILED', e && e.message); }
+
+        // Prepend a very high-specificity force style to override any app backgrounds
+        try {
+          await page.evaluate(() => {
+            try {
+              const id = 'ci-force-bg-style';
+              if (document.getElementById(id)) return;
+              const s = document.createElement('style');
+              s.id = id;
+              s.setAttribute('data-ci','1');
+              s.textContent = `
+                /* Aggressive CI normalization: remove images/gradients and force white background */
+                html, body, #root, .dashboard-container, .dashboard-grid { background: #ffffff !important; background-image: none !important; background-color: #ffffff !important; color: #222 !important; }
+                * { background-image: none !important; background-color: transparent !important; }
+                img, picture, video, iframe { filter: grayscale(1) !important; opacity: 1 !important; }
+                svg, svg * { fill: currentColor !important; stroke: currentColor !important; }
+                :root { --header-text: #222 !important; --card-bg: #ffffff !important; }
+              `;
+              // prepend so it overrides later-added styles
+              (document.head || document.documentElement).insertBefore(s, document.head && document.head.firstChild);
+            } catch(e) {}
+          });
+          // reflow and give time for styles to apply
+          await page.waitForTimeout(120);
+        } catch(e) { console.error('PREPEND_FORCE_BG_FAILED', e && e.message); }
+
+        // Ensure viewport and zoom again after forcing styles
+        try { await page.setViewportSize(VIEWPORT); } catch(e){}
+        try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch(e){}
       } catch(e) { try { internalErrors.push('inject noto css top-level: '+String(e && (e.message||e))); }catch(_){} }
     } catch(e) {}
 
