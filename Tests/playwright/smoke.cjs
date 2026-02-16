@@ -497,6 +497,35 @@ async function getTargetWebSocket(){
       // Ensure DOM height is stable before screenshot
       try { await waitForStableHeight(page); } catch (e) { try{ internalErrors.push('waitForStableHeight: '+String(e && (e.message||e))); }catch(_){} }
 
+      // Pre-capture: force a synchronous reflow, aggressively overwrite backgrounds,
+      // and trigger a repaint to ensure normalization is applied before screenshot.
+      try {
+        await page.evaluate(() => {
+          try {
+            const id = 'ci-pre-capture-override';
+            if (!document.getElementById(id)) {
+              const s = document.createElement('style');
+              s.id = id;
+              s.setAttribute('data-ci', '1');
+              s.textContent = `
+                html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important}
+                *, *::before, *::after { transition: none !important; animation: none !important; }
+              `;
+              (document.head || document.documentElement).insertBefore(s, (document.head && document.head.firstChild));
+            }
+            // Force background overwrite on key containers (best-effort)
+            ['html', 'body', '#root', '.dashboard-container', '.dashboard-grid'].forEach(sel => {
+              try { const el = document.querySelector(sel); if (el) el.style.background = '#ffffff'; } catch (e) {}
+            });
+            // Force a synchronous reflow and a double RAF to ensure paint
+            void (document.body && document.body.offsetHeight);
+            return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+          } catch (e) {}
+        });
+        await page.waitForTimeout(80);
+        console.error('PRE_CAPTURE_REPAINT_DONE');
+      } catch (e) { try { internalErrors.push('pre-capture repaint: ' + String(e && (e.message || e))); } catch (_) {} }
+
       // Try clip capture up to 3 times to avoid intermittent failures; do not
       // fall back to fullPage when ENFORCE_CLIP=1 to keep height deterministic.
       let attempts = 0;
