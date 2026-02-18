@@ -129,6 +129,25 @@ jobs:
           # Use exec wrapper to capture stdout/stderr separately and write smoke-result.json safely
           node Tests/playwright/exec_smoke_save.cjs
 
+      - name: Insurance (early): create tarball immediately after smoke capture
+        if: ${{ always() }}
+        run: |
+          set -e
+          out=/tmp/playwright-screenshots-early-${{ github.run_id }}.tgz
+          echo "Creating early tarball $out with builds/screenshots, dist, and ux-ping log"
+          rm -f "$out" || true
+          tar -czf "$out" --warning=no-file-changed builds/screenshots dist /tmp/ux-ping.${{ github.run_id }}.log || true
+          ls -la "$out" || true
+        shell: bash
+
+      - name: Insurance (early): upload tarball immediately
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots-tar-early
+          path: |
+            /tmp/playwright-screenshots-early-${{ github.run_id }}.tgz
+
       - name: Normalize smoke-result.json URLs
         env:
           URL: 'http://localhost:1420/'
@@ -146,7 +165,7 @@ jobs:
         env:
           SKIP_RUN_SMOKE: '1'
           COMPARE_PAD: '1'
-          COMPARE_TARGET_HEIGHT: '1257'
+          COMPARE_TARGET_HEIGHT: '1236'
           DISABLE_CDP: '1'
         run: npm run smoke:diff
 
@@ -159,6 +178,24 @@ jobs:
             builds/screenshots/**
             dist/**
             /tmp/ux-ping.${{ github.run_id }}.log
+      - name: Insurance: create tarball of screenshots+dist (always)
+        if: ${{ always() }}
+        run: |
+          set -e
+          out=/tmp/playwright-screenshots-${{ github.run_id }}.tgz
+          echo "Creating tarball $out with builds/screenshots, dist, and ux-ping log"
+          rm -f "$out" || true
+          tar -czf "$out" --warning=no-file-changed builds/screenshots dist /tmp/ux-ping.${{ github.run_id }}.log || true
+          ls -la "$out" || true
+        shell: bash
+
+      - name: Insurance: upload tarball (always)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots-tar
+          path: |
+            /tmp/playwright-screenshots-${{ github.run_id }}.tgz
       - name: List screenshot files
         run: |
           echo "=== builds/screenshots ==="

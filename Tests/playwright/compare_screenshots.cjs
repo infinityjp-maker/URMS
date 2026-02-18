@@ -117,6 +117,48 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
     const names = ['playwright-smoke.png','playwright-future-mode.png'];
     const availableNames = [];
 
+    // DIAGNOSTICS: list files and env for troubleshooting compare-step skips
+    try {
+      console.log('DIAG: environment:', {
+        COMPARE_CROP: process.env.COMPARE_CROP,
+        COMPARE_PAD: process.env.COMPARE_PAD,
+        COMPARE_TARGET_HEIGHT: process.env.COMPARE_TARGET_HEIGHT,
+        SKIP_RUN_SMOKE: process.env.SKIP_RUN_SMOKE,
+        ENFORCE_CLIP: process.env.ENFORCE_CLIP,
+        PLAYWRIGHT_CONFIG: process.env.PLAYWRIGHT_CONFIG
+      });
+    } catch (e) { console.warn('DIAG: failed to print env', e && e.message); }
+
+    try {
+      if (fs.existsSync(screenshotsDir)) {
+        console.log('DIAG: screenshots dir exists:', screenshotsDir);
+        const dfiles = fs.readdirSync(screenshotsDir).sort();
+        console.log('DIAG: screenshots files:', dfiles);
+        dfiles.forEach((f) => {
+          try {
+            const p = path.join(screenshotsDir, f);
+            const st = fs.statSync(p);
+            let info = { name: f, size: st.size };
+            if (f.toLowerCase().endsWith('.png')) {
+              const buf = fs.readFileSync(p);
+              if (buf.length >= 24) {
+                const w = buf.readUInt32BE(16);
+                const h = buf.readUInt32BE(20);
+                info.ihdr = w + 'x' + h;
+              }
+            }
+            console.log('DIAG: file:', info);
+          } catch (e) {
+            console.warn('DIAG: file stat failed for', f, e && e.message);
+          }
+        });
+      } else {
+        console.warn('DIAG: screenshots dir does NOT exist:', screenshotsDir);
+      }
+    } catch (e) {
+      console.warn('DIAG: listing screenshots failed', e && e.message);
+    }
+
     // run smoke to obtain structural info
     const smoke = await runSmoke();
 
