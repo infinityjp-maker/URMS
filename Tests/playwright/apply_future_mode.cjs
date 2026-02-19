@@ -25,6 +25,8 @@ async function getTargetWebSocket() {
 
 (async () => {
   console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP });
+  // Small delay to allow CDP port to become available after launcher starts
+  await new Promise((r) => setTimeout(r, 1000));
   try{
     const res = await getTargetWebSocket();
     const wsUrl = res && res.ws;
@@ -73,8 +75,8 @@ async function getTargetWebSocket() {
       }catch(e){ }
       if (!page){
         // last resort: launch a local browser and create a fixed-size context
-        try{
-          const local = await chromium.launch({ args: ['--no-sandbox'] });
+          try{
+          const local = await chromium.launch({ args: ['--no-sandbox', '--remote-debugging-port=9222'] });
           const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
           const localPage = await localCtx.newPage();
           await localPage.goto(process.env.URL || 'http://localhost:1420/', { waitUntil: 'networkidle' });

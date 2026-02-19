@@ -36,6 +36,12 @@ jobs:
             sleep 1
           done
 
+      - name: Wait for CDP port (9222)
+        run: |
+          # Wait for the CDP tcp port opened by browsers / WebView; non-fatal
+          npx wait-on tcp:9222 --timeout 30000 || true
+          sleep 1
+
       - name: Run future-mode capture
         run: node Tests/playwright/apply_future_mode.cjs
 
