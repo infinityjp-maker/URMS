@@ -40,10 +40,12 @@ jobs:
         run: |
           # Wait for the CDP tcp port opened by browsers / WebView; non-fatal
           # Increase timeout to allow slower runners to bring up browser debug port
-          npx wait-on tcp:9222 --timeout 60000 || true
+          npx wait-on tcp:9222 --timeout 120000 || true
           sleep 1
 
       - name: Run future-mode capture
+        env:
+          CDP_CONNECT_ATTEMPTS: '12'
         run: node Tests/playwright/apply_future_mode.cjs
 
       - name: Run smoke capture
