@@ -4,7 +4,26 @@ name: Playwright Smoke Compare
 on:
   workflow_dispatch: {}
   push:
-    branches: [ main, feature/** ]
+    # Synced to main by automation on 2026-02-19
+
+    on:
+      workflow_dispatch: {}
+      push:
+        branches: [ main, feature/** ]
+      pull_request: {}
+
+    jobs:
+      validate-workflow:
+        name: Validate workflow (smoke)
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+
+          - name: Cleanup previous builds
+            run: |
+              echo "Removing previous builds/ directory to avoid mixed artifacts"
+              rm -rf builds || true
   pull_request: {}
 
 jobs:
