@@ -53,7 +53,13 @@ async function getTargetWebSocket() {
     }
 
     if (!browser){
-      if (lastErr) throw lastErr; else throw new Error('could not connect over CDP');
+      // If we couldn't connect over CDP after retries, fall back to launching a local chromium instance.
+      console.warn('CDP connect failed after retries; attempting local chromium.launch() fallback');
+      try{
+        browser = await chromium.launch({ args: ['--no-sandbox', '--remote-debugging-port=9222'] });
+      }catch(err){
+        if (lastErr) throw lastErr; else throw err;
+      }
     }
 
     const host = (process.env.URL || 'http://tauri.localhost/').replace(/https?:\/\//, '');
