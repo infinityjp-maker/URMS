@@ -2,7 +2,7 @@ name: Playwright Smoke Compare
 # Synced to main by automation on 2026-02-19
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
   push:
     branches: [ main, feature/** ]
   pull_request: {}
@@ -205,3 +205,4 @@ jobs:
           ls -la dist/index.html || true
 
 # sync to main 2026-02-19T10:17:44.3429879+09:00
+# reindex-tick: 2026-02-19T10:30:00+09:00
