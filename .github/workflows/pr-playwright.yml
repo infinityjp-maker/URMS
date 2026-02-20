@@ -46,6 +46,7 @@ jobs:
       - name: Run future-mode capture
         env:
           CDP_CONNECT_ATTEMPTS: '12'
+          DISABLE_CDP: '1'
         run: node Tests/playwright/apply_future_mode.cjs
 
       - name: Run smoke capture
