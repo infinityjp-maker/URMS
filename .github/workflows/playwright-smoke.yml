@@ -32,6 +32,7 @@ jobs:
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
+      DISABLE_CDP: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

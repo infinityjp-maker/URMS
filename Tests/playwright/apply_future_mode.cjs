@@ -24,7 +24,11 @@ async function getTargetWebSocket() {
 }
 
 (async () => {
-  console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP });
+  console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP, DISABLE_CDP: process.env.DISABLE_CDP });
+  if (process.env.DISABLE_CDP && String(process.env.DISABLE_CDP) === '1'){
+    console.log('DISABLE_CDP=1 -> skipping future-mode capture');
+    process.exit(0);
+  }
   // Small delay to allow CDP port to become available after launcher starts
   await new Promise((r) => setTimeout(r, 1000));
   try{
