@@ -1,6 +1,6 @@
-$ParamPr = $args[0]
-Param()
+Param([int]$ParamPr)
 $prNumber = $null
+if($ParamPr){ $prNumber = $ParamPr }
 $ErrorActionPreference = 'Stop'
 $owner = 'infinityjp-maker'
 $repo = 'URMS'
@@ -88,7 +88,11 @@ if(-not $runId){
     git switch -c $branch
     New-Item -Path ".auto-dispatch-trigger-$ts" -ItemType File -Force | Out-Null
     git add .auto-dispatch-trigger-$ts
-    git commit -m "ci: trigger playwright smoke via push - $ts" -ErrorAction SilentlyContinue | Out-Null
+    try {
+        git commit -m "ci: trigger playwright smoke via push - $ts" | Out-Null
+    } catch {
+        Write-Warning "git commit failed or nothing to commit"
+    }
     git push -u origin $branch
     Write-Output "Pushed branch $branch, polling for run"
     $end2 = (Get-Date).AddSeconds(300)
