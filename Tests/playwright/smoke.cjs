@@ -32,9 +32,9 @@ async function getTargetWebSocket(){
     const disableCdp = process.env.DISABLE_CDP && String(process.env.DISABLE_CDP) === '1';
     let res = null;
     let wsUrl = null;
-    if (disableCdp) {
-      console.log('DISABLE_CDP=1 -> skipping CDP target fetch');
-    } else {
+      if (disableCdp) {
+        console.error('DISABLE_CDP=1 -> skipping CDP target fetch');
+      } else {
       try {
         res = await getTargetWebSocket();
         wsUrl = res && res.ws;
