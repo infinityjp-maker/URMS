@@ -28,7 +28,7 @@ jobs:
 
   smoke-compare:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
@@ -44,8 +44,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+      - name: Install Playwright browsers (chromium only)
+        run: npx playwright install chromium
         shell: bash
 
       - name: Install system fonts (reduce font-diff noise)
@@ -125,10 +125,17 @@ jobs:
           FORCE_SYSTEM_UI: '1'
           DISABLE_CDP: '1'
           URL: 'http://localhost:1420/'
+          NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
           mkdir -p builds/screenshots
           # Use exec wrapper to capture stdout/stderr separately and write smoke-result.json safely
           node Tests/playwright/exec_smoke_save.cjs
+
+      - name: Reap background node processes
+        if: ${{ always() }}
+        run: |
+          # Ensure leftover node processes are terminated to free memory
+          pkill node || true
 
       - name: Insurance (early): create tarball immediately after smoke capture
         if: ${{ always() }}
@@ -168,6 +175,7 @@ jobs:
           COMPARE_PAD: '1'
           COMPARE_TARGET_HEIGHT: '1236'
           DISABLE_CDP: '1'
+          NODE_OPTIONS: "--max-old-space-size=4096"
         run: npm run smoke:diff
 
       - name: Upload screenshots and dist
