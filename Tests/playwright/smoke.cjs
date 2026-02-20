@@ -33,7 +33,7 @@ async function getTargetWebSocket(){
     let res = null;
     let wsUrl = null;
     if (disableCdp) {
-      console.log('DISABLE_CDP=1 -> skipping CDP target fetch');
+      console.error('DISABLE_CDP=1 -> skipping CDP target fetch');
     } else {
       try {
         res = await getTargetWebSocket();
