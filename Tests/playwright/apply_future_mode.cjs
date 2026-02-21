@@ -24,17 +24,47 @@ async function getTargetWebSocket() {
 }
 
 (async () => {
-  console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP });
+  console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP, DISABLE_CDP: process.env.DISABLE_CDP });
+  if (process.env.DISABLE_CDP && String(process.env.DISABLE_CDP) === '1'){
+    console.log('DISABLE_CDP=1 -> skipping future-mode capture');
+    process.exit(0);
+  }
+  // Small delay to allow CDP port to become available after launcher starts
+  await new Promise((r) => setTimeout(r, 1000));
   try{
-    const res = await getTargetWebSocket();
-    const wsUrl = res && res.ws;
-    if (!wsUrl) throw new Error('webSocketDebuggerUrl not found');
-    if (res && res.targetUrl) process.env.URL = res.targetUrl;
-    // try connecting with ws url first, fall back to http endpoint
-    let browser;
-    // prefer connecting to the http CDP root (works more reliably for WebView2)
-    const httpBase = wsUrl.replace(/^ws:/, 'http:').replace(/\/devtools\/page.*$/, '');
-    browser = await chromium.connectOverCDP(httpBase);
+    // Attempt to obtain a CDP target and connect with retries (exponential backoff)
+    const maxAttempts = parseInt(process.env.CDP_CONNECT_ATTEMPTS || '8', 10);
+    let browser = null;
+    let lastErr = null;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++){
+      try{
+        const res = await getTargetWebSocket();
+        const wsUrl = res && res.ws;
+        if (!wsUrl) throw new Error('webSocketDebuggerUrl not found');
+        if (res && res.targetUrl) process.env.URL = res.targetUrl;
+        // prefer connecting to the http CDP root (works more reliably for WebView2)
+        const httpBase = wsUrl.replace(/^ws:/, 'http:').replace(/\/devtools\/page.*$/, '');
+        browser = await chromium.connectOverCDP(httpBase);
+        lastErr = null;
+        break;
+      }catch(err){
+        lastErr = err;
+        const backoff = Math.min(30000, 500 * Math.pow(2, attempt-1));
+        console.warn(`connect attempt ${attempt} failed: ${err && err.message || err}; retrying after ${backoff}ms`);
+        if (attempt === maxAttempts) break;
+        await new Promise((r) => setTimeout(r, backoff));
+      }
+    }
+
+    if (!browser){
+      // If we couldn't connect over CDP after retries, fall back to launching a local chromium instance.
+      console.warn('CDP connect failed after retries; attempting local chromium.launch() fallback');
+      try{
+        browser = await chromium.launch({ args: ['--no-sandbox', '--remote-debugging-port=9222'] });
+      }catch(err){
+        if (lastErr) throw lastErr; else throw err;
+      }
+    }
 
     const host = (process.env.URL || 'http://tauri.localhost/').replace(/https?:\/\//, '');
     const tryPages = () => {
@@ -73,8 +103,8 @@ async function getTargetWebSocket() {
       }catch(e){ }
       if (!page){
         // last resort: launch a local browser and create a fixed-size context
-        try{
-          const local = await chromium.launch({ args: ['--no-sandbox'] });
+          try{
+          const local = await chromium.launch({ args: ['--no-sandbox', '--remote-debugging-port=9222'] });
           const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF });
           const localPage = await localCtx.newPage();
           await localPage.goto(process.env.URL || 'http://localhost:1420/', { waitUntil: 'networkidle' });
