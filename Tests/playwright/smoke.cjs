@@ -29,10 +29,21 @@ async function getTargetWebSocket(){
   try {
     let url = process.env.URL || 'http://localhost:1420/';
     const preferUrl = process.env.URL || 'http://tauri.localhost/';
-    const res = await getTargetWebSocket();
-    const wsUrl = res && res.ws;
-    // if the CDP target exposes a URL, prefer that as our canonical URL
-    if (res && res.targetUrl) url = res.targetUrl;
+    const disableCdp = process.env.DISABLE_CDP && String(process.env.DISABLE_CDP) === '1';
+    let res = null;
+    let wsUrl = null;
+      if (disableCdp) {
+        console.error('DISABLE_CDP=1 -> skipping CDP target fetch');
+      } else {
+      try {
+        res = await getTargetWebSocket();
+        wsUrl = res && res.ws;
+        // if the CDP target exposes a URL, prefer that as our canonical URL
+        if (res && res.targetUrl) url = res.targetUrl;
+      } catch (e) {
+        console.log('CDP target not available, continuing without CDP:', e && e.message);
+      }
+    }
     let browser;
     let connectedOverCDP = false;
     // connect to http CDP root for WebView2
