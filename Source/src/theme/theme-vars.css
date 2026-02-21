@@ -1,0 +1,66 @@
+/* theme-vars.css
+   Centralized design tokens for URMS themes.
+   Define colors, typography, spacing, and elevation tokens here.
+   Keep values conservative to preserve existing Future Mode appearance;
+   theme-specific overrides go under html[data-theme="future"].
+*/
+:root {
+  /* Colors */
+  --color-bg-start: #031023; /* deeper navy */
+  --color-bg-end: #001026;   /* deep blue-black */
+  --color-bg: linear-gradient(180deg, var(--color-bg-start), var(--color-bg-end));
+  --color-surface-start: rgba(10,12,20,0.7);
+  --color-surface-end: rgba(6,8,18,0.6);
+  --color-panel-bg: rgba(6,8,18,0.64);
+  --color-accent: #00c8ff;
+  --color-accent-2: #66e0ff;
+  --color-border: rgba(0,200,255,0.22);
+  --color-text-primary: rgba(255,255,255,0.95);
+  --color-text-muted: rgba(255,255,255,0.86);
+
+  /* Glow (store RGB separately for alpha math) */
+  --glow-color-rgb: 64,200,255;
+  --glow-strength: 0.26;
+
+  /* Typography */
+  --font-family-base: 'Rajdhani', 'Inter', system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+  --font-family-title: 'Orbitron', 'Rajdhani', 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-size-base: 14px;
+  --line-height-base: 1.4;
+
+  /* Spacing */
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 24px;
+  --space-4: 28px;
+
+  /* Radii / Elevation */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --elevation-1: 0 2px 6px rgba(0,0,0,0.32);
+  /* Card shadow split into main shadow + neon glow for finer control */
+  --card-shadow-main: 0 24px 90px rgba(0,0,0,0.72);
+  --card-glow: rgba(var(--glow-color-rgb), calc(var(--glow-strength) * 1));
+  --card-shadow: var(--card-shadow-main);
+
+  /* Backdrop / glass */
+  --backdrop-blur: 12px;
+}
+
+/* Future theme overrides (only values that differ) */
+html[data-theme="future"], body.theme-future {
+  --color-accent: #00c8ff;
+  --color-accent-2: #66e0ff;
+  --color-bg-start: #04040a;
+  --color-bg-end: #06102a;
+  --color-panel-bg: rgba(6,8,18,0.64);
+  --glow-color-rgb: 0,200,255;
+  --glow-strength: 0.18;
+  --font-family-title: 'Orbitron', 'Rajdhani', var(--font-family-base);
+}
+
+/* Focus ring tokens for accessibility */
+:root {
+  --focus-ring-color: rgba(0,160,255,0.95);
+  --focus-ring-width: 3px;
+}

@@ -1,4 +1,5 @@
 const { chromium } = require('playwright');
+const { CLIP } = require('./stability_helpers.cjs');
 (async () => {
   const url = process.env.URL || 'http://localhost:1420/';
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
@@ -16,7 +17,12 @@ const { chromium } = require('playwright');
     const rootChildren = await page.evaluate(() => Array.from(document.getElementById('root')?.children||[]).map(e => ({tag:e.tagName, class:e.className})).slice(0,40));
     const result = { url, overlayText, rootHTMLSnippet: rootHTML ? rootHTML.slice(0,2000) : null, rootChildren, logs };
     console.log(JSON.stringify(result, null, 2));
-    await page.screenshot({ path: 'builds/screenshots/playwright-diagnose.png', fullPage: true });
+    const diagShot = 'builds/screenshots/playwright-diagnose.png';
+    if (process.env.ENFORCE_CLIP === '1' && CLIP) {
+      await page.screenshot({ path: diagShot, clip: CLIP });
+    } else {
+      await page.screenshot({ path: diagShot, fullPage: true });
+    }
     await browser.close();
     process.exit(0);
   } catch (err) {

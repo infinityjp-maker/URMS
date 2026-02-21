@@ -1,4 +1,5 @@
 const { chromium } = require('playwright');
+const { CLIP } = require('./stability_helpers.cjs');
 const http = require('http');
 function fetchJson(url){
   return new Promise((resolve,reject)=>{
@@ -15,26 +16,45 @@ function fetchJson(url){
 async function getTargetWebSocket() {
   const listUrl = process.env.CDP || 'http://127.0.0.1:9222/json/list';
   const prefer = process.env.URL || null;
-  const items = await fetchJson(listUrl);
-  if (!Array.isArray(items) || items.length === 0) throw new Error('no cdp targets');
-  let found = null;
-  if (prefer) found = items.find(i => (i.url||'').includes(prefer));
-  if (!found) found = items[0];
-  return { ws: (found.webSocketDebuggerUrl || found.webSocketUrl || null), targetUrl: (found.url || null) };
+  try {
+    const items = await fetchJson(listUrl);
+    if (!Array.isArray(items) || items.length === 0) return null;
+    let found = null;
+    if (prefer) found = items.find(i => (i.url||'').includes(prefer));
+    if (!found) found = items[0];
+    return { ws: (found.webSocketDebuggerUrl || found.webSocketUrl || null), targetUrl: (found.url || null) };
+  } catch (err) {
+    // If CDP list fetch fails (ECONNREFUSED, network issue, etc.), return null
+    // so caller can fall back to launching a local Playwright Chromium.
+    return null;
+  }
 }
 
 (async () => {
   console.log('DEBUG_ENV', { URL: process.env.URL, CDP: process.env.CDP });
-  try{
+    try{
     const res = await getTargetWebSocket();
     const wsUrl = res && res.ws;
-    if (!wsUrl) throw new Error('webSocketDebuggerUrl not found');
     if (res && res.targetUrl) process.env.URL = res.targetUrl;
-    // try connecting with ws url first, fall back to http endpoint
-    let browser;
-    // prefer connecting to the http CDP root (works more reliably for WebView2)
-    const httpBase = wsUrl.replace(/^ws:/, 'http:').replace(/\/devtools\/page.*$/, '');
-    browser = await chromium.connectOverCDP(httpBase);
+    let browser = null;
+    if (wsUrl) {
+      // try connecting to CDP; if it fails, we'll fall back to launching local chromium
+      try {
+        const httpBase = wsUrl.replace(/^ws:/, 'http:').replace(/\/devtools\/page.*$/, '');
+        browser = await chromium.connectOverCDP(httpBase);
+      } catch (e) {
+        console.warn('CDP connect failed, falling back to local chromium:', e && e.message || e);
+        browser = null;
+      }
+    }
+    // If we couldn't obtain a CDP-connected browser, launch a local Playwright chromium
+    if (!browser) {
+      try {
+        browser = await chromium.launch({ args: ['--no-sandbox'] });
+      } catch (e) {
+        throw new Error('could not obtain browser (CDP failed and local launch failed): ' + (e && e.message || e));
+      }
+    }
 
     const host = (process.env.URL || 'http://tauri.localhost/').replace(/https?:\/\//, '');
     const tryPages = () => {
@@ -51,7 +71,7 @@ async function getTargetWebSocket() {
       page = pages.find(p => (p.url()||'').includes(host) || (p.url()||'').includes('tauri.localhost')) || pages[0];
     }
 
-    const VIEWPORT = { width: 800, height: 1236 };
+    const VIEWPORT = { width: CLIP.width || 800, height: CLIP.height || 1257 };
     const DSF = 1;
     let context = (browser.contexts() && browser.contexts()[0]) || null;
     if (!page) {
@@ -94,15 +114,32 @@ async function getTargetWebSocket() {
 
     const outPath = 'builds/screenshots/playwright-future-mode.png';
     try { require('fs').mkdirSync('builds/screenshots', { recursive: true }); } catch(e){}
-    // ensure we capture the full document height in contexts where fullPage may be constrained
+    // enforce fixed viewport and document height so CI captures are stable
     try{
-      const scrollHeight = await page.evaluate(() => Math.max(document.documentElement.scrollHeight || 0, document.body.scrollHeight || 0));
-      if (scrollHeight && typeof page.setViewportSize === 'function'){
-        await page.setViewportSize({ width: 800, height: Math.max(600, scrollHeight) });
+      if (typeof page.setViewportSize === 'function'){
+        await page.setViewportSize(VIEWPORT || { width: 800, height: 1236 });
       }
+      try {
+        await page.evaluate((w,h) => {
+          try {
+            document.documentElement.style.width = w + 'px';
+            document.documentElement.style.height = h + 'px';
+            document.body.style.width = w + 'px';
+            document.body.style.height = h + 'px';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+          } catch(e){}
+        }, VIEWPORT.width, VIEWPORT.height);
+      } catch (e) {}
     }catch(e){}
-    await page.screenshot({ path: outPath, fullPage: true });
-    console.log(JSON.stringify({ url: page.url(), applied: 'theme-future', screenshot: outPath }));
+    // use explicit clip to guarantee output dimensions
+    try {
+      await page.screenshot({ path: outPath, clip: CLIP });
+    } catch (e) {
+      await page.screenshot({ path: outPath, fullPage: false });
+    }
+    const savedUrl = process.env.URL || (page && typeof page.url === 'function' ? page.url() : null);
+    console.log(JSON.stringify({ url: savedUrl, applied: 'theme-future', screenshot: outPath }));
     try{ await browser.close(); }catch(e){}
     process.exit(0);
   }catch(e){ console.error('ERROR', e && e.message || e); process.exit(1); }

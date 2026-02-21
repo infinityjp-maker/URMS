@@ -3,7 +3,7 @@ name: PR Tauri Playwright Smoke
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   build-and-playwright:
@@ -62,6 +62,8 @@ jobs:
 
       - name: Run smoke capture (exec wrapper) and save result
         shell: cmd
+        env:
+          URL: 'http://localhost:1420/'
         run: |
           mkdir builds\screenshots 2>nul
           node Tests/playwright/exec_smoke_save.cjs

@@ -36,4 +36,14 @@ Backend/src-tauri/target/
 # Local preview artifacts
 artifacts/
 
+# Generated annotated-diff viewers (builds/screenshots)
+builds/screenshots/annotated-diff-playwright-smoke.html
+builds/screenshots/annotated-diff-playwright-future-mode.html
 
+
+builds/artifacts_*/
+builds/screenshots/*.png
+builds/screenshots/map_diff_*.json
+builds/screenshots/annotated-diff-playwright-*.html
+builds/screenshots/smoke-result*.json
+Tests/playwright/**/smoke-result.json

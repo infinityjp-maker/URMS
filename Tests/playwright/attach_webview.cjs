@@ -134,9 +134,16 @@ async function fetchJson(url, timeout = 2000) {
         }).catch(()=>false);
       } catch(e) { rootHasChildren = false; }
       // take an interim screenshot to help debugging if it pops in later
-      if (rootHasChildren) {
-        try { await page.screenshot({ path: `builds/screenshots/playwright-webview-root-${Date.now()}.png`, fullPage: true }).catch(()=>{}); } catch(e) {}
-      }
+        if (rootHasChildren) {
+          try {
+            const tmpShot = `builds/screenshots/playwright-webview-root-${Date.now()}.png`;
+            if (process.env.ENFORCE_CLIP === '1' && require('./stability_helpers.cjs').CLIP) {
+              await page.screenshot({ path: tmpShot, clip: require('./stability_helpers.cjs').CLIP }).catch(()=>{});
+            } else {
+              await page.screenshot({ path: tmpShot, fullPage: true }).catch(()=>{});
+            }
+          } catch(e) {}
+        }
     }
 
     // Try to find the dashboard grid (longer timeout after ready)
@@ -169,7 +176,11 @@ async function fetchJson(url, timeout = 2000) {
     fs.mkdirSync('builds/screenshots', { recursive: true });
     fs.mkdirSync('builds/playwright', { recursive: true });
     const shotPath = 'builds/screenshots/playwright-webview.png';
-    await page.screenshot({ path: shotPath, fullPage: true }).catch(()=>{});
+    if (process.env.ENFORCE_CLIP === '1' && require('./stability_helpers.cjs').CLIP) {
+      await page.screenshot({ path: shotPath, clip: require('./stability_helpers.cjs').CLIP }).catch(()=>{});
+    } else {
+      await page.screenshot({ path: shotPath, fullPage: true }).catch(()=>{});
+    }
     // Save DOM snapshot
     const domHtml = await page.evaluate(() => document.documentElement.outerHTML).catch(()=>null);
     if (domHtml) fs.writeFileSync('builds/playwright/playwright-webview.html', domHtml, 'utf8');

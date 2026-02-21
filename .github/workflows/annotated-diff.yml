@@ -1,0 +1,20 @@
+name: Annotated Diff
+
+on: [pull_request]
+
+jobs:
+  annotated-diff:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate annotated-diff viewers
+        shell: pwsh
+        working-directory: builds/screenshots
+        run: ./generate-annotated-diff.ps1
+
+      - name: Verify generated viewers
+        shell: pwsh
+        working-directory: builds/screenshots
+        run: ./verify-annotated-diff.ps1

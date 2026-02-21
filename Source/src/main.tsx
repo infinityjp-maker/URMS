@@ -82,10 +82,14 @@ setTimeout(async () => {
         const ok = navigator.sendBeacon('http://127.0.0.1:8765/ux-ping', blob);
         if (ok) {
           try {
-            const tauri = (await import('@tauri-apps/api/tauri')).default || (await import('@tauri-apps/api/tauri'));
-            if (tauri && typeof tauri.invoke === 'function') {
-              tauri.invoke('frontend_log', { level: 'info', msg: JSON.stringify(payload) }).catch(()=>{});
-            }
+              // Mark ping as successful for Playwright and CI stabilization checks
+              try { (window as any).__pingOk = true; } catch(e) {}
+              try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e) {}
+              try { console.log('[ux-ping-ok]'); } catch(e) {}
+              const tauri = (await import('@tauri-apps/api/tauri')).default || (await import('@tauri-apps/api/tauri'));
+              if (tauri && typeof tauri.invoke === 'function') {
+                tauri.invoke('frontend_log', { level: 'info', msg: JSON.stringify(payload) }).catch(()=>{});
+              }
           } catch {}
           return;
         }
@@ -93,9 +97,14 @@ setTimeout(async () => {
       // Try fetch next
       await fetch('http://127.0.0.1:8765/ux-ping', {
         method: 'POST',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      // indicate success to page-level checks
+      try { (window as any).__pingOk = true; } catch(e) {}
+      try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e) {}
+      try { console.log('[ux-ping-ok]'); } catch(e) {}
       // also try to inform backend via invoke if available
       try {
         const tauri = (await import('@tauri-apps/api/tauri')).default || (await import('@tauri-apps/api/tauri'));

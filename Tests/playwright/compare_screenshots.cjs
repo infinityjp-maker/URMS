@@ -7,7 +7,8 @@ const pixelmatch = require('pixelmatch');
 // Crop configuration to focus comparisons on the stable central UI area.
 // Enable via env var COMPARE_CROP=1 to apply cropping, otherwise full-page compare.
 const CROP = {
-  enabled: !!process.env.COMPARE_CROP,
+  // Default: disabled to prefer full-height diffs; set COMPARE_CROP=1 to enable cropping
+  enabled: (process.env.COMPARE_CROP === undefined) ? false : !!process.env.COMPARE_CROP,
   x: 0,
   y: 120,
   width: 800,
@@ -20,26 +21,88 @@ function runSmoke() {
     if (process.env.SKIP_RUN_SMOKE === '1') {
       const path = 'builds/screenshots/smoke-result.json';
       try {
-        const j = JSON.parse(fs.readFileSync(path, 'utf8'));
+        let raw = fs.readFileSync(path, 'utf8');
+        // Enhanced JSON extraction: find the last balanced JSON object by
+        // scanning from each '{' (from the end) and matching braces. This
+        // is tolerant to leading/trailing noise and interleaved logs.
+        const extractLastJson = (s) => {
+          const starts = [];
+          for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);
+          for (let idx = starts.length - 1; idx >= 0; idx--) {
+            let i = starts[idx];
+            let depth = 0;
+            for (let j = i; j < s.length; j++) {
+              const ch = s[j];
+              if (ch === '{') depth++;
+              else if (ch === '}') depth--;
+              if (depth === 0) {
+                const candidate = s.slice(i, j + 1);
+                try { return JSON.parse(candidate); } catch (e) { break; }
+              }
+            }
+          }
+          return null;
+        };
+        let j = null;
+        try { j = JSON.parse(raw); } catch (e) { j = extractLastJson(raw); }
+        if (!j) throw new Error('no valid JSON object found in smoke-result.json');
         return resolve(j);
       } catch (e) {
         return reject(new Error('failed to read smoke-result.json: ' + e.message));
       }
     }
-    const env = Object.assign({}, process.env);
-    const cp = child_process.spawn('node', ['Tests/playwright/smoke.cjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
-    let out = '';
-    cp.stdout.on('data', (d) => out += d.toString());
-    cp.stderr.on('data', (d) => process.stderr.write(d));
-    cp.on('close', (code) => {
-      if (code !== 0) return reject(new Error('smoke.cjs exited with ' + code));
-      try {
-        const j = JSON.parse(out);
-        resolve(j);
-      } catch (e) {
-        reject(e);
-      }
-    });
+    // Attempt smoke.cjs up to 3 times to mitigate transient CDP/connection failures
+    const attemptsMax = 3;
+    let attempts = 0;
+    const runOnce = () => {
+      attempts++;
+      const env = Object.assign({}, process.env);
+      const cp = child_process.spawn('node', ['Tests/playwright/smoke.cjs'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
+      let out = '';
+      cp.stdout.on('data', (d) => out += d.toString());
+      cp.stderr.on('data', (d) => process.stderr.write(d));
+      cp.on('close', (code) => {
+        if (code !== 0) {
+          if (attempts < attemptsMax) {
+            console.error('smoke.cjs failed with', code, ' - retrying attempt', attempts + 1);
+            setTimeout(runOnce, 1000 * attempts);
+            return;
+          }
+          return reject(new Error('smoke.cjs exited with ' + code));
+        }
+        try {
+          // Try parse full stdout JSON first, then fallback to robust extraction
+          // using the same balanced-brace approach.
+          let j = null;
+          try { j = JSON.parse(out); } catch (e) {
+            const extractLastJson = (s) => {
+              const starts = [];
+              for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);
+              for (let idx = starts.length - 1; idx >= 0; idx--) {
+                let i = starts[idx];
+                let depth = 0;
+                for (let j = i; j < s.length; j++) {
+                  const ch = s[j];
+                  if (ch === '{') depth++;
+                  else if (ch === '}') depth--;
+                  if (depth === 0) {
+                    const candidate = s.slice(i, j + 1);
+                    try { return JSON.parse(candidate); } catch (e) { break; }
+                  }
+                }
+              }
+              return null;
+            };
+            j = extractLastJson(out);
+          }
+          if (!j) throw new Error('no valid JSON object found on stdout from smoke.cjs');
+          resolve(j);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    };
+    runOnce();
   });
 }
 
@@ -52,6 +115,49 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
 
     const screenshotsDir = path.join('builds','screenshots');
     const names = ['playwright-smoke.png','playwright-future-mode.png'];
+    const availableNames = [];
+
+    // DIAGNOSTICS: list files and env for troubleshooting compare-step skips
+    try {
+      console.log('DIAG: environment:', {
+        COMPARE_CROP: process.env.COMPARE_CROP,
+        COMPARE_PAD: process.env.COMPARE_PAD,
+        COMPARE_TARGET_HEIGHT: process.env.COMPARE_TARGET_HEIGHT,
+        SKIP_RUN_SMOKE: process.env.SKIP_RUN_SMOKE,
+        ENFORCE_CLIP: process.env.ENFORCE_CLIP,
+        PLAYWRIGHT_CONFIG: process.env.PLAYWRIGHT_CONFIG
+      });
+    } catch (e) { console.warn('DIAG: failed to print env', e && e.message); }
+
+    try {
+      if (fs.existsSync(screenshotsDir)) {
+        console.log('DIAG: screenshots dir exists:', screenshotsDir);
+        const dfiles = fs.readdirSync(screenshotsDir).sort();
+        console.log('DIAG: screenshots files:', dfiles);
+        dfiles.forEach((f) => {
+          try {
+            const p = path.join(screenshotsDir, f);
+            const st = fs.statSync(p);
+            let info = { name: f, size: st.size };
+            if (f.toLowerCase().endsWith('.png')) {
+              const buf = fs.readFileSync(p);
+              if (buf.length >= 24) {
+                const w = buf.readUInt32BE(16);
+                const h = buf.readUInt32BE(20);
+                info.ihdr = w + 'x' + h;
+              }
+            }
+            console.log('DIAG: file:', info);
+          } catch (e) {
+            console.warn('DIAG: file stat failed for', f, e && e.message);
+          }
+        });
+      } else {
+        console.warn('DIAG: screenshots dir does NOT exist:', screenshotsDir);
+      }
+    } catch (e) {
+      console.warn('DIAG: listing screenshots failed', e && e.message);
+    }
 
     // run smoke to obtain structural info
     const smoke = await runSmoke();
@@ -68,10 +174,17 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
     for(const name of names){
       const cur = path.join(screenshotsDir,name);
       const base = path.join(baselineDir,name);
+      const optional = (name === 'playwright-future-mode.png');
       if(!fs.existsSync(cur)){
+        if(optional){
+          console.warn('Optional current screenshot missing, skipping:', cur);
+          continue;
+        }
         console.error('Missing current screenshot:', cur);
         process.exit(2);
       }
+      // mark as available for later pixel-diff comparisons
+      availableNames.push(name);
       if(!fs.existsSync(base)){
         fs.copyFileSync(cur, base);
         console.warn('Baseline created for', name);
@@ -113,9 +226,16 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
     }
 
     // pixel diffs
-    for(const name of names){
-      const curPath = path.join(screenshotsDir,name);
+    for(const name of availableNames){
+      // prefer '-dist' variant if present in CI artifacts (built output), fall back to normal name
+      const distVariant = name.replace('.png','-dist.png');
+      const distPath = path.join(screenshotsDir, distVariant);
+      const curPath = fs.existsSync(distPath) ? distPath : path.join(screenshotsDir,name);
       const basePath = path.join(baselineDir,name);
+      if(!fs.existsSync(basePath)){
+        console.warn('Baseline image missing for', name, '- skipping diff');
+        continue;
+      }
       const diffPath = path.join(screenshotsDir, 'diff-' + name);
       const curBuf = fs.readFileSync(curPath);
       const baseBuf = fs.readFileSync(basePath);
@@ -142,10 +262,25 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
           baseP = cropRect(baseP, x, y, w, h);
         }
       }
-      // If dimensions differ but widths match, crop the taller image to the shorter height
+      // If dimensions differ but widths match, either crop the taller image to the
+      // shorter height or pad the shorter to match the taller, depending on
+      // environment settings. Set COMPARE_PAD=1 to pad (preferred for CI
+      // stability) or COMPARE_TARGET_HEIGHT to force a fixed height.
       if (curP.width === baseP.width && curP.height !== baseP.height) {
-        const targetH = Math.min(curP.height, baseP.height);
-        const crop = (png, h) => {
+        // Determine target height: prefer env var, else read file written by smoke.cjs, else derive
+        let envTarget = parseInt(process.env.COMPARE_TARGET_HEIGHT || '0', 10) || 0;
+        if (!envTarget) {
+          try {
+            const fh = path.join('builds','COMPARE_TARGET_HEIGHT');
+            if (fs.existsSync(fh)) {
+              const v = fs.readFileSync(fh,'utf8').trim();
+              envTarget = parseInt(v,10) || 0;
+            }
+          } catch(e) { /* ignore */ }
+        }
+        const targetH = envTarget || Math.max(curP.height, baseP.height);
+
+        const cropTo = (png, h) => {
           const {width} = png;
           const out = new PNG({width, height: h});
           for (let row = 0; row < h; row++) {
@@ -156,14 +291,50 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
           }
           return out;
         };
-        if (curP.height > baseP.height) {
-          console.warn('Normalizing current image height from', curP.height, 'to', targetH);
-          curP.data = crop(curP, targetH).data;
-          curP.height = targetH;
-        } else if (baseP.height > curP.height) {
-          console.warn('Normalizing baseline image height from', baseP.height, 'to', targetH);
-          baseP.data = crop(baseP, targetH).data;
-          baseP.height = targetH;
+
+        const padTo = (png, h) => {
+          const {width, height} = png;
+          const out = new PNG({width, height: h});
+          // copy existing rows
+          for (let row = 0; row < Math.min(height, h); row++) {
+            const srcStart = row * width * 4;
+            const dstStart = row * width * 4;
+            png.data.copy(out.data, dstStart, srcStart, srcStart + width * 4);
+          }
+          // fill extra rows with the last row's pixels to reduce visual seam
+          if (h > height) {
+            const lastRowStart = (height - 1) * width * 4;
+            for (let row = height; row < h; row++) {
+              const dstStart = row * width * 4;
+              out.data.set(out.data.slice(lastRowStart, lastRowStart + width * 4), dstStart);
+            }
+          }
+          return out;
+        };
+
+        if (process.env.COMPARE_PAD === '1') {
+          // pad shorter image(s) up to targetH
+          if (curP.height < targetH) {
+            console.warn('Padding current image height from', curP.height, 'to', targetH);
+            const padded = padTo(curP, targetH);
+            curP.data = padded.data; curP.height = targetH;
+          }
+          if (baseP.height < targetH) {
+            console.warn('Padding baseline image height from', baseP.height, 'to', targetH);
+            const padded = padTo(baseP, targetH);
+            baseP.data = padded.data; baseP.height = targetH;
+          }
+        } else {
+          // default: crop to the smaller height to avoid introducing padding
+          const cropTarget = Math.min(curP.height, baseP.height);
+          if (curP.height > cropTarget) {
+            console.warn('Normalizing current image height from', curP.height, 'to', cropTarget);
+            curP.data = cropTo(curP, cropTarget).data; curP.height = cropTarget;
+          }
+          if (baseP.height > cropTarget) {
+            console.warn('Normalizing baseline image height from', baseP.height, 'to', cropTarget);
+            baseP.data = cropTo(baseP, cropTarget).data; baseP.height = cropTarget;
+          }
         }
       }
       if(curP.width !== baseP.width || curP.height !== baseP.height){

@@ -1,5 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
+const { CLIP } = require('./stability_helpers.cjs');
 (async () => {
   const url = 'http://localhost:1420/';
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
@@ -18,7 +19,11 @@ const fs = require('fs');
     const screenshotPath = 'builds/screenshots/playwright-assert-dev.png';
     const jsonPath = 'builds/screenshots/playwright-assert-dev.json';
     fs.mkdirSync('builds/screenshots', { recursive: true });
-    await page.screenshot({ path: screenshotPath, fullPage: true });
+    if (process.env.ENFORCE_CLIP === '1' && CLIP) {
+      await page.screenshot({ path: screenshotPath, clip: CLIP });
+    } else {
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+    }
 
     const result = {
       url,

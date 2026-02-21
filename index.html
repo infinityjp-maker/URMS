@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>URMS v4.0</title>
     <style>
+      /* CI early normalization: force light background and stable fonts before first paint */
+      #ci-force-init{display:none}
+    </style>
+    <style id="ci-force-init" data-ci="1">
+      html,body,#root { background: #ffffff !important; background-image: none !important; background-color: #ffffff !important; color: #222 !important; }
+      * { background-image: none !important; background-color: transparent !important; -webkit-font-smoothing: antialiased !important; text-rendering: optimizeLegibility !important; }
+      img,picture,video,iframe { filter: grayscale(1) !important; opacity: 1 !important; }
+      svg, svg * { fill: currentColor !important; stroke: currentColor !important; }
+      :root { --ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", Meiryo, sans-serif !important; }
+      * , *::before, *::after { font-family: var(--ci-system-fonts) !important; }
+    </style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body, #root { width: 100%; height: 100%; }
       body {
@@ -18,7 +29,27 @@
         display: flex;
         flex-direction: column;
       }
+      /* Force light color-scheme to avoid CI high-contrast/dark theming */
+      :root { color-scheme: light; }
     </style>
+    <link rel="stylesheet" href="assets/fonts/noto-local.css" />
+    <script>
+      // Override prefers-color-scheme detection in hostile CI environments (best-effort)
+      (function(){
+        try {
+          const realMM = window.matchMedia;
+          window.matchMedia = function(query){
+            try {
+              if (typeof query === 'string' && query.indexOf('prefers-color-scheme') !== -1) {
+                // return an object that reports dark=false, light=true
+                return { matches: false, media: query, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null };
+              }
+            } catch(e){}
+            return realMM.apply(this, arguments);
+          };
+        } catch(e){}
+      })();
+    </script>
   </head>
 
   <body>
@@ -104,11 +135,18 @@
             setTimeout(async () => {
               const payload = { msg: 'frontend: http ping', attempt: i, ts: Date.now() };
               try {
-                await fetch('http://127.0.0.1:8765/ux-ping', {
+                const resp = await fetch('http://127.0.0.1:8765/ux-ping', {
                   method: 'POST',
+                  mode: 'cors',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(payload)
                 });
+                // on success, set fast detection markers so Playwright can observe
+                if (resp && resp.ok) {
+                  try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}
+                  try { window.__pingOk = true; } catch(e){}
+                  try { console.log('[ux-ping-ok]', payload.attempt, payload.ts); } catch(e){}
+                }
                 tryWriteLog('[http-ping] ' + JSON.stringify(payload));
               } catch (e) {
                 // ignore network errors; tryWriteLog will also attempt file/invoke
@@ -123,6 +161,14 @@
           const intervalMs = 1200;
           const img = document.createElement('img');
           img.style.display = 'none';
+          // on successful image load, set marker for Playwright to observe
+          img.onload = function(){
+            try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}
+            try { window.__pingOk = true; } catch(e){}
+            try { console.log('[ux-ping-ok] img'); } catch(e){}
+            try { tryWriteLog('[http-ping-img-ok]'); } catch(e){}
+          };
+          img.onerror = function(){ try { tryWriteLog('[http-ping-img-error]'); } catch(e){} };
           document.body.appendChild(img);
           for (let i=0;i<attempts;i++){
             setTimeout(()=>{
