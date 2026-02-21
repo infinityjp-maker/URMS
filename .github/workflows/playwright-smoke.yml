@@ -3,26 +3,7 @@ name: Playwright Smoke Compare
 on:
   workflow_dispatch: {}
   push:
-    # Synced to main by automation on 2026-02-19
-
-    on:
-      workflow_dispatch: {}
-      push:
-        branches: [ main, feature/** ]
-      pull_request: {}
-
-    jobs:
-      validate-workflow:
-        name: Validate workflow (smoke)
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v4
-
-          - name: Cleanup previous builds
-            run: |
-              echo "Removing previous builds/ directory to avoid mixed artifacts"
-              rm -rf builds || true
+    branches: [ main, feature/** ]
   pull_request: {}
 
 jobs:
@@ -48,7 +29,7 @@ jobs:
   smoke-compare:
     name: Smoke Compare
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
@@ -140,9 +121,16 @@ jobs:
           FORCE_SYSTEM_UI: '1'
           DISABLE_CDP: '1'
           URL: 'http://localhost:1420/'
+          NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
           mkdir -p builds/screenshots
           node Tests/playwright/exec_smoke_save.cjs
+
+      - name: Reap background node processes
+        if: ${{ always() }}
+        run: |
+          # Ensure leftover node processes are terminated to free memory
+          pkill node || true
 
       - name: Insurance (early): create tarball immediately after smoke capture
         if: ${{ always() }}
@@ -222,6 +210,7 @@ jobs:
           COMPARE_PAD: '1'
           COMPARE_TARGET_HEIGHT: '1236'
           DISABLE_CDP: '1'
+          NODE_OPTIONS: "--max-old-space-size=4096"
         run: npm run smoke:diff
 
       - name: Upload screenshots and dist
