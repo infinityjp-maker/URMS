@@ -6,6 +6,9 @@ on:
     branches: [ main, feature/** ]
   pull_request: {}
 
+env:
+  DISABLE_CDP: '1'
+
 jobs:
   validate-workflow:
     name: Validate workflow (smoke)
