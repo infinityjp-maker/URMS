@@ -1,7 +1,7 @@
-﻿{
-    "attempt":  3,
-    "status":  "timeout",
-    "conclusion":  "",
-    "runId":  22279600941,
-    "updated":  "2026-02-23T02:37:02.5901566+09:00"
+{
+  "updated": "2026-02-23T08:44:30.5391705+09:00",
+  "runId": 22279600941,
+  "status": "completed",
+  "attempt": 3,
+  "conclusion": "cancelled"
 }
