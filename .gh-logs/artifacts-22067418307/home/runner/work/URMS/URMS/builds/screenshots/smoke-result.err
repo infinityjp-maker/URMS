@@ -1,0 +1,18 @@
+DISABLE_CDP=1, skipping CDP discovery
+ADD_INIT_SCRIPT_CONTEXT
+INJECT: added noto-local.css from http://localhost:1420/assets/fonts/noto-local.css
+INJECT: added normalization CSS
+INJECT: attempted to remove theme classes
+PAGE_METRICS {"scrollHeight":1291,"clientHeight":1236,"fontsStatus":"loaded","devicePixelRatio":1,"viewport":{"width":800,"height":1236}}
+FORCE_SYSTEM_UI: applied debug-force-system-ui class to body
+FORCE_SYSTEM_UI: removed webfont links, attempted to strip @font-face, and injected font override
+CLIP {"x":0,"y":0,"width":800,"height":1236}
+VIEWPORT_SET {"width":800,"height":1236}
+SCREENSHOT_PNG_SIZE 800 1236
+SCREENSHOT_FILE_BYTES 67351
+WROTE builds/screenshots/smoke-result.json
+WROTE builds/smoke-result.json
+WROTE builds/screenshots/smoke-result.full.json
+WROTE builds/smoke-result.full.json
+WROTE builds/COMPARE_TARGET_HEIGHT 1236
+RESULT_META {"devicePixelRatio":1,"viewport":{"width":800,"height":1236}}

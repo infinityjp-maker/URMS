@@ -1,0 +1,12 @@
+{
+  "found": {
+    "smoke-run.stdout.log": [],
+    "smoke-run.stderr.log": [],
+    "smoke-result.json": [],
+    "smoke-exec-summary.json": [],
+    "NotoSansJP-Regular.woff2": [],
+    "playwright-screenshots-tar-early": [],
+    "playwright-screenshots-tar": []
+  },
+  "all": []
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "smoke-run.stdout.log",
+    "found": false,
+    "path": null,
+    "length": 0
+  },
+  {
+    "name": "smoke-run.stderr.log",
+    "found": false,
+    "path": null,
+    "length": 0
+  },
+  {
+    "name": "smoke-exec-summary.json",
+    "found": false,
+    "path": null,
+    "length": 0
+  },
+  {
+    "name": "smoke-result.json",
+    "found": false,
+    "path": null,
+    "length": 0
+  },
+  {
+    "name": "NotoSansJP-Regular.woff2",
+    "found": false,
+    "path": null,
+    "length": 0
+  }
+]

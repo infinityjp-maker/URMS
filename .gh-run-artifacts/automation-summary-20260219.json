@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-02-19T19:20:00+09:00",
+  "pr": 13,
+  "pr_merge_state": "blocked",
+  "pr_mergeable": "MERGEABLE",
+  "attempts": {
+    "programmatic_dispatch_attempts": 5,
+    "fallback_push_attempted": true
+  },
+  "inspected_runs": [
+    {
+      "databaseId": 22172116705,
+      "headBranch": "fix/playwright-smoke-yaml-fence",
+      "event": "push",
+      "createdAt": "2026-02-19T07:10:29Z",
+      "conclusion": "failure",
+      "artifacts_count": 0
+    },
+    {
+      "databaseId": 22171688160,
+      "headBranch": "feature/auto-dispatch-20260219155059",
+      "event": "push",
+      "createdAt": "2026-02-19T06:52:27Z",
+      "conclusion": "failure",
+      "artifacts_count": 0
+    }
+  ],
+  "artifact_inventory": {},
+  "notes": [
+    "PR #13 is in 'blocked' mergeStateStatus; auto-merge was requested but checks have not completed.",
+    "Multiple recent runs completed with 'failure' and have zero artifacts uploaded according to the Actions API.",
+    "To diagnose root cause we need the job logs for failing runs (see Actions UI for run IDs above).",
+    "Options: (A) provide job logs, (B) allow admin force-merge, (C) let me create a temporary diagnostic commit that echoes and uploads early artifacts to ensure we capture logs."
+  ]
+}
