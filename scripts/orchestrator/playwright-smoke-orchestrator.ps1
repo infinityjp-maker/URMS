@@ -3,12 +3,30 @@ param(
 )
 set-strictmode -Version Latest
 
-$RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$RepoRoot = (Resolve-Path (Join-Path $ScriptDir '..\..') | ForEach-Object { $_.ProviderPath })
 Push-Location $RepoRoot
+
+# Self-detach so the script can continue after the invoking terminal is closed.
+if(-not $Detached){
+  $pwshCmd = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
+  if(-not $pwshCmd){ $pwshCmd = (Get-Command powershell -ErrorAction SilentlyContinue).Source }
+  if($pwshCmd){
+    $args = "-NoProfile -ExecutionPolicy Bypass -File \"$($MyInvocation.MyCommand.Definition)\" -Detached"
+    Start-Process -FilePath $pwshCmd -ArgumentList $args -WindowStyle Hidden | Out-Null
+    Write-Output "Orchestrator launched in background via $pwshCmd; exiting parent process.";
+    Exit 0
+  } else {
+    Write-Output "pwsh/powershell not found in PATH; continuing in-process.";
+  }
+}
 
 $LockFile = Join-Path $RepoRoot 'scripts/orchestrator/orchestrator.lock'
 $StateFile = Join-Path $RepoRoot 'scripts/orchestrator/state.json'
 $LogDir = Join-Path $RepoRoot 'logs'
+# ensure orchestrator directory exists for lock/state
+$OrchDir = Join-Path $RepoRoot 'scripts/orchestrator'
+if(-not (Test-Path $OrchDir)){ New-Item -Path $OrchDir -ItemType Directory -Force | Out-Null }
 if(-not (Test-Path $LogDir)){ New-Item -Path $LogDir -ItemType Directory | Out-Null }
 $LogFile = Join-Path $LogDir ("playwright-smoke-orchestrator-{0}.log" -f (Get-Date -Format yyyyMMdd))
 
@@ -37,6 +55,9 @@ if(Test-Path $LockFile){
 
 # Write own PID to lock
 $MyPid = $PID
+# ensure lockfile directory exists
+$LockDir = Split-Path -Parent $LockFile
+if(-not (Test-Path $LockDir)){ New-Item -Path $LockDir -ItemType Directory -Force | Out-Null }
 Set-Content -Path $LockFile -Value $MyPid
 Log("Orchestrator started. PID=$MyPid")
 
