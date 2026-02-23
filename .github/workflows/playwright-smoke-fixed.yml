@@ -1,5 +1,10 @@
 name: Playwright Smoke Compare (fixed)
 
+permissions:
+  contents: read
+  actions: write
+  id-token: write
+
 on:
   workflow_dispatch: {}
   push:
@@ -165,7 +170,10 @@ jobs:
       server.serve_forever()
     PY
           nohup python3 ux_ping_server.py > ux_ping.log 2>&1 &
+          echo "started ux-ping server, pid=$(pgrep -f ux_ping_server.py || true)" || true
           sleep 1
+          echo "--- ux_ping.log ---" ; tail -n +1 ux_ping.log || true
+          echo "--- process list ---" ; ps -ef | grep ux_ping_server.py || true
           # run with a safety timeout to avoid long-running hangs (25m)
           timeout 1500s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
