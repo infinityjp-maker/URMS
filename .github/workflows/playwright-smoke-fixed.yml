@@ -6,9 +6,8 @@ permissions:
   id-token: write
 
 on:
-  workflow_dispatch: {}
   push:
-    branches: [ temp/disable-cdp, main ]
+    branches: [ main ]
 
 jobs:
   smoke-compare:
