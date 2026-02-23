@@ -9,7 +9,7 @@ jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
@@ -52,19 +52,34 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
+      - name: Show cache status
+        run: |
+          echo "cache-playwright: ${{ steps.cache-playwright.outputs.cache-hit }}"
+          echo "cache-node-modules: ${{ steps.cache-node-modules.outputs.cache-hit }}"
+          echo "cache-npm: ${{ steps.cache-npm.outputs.cache-hit }}"
+
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           npm ci
+        shell: bash
 
-      - name: Install Playwright and browsers (if cache miss)
+      - name: Skip npm ci when node_modules cache hit
+        if: steps.cache-node-modules.outputs.cache-hit == 'true'
+        run: |
+          echo "node_modules cache hit; skipping npm ci"
+
+      - name: Install Playwright and browsers (only on cache miss)
         if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: |
           npm explore playwright -- npm i >/dev/null || true
+          # install browsers and native deps only when cache miss
           npx playwright install --with-deps
         shell: bash
 
       - name: Install NotoJP fonts (minimal)
         run: |
+          # minimal font install only (avoid large extra packages)
           sudo apt-get update -y
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fonts-noto-cjk fonts-noto-color-emoji || true
         shell: bash
@@ -99,8 +114,8 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
           mkdir -p builds/screenshots
-          # run with a safety timeout to avoid long-running hangs
-          timeout 1500s node Tests/playwright/exec_smoke_save.cjs
+          # run with a safety timeout to avoid long-running hangs (20m)
+          timeout 1200s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
 
       - name: Upload artifacts
