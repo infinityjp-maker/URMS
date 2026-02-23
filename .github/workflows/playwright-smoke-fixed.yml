@@ -114,6 +114,30 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
           mkdir -p builds/screenshots
+          # start a minimal local ux-ping mock server so front-end pings succeed
+          cat > ux_ping_server.py <<'PY'
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class H(BaseHTTPRequestHandler):
+      def _ok(self):
+        self.send_response(200)
+        self.send_header('Content-Type','text/plain')
+        self.end_headers()
+      def do_GET(self):
+        if self.path.startswith('/ux-ping'):
+          self._ok(); self.wfile.write(b'ok')
+        else:
+          self.send_response(404); self.end_headers()
+      def do_POST(self):
+        if self.path.startswith('/ux-ping'):
+          self._ok(); self.wfile.write(b'ok')
+        else:
+          self.send_response(404); self.end_headers()
+    if __name__ == '__main__':
+      server = HTTPServer(('127.0.0.1', 8765), H)
+      server.serve_forever()
+    PY
+          nohup python3 ux_ping_server.py >/dev/null 2>&1 &
+          sleep 0.5
           # run with a safety timeout to avoid long-running hangs (25m)
           timeout 1500s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
