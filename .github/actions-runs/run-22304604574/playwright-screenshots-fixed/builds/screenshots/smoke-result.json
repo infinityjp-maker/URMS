@@ -1,0 +1,9 @@
+{
+  "error": "smoke-run-failed-or-no-json",
+  "exitCode": null,
+  "reason": "SIGTERM",
+  "url": "http://localhost:1420/",
+  "stderrPreview": "DISABLE_CDP=1, skipping CDP discovery\nADD_INIT_SCRIPT_CONTEXT\nINJECT: added noto-local.css from http://localhost:1420/assets/fonts/noto-local.css\nINJECT: added normalization CSS\nINJECT: attempted to remove theme classes\nPAGE_METRICS {\"scrollHeight\":1483,\"clientHeight\":1236,\"fontsStatus\":\"loaded\",\"devicePixelRatio\":1,\"viewport\":{\"width\":800,\"height\":1236}}\nFORCE_SYSTEM_UI: applied debug-force-system-ui class to body\nFORCE_SYSTEM_UI: removed webfont links, attempted to strip @font-face, and injected font override\nCLIP {\"x\":0,\"y\":0,\"width\":800,\"height\":1236}\nVIEWPORT_SET {\"width\":800,\"height\":1236}\n",
+  "stdoutPreview": null,
+  "timestamp": "2026-02-23T12:03:31.346Z"
+}

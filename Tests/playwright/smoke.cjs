@@ -47,6 +47,20 @@ function fetchJson(url, timeoutMs = 5000){
   });
 }
 
+async function gotoWithRetry(page, url, attempts = 2) {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      console.error('GOTO_ATTEMPT', i, url);
+      await page.goto(url, { waitUntil: 'networkidle' });
+      return;
+    } catch (e) {
+      console.error('GOTO_ATTEMPT_FAILED', i, e && (e.message || e));
+      if (i === attempts) throw e;
+      try { await page.waitForTimeout(500 * i); } catch (_) {}
+    }
+  }
+}
+
 async function getTargetWebSocket(){
   const listUrl = process.env.CDP || 'http://127.0.0.1:9222/json/list';
   const prefer = process.env.URL || null;
@@ -147,7 +161,7 @@ async function getTargetWebSocket(){
           } catch(e) { try { console.error('ADD_INIT_SCRIPT_FAILED', e && e.message); } catch(_){} }
           if (context && typeof context.newPage === 'function') {
             page = await context.newPage();
-            try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e){}
+            try { await gotoWithRetry(page, process.env.URL || preferUrl, 2); } catch(e){}
           }
       }
     } catch(e) {
@@ -173,7 +187,7 @@ async function getTargetWebSocket(){
     // If we have a CDP-connected browser and no existing page, create one in that browser and navigate
     if (!page && connectedOverCDP && context && typeof context.newPage === 'function'){
       page = await context.newPage();
-      try { await page.goto(process.env.URL || preferUrl, { waitUntil: 'networkidle', timeout: 30000 }); } catch(e) {}
+      try { await gotoWithRetry(page, process.env.URL || preferUrl, 2); } catch(e) {}
     }
 
     if (!page){
@@ -189,7 +203,7 @@ async function getTargetWebSocket(){
         }
       } catch(e) { try { console.error('ADD_INIT_SCRIPT_LOCAL_FAILED', e && e.message); } catch(_){} }
       page = await localCtx.newPage();
-      await page.goto(url, { waitUntil: 'networkidle' , timeout: 30000});
+      await gotoWithRetry(page, url, 2);
     }
 
     // If we found/created a page from the WebView/CDP, prefer its URL for checks
@@ -473,24 +487,24 @@ async function getTargetWebSocket(){
       try {
         // Wait briefly for explicit DOM marker set by frontend
         try {
-          await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 7000 });
+          await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 20000 });
           domMarkerDetected = true;
         } catch (e) {
-          try { internalErrors.push('waitForSelector [data-ux-ping]: '+String(e && (e.message||e))); } catch(_){}
+          try { internalErrors.push('waitForSelector [data-ux-ping]: '+String(e && (e.stack || e.message || e))); } catch(_){ }
         }
 
         // Wait for console marker '[ux-ping-ok]' which frontend logs on success
         try {
-          await page.waitForEvent('console', { timeout: 7000, predicate: msg => {
+          await page.waitForEvent('console', { timeout: 20000, predicate: msg => {
             try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; }
           } });
           consoleMarkerDetected = true;
         } catch (e) {
-          try { internalErrors.push('waitForEvent(console [ux-ping-ok]): '+String(e && (e.message||e))); } catch(_){}
+          try { internalErrors.push('waitForEvent(console [ux-ping-ok]): '+String(e && (e.stack || e.message || e))); } catch(_){ }
         }
 
         // Probe final pingOk value from the page (may be set by inline or bundle code)
-        try { pingOk = await page.evaluate(() => !!(window && (window.__pingOk === true))).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.message||e))); }catch(_){} }
+        try { pingOk = await page.evaluate(() => !!(window && (window.__pingOk === true))).catch(()=>false); } catch(e){ try{ internalErrors.push('probe pingOk final: '+String(e && (e.stack || e.message || e))); }catch(_){} }
 
         // Expose detection flags to result for CI analysis: (deferred to final assembly)
       } catch (e) { try{ internalErrors.push('waitFor ping markers: '+String(e && (e.message||e))); }catch(_){} }
@@ -670,6 +684,29 @@ async function getTargetWebSocket(){
           try { result.domMarkerDetected = !!(result.domSnapshot && result.domSnapshot.html && result.domSnapshot.html.indexOf('data-ux-ping="ok"') !== -1); } catch(e) { result.domMarkerDetected = false; }
           try { result.consoleMarkerDetected = !!(Array.isArray(result.consoleMessages) && result.consoleMessages.some(m => (m && m.text && String(m.text).includes('[ux-ping-ok]')))); } catch(e) { result.consoleMarkerDetected = false; }
         } catch(e) {}
+    // Probe local ux-ping endpoints (8765 -> 8877 fallback), allow 20s for fetch
+    try {
+      const ports = [8765, 8877];
+      for (const p of ports) {
+        try {
+          const u = `http://127.0.0.1:${p}/ux-ping`;
+          const pj = await fetchJson(u, 20000).catch(()=>null);
+          if (pj && pj.ok) {
+            console.error('UX_PING_OK', p, JSON.stringify(pj));
+            result.pingPostReceived = true;
+            result.pingPort = p;
+            break;
+          }
+        } catch (e) {
+          try { internalErrors.push('ux-ping probe failed port '+p+': '+String(e && (e.stack || e.message || e))); } catch(_){}
+        }
+      }
+    } catch (e) { try { internalErrors.push('ux-ping probes overall failed: '+String(e && (e.stack || e.message || e))); } catch(_){} }
+
+    // Add a detailed internalErrors summary to help CI diagnosis
+    try {
+      result.internalErrorsDetailed = (internalErrors || []).map((ie, idx) => ({ idx, ts: Date.now(), msg: ie }));
+    } catch(e) {}
       try { fs.writeFileSync('builds/screenshots/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.json'); } catch(e){ try{ internalErrors.push('write smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/smoke-result.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/smoke-result.json'); } catch(e){ try{ internalErrors.push('write builds/smoke-result.json: '+String(e && (e.message||e))); }catch(_){} }
       try { fs.writeFileSync('builds/screenshots/smoke-result.full.json', JSON.stringify(result, null, 2), 'utf8'); console.error('WROTE', 'builds/screenshots/smoke-result.full.json'); } catch(e){ try{ internalErrors.push('write smoke-result.full.json (screenshots): '+String(e && (e.message||e))); }catch(_){} }

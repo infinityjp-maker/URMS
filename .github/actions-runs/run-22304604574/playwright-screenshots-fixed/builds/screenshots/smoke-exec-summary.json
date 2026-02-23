@@ -1,0 +1,12 @@
+{
+  "exitCode": null,
+  "gotStdout": false,
+  "gotStderr": true,
+  "stdoutBytes": 0,
+  "stderrBytes": 603,
+  "firstStdoutAt": null,
+  "firstStderrAt": "2026-02-23T11:43:31.790Z",
+  "finishedAt": "2026-02-23T12:03:31.352Z",
+  "host": "runnervmwffz4",
+  "reason": "SIGTERM"
+}

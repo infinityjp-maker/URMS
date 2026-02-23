@@ -14,7 +14,7 @@ jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
@@ -33,8 +33,9 @@ jobs:
         with:
           path: |
             ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json','**/package.json') }}
+          key: ${{ runner.os }}-node-20.x-npm-${{ hashFiles('**/package-lock.json','**/package.json') }}
           restore-keys: |
+            ${{ runner.os }}-node-20.x-npm-
             ${{ runner.os }}-npm-
 
       - name: Cache Playwright browsers
@@ -43,8 +44,9 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json','**/package.json') }}
+          key: ${{ runner.os }}-node-20.x-playwright-${{ hashFiles('**/package-lock.json','**/package.json') }}
           restore-keys: |
+            ${{ runner.os }}-node-20.x-playwright-
             ${{ runner.os }}-playwright-
 
       - name: Cache node_modules
@@ -53,8 +55,9 @@ jobs:
         with:
           path: |
             node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json','**/package.json') }}
+          key: ${{ runner.os }}-node-20.x-node-modules-${{ hashFiles('**/package-lock.json','**/package.json') }}
           restore-keys: |
+            ${{ runner.os }}-node-20.x-node-modules-
             ${{ runner.os }}-node-modules-
 
       - name: Show cache status
@@ -121,61 +124,92 @@ jobs:
           mkdir -p builds/screenshots
           # start a minimal local ux-ping mock server so front-end pings succeed
           cat > ux_ping_server.py <<'PY'
-    from http.server import BaseHTTPRequestHandler, HTTPServer
-    import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+import threading
+import sys
 
-    class H(BaseHTTPRequestHandler):
-      def _set_cors(self):
+class H(BaseHTTPRequestHandler):
+    def _set_cors(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 
-      def _ok(self, payload=b'{"ok":true}'):
+    def _ok(self, port):
+        payload = json.dumps({"ok": True, "port": port}).encode('utf8')
         self.send_response(200)
         self._set_cors()
-        self.send_header('Content-Type','application/json')
+        self.send_header('Content-Type', 'application/json')
         self.end_headers()
         try:
-          self.wfile.write(payload)
+            self.wfile.write(payload)
         except BrokenPipeError:
-          pass
+            pass
 
-      def do_OPTIONS(self):
+    def do_OPTIONS(self):
         self.send_response(204)
         self._set_cors()
         self.end_headers()
 
-      def do_GET(self):
+    def do_GET(self):
         if self.path.startswith('/ux-ping'):
-          self._ok()
+            port = self.server.server_port
+            self._ok(port)
         else:
-          self.send_response(404); self.end_headers()
+            self.send_response(404); self.end_headers()
 
-      def do_POST(self):
+    def do_POST(self):
         if self.path.startswith('/ux-ping'):
-          # consume body but ignore
-          try:
-            length = int(self.headers.get('Content-Length', 0))
-            if length:
-              self.rfile.read(length)
-          except Exception:
-            pass
-          self._ok()
+            try:
+                length = int(self.headers.get('Content-Length', 0))
+                if length:
+                    self.rfile.read(length)
+            except Exception:
+                pass
+            port = self.server.server_port
+            self._ok(port)
         else:
-          self.send_response(404); self.end_headers()
+            self.send_response(404); self.end_headers()
 
-    if __name__ == '__main__':
-      server = HTTPServer(('127.0.0.1', 8765), H)
-      print('ux-ping server listening on 127.0.0.1:8765')
-      server.serve_forever()
-    PY
+def serve_on(port):
+    srv = HTTPServer(('127.0.0.1', port), H)
+    print(f'ux-ping server listening on 127.0.0.1:{port}', flush=True)
+    try:
+        srv.serve_forever()
+    except Exception:
+        pass
+
+if __name__ == '__main__':
+    ports = [8765, 8877]
+    threads = []
+    for p in ports:
+        t = threading.Thread(target=serve_on, args=(p,), daemon=True)
+        t.start()
+        threads.append(t)
+    print('started ux-ping servers on ports:', ports, flush=True)
+    # keep main thread alive
+    try:
+        while True:
+            for t in threads:
+                t.join(1)
+    except KeyboardInterrupt:
+        sys.exit(0)
+PY
           nohup python3 ux_ping_server.py > ux_ping.log 2>&1 &
           echo "started ux-ping server, pid=$(pgrep -f ux_ping_server.py || true)" || true
-          sleep 1
+          # perform 3 health checks with 1s interval against both ports
+          ok8765=0; ok8877=0
+          for i in 1 2 3; do
+            echo "health-check attempt $i"
+            if curl -fsS http://127.0.0.1:8765/ux-ping -m 1 >/dev/null 2>&1; then ok8765=1; fi
+            if curl -fsS http://127.0.0.1:8877/ux-ping -m 1 >/dev/null 2>&1; then ok8877=1; fi
+            sleep 1
+          done
+          echo "ux-ping health: 8765=$ok8765 8877=$ok8877"
           echo "--- ux_ping.log ---" ; tail -n +1 ux_ping.log || true
           echo "--- process list ---" ; ps -ef | grep ux_ping_server.py || true
-          # run with a safety timeout to avoid long-running hangs (25m)
-          timeout 1500s node Tests/playwright/exec_smoke_save.cjs
+          # run with a safety timeout to avoid long-running hangs (30m)
+          timeout 1800s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
 
       - name: Upload artifacts

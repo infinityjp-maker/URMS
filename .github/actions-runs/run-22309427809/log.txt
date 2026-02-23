@@ -1,0 +1,248 @@
+diag	Set up job	﻿2026-02-23T14:03:46.3493260Z Current runner version: '2.331.0'
+diag	Set up job	2026-02-23T14:03:46.3520894Z ##[group]Runner Image Provisioner
+diag	Set up job	2026-02-23T14:03:46.3522161Z Hosted Compute Agent
+diag	Set up job	2026-02-23T14:03:46.3523059Z Version: 20260123.484
+diag	Set up job	2026-02-23T14:03:46.3523999Z Commit: 6bd6555ca37d84114959e1c76d2c01448ff61c5d
+diag	Set up job	2026-02-23T14:03:46.3525838Z Build Date: 2026-01-23T19:41:17Z
+diag	Set up job	2026-02-23T14:03:46.3527029Z Worker ID: {3e9f29d5-32c5-4108-ba09-22c9c1df5152}
+diag	Set up job	2026-02-23T14:03:46.3528236Z Azure Region: eastus
+diag	Set up job	2026-02-23T14:03:46.3529292Z ##[endgroup]
+diag	Set up job	2026-02-23T14:03:46.3531929Z ##[group]Operating System
+diag	Set up job	2026-02-23T14:03:46.3532939Z Ubuntu
+diag	Set up job	2026-02-23T14:03:46.3533822Z 24.04.3
+diag	Set up job	2026-02-23T14:03:46.3534654Z LTS
+diag	Set up job	2026-02-23T14:03:46.3535337Z ##[endgroup]
+diag	Set up job	2026-02-23T14:03:46.3536187Z ##[group]Runner Image
+diag	Set up job	2026-02-23T14:03:46.3537010Z Image: ubuntu-24.04
+diag	Set up job	2026-02-23T14:03:46.3537880Z Version: 20260201.15.1
+diag	Set up job	2026-02-23T14:03:46.3539611Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260201.15/images/ubuntu/Ubuntu2404-Readme.md
+diag	Set up job	2026-02-23T14:03:46.3542477Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260201.15
+diag	Set up job	2026-02-23T14:03:46.3544074Z ##[endgroup]
+diag	Set up job	2026-02-23T14:03:46.3545775Z ##[group]GITHUB_TOKEN Permissions
+diag	Set up job	2026-02-23T14:03:46.3548568Z Contents: read
+diag	Set up job	2026-02-23T14:03:46.3549470Z Metadata: read
+diag	Set up job	2026-02-23T14:03:46.3550252Z Packages: read
+diag	Set up job	2026-02-23T14:03:46.3551320Z ##[endgroup]
+diag	Set up job	2026-02-23T14:03:46.3554080Z Secret source: Actions
+diag	Set up job	2026-02-23T14:03:46.3555542Z Prepare workflow directory
+diag	Set up job	2026-02-23T14:03:46.4029972Z Prepare all required actions
+diag	Set up job	2026-02-23T14:03:46.4088377Z Getting action download info
+diag	Set up job	2026-02-23T14:03:46.6374101Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+diag	Set up job	2026-02-23T14:03:46.8474392Z Complete job name: diag
+diag	Checkout	﻿2026-02-23T14:03:46.9254264Z ##[group]Run actions/checkout@v4
+diag	Checkout	2026-02-23T14:03:46.9255106Z with:
+diag	Checkout	2026-02-23T14:03:46.9255526Z   repository: infinityjp-maker/URMS
+diag	Checkout	2026-02-23T14:03:46.9256165Z   token: ***
+diag	Checkout	2026-02-23T14:03:46.9256563Z   ssh-strict: true
+diag	Checkout	2026-02-23T14:03:46.9256948Z   ssh-user: git
+diag	Checkout	2026-02-23T14:03:46.9257332Z   persist-credentials: true
+diag	Checkout	2026-02-23T14:03:46.9257760Z   clean: true
+diag	Checkout	2026-02-23T14:03:46.9258148Z   sparse-checkout-cone-mode: true
+diag	Checkout	2026-02-23T14:03:46.9258616Z   fetch-depth: 1
+diag	Checkout	2026-02-23T14:03:46.9258979Z   fetch-tags: false
+diag	Checkout	2026-02-23T14:03:46.9259370Z   show-progress: true
+diag	Checkout	2026-02-23T14:03:46.9259765Z   lfs: false
+diag	Checkout	2026-02-23T14:03:46.9260123Z   submodules: false
+diag	Checkout	2026-02-23T14:03:46.9260666Z   set-safe-directory: true
+diag	Checkout	2026-02-23T14:03:46.9261349Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.0309657Z Syncing repository: infinityjp-maker/URMS
+diag	Checkout	2026-02-23T14:03:47.0311626Z ##[group]Getting Git version info
+diag	Checkout	2026-02-23T14:03:47.0312273Z Working directory is '/home/runner/work/URMS/URMS'
+diag	Checkout	2026-02-23T14:03:47.0313218Z [command]/usr/bin/git version
+diag	Checkout	2026-02-23T14:03:47.0385431Z git version 2.52.0
+diag	Checkout	2026-02-23T14:03:47.0410849Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.0423864Z Temporarily overriding HOME='/home/runner/work/_temp/237ca5b8-9dff-4d44-b568-0030532552c0' before making global git config changes
+diag	Checkout	2026-02-23T14:03:47.0425255Z Adding repository directory to the temporary git global config as a safe directory
+diag	Checkout	2026-02-23T14:03:47.0436005Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/URMS/URMS
+diag	Checkout	2026-02-23T14:03:47.0472325Z Deleting the contents of '/home/runner/work/URMS/URMS'
+diag	Checkout	2026-02-23T14:03:47.0475453Z ##[group]Initializing the repository
+diag	Checkout	2026-02-23T14:03:47.0479193Z [command]/usr/bin/git init /home/runner/work/URMS/URMS
+diag	Checkout	2026-02-23T14:03:47.0577126Z hint: Using 'master' as the name for the initial branch. This default branch name
+diag	Checkout	2026-02-23T14:03:47.0578644Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+diag	Checkout	2026-02-23T14:03:47.0579726Z hint: to use in all of your new repositories, which will suppress this warning,
+diag	Checkout	2026-02-23T14:03:47.0580876Z hint: call:
+diag	Checkout	2026-02-23T14:03:47.0581690Z hint:
+diag	Checkout	2026-02-23T14:03:47.0582588Z hint: 	git config --global init.defaultBranch <name>
+diag	Checkout	2026-02-23T14:03:47.0583828Z hint:
+diag	Checkout	2026-02-23T14:03:47.0585026Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+diag	Checkout	2026-02-23T14:03:47.0587087Z hint: 'development'. The just-created branch can be renamed via this command:
+diag	Checkout	2026-02-23T14:03:47.0588716Z hint:
+diag	Checkout	2026-02-23T14:03:47.0589523Z hint: 	git branch -m <name>
+diag	Checkout	2026-02-23T14:03:47.0590731Z hint:
+diag	Checkout	2026-02-23T14:03:47.0592157Z hint: Disable this message with "git config set advice.defaultBranchName false"
+diag	Checkout	2026-02-23T14:03:47.0594179Z Initialized empty Git repository in /home/runner/work/URMS/URMS/.git/
+diag	Checkout	2026-02-23T14:03:47.0596896Z [command]/usr/bin/git remote add origin https://github.com/infinityjp-maker/URMS
+diag	Checkout	2026-02-23T14:03:47.0632534Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.0633744Z ##[group]Disabling automatic garbage collection
+diag	Checkout	2026-02-23T14:03:47.0637446Z [command]/usr/bin/git config --local gc.auto 0
+diag	Checkout	2026-02-23T14:03:47.0665002Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.0665683Z ##[group]Setting up auth
+diag	Checkout	2026-02-23T14:03:47.0671485Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+diag	Checkout	2026-02-23T14:03:47.0701579Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+diag	Checkout	2026-02-23T14:03:47.1021298Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+diag	Checkout	2026-02-23T14:03:47.1048691Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+diag	Checkout	2026-02-23T14:03:47.1261425Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+diag	Checkout	2026-02-23T14:03:47.1289452Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+diag	Checkout	2026-02-23T14:03:47.1511149Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+diag	Checkout	2026-02-23T14:03:47.1544088Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.1544872Z ##[group]Fetching the repository
+diag	Checkout	2026-02-23T14:03:47.1552165Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a7d5e25e22abd4f965fccd1cf6ed561fcf977054:refs/remotes/origin/temp/disable-cdp
+diag	Checkout	2026-02-23T14:03:47.7918406Z From https://github.com/infinityjp-maker/URMS
+diag	Checkout	2026-02-23T14:03:47.7922397Z  * [new ref]         a7d5e25e22abd4f965fccd1cf6ed561fcf977054 -> origin/temp/disable-cdp
+diag	Checkout	2026-02-23T14:03:47.7951900Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.7953819Z ##[group]Determining the checkout info
+diag	Checkout	2026-02-23T14:03:47.7955853Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.7959756Z [command]/usr/bin/git sparse-checkout disable
+diag	Checkout	2026-02-23T14:03:47.8000104Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+diag	Checkout	2026-02-23T14:03:47.8027132Z ##[group]Checking out the ref
+diag	Checkout	2026-02-23T14:03:47.8031700Z [command]/usr/bin/git checkout --progress --force -B temp/disable-cdp refs/remotes/origin/temp/disable-cdp
+diag	Checkout	2026-02-23T14:03:47.9616142Z Switched to a new branch 'temp/disable-cdp'
+diag	Checkout	2026-02-23T14:03:47.9618268Z branch 'temp/disable-cdp' set up to track 'origin/temp/disable-cdp'.
+diag	Checkout	2026-02-23T14:03:47.9634065Z ##[endgroup]
+diag	Checkout	2026-02-23T14:03:47.9671269Z [command]/usr/bin/git log -1 --format=%H
+diag	Checkout	2026-02-23T14:03:47.9692544Z a7d5e25e22abd4f965fccd1cf6ed561fcf977054
+diag	Print environment	﻿2026-02-23T14:03:47.9916192Z ##[group]Run uname -a
+diag	Print environment	2026-02-23T14:03:47.9917342Z [36;1muname -a[0m
+diag	Print environment	2026-02-23T14:03:47.9918299Z [36;1mlsb_release -a || true[0m
+diag	Print environment	2026-02-23T14:03:47.9919446Z [36;1mnode -v || true[0m
+diag	Print environment	2026-02-23T14:03:47.9920717Z [36;1mnpm -v || true[0m
+diag	Print environment	2026-02-23T14:03:47.9921744Z [36;1mecho "--- env ---"[0m
+diag	Print environment	2026-02-23T14:03:47.9922774Z [36;1menv | sort[0m
+diag	Print environment	2026-02-23T14:03:47.9923720Z [36;1mecho "DIAGNOSTIC_OK"[0m
+diag	Print environment	2026-02-23T14:03:47.9961185Z shell: /usr/bin/bash -e {0}
+diag	Print environment	2026-02-23T14:03:47.9962285Z ##[endgroup]
+diag	Print environment	2026-02-23T14:03:48.0054343Z Linux runnervmwffz4 6.11.0-1018-azure #18~24.04.1-Ubuntu SMP Sat Jun 28 04:46:03 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+diag	Print environment	2026-02-23T14:03:48.0124428Z Distributor ID:	Ubuntu
+diag	Print environment	2026-02-23T14:03:48.0126168Z Description:	Ubuntu 24.04.3 LTS
+diag	Print environment	2026-02-23T14:03:48.0127611Z Release:	24.04
+diag	Print environment	2026-02-23T14:03:48.0128495Z Codename:	noble
+diag	Print environment	2026-02-23T14:03:48.0654593Z v20.20.0
+diag	Print environment	2026-02-23T14:03:48.2674620Z 10.8.2
+diag	Print environment	2026-02-23T14:03:48.2721443Z --- env ---
+diag	Print environment	2026-02-23T14:03:48.2739129Z ACCEPT_EULA=Y
+diag	Print environment	2026-02-23T14:03:48.2739840Z ACTIONS_ORCHESTRATION_ID=b2b4adab-33e3-4c13-b3bf-12a8ca673ba1.diag.__default
+diag	Print environment	2026-02-23T14:03:48.2740374Z ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE=/opt/actionarchivecache
+diag	Print environment	2026-02-23T14:03:48.2741110Z AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
+diag	Print environment	2026-02-23T14:03:48.2741679Z ANDROID_HOME=/usr/local/lib/android/sdk
+diag	Print environment	2026-02-23T14:03:48.2742290Z ANDROID_NDK=/usr/local/lib/android/sdk/ndk/27.3.13750724
+diag	Print environment	2026-02-23T14:03:48.2742970Z ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724
+diag	Print environment	2026-02-23T14:03:48.2743694Z ANDROID_NDK_LATEST_HOME=/usr/local/lib/android/sdk/ndk/29.0.14206865
+diag	Print environment	2026-02-23T14:03:48.2744666Z ANDROID_NDK_ROOT=/usr/local/lib/android/sdk/ndk/27.3.13750724
+diag	Print environment	2026-02-23T14:03:48.2745175Z ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+diag	Print environment	2026-02-23T14:03:48.2745468Z ANT_HOME=/usr/share/ant
+diag	Print environment	2026-02-23T14:03:48.2745754Z AZURE_EXTENSION_DIR=/opt/az/azcliextensions
+diag	Print environment	2026-02-23T14:03:48.2746101Z BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+diag	Print environment	2026-02-23T14:03:48.2746527Z CHROMEWEBDRIVER=/usr/local/share/chromedriver-linux64
+diag	Print environment	2026-02-23T14:03:48.2746892Z CHROME_BIN=/usr/bin/google-chrome
+diag	Print environment	2026-02-23T14:03:48.2747152Z CI=true
+diag	Print environment	2026-02-23T14:03:48.2747351Z CONDA=/usr/share/miniconda
+diag	Print environment	2026-02-23T14:03:48.2747618Z DEBIAN_FRONTEND=noninteractive
+diag	Print environment	2026-02-23T14:03:48.2747883Z DOTNET_MULTILEVEL_LOOKUP=0
+diag	Print environment	2026-02-23T14:03:48.2748128Z DOTNET_NOLOGO=1
+diag	Print environment	2026-02-23T14:03:48.2748360Z DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+diag	Print environment	2026-02-23T14:03:48.2748672Z EDGEWEBDRIVER=/usr/local/share/edge_driver
+diag	Print environment	2026-02-23T14:03:48.2748967Z ENABLE_RUNNER_TRACING=true
+diag	Print environment	2026-02-23T14:03:48.2749258Z GECKOWEBDRIVER=/usr/local/share/gecko_driver
+diag	Print environment	2026-02-23T14:03:48.2749573Z GHCUP_INSTALL_BASE_PREFIX=/usr/local
+diag	Print environment	2026-02-23T14:03:48.2749850Z GITHUB_ACTION=__run
+diag	Print environment	2026-02-23T14:03:48.2750074Z GITHUB_ACTIONS=true
+diag	Print environment	2026-02-23T14:03:48.2750295Z GITHUB_ACTION_REF=
+diag	Print environment	2026-02-23T14:03:48.2750748Z GITHUB_ACTION_REPOSITORY=
+diag	Print environment	2026-02-23T14:03:48.2751016Z GITHUB_ACTOR=infinityjp-maker
+diag	Print environment	2026-02-23T14:03:48.2751278Z GITHUB_ACTOR_ID=257793200
+diag	Print environment	2026-02-23T14:03:48.2751654Z GITHUB_API_URL=https://api.github.com
+diag	Print environment	2026-02-23T14:03:48.2751956Z GITHUB_BASE_REF=
+diag	Print environment	2026-02-23T14:03:48.2752367Z GITHUB_ENV=/home/runner/work/_temp/_runner_file_commands/set_env_e34e1824-4f74-472e-a6ea-c7c1fbd47fec
+diag	Print environment	2026-02-23T14:03:48.2752854Z GITHUB_EVENT_NAME=push
+diag	Print environment	2026-02-23T14:03:48.2753178Z GITHUB_EVENT_PATH=/home/runner/work/_temp/_github_workflow/event.json
+diag	Print environment	2026-02-23T14:03:48.2753601Z GITHUB_GRAPHQL_URL=https://api.github.com/graphql
+diag	Print environment	2026-02-23T14:03:48.2753925Z GITHUB_HEAD_REF=
+diag	Print environment	2026-02-23T14:03:48.2754128Z GITHUB_JOB=diag
+diag	Print environment	2026-02-23T14:03:48.2754555Z GITHUB_OUTPUT=/home/runner/work/_temp/_runner_file_commands/set_output_e34e1824-4f74-472e-a6ea-c7c1fbd47fec
+diag	Print environment	2026-02-23T14:03:48.2755240Z GITHUB_PATH=/home/runner/work/_temp/_runner_file_commands/add_path_e34e1824-4f74-472e-a6ea-c7c1fbd47fec
+diag	Print environment	2026-02-23T14:03:48.2755733Z GITHUB_REF=refs/heads/temp/disable-cdp
+diag	Print environment	2026-02-23T14:03:48.2756017Z GITHUB_REF_NAME=temp/disable-cdp
+diag	Print environment	2026-02-23T14:03:48.2756288Z GITHUB_REF_PROTECTED=false
+diag	Print environment	2026-02-23T14:03:48.2756526Z GITHUB_REF_TYPE=branch
+diag	Print environment	2026-02-23T14:03:48.2757075Z GITHUB_REPOSITORY=infinityjp-maker/URMS
+diag	Print environment	2026-02-23T14:03:48.2757373Z GITHUB_REPOSITORY_ID=1144366758
+diag	Print environment	2026-02-23T14:03:48.2757645Z GITHUB_REPOSITORY_OWNER=infinityjp-maker
+diag	Print environment	2026-02-23T14:03:48.2757939Z GITHUB_REPOSITORY_OWNER_ID=257793200
+diag	Print environment	2026-02-23T14:03:48.2758209Z GITHUB_RETENTION_DAYS=90
+diag	Print environment	2026-02-23T14:03:48.2758448Z GITHUB_RUN_ATTEMPT=1
+diag	Print environment	2026-02-23T14:03:48.2758666Z GITHUB_RUN_ID=22309427809
+diag	Print environment	2026-02-23T14:03:48.2758902Z GITHUB_RUN_NUMBER=13
+diag	Print environment	2026-02-23T14:03:48.2759137Z GITHUB_SERVER_URL=https://github.com
+diag	Print environment	2026-02-23T14:03:48.2759471Z GITHUB_SHA=a7d5e25e22abd4f965fccd1cf6ed561fcf977054
+diag	Print environment	2026-02-23T14:03:48.2760153Z GITHUB_STATE=/home/runner/work/_temp/_runner_file_commands/save_state_e34e1824-4f74-472e-a6ea-c7c1fbd47fec
+diag	Print environment	2026-02-23T14:03:48.2761072Z GITHUB_STEP_SUMMARY=/home/runner/work/_temp/_runner_file_commands/step_summary_e34e1824-4f74-472e-a6ea-c7c1fbd47fec
+diag	Print environment	2026-02-23T14:03:48.2761619Z GITHUB_TRIGGERING_ACTOR=infinityjp-maker
+diag	Print environment	2026-02-23T14:03:48.2761905Z GITHUB_WORKFLOW=CI Diagnostic
+diag	Print environment	2026-02-23T14:03:48.2762404Z GITHUB_WORKFLOW_REF=infinityjp-maker/URMS/.github/workflows/ci-diagnostic.yml@refs/heads/temp/disable-cdp
+diag	Print environment	2026-02-23T14:03:48.2762975Z GITHUB_WORKFLOW_SHA=a7d5e25e22abd4f965fccd1cf6ed561fcf977054
+diag	Print environment	2026-02-23T14:03:48.2763348Z GITHUB_WORKSPACE=/home/runner/work/URMS/URMS
+diag	Print environment	2026-02-23T14:03:48.2763671Z GOROOT_1_22_X64=/opt/hostedtoolcache/go/1.22.12/x64
+diag	Print environment	2026-02-23T14:03:48.2764024Z GOROOT_1_23_X64=/opt/hostedtoolcache/go/1.23.12/x64
+diag	Print environment	2026-02-23T14:03:48.2764358Z GOROOT_1_24_X64=/opt/hostedtoolcache/go/1.24.12/x64
+diag	Print environment	2026-02-23T14:03:48.2764684Z GOROOT_1_25_X64=/opt/hostedtoolcache/go/1.25.6/x64
+diag	Print environment	2026-02-23T14:03:48.2765006Z GRADLE_HOME=/usr/share/gradle-9.3.1
+diag	Print environment	2026-02-23T14:03:48.2765274Z HOME=/home/runner
+diag	Print environment	2026-02-23T14:03:48.2765504Z HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS=3650
+diag	Print environment	2026-02-23T14:03:48.2765793Z HOMEBREW_NO_AUTO_UPDATE=1
+diag	Print environment	2026-02-23T14:03:48.2766054Z INVOCATION_ID=1724d59329a343878832970ac54d3575
+diag	Print environment	2026-02-23T14:03:48.2766339Z ImageOS=ubuntu24
+diag	Print environment	2026-02-23T14:03:48.2766563Z ImageVersion=20260201.15.1
+diag	Print environment	2026-02-23T14:03:48.2766832Z JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
+diag	Print environment	2026-02-23T14:03:48.2767150Z JAVA_HOME_11_X64=/usr/lib/jvm/temurin-11-jdk-amd64
+diag	Print environment	2026-02-23T14:03:48.2767491Z JAVA_HOME_17_X64=/usr/lib/jvm/temurin-17-jdk-amd64
+diag	Print environment	2026-02-23T14:03:48.2767819Z JAVA_HOME_21_X64=/usr/lib/jvm/temurin-21-jdk-amd64
+diag	Print environment	2026-02-23T14:03:48.2768152Z JAVA_HOME_25_X64=/usr/lib/jvm/temurin-25-jdk-amd64
+diag	Print environment	2026-02-23T14:03:48.2768482Z JAVA_HOME_8_X64=/usr/lib/jvm/temurin-8-jdk-amd64
+diag	Print environment	2026-02-23T14:03:48.2768773Z JOURNAL_STREAM=9:9067
+diag	Print environment	2026-02-23T14:03:48.2769012Z LANG=C.UTF-8
+diag	Print environment	2026-02-23T14:03:48.2769211Z LOGNAME=runner
+diag	Print environment	2026-02-23T14:03:48.2769628Z MEMORY_PRESSURE_WATCH=/sys/fs/cgroup/system.slice/hosted-compute-agent.service/memory.pressure
+diag	Print environment	2026-02-23T14:03:48.2770143Z MEMORY_PRESSURE_WRITE=c29tZSAyMDAwMDAgMjAwMDAwMAA=
+diag	Print environment	2026-02-23T14:03:48.2770714Z NVM_DIR=/home/runner/.nvm
+diag	Print environment	2026-02-23T14:03:48.2771771Z PATH=/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+diag	Print environment	2026-02-23T14:03:48.2772811Z PIPX_BIN_DIR=/opt/pipx_bin
+diag	Print environment	2026-02-23T14:03:48.2773057Z PIPX_HOME=/opt/pipx
+diag	Print environment	2026-02-23T14:03:48.2773343Z POWERSHELL_DISTRIBUTION_CHANNEL=GitHub-Actions-ubuntu24
+diag	Print environment	2026-02-23T14:03:48.2774054Z PSModulePath=/root/.local/share/powershell/Modules:/usr/local/share/powershell/Modules:/opt/microsoft/powershell/7/Modules:/usr/share/az_14.6.0
+diag	Print environment	2026-02-23T14:03:48.2775047Z ***
+diag	Print environment	2026-02-23T14:03:48.2775242Z RUNNER_ARCH=X64
+diag	Print environment	2026-02-23T14:03:48.2775530Z RUNNER_ENVIRONMENT=github-hosted
+diag	Print environment	2026-02-23T14:03:48.2775809Z RUNNER_NAME=GitHub Actions 1000001154
+diag	Print environment	2026-02-23T14:03:48.2776083Z RUNNER_OS=Linux
+diag	Print environment	2026-02-23T14:03:48.2776300Z RUNNER_TEMP=/home/runner/work/_temp
+diag	Print environment	2026-02-23T14:03:48.2776589Z RUNNER_TOOL_CACHE=/opt/hostedtoolcache
+diag	Print environment	2026-02-23T14:03:48.2776935Z RUNNER_TRACKING_ID=github_1b99396f-e569-4734-917c-92468586ace3
+diag	Print environment	2026-02-23T14:03:48.2777489Z RUNNER_WORKSPACE=/home/runner/work/URMS
+diag	Print environment	2026-02-23T14:03:48.2777816Z SELENIUM_JAR_PATH=/usr/share/java/selenium-server.jar
+diag	Print environment	2026-02-23T14:03:48.2778136Z SGX_AESM_ADDR=1
+diag	Print environment	2026-02-23T14:03:48.2778341Z SHELL=/bin/bash
+diag	Print environment	2026-02-23T14:03:48.2778536Z SHLVL=1
+diag	Print environment	2026-02-23T14:03:48.2778743Z SWIFT_PATH=/usr/share/swift/usr/bin
+diag	Print environment	2026-02-23T14:03:48.2779003Z SYSTEMD_EXEC_PID=2037
+diag	Print environment	2026-02-23T14:03:48.2779224Z USER=runner
+diag	Print environment	2026-02-23T14:03:48.2779431Z USE_BAZEL_FALLBACK_VERSION=silent:
+diag	Print environment	2026-02-23T14:03:48.2779728Z VCPKG_INSTALLATION_ROOT=/usr/local/share/vcpkg
+diag	Print environment	2026-02-23T14:03:48.2780032Z XDG_CONFIG_HOME=/home/runner/.config
+diag	Print environment	2026-02-23T14:03:48.2780435Z XDG_RUNTIME_DIR=/run/user/1001
+diag	Print environment	2026-02-23T14:03:48.2781083Z _=/usr/bin/env
+diag	Print environment	2026-02-23T14:03:48.2781421Z DIAGNOSTIC_OK
+diag	Post Checkout	﻿2026-02-23T14:03:48.2873706Z Post job cleanup.
+diag	Post Checkout	2026-02-23T14:03:48.3783700Z [command]/usr/bin/git version
+diag	Post Checkout	2026-02-23T14:03:48.3818041Z git version 2.52.0
+diag	Post Checkout	2026-02-23T14:03:48.3861705Z Temporarily overriding HOME='/home/runner/work/_temp/64f0a60f-ac67-4031-9eca-1aa584275611' before making global git config changes
+diag	Post Checkout	2026-02-23T14:03:48.3863164Z Adding repository directory to the temporary git global config as a safe directory
+diag	Post Checkout	2026-02-23T14:03:48.3868395Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/URMS/URMS
+diag	Post Checkout	2026-02-23T14:03:48.3903813Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+diag	Post Checkout	2026-02-23T14:03:48.3936736Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+diag	Post Checkout	2026-02-23T14:03:48.4164484Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+diag	Post Checkout	2026-02-23T14:03:48.4184319Z http.https://github.com/.extraheader
+diag	Post Checkout	2026-02-23T14:03:48.4196008Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+diag	Post Checkout	2026-02-23T14:03:48.4228723Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+diag	Post Checkout	2026-02-23T14:03:48.4444745Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+diag	Post Checkout	2026-02-23T14:03:48.4476932Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+diag	Complete job	﻿2026-02-23T14:03:48.4801217Z Cleaning up orphan processes
