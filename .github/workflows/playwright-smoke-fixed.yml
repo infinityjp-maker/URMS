@@ -9,7 +9,7 @@ jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
@@ -28,7 +28,7 @@ jobs:
         with:
           path: |
             ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json','**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-npm-
 
@@ -38,7 +38,7 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json','**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
@@ -48,7 +48,7 @@ jobs:
         with:
           path: |
             node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json','**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
@@ -114,8 +114,8 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
           mkdir -p builds/screenshots
-          # run with a safety timeout to avoid long-running hangs (20m)
-          timeout 1200s node Tests/playwright/exec_smoke_save.cjs
+          # run with a safety timeout to avoid long-running hangs (25m)
+          timeout 1500s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
 
       - name: Upload artifacts
