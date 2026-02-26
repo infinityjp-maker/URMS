@@ -35,7 +35,7 @@ jobs:
 
       - name: Start static server (background)
         run: |
-          nohup node scripts/simple-static-server.js 1420 > /tmp/static.log 2>&1 &
+          nohup python3 -m http.server 1420 --directory dist > /tmp/static.log 2>&1 &
           sleep 1
         shell: bash
 
