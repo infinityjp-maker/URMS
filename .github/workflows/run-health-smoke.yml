@@ -47,11 +47,12 @@ jobs:
       - name: Wait for static server
         run: |
           for i in {1..30}; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" http://tauri.localhost:1420/ || true)
-            if [ "$code" = "200" ]; then echo "static ready"; exit 0; fi
-            echo "waiting for static ($i)"; sleep 1
+            code1=$(curl -s -o /dev/null -w "%{http_code}" http://tauri.localhost:1420/ || true)
+            code2=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:1420/ || true)
+            if [ "$code1" = "200" ] || [ "$code2" = "200" ]; then echo "static ready"; exit 0; fi
+            echo "waiting for static ($i) - codes: tauri.localhost=$code1, 127.0.0.1=$code2"; sleep 1
           done
-          echo "static did not become ready"; exit 1
+          echo "static did not become ready"; echo "--- /tmp/static.log ---"; sudo cat /tmp/static.log || true; exit 1
         shell: bash
 
       - name: Preflight health check (PowerShell)
