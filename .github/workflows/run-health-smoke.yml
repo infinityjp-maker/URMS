@@ -64,11 +64,11 @@ jobs:
         shell: bash
 
       - name: Preflight health check (PowerShell)
-        shell: bash
+        shell: pwsh
         env:
           URL: 'http://tauri.localhost:1420/'
         run: |
-          pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports 8765,8877
+          ./scripts/health-check.ps1 -Url $env:URL -Ports '8765,8877'
 
       - name: Run smoke (save logs)
         env:
