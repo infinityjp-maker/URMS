@@ -68,7 +68,7 @@ jobs:
         env:
           URL: 'http://tauri.localhost:1420/'
         run: |
-          ./scripts/health-check.ps1 -Url $env:URL -Ports '8765,8877'
+          & ./scripts/health-check.ps1 -Url $env:URL -Ports '8765,8877'
 
       - name: Run smoke (save logs)
         env:
