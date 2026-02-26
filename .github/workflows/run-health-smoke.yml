@@ -33,9 +33,17 @@ jobs:
           sleep 1
         shell: bash
 
+      - name: Verify dist exists
+        run: |
+          echo 'Checking dist directory'
+          if [ ! -d "$GITHUB_WORKSPACE/dist" ]; then echo 'dist missing' && ls -la || true; exit 1; fi
+          ls -la "$GITHUB_WORKSPACE/dist" | sed -n '1,80p'
+        shell: bash
+
       - name: Start static server (background)
         run: |
-          nohup python3 -m http.server 1420 --directory dist > /tmp/static.log 2>&1 &
+          echo "Starting python static server serving $GITHUB_WORKSPACE/dist on 1420"
+          nohup python3 -m http.server 1420 --bind 127.0.0.1 --directory "$GITHUB_WORKSPACE/dist" > /tmp/static.log 2>&1 &
           sleep 1
         shell: bash
 
@@ -60,7 +68,7 @@ jobs:
         env:
           URL: 'http://tauri.localhost:1420/'
         run: |
-          ./scripts/health-check.ps1 -Url $env:URL -Ports 8765,8877
+          & ./scripts/health-check.ps1 -Url $env:URL -Ports 8765,8877
 
       - name: Run smoke (save logs)
         env:
