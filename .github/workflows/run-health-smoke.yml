@@ -83,6 +83,23 @@ jobs:
           node scripts/parse-smoke-artifacts.cjs
         shell: bash
 
+      - name: List expected artifact locations
+        if: always()
+        run: |
+          echo '--- workspace root ---'
+          ls -la "$GITHUB_WORKSPACE" | sed -n '1,200p' || true
+          echo '--- .github/actions-runs ---'
+          ls -la .github/actions-runs || true
+          echo '--- builds/diagnostics ---'
+          ls -la builds/diagnostics || true
+          echo '--- screenshots ---'
+          ls -la screenshots || true
+          echo '--- capture disk usage ---'
+          du -sh .github/actions-runs || true
+          du -sh builds/diagnostics || true
+          du -sh screenshots || true
+        shell: bash
+
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
