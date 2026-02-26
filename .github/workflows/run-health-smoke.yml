@@ -1,0 +1,86 @@
+name: Run Health Check and Smoke (manual)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  run-health-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        shell: bash
+
+      - name: Build
+        run: npm run build
+
+      - name: Start ping server (background)
+        run: |
+          nohup PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
+          nohup PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &
+          sleep 1
+        shell: bash
+
+      - name: Start static server (background)
+        run: |
+          nohup node scripts/simple-static-server.js 1420 > /tmp/static.log 2>&1 &
+          sleep 1
+        shell: bash
+
+      - name: Map tauri.localhost to runner loopback
+        run: |
+          echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
+        shell: bash
+
+      - name: Wait for static server
+        run: |
+          for i in {1..30}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://tauri.localhost:1420/ || true)
+            if [ "$code" = "200" ]; then echo "static ready"; exit 0; fi
+            echo "waiting for static ($i)"; sleep 1
+          done
+          echo "static did not become ready"; exit 1
+        shell: bash
+
+      - name: Preflight health check (PowerShell)
+        shell: pwsh
+        env:
+          URL: 'http://tauri.localhost:1420/'
+        run: |
+          ./scripts/health-check.ps1 -Url $env:URL -Ports 8765,8877
+
+      - name: Run smoke (save logs)
+        env:
+          URL: 'http://tauri.localhost:1420/'
+        run: |
+          mkdir -p .github/actions-runs || true
+          node Tests/playwright/smoke.cjs > .github/actions-runs/last-smoke.log 2>&1
+        shell: bash
+
+      - name: Parse artifacts (generate summary)
+        run: |
+          node scripts/parse-smoke-artifacts.cjs
+        shell: bash
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-artifacts
+          path: |
+            .github/actions-runs/last-smoke.log
+            .github/actions-runs/smoke-summary.txt
+            builds/diagnostics/**
+            screenshots/**
