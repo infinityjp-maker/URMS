@@ -1,11 +1,13 @@
 param(
     [string]$Url = $(if ($env:URL) { $env:URL } else { 'http://tauri.localhost/' }),
     param(
-        [string]$Url = $(if ($env:URL) { $env:URL } else { 'http://tauri.localhost/' }),
+        [string]$Url = $env:URL,
         [int]$Retries = 60,
         [int]$DelaySeconds = 1,
         [int[]]$Ports = @(8765,8877)
     )
+
+    if (-not $Url) { $Url = 'http://tauri.localhost/' }
 
     function Test-TcpPort {
         param(
