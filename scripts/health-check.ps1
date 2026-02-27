@@ -29,6 +29,21 @@ function Test-TcpPort {
     }
 }
 
+function Test-HttpPing {
+    param(
+        [string]$Host,
+        [int]$Port,
+        [int]$TimeoutSeconds = 1
+    )
+    try {
+        $url = "http://$Host`:$Port/ux-ping"
+        $resp = Invoke-WebRequest -Uri $url -TimeoutSec $TimeoutSeconds -UseBasicParsing -ErrorAction Stop
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 function Test-HttpUrl {
     param(
         [string]$Url,
@@ -72,7 +87,9 @@ while ($attempt -lt $Retries) {
     if ($uri) {
         $targetHost = $uri.Host
         foreach ($p in $Ports) {
-            $tcpResults[$p] = Test-TcpPort $targetHost $p
+            $ok = Test-TcpPort $targetHost $p
+            if (-not $ok) { $ok = Test-HttpPing -Host $targetHost -Port $p }
+            $tcpResults[$p] = $ok
         }
     }
 
