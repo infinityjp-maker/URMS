@@ -1,0 +1,134 @@
+[
+    {
+        "pid":  198092,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  135428,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  45416,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  11952,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  15272,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  82700,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  205404,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  155180,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  152760,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  199620,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  181440,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  205656,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  138096,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  153568,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  118596,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  157748,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  203516,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  197504,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  181524,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  196348,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  200356,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  205940,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    }
+]

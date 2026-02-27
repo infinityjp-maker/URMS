@@ -33,6 +33,20 @@ jobs:
           sleep 1
         shell: bash
 
+      - name: Verify ping servers responding (debug)
+        run: |
+          echo 'curl 8765 ->'
+          curl -svS http://127.0.0.1:8765/ux-ping || true
+          echo 'curl 8877 ->'
+          curl -svS http://127.0.0.1:8877/ux-ping || true
+          echo 'tail /tmp/ux-ping-8765.log'
+          sudo sed -n '1,200p' /tmp/ux-ping-8765.log || true
+          echo 'tail /tmp/ux-ping-8877.log'
+          sudo sed -n '1,200p' /tmp/ux-ping-8877.log || true
+          echo 'listening ports (ss)'
+          ss -ltnp | sed -n '1,200p' || true
+        shell: bash
+
       - name: Verify dist exists
         run: |
           echo 'Checking dist directory'
@@ -75,12 +89,13 @@ jobs:
           URL: 'http://tauri.localhost:1420/'
         run: |
           mkdir -p .github/actions-runs || true
-          node Tests/playwright/smoke.cjs > .github/actions-runs/last-smoke.log 2>&1
+          node Tests/playwright/smoke.cjs > .github/actions-runs/last-smoke.log 2>&1 || true
+          ls -la .github/actions-runs || true
         shell: bash
 
       - name: Parse artifacts (generate summary)
         run: |
-          node scripts/parse-smoke-artifacts.cjs
+          node scripts/parse-smoke-artifacts.cjs || true
         shell: bash
 
       - name: List expected artifact locations

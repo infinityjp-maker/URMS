@@ -119,6 +119,15 @@ url; do                                                                         
 					npx http-server dist -p 1420 -c-1 &
 					npx wait-on http://localhost:1420
 
+			- name: Preflight health check (PowerShell)
+				# Ensure the target URL and ux-ping ports are reachable before running smoke
+				shell: pwsh
+				env:
+					URL: 'http://localhost:1420/'
+				# Run the repository health-check.ps1 script; fails the job if check fails
+				run: |
+					./scripts/health-check.ps1 -Url $env:URL -Ports 8765,8877
+
 			- name: Run smoke capture (CI) and save stdout
 				env:
 					FORCE_SYSTEM_UI: '1'
@@ -128,6 +137,8 @@ url; do                                                                         
 				run: |
 					mkdir -p builds/screenshots
 					node Tests/playwright/exec_smoke_save.cjs
+
+
 
 			- name: Reap background node processes
 				if: ${{ always() }}

@@ -1,0 +1,224 @@
+[
+    {
+        "pid":  198092,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  135428,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  45416,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  11952,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  15272,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  82700,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  205404,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  155180,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  152760,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  199620,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  181440,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  205656,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  138096,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  153568,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  204784,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -NoProfile -ExecutionPolicy Bypass -Command \"Import-Module \u0027c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\.vscode\\\\\\\\extensions\\\\\\\\ms-vscode.powershell-2025.4.0\\\\\\\\modules\\\\\\\\PowerShellEditorServices\\\\\\\\PowerShellEditorServices.psd1\u0027; Start-EditorServices -HostName \u0027Visual Studio Code Host\u0027 -HostProfileId \u0027Microsoft.VSCode\u0027 -HostVersion \u00272025.4.0\u0027 -BundledModulesPath \u0027c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\.vscode\\\\\\\\extensions\\\\\\\\ms-vscode.powershell-2025.4.0\\\\\\\\modules\u0027 -EnableConsoleRepl -StartupBanner \\\\\\\\\"PowerShell Extension v2025.4.0\nCopyright (c) Microsoft Corporation.\n\nhttps://aka.ms/vscode-powershell\nType \u0027help\u0027 to get help.\n\\\\\\\\\" -LogLevel \u0027Warning\u0027 -LogPath \u0027c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Roaming\\\\\\\\Code\\\\\\\\logs\\\\\\\\20260224T220020\\\\\\\\window1\\\\\\\\exthost\\\\\\\\ms-vscode.powershell\u0027 -SessionDetailsPath \u0027c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Roaming\\\\\\\\Code\\\\\\\\User\\\\\\\\globalStorage\\\\\\\\ms-vscode.powershell\\\\\\\\sessions\\\\\\\\PSES-VSCode-202828-101223.json\u0027 -FeatureFlags @() \"",
+        "childCount":  0
+    },
+    {
+        "pid":  118596,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  157748,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  203516,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  139132,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  203840,
+        "parent":  139132,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .\\\\\\\\scripts\\\\\\\\gh-run-watcher.ps1 -MaxAttempts 2 -WorkflowId 237401233 -Branch main",
+        "childCount":  0
+    },
+    {
+        "pid":  197504,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  188064,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  204820,
+        "parent":  188064,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .\\\\\\\\scripts\\\\\\\\gh-run-watcher.ps1 -MaxAttempts 2 -WorkflowId 237401233 -Branch main",
+        "childCount":  0
+    },
+    {
+        "pid":  181524,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  196320,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  207424,
+        "parent":  196320,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .\\\\\\\\scripts\\\\\\\\gh-run-watcher.ps1 -MaxAttempts 2 -WorkflowId 237401233 -Branch main",
+        "childCount":  0
+    },
+    {
+        "pid":  196348,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  207600,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  206744,
+        "parent":  207600,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .\\\\\\\\scripts\\\\\\\\gh-run-watcher.ps1 -MaxAttempts 1 -WorkflowId 237401233 -Branch main",
+        "childCount":  0
+    },
+    {
+        "pid":  200356,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  203072,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  37944,
+        "parent":  203072,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .\\\\\\\\scripts\\\\\\\\gh-run-watcher.ps1 -MaxAttempts 1 -WorkflowId 237401233 -Branch main",
+        "childCount":  0
+    },
+    {
+        "pid":  205940,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  0
+    },
+    {
+        "pid":  179412,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  192212,
+        "parent":  179412,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .\\\\\\\\scripts\\\\\\\\gh-run-watcher.ps1 -MaxAttempts 1 -WorkflowId 237401233 -Branch main",
+        "childCount":  0
+    },
+    {
+        "pid":  221216,
+        "parent":  205648,
+        "cmd":  "\"C:\\\\\\\\Program Files\\\\\\\\PowerShell\\\\\\\\7\\\\\\\\pwsh.exe\" -noexit -command \"try { . \\\\\\\\\"c:\\\\\\\\Users\\\\\\\\infin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Programs\\\\\\\\Microsoft VS Code\\\\\\\\072586267e\\\\\\\\resources\\\\\\\\app\\\\\\\\out\\\\\\\\vs\\\\\\\\workbench\\\\\\\\contrib\\\\\\\\terminal\\\\\\\\common\\\\\\\\scripts\\\\\\\\shellIntegration.ps1\\\\\\\\\" } catch {}\"",
+        "childCount":  1
+    },
+    {
+        "pid":  214712,
+        "parent":  221216,
+        "cmd":  "\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\WindowsPowerShell\\\\\\\\v1.0\\\\\\\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File .github/actions-runs/list_ps_procs.ps1",
+        "childCount":  0
+    }
+]
