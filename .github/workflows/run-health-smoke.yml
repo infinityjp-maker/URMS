@@ -108,6 +108,16 @@ jobs:
         run: |
           pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports 8765,8877
 
+      - name: Browser preflight (Playwright)
+        env:
+          URL: 'http://tauri.localhost:1420/'
+        run: |
+          echo 'Running browser preflight using Playwright'
+          node .github/workflows/browser-preflight.cjs || true
+          echo '--- browser-preflight.json ---'
+          sudo sed -n '1,200p' builds/diagnostics/browser-preflight.json || true
+        shell: bash
+
       - name: Run smoke (save logs)
         env:
           URL: 'http://tauri.localhost:1420/'

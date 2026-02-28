@@ -14,12 +14,22 @@ async function probePort(host, port, timeout=2000){
   });
 }
 
-function fetchJson(url, timeoutMs=3000){
+function fetchJsonOrText(url, timeoutMs=3000){
   return new Promise((resolve,reject)=>{
     const req = http.get(url, res => {
       let d='';
       res.on('data', c => d += c);
-      res.on('end', () => { try{ resolve(JSON.parse(d)); } catch(e){ resolve(null); } });
+      res.on('end', () => {
+        try{
+          const j = JSON.parse(d);
+          resolve(j);
+        } catch(e){
+          // accept plain text 'OK' as success
+          const txt = (d||'').trim();
+          if (txt === 'OK' || txt === 'ok') return resolve({ ok: true, text: txt });
+          resolve(null);
+        }
+      });
     });
     req.on('error', () => resolve(null));
     req.setTimeout(timeoutMs, () => { req.abort(); resolve(null); });
@@ -29,10 +39,14 @@ function fetchJson(url, timeoutMs=3000){
 (async ()=>{
   const diag = [];
   const ports = [1420, 8765, 8877];
+  const hosts = ['127.0.0.1','tauri.localhost'];
   for (const p of ports){
-    const r = await probePort('127.0.0.1', p, 2000).catch(e=>({ port: p, tcp: false, err: String(e) }));
-    try { const pj = await fetchJson(`http://127.0.0.1:${p}/ux-ping`, 2000); r.http = !!(pj && pj.ok); } catch(e){ r.http = false; }
-    diag.push(r);
+    for (const h of hosts){
+      const r = await probePort(h, p, 2000).catch(e=>({ host: h, port: p, tcp: false, err: String(e) }));
+      try { const pj = await fetchJsonOrText(`http://${h}:${p}/ux-ping`, 2000); r.http = !!(pj && pj.ok); } catch(e){ r.http = false; }
+      r.host = h;
+      diag.push(r);
+    }
   }
   console.log('PRE_SMOKE_PROBES', JSON.stringify(diag));
   try { safeWriteJsonSync(path.join('builds','diagnostics','connectivity-preflight.json'), diag); } catch(e){ }

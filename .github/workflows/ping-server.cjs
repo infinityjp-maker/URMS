@@ -5,8 +5,9 @@ const port = process.env.PORT || 8765;
 const server = http.createServer((req, res) => {
   if (req.url && req.url.startsWith('/ux-ping')) {
     console.log('PING');
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('OK');
+    const body = JSON.stringify({ ok: true });
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(body);
     return;
   }
   res.writeHead(404, { 'Content-Type': 'text/plain' });
