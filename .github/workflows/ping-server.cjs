@@ -13,7 +13,8 @@ const server = http.createServer((req, res) => {
   res.end('Not Found');
 });
 
-server.listen(port, () => {
+// Bind to all interfaces so browser processes can reach the server
+server.listen(port, '0.0.0.0', () => {
   console.log(`ping-server listening on ${port}`);
 });
 
