@@ -1,0 +1,17 @@
+[
+  {
+    "port": 1420,
+    "tcp": true,
+    "http": false
+  },
+  {
+    "port": 8765,
+    "tcp": true,
+    "http": false
+  },
+  {
+    "port": 8877,
+    "tcp": true,
+    "http": false
+  }
+]

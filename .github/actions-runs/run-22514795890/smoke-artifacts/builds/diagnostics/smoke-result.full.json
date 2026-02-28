@@ -1,0 +1,90 @@
+{
+  "url": "chrome-error://chromewebdata/",
+  "gridInfo": {
+    "exists": false
+  },
+  "cardCount": 0,
+  "headings": [],
+  "titleColor": null,
+  "screenshot": "screenshots\\playwright-smoke.png",
+  "pageErrors": [],
+  "internalErrors": [
+    "DISABLE_CDP=1, skipping CDP discovery",
+    "GOTO_ATTEMPT_FAILED: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/\nCall log:\n\u001b[2m  - navigating to \"http://tauri.localhost/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "GOTO_ATTEMPT_FAILED: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/\nCall log:\n\u001b[2m  - navigating to \"http://tauri.localhost/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "nav-failure-content failed: Error: page.content: Unable to retrieve content because the page is navigating and changing the content.",
+    "gotoWithRetry initial: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/\nCall log:\n\u001b[2m  - navigating to \"http://tauri.localhost/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "INJECT_NOTE_ADD_FAILED: page.addStyleTag: Event",
+    "pre-capture repaint attempt failed: page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+    "pre-capture repaint: not applied after retries",
+    "waitForSelector [data-ux-ping]: page.waitForSelector: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-ux-ping=\"ok\"]') to be visible\u001b[22m\n\n    at D:\\GitHub\\URMS\\Tests\\playwright\\smoke.cjs:309:24",
+    "waitForEvent(console [ux-ping-ok]): page.waitForEvent: Timeout 8000ms exceeded while waiting for event \"console\"\n=========================== logs ===========================\nwaiting for event \"console\"\n============================================================\n    at D:\\GitHub\\URMS\\Tests\\playwright\\smoke.cjs:312:24",
+    "waitForSelector .dashboard-grid: page.waitForSelector: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.dashboard-grid') to be visible\u001b[22m\n",
+    "ux-ping fetch failed: connect ECONNREFUSED 127.0.0.1:8765",
+    "ux-ping fetch failed: connect ECONNREFUSED 127.0.0.1:8877"
+  ],
+  "domSnapshot": {
+    "html": "<html style=\"font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans JP&quot;, &quot;Hiragino Kaku Gothic ProN&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;MS Gothic&quot;, sans-serif;\"><head><style type=\"text/css\">:root{color-scheme: light !important} html,body{background:#ffffff !important; background-image: none !important; background-color: #ffffff !important; color:#222 !important}</style><style type=\"text/css\">* { transition: none !important; animation: none !important; caret-color: transparent !important; }</style><style type=\"text/css\">\n      /* dynamic UI suppression for CI captures */\n      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status], header, footer, .header, .site-header, .app-header, .topbar, .toolbar, .breadcrumbs, .banner, .promo, .dev-banner, .debug-banner { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }\n      /* ensure animations/transitions are disabled globally */\n      * { transition: none !important; animation: none !important; }\n      /* hide common nav and user chrome that often changes between runs */\n      nav, .nav, .navbar, .user-menu, .account-menu, .clock-widget { visibility: hidden !important; opacity: 0 !important; }\n      /* reduce visual noise from images (replace with neutral background) */\n      img, picture, video, iframe { visibility: visible !important; opacity: 1 !important; object-fit: contain !important; filter: grayscale(1) blur(0px) !important; }\n      /* prefer stable system UI fonts to avoid webfont variability (include common JP system fonts) */\n      :root { --ci-system-fonts: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", \"Yu Gothic\", Meiryo, sans-serif; }\n      * { font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; -webkit-font-smoothing: antialiased !important; -moz-osx-font-smoothing: grayscale !important; }\n    </style></head><body></body><style data-ci-system-fonts=\"1\">:root{ --ci-system-fonts: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", \"Yu Gothic\", Meiryo, \"MS Gothic\", sans-serif !important; --ci-scrollbar-width: 16px; }\n* , *::before, *::after { font-family: var(--ci-system-fonts) !important; font-weight: 400 !important; font-style: normal !important; -webkit-font-smoothing: antialiased !important; -moz-osx-font-smoothing: grayscale !important; }\nhtml, body { scrollbar-gutter: stable both-edges !important; }\n::-webkit-scrollbar { width: var(--ci-scrollbar-width) !important; height: var(--ci-scrollbar-width) !important; background: transparent !important; }\n::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18) !important; border-radius: 6px !important; }\n::-webkit-scrollbar-track { background: transparent !important; }</style><style data-ci-normalize=\"1\">body, html { background: #ffffff !important; color: #222 !important; } header, footer, nav, .site-header, .app-header, .toolbar, .banner, .promo, .debug-banner { display: none !important; }</style></html>",
+    "elems": [
+      {
+        "selector": "body",
+        "tag": "BODY",
+        "id": null,
+        "class": null,
+        "rect": {
+          "x": 24,
+          "y": 8,
+          "w": 752,
+          "h": 1220
+        },
+        "computed": {
+          "display": "block",
+          "width": "752px",
+          "height": "1220px",
+          "margin": "8px",
+          "padding": "0px",
+          "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", \"Yu Gothic\", Meiryo, \"MS Gothic\", sans-serif",
+          "fontSize": "16px",
+          "color": "rgb(34, 34, 34)",
+          "background": "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box"
+        },
+        "outer": "<body></body>"
+      },
+      {
+        "selector": "html",
+        "tag": "HTML",
+        "id": null,
+        "class": null,
+        "rect": {
+          "x": 16,
+          "y": 0,
+          "w": 768,
+          "h": 1236
+        },
+        "computed": {
+          "display": "block",
+          "width": "768px",
+          "height": "1236px",
+          "margin": "0px",
+          "padding": "0px",
+          "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans JP\", \"Hiragino Kaku Gothic ProN\", \"Yu Gothic\", Meiryo, \"MS Gothic\", sans-serif",
+          "fontSize": "16px",
+          "color": "rgb(34, 34, 34)",
+          "background": "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box"
+        },
+        "outer": "<html style=\"font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans JP&quot;, &quot;Hiragino Kaku Gothic ProN&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;MS Gothic&quot;, sans-serif;\"><head><style type=\"text/css\">:root{color-scheme: light !important} html,body{background:#ffffff !important; background-image: none !important; background-color: #ffffff !important; color:#222 !important}</style><style type=\"text/css\">* { transition: none !important; animation: none !important; caret-color: transparent !important; }</style><style type=\"text/css\">\n      /* dynamic UI suppression for CI captures */\n      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status], header, footer, .header, .site-header, .app-header, .topbar, .toolbar, .breadcrumbs, .banner, .promo, .dev-banner, .debug-banner { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }\n      /* ensure animations/transitions are disabled globally */\n      * { transition: none !important; animation: none !important; }\n      /* hide common nav and user chrome that often changes between runs */\n      nav, .nav, .navbar, .user-menu, .account-menu, .clock-widget { visibility: hidden !important; opacity: 0 !important; }\n      /* reduce visual noise from images (replace with neutral background) */\n      img, picture, video, iframe { visibility: visible !important; opacity: 1 !important; object-fit: contain !important; filter: grayscale(1) blur(0px) !important; }\n      /* prefer stable system UI fonts to avoid webfont variability (include common JP system fonts) */\n      :root { --ci-sys"
+      }
+    ]
+  },
+  "devicePixelRatio": 1,
+  "viewport": {
+    "width": 800,
+    "height": 1236
+  },
+  "pingOk": false,
+  "domMarkerDetected": false,
+  "consoleMarkerDetected": false,
+  "pingPostReceived": false,
+  "timestamp": 1772032015141,
+  "success": true
+}

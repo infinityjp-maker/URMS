@@ -85,10 +85,13 @@ while ($attempt -lt $Retries) {
 
     $tcpResults = @{}
     if ($uri) {
-        $targetHost = $uri.Host
+        $hostsToTry = @($uri.Host, '127.0.0.1', 'localhost') | Select-Object -Unique
         foreach ($p in $Ports) {
-            $ok = Test-TcpPort $targetHost $p
-            if (-not $ok) { $ok = Test-HttpPing -HostName $targetHost -Port $p }
+            $ok = $false
+            foreach ($h in $hostsToTry) {
+                if (Test-TcpPort $h $p) { $ok = $true; break }
+                if (Test-HttpPing -HostName $h -Port $p) { $ok = $true; break }
+            }
             $tcpResults[$p] = $ok
         }
     }
