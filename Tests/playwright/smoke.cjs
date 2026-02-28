@@ -169,7 +169,25 @@ async function waitForStableHeight(page, duration = 500) {
             await context.addInitScript({ content: `(() => { try { const css = ${JSON.stringify(ciInitCss)}; const s = document.createElement('style'); s.id = 'ci-init-style'; s.setAttribute('data-ci','1'); s.textContent = css; const h = document.head || document.documentElement; h.insertBefore(s, h.firstChild); } catch(e){} })()` });
           }
         } catch (e) { pushInternalError(internalErrors, 'ADD_INIT_SCRIPT_FAILED: '+String(e && e.message)); }
-        if (context && typeof context.newPage === 'function') { page = await context.newPage(); try { await gotoWithRetry(page, process.env.URL || preferUrl, 2, internalErrors); } catch(e){ pushInternalError(internalErrors, 'gotoWithRetry initial: '+String(e && e.message)); } }
+        if (context && typeof context.newPage === 'function') {
+          page = await context.newPage();
+          const initialTarget = process.env.URL || preferUrl;
+          try {
+            await gotoWithRetry(page, initialTarget, 2, internalErrors);
+          } catch (e) {
+            pushInternalError(internalErrors, 'gotoWithRetry initial: '+String(e && e.message));
+            try {
+              // If connection refused to tauri.localhost/localhost, try loopback IP fallback
+              if (initialTarget && (initialTarget.includes('tauri.localhost') || initialTarget.includes('localhost'))) {
+                const alt = initialTarget.replace('tauri.localhost','127.0.0.1').replace('localhost','127.0.0.1');
+                pushInternalError(internalErrors, 'Attempting fallback to '+alt);
+                await gotoWithRetry(page, alt, 2, internalErrors);
+              }
+            } catch (e2) {
+              pushInternalError(internalErrors, 'gotoWithRetry fallback failed: '+String(e2 && e2.message));
+            }
+          }
+        }
       }
     } catch (e) { pushInternalError(internalErrors, 'NEW_CONTEXT_ERROR: ' + String(e && (e.message || e))); context = null; page = null; }
 

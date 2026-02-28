@@ -1,0 +1,38 @@
+Last MARK: none
+Log error keywords: none
+pingOk: false
+internalErrors: 13
+internalErrors breakdown:
+ - 1 x DISABLE_CDP=1, skipping CDP discovery
+ - 2 x GOTO_ATTEMPT_FAILED: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/
+Call log:
+[2m  - navigating to "http://tauri.localhost/", waiting until "domcontentloaded"[22m
+
+ - 1 x nav-failure-content failed: Error: page.content: Unable to retrieve content because the page is navigating and changing the content.
+ - 1 x gotoWithRetry initial: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/
+Call log:
+[2m  - navigating to "http://tauri.localhost/", waiting until "domcontentloaded"[22m
+
+ - 1 x INJECT_NOTE_ADD_FAILED: page.addStyleTag: Event
+ - 1 x pre-capture repaint attempt failed: page.evaluate: Execution context was destroyed, most likely because of a navigation.
+ - 1 x pre-capture repaint: not applied after retries
+ - 1 x waitForSelector [data-ux-ping]: page.waitForSelector: Timeout 8000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-ux-ping="ok"]') to be visible[22m
+
+    at D:\GitHub\URMS\Tests\playwright\smoke.cjs:309:24
+ - 1 x waitForEvent(console [ux-ping-ok]): page.waitForEvent: Timeout 8000ms exceeded while waiting for event "console"
+=========================== logs ===========================
+waiting for event "console"
+============================================================
+    at D:\GitHub\URMS\Tests\playwright\smoke.cjs:312:24
+ - 1 x waitForSelector .dashboard-grid: page.waitForSelector: Timeout 8000ms exceeded.
+Call log:
+[2m  - waiting for locator('.dashboard-grid') to be visible[22m
+
+ - 1 x ux-ping fetch failed: connect ECONNREFUSED 127.0.0.1:8765
+ - 1 x ux-ping fetch failed: connect ECONNREFUSED 127.0.0.1:8877
+readiness keys: 5, nulls: 5
+response-bodies: none
+screenshots: 2 files
+ sample: playwright-smoke-full.png, playwright-smoke.png

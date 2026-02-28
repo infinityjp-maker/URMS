@@ -26,10 +26,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Map tauri.localhost to runner loopback
+        run: |
+          echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
+        shell: bash
+
       - name: Start ping server (background)
         run: |
-          nohup PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
-          nohup PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &
+          nohup env PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
+          nohup env PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &
           sleep 1
         shell: bash
 
@@ -45,6 +50,17 @@ jobs:
           sudo sed -n '1,200p' /tmp/ux-ping-8877.log || true
           echo 'listening ports (ss)'
           ss -ltnp | sed -n '1,200p' || true
+        shell: bash
+
+      - name: Wait for ping servers to return 200
+        run: |
+          for i in {1..20}; do
+            c1=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8765/ux-ping || true)
+            c2=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8877/ux-ping || true)
+            if [ "$c1" = "200" ] && [ "$c2" = "200" ]; then echo "ping servers ready"; exit 0; fi
+            echo "waiting for ping servers ($i) - 8765=$c1 8877=$c2"; sleep 1
+          done
+          echo 'ping servers did not become ready'; echo '--- /tmp/ux-ping-8765.log ---'; sudo sed -n '1,200p' /tmp/ux-ping-8765.log || true; echo '--- /tmp/ux-ping-8877.log ---'; sudo sed -n '1,200p' /tmp/ux-ping-8877.log || true; exit 1
         shell: bash
 
       - name: Verify dist exists
@@ -82,7 +98,7 @@ jobs:
         env:
           URL: 'http://tauri.localhost:1420/'
         run: |
-          pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports "8765,8877"
+          pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports 8765,8877
 
       - name: Run smoke (save logs)
         env:
