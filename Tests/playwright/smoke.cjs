@@ -28,6 +28,7 @@ function safeWriteJsonSync(p, obj) { try { ensureDirSync(path.dirname(p)); fs.wr
 function pushInternalError(arr, msg) { try { if (!Array.isArray(arr)) return; arr.push(String(msg)); } catch (e) { /* swallow */ } }
 
 const http = require('http');
+const net = require('net');
 function fetchJson(url, timeoutMs = 5000){
   return new Promise((resolve,reject)=>{
     const req = http.get(url, res => {
@@ -171,6 +172,29 @@ async function waitForStableHeight(page, duration = 500) {
         } catch (e) { pushInternalError(internalErrors, 'ADD_INIT_SCRIPT_FAILED: '+String(e && e.message)); }
         if (context && typeof context.newPage === 'function') {
           page = await context.newPage();
+          // Run connectivity probes from this Node process to capture reachability
+          async function runConnectivityChecks(errs) {
+            try {
+              const probes = [];
+              const ports = [1420, 8765, 8877];
+              for (const p of ports) {
+                const r = await new Promise(res => {
+                  const sock = net.createConnection({ host: '127.0.0.1', port: p }, () => { sock.destroy(); res({ port: p, tcp: true }); });
+                  sock.on('error', e => { res({ port: p, tcp: false, err: String(e) }); });
+                  sock.setTimeout(2000, () => { sock.destroy(); res({ port: p, tcp: false, err: 'timeout' }); });
+                }).catch(e => ({ port: p, tcp: false, err: String(e) }));
+                probes.push(r);
+                try {
+                  const pj = await fetchJson(`http://127.0.0.1:${p}/ux-ping`, 3000).catch(e => null);
+                  probes[probes.length-1].http = !!(pj && pj.ok);
+                } catch (e) { probes[probes.length-1].http = false; }
+              }
+              try { safeWriteJsonSync(path.join(DIAG_DIR, 'connectivity-probes.json'), probes); } catch(e) { if (Array.isArray(errs)) pushInternalError(errs, 'connectivity-probes write failed: '+String(e && e.message)); }
+              console.log('CONNECTIVITY_PROBES', JSON.stringify(probes));
+              return probes;
+            } catch (e) { if (Array.isArray(errs)) pushInternalError(errs, 'runConnectivityChecks failed: '+String(e && e.message)); return null; }
+          }
+          try { await runConnectivityChecks(internalErrors); } catch (e) { pushInternalError(internalErrors, 'connectivity check failed: '+String(e && e.message)); }
           const initialTarget = process.env.URL || preferUrl;
           try {
             await gotoWithRetry(page, initialTarget, 2, internalErrors);
