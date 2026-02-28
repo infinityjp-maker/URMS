@@ -82,13 +82,6 @@ jobs:
           echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
         shell: bash
 
-      - name: Pre-smoke connectivity probes (Node)
-        run: |
-          echo 'Running pre-smoke connectivity probes';
-          node .github/workflows/pre-smoke-probes.cjs || true
-          echo '--- connectivity-preflight.json ---';
-          sudo sed -n '1,200p' builds/diagnostics/connectivity-preflight.json || true
-        shell: bash
 
       - name: Wait for static server
         run: |
@@ -99,6 +92,14 @@ jobs:
             echo "waiting for static ($i) - codes: tauri.localhost=$code1, 127.0.0.1=$code2"; sleep 1
           done
           echo "static did not become ready"; echo "--- /tmp/static.log ---"; sudo cat /tmp/static.log || true; exit 1
+        shell: bash
+
+      - name: Pre-smoke connectivity probes (Node)
+        run: |
+          echo 'Running pre-smoke connectivity probes';
+          node .github/workflows/pre-smoke-probes.cjs || true
+          echo '--- connectivity-preflight.json ---';
+          sudo sed -n '1,200p' builds/diagnostics/connectivity-preflight.json || true
         shell: bash
 
       - name: Preflight health check (PowerShell)
