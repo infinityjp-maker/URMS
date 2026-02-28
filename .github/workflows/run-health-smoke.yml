@@ -73,13 +73,21 @@ jobs:
       - name: Start static server (background)
         run: |
           echo "Starting python static server serving $GITHUB_WORKSPACE/dist on 1420"
-          nohup python3 -m http.server 1420 --bind 127.0.0.1 --directory "$GITHUB_WORKSPACE/dist" > /tmp/static.log 2>&1 &
+          nohup python3 -m http.server 1420 --bind 0.0.0.0 --directory "$GITHUB_WORKSPACE/dist" > /tmp/static.log 2>&1 &
           sleep 1
         shell: bash
 
       - name: Map tauri.localhost to runner loopback
         run: |
           echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
+        shell: bash
+
+      - name: Pre-smoke connectivity probes (Node)
+        run: |
+          echo 'Running pre-smoke connectivity probes';
+          node .github/workflows/pre-smoke-probes.cjs || true
+          echo '--- connectivity-preflight.json ---';
+          sudo sed -n '1,200p' builds/diagnostics/connectivity-preflight.json || true
         shell: bash
 
       - name: Wait for static server
