@@ -131,6 +131,16 @@ jobs:
         run: |
           pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports 8765,8877
 
+      - name: Browser resolve debug (Playwright)
+        env:
+          URL: 'http://127.0.0.1:1420/'
+        run: |
+          echo 'Running browser resolve debug'
+          node .github/workflows/browser-resolve-debug.cjs || true
+          echo '--- browser-resolve.json ---'
+          sudo sed -n '1,200p' builds/diagnostics/browser-resolve.json || true
+        shell: bash
+
       - name: Browser preflight (Playwright)
         env:
           URL: 'http://127.0.0.1:1420/'
