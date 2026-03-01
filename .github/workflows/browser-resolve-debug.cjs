@@ -12,6 +12,16 @@ function safeWriteJsonSync(p,obj){ try{ ensureDirSync(path.dirname(p)); fs.write
     browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-dev-shm-usage','--host-resolver-rules=MAP tauri.localhost 127.0.0.1','--disable-features=NetworkService,NetworkServiceInProcess'] });
     const ctx = await browser.newContext({ viewport: { width: 800, height: 1200 } });
     const page = await ctx.newPage();
+    out.console = [];
+    page.on('console', msg => {
+      try { out.console.push({ type: msg.type(), text: msg.text() }); } catch(e) { /* ignore */ }
+    });
+
+    // Attempt to load a CI preflight page (served from static server) to exercise same-origin context
+    try {
+      await page.goto('http://127.0.0.1:1420/ci-preflight.html', { waitUntil: 'load', timeout: 5000 }).catch(e => { out.navError = String(e); });
+      try { out.pagePreflight = await page.evaluate(() => window.__ciPreflight || null); } catch(e) { out.pagePreflightEvalError = String(e); }
+    } catch(e) { out.navException = String(e); }
 
     const hosts = ['tauri.localhost','127.0.0.1'];
     const ports = [1420,8765,8877];

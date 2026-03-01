@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CI Preflight</title>
+</head>
+<body>
+  <h1>CI Preflight</h1>
+  <pre id="out">starting...</pre>
+  <script>
+    (async function(){
+      const outEl = document.getElementById('out');
+      const log = (k,v)=>{ const s = JSON.stringify({k,v},null,2); console.log('[CI-PREFLIGHT]',s); outEl.textContent += '\n'+s; };
+      const targets = [
+        'http://127.0.0.1:1420/',
+        'http://127.0.0.1:8765/ux-ping',
+        'http://127.0.0.1:8877/ux-ping'
+      ];
+      const results = [];
+      for (const t of targets) {
+        try {
+          const controller = new AbortController();
+          const id = setTimeout(()=>controller.abort(), 3000);
+          const r = await fetch(t, { signal: controller.signal });
+          clearTimeout(id);
+          const txt = await r.text().catch(()=>null);
+          const item = { target: t, ok: !!r.ok, status: r.status, text: (txt||null) };
+          results.push(item);
+          log('fetch', item);
+        } catch (e) {
+          const item = { target: t, ok: false, error: String(e) };
+          results.push(item);
+          log('fetch-error', item);
+        }
+      }
+      // expose for Playwright to read
+      window.__ciPreflight = results;
+    })();
+  </script>
+</body>
+</html>
