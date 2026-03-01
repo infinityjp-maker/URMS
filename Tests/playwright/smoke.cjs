@@ -141,6 +141,15 @@ async function waitForStableHeight(page, duration = 500) {
 
     const wsUrl = res && res.ws;
     if (res && res.targetUrl) url = res.targetUrl;
+    // If a caller explicitly set URL in the environment, prefer that
+    // over any discovered CDP target to avoid name-resolution surprises
+    // (e.g. tauri.localhost -> ::1). This is a minimal, safe override.
+    if (process.env.URL) {
+      url = process.env.URL;
+      // preferUrl may be used later as a fallback; keep it consistent
+      // with the explicit environment setting.
+      try { preferUrl = process.env.URL; } catch (e) { /* noop */ }
+    }
 
     let browser;
     let connectedOverCDP = false;
