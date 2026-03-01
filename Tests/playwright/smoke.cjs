@@ -124,7 +124,9 @@ async function waitForStableHeight(page, duration = 500) {
 
   try {
     let url = process.env.URL || 'http://localhost:1420/';
-    const preferUrl = process.env.URL || 'http://tauri.localhost/';
+    let preferUrl = process.env.URL || 'http://tauri.localhost/';
+    // Emit environment diagnostics so CI logs include the effective targets
+    try { console.log('SMOKE_ENV', JSON.stringify({ URL: process.env.URL || null, url, preferUrl })); } catch (e) { /* noop */ }
 
     // Discover or launch browser
     let res;
