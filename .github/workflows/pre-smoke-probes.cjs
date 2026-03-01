@@ -43,7 +43,11 @@ function fetchJsonOrText(url, timeoutMs=3000){
   for (const p of ports){
     for (const h of hosts){
       const r = await probePort(h, p, 2000).catch(e=>({ host: h, port: p, tcp: false, err: String(e) }));
-      try { const pj = await fetchJsonOrText(`http://${h}:${p}/ux-ping`, 2000); r.http = !!(pj && pj.ok); } catch(e){ r.http = false; }
+      try {
+        const pathToCheck = (p === 1420) ? '/' : '/ux-ping';
+        const pj = await fetchJsonOrText(`http://${h}:${p}${pathToCheck}`, 2000);
+        r.http = !!(pj && pj.ok);
+      } catch(e){ r.http = false; }
       r.host = h;
       diag.push(r);
     }
