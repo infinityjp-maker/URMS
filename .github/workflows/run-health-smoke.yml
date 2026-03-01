@@ -28,9 +28,9 @@ jobs:
 
       - name: Map tauri.localhost to runner loopback
         run: |
-          # remove any existing tauri.localhost entries and add a single IPv4 mapping
+          # remove any existing tauri.localhost entries and prepend a single IPv4 mapping
           sudo sed -i '/tauri.localhost/d' /etc/hosts || true
-          echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
+          sudo bash -lc "printf '127.0.0.1 tauri.localhost\n' | cat - /etc/hosts > /tmp/hosts && sudo mv /tmp/hosts /etc/hosts"
           echo '--- /etc/hosts entries for tauri.localhost ---'
           sudo grep -n 'tauri.localhost' /etc/hosts || true
           echo '--- getent hosts ---'
