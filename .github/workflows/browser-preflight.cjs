@@ -7,7 +7,7 @@ function safeWriteJsonSync(p,obj){ try{ ensureDirSync(path.dirname(p)); fs.write
 
 (async ()=>{
   const url = process.env.URL || 'http://tauri.localhost:1420/';
-  const out = { url, timestamp: Date.now(), gotoOk: false, fetchOk: false, errors: [] };
+  const out = { url, timestamp: Date.now(), gotoOk: false, fetchOk: false, attempts: [], errors: [] };
   let browser = null;
   try{
     browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-dev-shm-usage'] });
@@ -18,12 +18,30 @@ function safeWriteJsonSync(p,obj){ try{ ensureDirSync(path.dirname(p)); fs.write
       out.gotoOk = true;
     } catch(e){ out.errors.push('goto:'+String(e)); }
 
+    // From the browser context, try probing likely ux-ping endpoints directly (ports 8765, 8877),
+    // and fallback to the static server (1420) only as a last resort. Record each attempt.
     try{
-      const res = await page.evaluate(async (u)=>{
-        try{ const r = await fetch(u+'ux-ping'); const t = await r.text(); return { ok: r.ok, text: t }; } catch(e){ return { ok: false, err: String(e) }; }
-      }, url.endsWith('/')?url:url+'/');
-      out.fetchOk = !!(res && res.ok);
-      out.fetchText = res && (res.text || res.err || null);
+      const hostsToTry = ['127.0.0.1','tauri.localhost'];
+      const portsToTry = [8765, 8877, 1420];
+      for (const h of hostsToTry) {
+        for (const p of portsToTry) {
+          try {
+            const target = `http://${h}:${p}/ux-ping`;
+            const res = await page.evaluate(async (t) => {
+              try {
+                const r = await fetch(t, { method: 'GET' });
+                const text = await r.text().catch(() => null);
+                return { ok: r.ok, status: r.status, text };
+              } catch (e) { return { ok: false, err: String(e) }; }
+            }, target);
+            out.attempts.push({ host: h, port: p, target, result: res });
+            if (res && res.ok) { out.fetchOk = true; out.fetchText = res.text || null; break; }
+          } catch (innerErr) {
+            out.attempts.push({ host: h, port: p, error: String(innerErr) });
+          }
+        }
+        if (out.fetchOk) break;
+      }
     } catch(e){ out.errors.push('fetch:'+String(e)); }
 
     try{ await page.close(); } catch(e){}
