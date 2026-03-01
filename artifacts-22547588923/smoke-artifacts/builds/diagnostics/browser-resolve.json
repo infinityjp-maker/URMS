@@ -1,0 +1,61 @@
+{
+  "timestamp": 1772381937805,
+  "envURL": null,
+  "attempts": [
+    {
+      "host": "tauri.localhost",
+      "port": 1420,
+      "target": "http://tauri.localhost:1420/",
+      "result": {
+        "ok": false,
+        "error": "TypeError: Failed to fetch"
+      }
+    },
+    {
+      "host": "tauri.localhost",
+      "port": 8765,
+      "target": "http://tauri.localhost:8765/ux-ping",
+      "result": {
+        "ok": false,
+        "error": "TypeError: Failed to fetch"
+      }
+    },
+    {
+      "host": "tauri.localhost",
+      "port": 8877,
+      "target": "http://tauri.localhost:8877/ux-ping",
+      "result": {
+        "ok": false,
+        "error": "TypeError: Failed to fetch"
+      }
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 1420,
+      "target": "http://127.0.0.1:1420/",
+      "result": {
+        "ok": false,
+        "error": "TypeError: Failed to fetch"
+      }
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 8765,
+      "target": "http://127.0.0.1:8765/ux-ping",
+      "result": {
+        "ok": false,
+        "error": "TypeError: Failed to fetch"
+      }
+    },
+    {
+      "host": "127.0.0.1",
+      "port": 8877,
+      "target": "http://127.0.0.1:8877/ux-ping",
+      "result": {
+        "ok": false,
+        "error": "TypeError: Failed to fetch"
+      }
+    }
+  ],
+  "localFetch": "TypeError: Failed to fetch"
+}
