@@ -28,7 +28,17 @@ jobs:
 
       - name: Map tauri.localhost to runner loopback
         run: |
+          # remove any existing tauri.localhost entries and add a single IPv4 mapping
+          sudo sed -i '/tauri.localhost/d' /etc/hosts || true
           echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
+          echo '--- /etc/hosts entries for tauri.localhost ---'
+          sudo grep -n 'tauri.localhost' /etc/hosts || true
+          echo '--- getent hosts ---'
+          getent hosts tauri.localhost || true
+          echo '--- ping (IPv4) ---'
+          ping -4 -c1 tauri.localhost || true
+          echo '--- ping (IPv6) ---'
+          ping -6 -c1 tauri.localhost || true
         shell: bash
 
       - name: Start ping server (background)
@@ -76,12 +86,6 @@ jobs:
           nohup python3 -m http.server 1420 --bind 0.0.0.0 --directory "$GITHUB_WORKSPACE/dist" > /tmp/static.log 2>&1 &
           sleep 1
         shell: bash
-
-      - name: Map tauri.localhost to runner loopback
-        run: |
-          echo '127.0.0.1 tauri.localhost' | sudo tee -a /etc/hosts
-        shell: bash
-
 
       - name: Wait for static server
         run: |
