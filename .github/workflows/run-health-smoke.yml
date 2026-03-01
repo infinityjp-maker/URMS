@@ -94,6 +94,24 @@ jobs:
           echo "static did not become ready"; echo "--- /tmp/static.log ---"; sudo cat /tmp/static.log || true; exit 1
         shell: bash
 
+      - name: Debug network before browser (verbose)
+        run: |
+          echo '--- curl static (tauri.localhost & 127.0.0.1) ---'
+          curl -svS http://tauri.localhost:1420/ || true
+          curl -svS http://127.0.0.1:1420/ || true
+          echo '--- curl ping servers (both hosts/ports) ---'
+          curl -svS http://tauri.localhost:8765/ux-ping || true
+          curl -svS http://127.0.0.1:8765/ux-ping || true
+          curl -svS http://tauri.localhost:8877/ux-ping || true
+          curl -svS http://127.0.0.1:8877/ux-ping || true
+          echo '--- tail static & ping logs ---'
+          sudo sed -n '1,200p' /tmp/static.log || true
+          sudo sed -n '1,200p' /tmp/ux-ping-8765.log || true
+          sudo sed -n '1,200p' /tmp/ux-ping-8877.log || true
+          echo '--- listening ports (ss) ---'
+          ss -ltnp || true
+        shell: bash
+
       - name: Pre-smoke connectivity probes (Node)
         run: |
           echo 'Running pre-smoke connectivity probes';
