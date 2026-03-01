@@ -14,16 +14,40 @@ function Test-TcpPort {
         [int]$TimeoutMs = 1000
     )
     try {
-        $tcp = New-Object System.Net.Sockets.TcpClient
-        $iar = $tcp.BeginConnect($TargetHost, $Port, $null, $null)
-        $wait = $iar.AsyncWaitHandle.WaitOne($TimeoutMs)
-        if (-not $wait) {
-            $tcp.Close()
-            return $false
+        # Prefer IPv4 addresses to avoid IPv6 (::1) resolution issues in some CI environments.
+        $ips = @()
+        try {
+            $ips = [System.Net.Dns]::GetHostAddresses($TargetHost) | Where-Object { $_.AddressFamily -eq 'InterNetwork' }
+        } catch {
+            $ips = @()
         }
-        $tcp.EndConnect($iar)
-        $tcp.Close()
-        return $true
+
+        if ($ips -and $ips.Count -gt 0) {
+            foreach ($addr in $ips) {
+                $tcp = New-Object System.Net.Sockets.TcpClient
+                $iar = $tcp.BeginConnect($addr.ToString(), $Port, $null, $null)
+                $wait = $iar.AsyncWaitHandle.WaitOne($TimeoutMs)
+                if ($wait) {
+                    try { $tcp.EndConnect($iar) } catch {}
+                    $tcp.Close()
+                    return $true
+                }
+                $tcp.Close()
+            }
+            return $false
+        } else {
+            # Fallback to hostname connect if no IPv4 addresses found
+            $tcp = New-Object System.Net.Sockets.TcpClient
+            $iar = $tcp.BeginConnect($TargetHost, $Port, $null, $null)
+            $wait = $iar.AsyncWaitHandle.WaitOne($TimeoutMs)
+            if (-not $wait) {
+                $tcp.Close()
+                return $false
+            }
+            $tcp.EndConnect($iar)
+            $tcp.Close()
+            return $true
+        }
     } catch {
         return $false
     }
