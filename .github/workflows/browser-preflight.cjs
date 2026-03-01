@@ -10,7 +10,7 @@ function safeWriteJsonSync(p,obj){ try{ ensureDirSync(path.dirname(p)); fs.write
   const out = { url, timestamp: Date.now(), gotoOk: false, fetchOk: false, attempts: [], errors: [] };
   let browser = null;
   try{
-    browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-dev-shm-usage'] });
+    browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--disable-dev-shm-usage','--host-resolver-rules=MAP tauri.localhost 127.0.0.1'] });
     const ctx = await browser.newContext({ viewport: { width: 800, height: 1200 } });
     const page = await ctx.newPage();
     try{
