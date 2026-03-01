@@ -123,9 +123,9 @@ async function waitForStableHeight(page, duration = 500) {
   let result = {};
 
   try {
-    // Ensure CI-run tests use the runner loopback explicitly when available
+    // Ensure CI-run tests use the runner loopback explicitly and force IPv4 in CI
     if (process.env.GITHUB_ACTIONS === 'true') {
-      process.env.URL = process.env.URL || 'http://127.0.0.1:1420/';
+      process.env.URL = 'http://127.0.0.1:1420/';
     }
     let url = process.env.URL || 'http://localhost:1420/';
     let preferUrl = process.env.URL || 'http://tauri.localhost/';

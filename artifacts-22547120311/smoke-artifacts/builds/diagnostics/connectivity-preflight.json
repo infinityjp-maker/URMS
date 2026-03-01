@@ -1,0 +1,38 @@
+[
+  {
+    "port": 1420,
+    "tcp": true,
+    "http": false,
+    "host": "127.0.0.1"
+  },
+  {
+    "port": 1420,
+    "tcp": true,
+    "http": false,
+    "host": "tauri.localhost"
+  },
+  {
+    "port": 8765,
+    "tcp": true,
+    "http": true,
+    "host": "127.0.0.1"
+  },
+  {
+    "port": 8765,
+    "tcp": true,
+    "http": true,
+    "host": "tauri.localhost"
+  },
+  {
+    "port": 8877,
+    "tcp": true,
+    "http": true,
+    "host": "127.0.0.1"
+  },
+  {
+    "port": 8877,
+    "tcp": true,
+    "http": true,
+    "host": "tauri.localhost"
+  }
+]
