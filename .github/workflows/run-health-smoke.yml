@@ -263,18 +263,51 @@ jobs:
             if (!fs.existsSync(p)) { console.log('triage.json not found; skipping issue creation'); return; }
             const t = JSON.parse(fs.readFileSync(p, 'utf8'));
             if ((t.severity || '').toLowerCase() !== 'critical') { console.log('severity is not critical (actual='+t.severity+'); skipping issue creation'); return; }
-            const labels = (t.inferredTags || []).slice(0, 10);
+            const inferred = (t.inferredTags || []).slice(0, 10);
             const bodyObj = {
               success: t.success,
               inferredTags: t.inferredTags || [],
               severity: t.severity,
               internalErrors: (t.internalErrors || []).slice(0, 10)
             };
-            const body = `Auto-triage detected a critical smoke failure.\n\n**triage.json (excerpt)**:\n\n\`\`\`json\n${JSON.stringify(bodyObj, null, 2)}\n\`\`\``;
+            const excerpt = JSON.stringify(bodyObj, null, 2);
             const title = 'CI auto-triage: critical failure detected';
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Search for existing open issues with same title and any matching inferred tag
+            console.log('Searching for existing open issues with title and inferredTags:', inferred);
+            const listRes = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+            let candidates = (listRes && listRes.data || []).filter(issue => {
+              if (!issue || !issue.title) return false;
+              if (issue.title !== title) return false;
+              const issueLabels = (issue.labels || []).map(l => (typeof l === 'string') ? l : (l && l.name)).filter(Boolean);
+              return issueLabels.some(l => inferred.includes(l));
+            });
+
+            if (candidates.length > 0) {
+              // pick the most recently created open issue
+              candidates.sort((a,b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
+              const existing = candidates[0];
+              const now = new Date().toISOString();
+              const comment = `triage 自動診断により同一カテゴリの critical failure が再検出されました。最新 triage.json の抜粋を以下に記録します。\n\n\`\`\`json\n${excerpt}\n\`\`\`\n\n(commented at ${now})`;
+              const commentRes = await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body: comment });
+              const commentUrl = commentRes && commentRes.data && commentRes.data.html_url ? commentRes.data.html_url : (existing.html_url || `https://github.com/${owner}/${repo}/issues/${existing.number}`);
+              const commentCreatedAt = commentRes && commentRes.data && commentRes.data.created_at ? commentRes.data.created_at : now;
+              const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
+              try {
+                fs.appendFileSync(sum, `- triage issue: appended to existing #${existing.number} ${existing.html_url} (commented: ${commentCreatedAt}) comment: ${commentUrl}\n`);
+                console.log('Appended issue comment and wrote summary for existing issue:', existing.number, commentUrl, commentCreatedAt);
+              } catch (e) { console.log('Failed to append existing issue info to job summary', e); }
+              return;
+            }
+
+            // No existing matching issue found — create a new one
+            const labels = inferred;
+            const body = `Auto-triage detected a critical smoke failure.\n\n**triage.json (excerpt)**:\n\n\`\`\`json\n${excerpt}\n\`\`\``;
             console.log('Creating issue with labels:', labels);
-            const res = await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body, labels });
-            const issueUrl = (res && res.data && (res.data.html_url || (`https://github.com/${context.repo.owner}/${context.repo.repo}/issues/${res.data.number}`))) || 'unknown';
+            const res = await github.rest.issues.create({ owner, repo, title, body, labels });
+            const issueUrl = (res && res.data && (res.data.html_url || (`https://github.com/${owner}/${repo}/issues/${res.data.number}`))) || 'unknown';
             const issueNumber = res && res.data && res.data.number ? res.data.number : 'unknown';
             const issueCreatedAt = res && res.data && (res.data.created_at || res.data.createdAt) ? (res.data.created_at || res.data.createdAt) : 'unknown';
             const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
