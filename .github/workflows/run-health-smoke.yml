@@ -141,7 +141,11 @@ jobs:
         env:
           URL: 'http://127.0.0.1:1420/'
         run: |
-          pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports 8765,8877
+          if command -v pwsh >/dev/null 2>&1; then
+            pwsh -NoProfile -NonInteractive -File ./scripts/health-check.ps1 -Url "$URL" -Ports 8765,8877
+          else
+            echo 'pwsh not available in this environment; skipping PowerShell preflight check.'
+          fi
 
       - name: Browser resolve debug (Playwright)
         env:
