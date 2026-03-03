@@ -168,7 +168,14 @@ async function waitForStableHeight(page, duration = 500) {
     }
 
     if (!browser) {
-      try { browser = await chromium.launch({ args: ['--no-sandbox', `--force-device-scale-factor=${process.env.DSF ? Number(process.env.DSF) : 1}`, '--host-resolver-rules=MAP tauri.localhost 127.0.0.1', '--disable-features=NetworkService,NetworkServiceInProcess', '--disable-dev-shm-usage', '--no-zygote', '--single-process'] }); } catch (e) { pushInternalError(internalErrors, 'BROWSER_LAUNCH_ERROR: ' + String(e && e.message)); pushInternalError(internalErrors, 'BROWSER_LAUNCH_STACK: ' + ((e && e.stack) || '').slice(0,2000)); throw e; }
+      try {
+        const baseArgs = ['--no-sandbox', `--force-device-scale-factor=${process.env.DSF ? Number(process.env.DSF) : 1}`, '--host-resolver-rules=MAP tauri.localhost 127.0.0.1', '--disable-features=NetworkService,NetworkServiceInProcess', '--disable-dev-shm-usage', '--no-zygote', '--single-process'];
+        // Allow CI-only additional Chromium args via env var `CI_BROWSER_ARGS`
+        const extra = process.env.CI_BROWSER_ARGS ? String(process.env.CI_BROWSER_ARGS).trim().split(/\s+/).filter(Boolean) : [];
+        const args = baseArgs.concat(extra);
+        browser = await chromium.launch({ args });
+      } catch (e) { pushInternalError(internalErrors, 'BROWSER_LAUNCH_ERROR: ' + String(e && e.message)); pushInternalError(internalErrors, 'BROWSER_LAUNCH_STACK: ' + ((e && e.stack) || '').slice(0,2000)); throw e; }
+    }
     }
 
     const VIEWPORT = { width: CLIP.width, height: CLIP.height };
@@ -241,7 +248,10 @@ async function waitForStableHeight(page, duration = 500) {
     if (!page && connectedOverCDP && context && typeof context.newPage === 'function'){ page = await context.newPage(); try { await gotoWithRetry(page, process.env.URL || preferUrl, 2, internalErrors); } catch(e) { pushInternalError(internalErrors, 'gotoWithRetry CDP newPage: '+String(e && e.message)); } }
 
     if (!page){
-      const local = await chromium.launch({ args: ['--no-sandbox', `--force-device-scale-factor=${DSF}`, '--host-resolver-rules=MAP tauri.localhost 127.0.0.1', '--disable-features=NetworkService,NetworkServiceInProcess', '--disable-dev-shm-usage', '--no-zygote', '--single-process'] });
+      const baseLocalArgs = ['--no-sandbox', `--force-device-scale-factor=${DSF}`, '--host-resolver-rules=MAP tauri.localhost 127.0.0.1', '--disable-features=NetworkService,NetworkServiceInProcess', '--disable-dev-shm-usage', '--no-zygote', '--single-process'];
+      const extraLocal = process.env.CI_BROWSER_ARGS ? String(process.env.CI_BROWSER_ARGS).trim().split(/\s+/).filter(Boolean) : [];
+      const localArgs = baseLocalArgs.concat(extraLocal);
+      const local = await chromium.launch({ args: localArgs });
       const localCtx = await local.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
           try { if (localCtx && typeof localCtx.addInitScript === 'function') { const ciInitCss = `html,body,#root{background:#ffffff!important}`; await localCtx.addInitScript({ content: `(() => { try { const css = ${JSON.stringify(ciInitCss)}; const s = document.createElement('style'); s.id = 'ci-init-style'; s.setAttribute('data-ci','1'); s.textContent = css; const h = document.head || document.documentElement; h.insertBefore(s, h.firstChild); } catch(e){} })()` }); } } catch (e) { pushInternalError(internalErrors, 'ADD_INIT_SCRIPT_LOCAL_FAILED: '+String(e && e.message)); }
       page = await localCtx.newPage(); await gotoWithRetry(page, url, 2, internalErrors);
