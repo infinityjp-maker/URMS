@@ -5,8 +5,20 @@ const port = process.env.PORT || 8765;
 const server = http.createServer((req, res) => {
   if (req.url && req.url.startsWith('/ux-ping')) {
     console.log('PING');
+    // Allow browser-based fetches from the UI (CORS)
     const body = JSON.stringify({ ok: true });
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    const headers = {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type'
+    };
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, headers);
+      res.end();
+      return;
+    }
+    res.writeHead(200, headers);
     res.end(body);
     return;
   }
