@@ -113,6 +113,25 @@ try {
     },
     timestamp: new Date().toISOString()
   };
+  // Determine severity: critical / warning / info
+  try {
+    const errs = (triage.internalErrors || []).join('\n');
+    const tags = (triage.inferredTags || []).map(String);
+    let severity = 'info';
+    const hasCriticalTag = tags.some(t => ['ConnectionRefused','BrowserFetchFailed','Static1420NotHttp'].includes(t));
+    const hasCSP = tags.includes('CSP') || /Content Security Policy|CSP/i.test(errs);
+    const connectivityHasHttpFalse = Array.isArray(triage.connectivity) && triage.connectivity.some(p => p && (p.http === false || p.http === 'false'));
+    if (hasCriticalTag || /ERR_CONNECTION_REFUSED|ECONNREFUSED|Failed to fetch|Connection refused/i.test(errs)) {
+      severity = 'critical';
+    } else if (hasCSP || connectivityHasHttpFalse) {
+      severity = 'warning';
+    } else {
+      severity = 'info';
+    }
+    triage.severity = severity;
+  } catch (e) {
+    triage.severity = 'info';
+  }
   fs.mkdirSync(path.join('builds','diagnostics'), { recursive: true });
   fs.writeFileSync(path.join('builds','diagnostics','triage.json'), JSON.stringify(triage, null, 2), 'utf8');
   // mirror to actions-runs for quick access
