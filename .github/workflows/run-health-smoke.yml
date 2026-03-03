@@ -7,6 +7,10 @@ on:
         description: 'Runner label to use (e.g. ubuntu-latest or self-hosted)'
         required: false
         default: 'ubuntu-latest'
+      ci_browser_args:
+        description: 'Additional Chromium args for CI (overrides default)'
+        required: false
+        default: "--disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process"
 
 jobs:
   run-health-smoke:
@@ -14,7 +18,7 @@ jobs:
     container: mcr.microsoft.com/playwright:focal
     timeout-minutes: 30
     env:
-      CI_BROWSER_ARGS: "--disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process"
+      CI_BROWSER_ARGS: ${{ github.event.inputs.ci_browser_args }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

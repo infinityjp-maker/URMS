@@ -1,6 +1,8 @@
 const http = require('http');
 
 const port = process.env.PORT || 8765;
+// Allow configuring CORS origin via environment for safer production defaults
+const CORS_ALLOW_ORIGIN = (process.env.CORS_ALLOW_ORIGIN && String(process.env.CORS_ALLOW_ORIGIN)) || '*';
 
 const server = http.createServer((req, res) => {
   if (req.url && req.url.startsWith('/ux-ping')) {
@@ -9,7 +11,7 @@ const server = http.createServer((req, res) => {
     const body = JSON.stringify({ ok: true });
     const headers = {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': CORS_ALLOW_ORIGIN,
       'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type'
     };

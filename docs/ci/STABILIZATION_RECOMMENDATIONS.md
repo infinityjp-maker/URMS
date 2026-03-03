@@ -13,15 +13,19 @@
   - 理由: Hosted runner のネットワーク名前空間制約に対処できる一方、Docker 未サポート環境へのフォールバックが必要。
 
 - `CI_BROWSER_ARGS` の安全運用
-  - 提案: ワークフロー inputs で `ci_browser_args` を受け取り、必要時に override 可能にする。既存のデフォルトは維持。
+  - 提案: ワークフロー inputs (`ci_browser_args`) を用いて運用者が実行時に Chromium 引数を指定できるようにしました（既存のデフォルトは引き続き使用可能）。
   - 理由: 将来の環境差を迅速に調整可能にするため。
 
 - PowerShell (`pwsh`) 前提の処理
   - 提案: PowerShell スクリプトは `scripts/health-check.ps1` として残し、workflow では `pwsh` がない場合の代替（Node ベースの pre-smoke probes）を明示する。
   - 理由: Windows 環境では pwsh を使うが、コンテナイメージには入っていないことがある為。
 
-- /etc/hosts マッピングの扱い
+-- /etc/hosts マッピングの扱い
   - 提案: `/etc/hosts` 直接編集は推奨手段としない。代替案として Playwright の `host-resolver-rules` を使ったブラウザ側の名前解決上書き（環境変数経由）を優先する。
+
+- `ping-server` の CORS 設定を環境変数化
+  - 変更: `CORS_ALLOW_ORIGIN` 環境変数で `ping-server` の `Access-Control-Allow-Origin` を指定できるようにしました（デフォルトは `*`）。
+  - 理由: CI 環境ではワイルドカードが便利だが、運用環境では origin を限定した方が安全なため、設定可能にしておくと良い。
 
 中〜低優先度の改善:
 
