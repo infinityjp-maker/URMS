@@ -371,14 +371,7 @@ jobs:
           set -e
           dest="${RUNNER_TEMP}/triage-summary.txt"
           src="${GITHUB_STEP_SUMMARY:-.github/actions-runs/step-summary.txt}"
-          if [ -f "$src" ] && [ -s "$src" ]; then
-            cat "$src" > "$dest"
-          else
-            echo '--- job summary (fallback) ---' > "$dest"
-            [ -f .github/actions-runs/step-summary.txt ] && sed -n '1,200p' .github/actions-runs/step-summary.txt >> "$dest" || true
-            [ -f builds/diagnostics/triage.json ] && sed -n '1,200p' builds/diagnostics/triage.json >> "$dest" || true
-          fi
-          echo "Wrote triage summary to $dest"
+          node -e "const fs=require('fs'); const dest=process.env.DEST||process.env.RUNNER_TEMP+'/triage-summary.txt'; const sum=process.env.GITHUB_STEP_SUMMARY||'.github/actions-runs/step-summary.txt'; let md='## Triage Summary\n\n'; if (fs.existsSync('builds/diagnostics/triage.json')){ const j=JSON.parse(fs.readFileSync('builds/diagnostics/triage.json','utf8')); md+=`- severity: ${j.severity||'unknown'}\n- inferredTags: ${(j.inferredTags||[]).join(', ')||'none'}\n- internalErrors:`; (j.internalErrors||[]).slice(0,10).forEach(e=>{ md+='\n  - '+String(e).replace(/\n/g,' '); }); md+='\n\n```json\n'+JSON.stringify(j,null,2)+'\n```\n'; } else { md+='(no triage.json)\n'; } if (fs.existsSync(sum)){ const s=fs.readFileSync(sum,'utf8'); const m=(s.match(/- triage issue: .*$/m)||[])[0]; if (m) md+='\n'+m+'\n'; } fs.writeFileSync(dest,md); console.log('wrote',dest);" DEST="$dest"
         shell: bash
 
       - name: Upload triage summary
