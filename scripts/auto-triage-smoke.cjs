@@ -24,6 +24,8 @@ if (!smoke) {
 
 const connPath = path.join('builds','diagnostics','connectivity-preflight.json');
 const connectivity = fs.existsSync(connPath) ? safeReadJson(connPath) : null;
+const browserResolvePath = path.join('builds','diagnostics','browser-resolve.json');
+const browserResolve = fs.existsSync(browserResolvePath) ? safeReadJson(browserResolvePath) : null;
 
 const out = [];
 out.push('Smoke auto-triage');
@@ -54,14 +56,39 @@ if (connectivity && Array.isArray(connectivity)) {
 
 // heuristic triage
 const issues = [];
+
+// analyze browser-resolve diagnostics for browser fetch failures
+if (browserResolve && Array.isArray(browserResolve)) {
+  const brFails = browserResolve.filter(r => !r.ok || (r.error && /Failed to fetch|TypeError: Failed to fetch|ERR_CONNECTION_REFUSED|ECONNREFUSED/i.test(String(r.error))));
+  if (brFails.length) {
+    issues.push('BrowserFetchFailed');
+  }
+}
+
 if (smoke && Array.isArray(smoke.internalErrors)) {
   const i = smoke.internalErrors.join('\n');
   if (/CSP|Content Security Policy|violates the following Content Security Policy/i.test(i)) issues.push('CSP');
-  if (/Failed to fetch|ERR_CONNECTION_REFUSED|ECONNREFUSED/i.test(i)) issues.push('ConnectionRefused');
+  if (/Failed to fetch|ERR_CONNECTION_REFUSED|ECONNREFUSED|Connection refused/i.test(i)) issues.push('ConnectionRefused');
 }
+
+// inspect consoleMessages and pageErrors for fetch/CSP signs
+if (smoke && Array.isArray(smoke.consoleMessages)) {
+  const cm = smoke.consoleMessages.join('\n');
+  if (/Content Security Policy|CSP/i.test(cm)) issues.push('CSP');
+  if (/Failed to fetch|TypeError: Failed to fetch|net::ERR_CONNECTION_REFUSED/i.test(cm)) issues.push('BrowserFetchFailed');
+}
+if (smoke && Array.isArray(smoke.pageErrors)) {
+  const pe = smoke.pageErrors.join('\n');
+  if (/Failed to fetch|TypeError: Failed to fetch|net::ERR_CONNECTION_REFUSED/i.test(pe)) issues.push('BrowserFetchFailed');
+}
+
 if (connectivity && connectivity.find(p=>p.port===1420 && !p.http)) issues.push('Static1420NotHttp');
 
 out.push('\nInferred issues: ' + (issues.length?issues.join(', '):'none'));
+
+// Deduplicate and present tags as a separate section
+const uniqueTags = Array.from(new Set(issues));
+out.push('\nInferred tags: ' + (uniqueTags.length ? uniqueTags.join(', ') : 'none'));
 
 try {
   fs.mkdirSync(path.join('.github','actions-runs'), { recursive: true });
