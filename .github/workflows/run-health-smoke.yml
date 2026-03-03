@@ -365,9 +365,25 @@ jobs:
             .github/actions-runs/triage.json
             builds/diagnostics/**
             screenshots/**
+      - name: Write triage summary to runner temp
+        if: always()
+        run: |
+          set -e
+          dest="${RUNNER_TEMP}/triage-summary.txt"
+          src="${GITHUB_STEP_SUMMARY:-.github/actions-runs/step-summary.txt}"
+          if [ -f "$src" ] && [ -s "$src" ]; then
+            cat "$src" > "$dest"
+          else
+            echo '--- job summary (fallback) ---' > "$dest"
+            [ -f .github/actions-runs/step-summary.txt ] && sed -n '1,200p' .github/actions-runs/step-summary.txt >> "$dest" || true
+            [ -f builds/diagnostics/triage.json ] && sed -n '1,200p' builds/diagnostics/triage.json >> "$dest" || true
+          fi
+          echo "Wrote triage summary to $dest"
+        shell: bash
+
       - name: Upload triage summary
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: triage-summary
-          path: ${{ github.step_summary }}
+          path: ${{ runner.temp }}/triage-summary.txt
