@@ -2,7 +2,8 @@ const http = require('http');
 
 const port = process.env.PORT || 8765;
 // Allow configuring CORS origin via environment for safer production defaults
-const CORS_ALLOW_ORIGIN = (process.env.CORS_ALLOW_ORIGIN && String(process.env.CORS_ALLOW_ORIGIN)) || '*';
+// Default to localhost origin to avoid exposing the ping endpoint broadly in production.
+const CORS_ALLOW_ORIGIN = (process.env.CORS_ALLOW_ORIGIN && String(process.env.CORS_ALLOW_ORIGIN)) || 'http://127.0.0.1';
 
 const server = http.createServer((req, res) => {
   if (req.url && req.url.startsWith('/ux-ping')) {

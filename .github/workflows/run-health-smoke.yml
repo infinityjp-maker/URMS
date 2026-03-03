@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 30
     env:
       CI_BROWSER_ARGS: ${{ github.event.inputs.ci_browser_args }}
+      CORS_ALLOW_ORIGIN: '*'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -236,6 +237,12 @@ jobs:
       - name: Parse artifacts (generate summary)
         run: |
           node scripts/parse-smoke-artifacts.cjs || true
+      - name: Auto-triage smoke artifacts
+        if: always()
+        run: |
+          node scripts/auto-triage-smoke.cjs || true
+          echo '--- auto-triage output ---'
+          sudo sed -n '1,200p' .github/actions-runs/smoke-triage.txt || true
         shell: bash
 
       - name: List expected artifact locations
