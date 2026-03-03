@@ -248,7 +248,7 @@ jobs:
       - name: Add triage tags to job summary
         if: always()
         run: |
-          node -e "const fs=require('fs'); const p='builds/diagnostics/triage.json'; if (fs.existsSync(p)){ const f=require('./'+p); const tags=(f.inferredTags||[]).join(', '); const sum=process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt'; fs.appendFileSync(sum, '## Smoke triage tags\n'+(tags||'none')+'\n'); console.log('Appended triage tags to job summary'); } else { console.log('triage.json not found'); }"
+          node -e "const fs=require('fs'); const p='builds/diagnostics/triage.json'; const sum=process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt'; if (fs.existsSync(p)){ const f=require('./'+p); const tags=(f.inferredTags||[]).join(', '); const sev=f.severity||'unknown'; fs.appendFileSync(sum, '## Smoke triage\n- inferredTags: '+(tags||'none')+'\n- severity: '+sev+'\n'); console.log('Appended triage tags and severity to job summary'); } else { console.log('triage.json not found'); }"
         shell: bash
 
       - name: List expected artifact locations
