@@ -245,6 +245,12 @@ jobs:
           sudo sed -n '1,200p' .github/actions-runs/smoke-triage.txt || true
         shell: bash
 
+      - name: Add triage tags to job summary
+        if: always()
+        run: |
+          node -e "const fs=require('fs'); const p='builds/diagnostics/triage.json'; if (fs.existsSync(p)){ const f=require('./'+p); const tags=(f.inferredTags||[]).join(', '); const sum=process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt'; fs.appendFileSync(sum, '## Smoke triage tags\n'+(tags||'none')+'\n'); console.log('Appended triage tags to job summary'); } else { console.log('triage.json not found'); }"
+        shell: bash
+
       - name: List expected artifact locations
         if: always()
         run: |
@@ -270,5 +276,6 @@ jobs:
           path: |
             .github/actions-runs/last-smoke.log
             .github/actions-runs/smoke-summary.txt
+            .github/actions-runs/triage.json
             builds/diagnostics/**
             screenshots/**
