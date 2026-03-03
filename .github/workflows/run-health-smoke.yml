@@ -275,15 +275,34 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // Search for existing open issues with same title and any matching inferred tag
+            // Search for existing open issues with same normalized title and any matching inferred tag
             console.log('Searching for existing open issues with title and inferredTags:', inferred);
-            const listRes = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
-            let candidates = (listRes && listRes.data || []).filter(issue => {
+            const normalize = s => (''+(s||'')).toLowerCase().replace(/[^a-z0-9]/g,'').trim();
+            const normTitle = normalize(title);
+            // page through all open issues (per_page=100)
+            let allIssues = [];
+            let page = 1;
+            while (true) {
+              const res = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100, page });
+              if (!res || !res.data || res.data.length === 0) break;
+              allIssues = allIssues.concat(res.data);
+              if (res.data.length < 100) break;
+              page += 1;
+            }
+            console.log('Fetched open issues count:', allIssues.length);
+            let candidates = (allIssues || []).filter(issue => {
               if (!issue || !issue.title) return false;
-              if (issue.title !== title) return false;
+              if (normalize(issue.title) !== normTitle) return false;
               const issueLabels = (issue.labels || []).map(l => (typeof l === 'string') ? l : (l && l.name)).filter(Boolean);
               return issueLabels.some(l => inferred.includes(l));
             });
+            // Persist candidate list to job summary for debugging
+            try {
+              const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
+              const candLine = candidates.length ? candidates.map(c => `#${c.number} ${c.html_url || ''}`).join(', ') : 'none';
+              fs.appendFileSync(sum, `- triage candidates: ${candLine}\n`);
+              console.log('Wrote triage candidates to job summary:', candLine);
+            } catch (e) { console.log('Failed to append triage candidates to job summary', e); }
 
             if (candidates.length > 0) {
               // pick the most recently created open issue
