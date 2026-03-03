@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "severity": "critical",
+  "inferredTags": ["ConnectionRefused", "Static1420NotHttp"],
+  "internalErrors": ["dummy error A", "dummy error B"]
+}
