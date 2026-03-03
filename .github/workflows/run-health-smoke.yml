@@ -312,7 +312,7 @@ jobs:
             const issueCreatedAt = res && res.data && (res.data.created_at || res.data.createdAt) ? (res.data.created_at || res.data.createdAt) : 'unknown';
             const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
             try {
-              fs.appendFileSync(sum, `- triage issue: #${issueNumber} ${issueUrl} (created: ${issueCreatedAt})\n`);
+                fs.appendFileSync(sum, `- triage issue: #${issueNumber} ${issueUrl} (created: ${issueCreatedAt})\n`);
               console.log('Appended issue info to job summary:', issueNumber, issueUrl, issueCreatedAt);
             } catch (e) { console.log('Failed to append issue URL to job summary', e); }
         env:
