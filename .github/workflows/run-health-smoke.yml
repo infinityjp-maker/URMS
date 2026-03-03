@@ -13,6 +13,8 @@ jobs:
     runs-on: ${{ github.event.inputs.runner || 'ubuntu-latest' }}
     container: mcr.microsoft.com/playwright:focal
     timeout-minutes: 30
+    env:
+      CI_BROWSER_ARGS: "--disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
