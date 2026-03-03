@@ -275,8 +275,13 @@ jobs:
             console.log('Creating issue with labels:', labels);
             const res = await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body, labels });
             const issueUrl = (res && res.data && (res.data.html_url || (`https://github.com/${context.repo.owner}/${context.repo.repo}/issues/${res.data.number}`))) || 'unknown';
+            const issueNumber = res && res.data && res.data.number ? res.data.number : 'unknown';
+            const issueCreatedAt = res && res.data && (res.data.created_at || res.data.createdAt) ? (res.data.created_at || res.data.createdAt) : 'unknown';
             const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
-            try { fs.appendFileSync(sum, `- triage issue: ${issueUrl}\n`); console.log('Appended issue URL to job summary:', issueUrl); } catch (e) { console.log('Failed to append issue URL to job summary', e); }
+            try {
+              fs.appendFileSync(sum, `- triage issue: #${issueNumber} ${issueUrl} (created: ${issueCreatedAt})\n`);
+              console.log('Appended issue info to job summary:', issueNumber, issueUrl, issueCreatedAt);
+            } catch (e) { console.log('Failed to append issue URL to job summary', e); }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
