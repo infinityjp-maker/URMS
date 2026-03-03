@@ -273,7 +273,10 @@ jobs:
             const body = `Auto-triage detected a critical smoke failure.\n\n**triage.json (excerpt)**:\n\n\`\`\`json\n${JSON.stringify(bodyObj, null, 2)}\n\`\`\``;
             const title = 'CI auto-triage: critical failure detected';
             console.log('Creating issue with labels:', labels);
-            await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body, labels });
+            const res = await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body, labels });
+            const issueUrl = (res && res.data && (res.data.html_url || (`https://github.com/${context.repo.owner}/${context.repo.repo}/issues/${res.data.number}`))) || 'unknown';
+            const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
+            try { fs.appendFileSync(sum, `- triage issue: ${issueUrl}\n`); console.log('Appended issue URL to job summary:', issueUrl); } catch (e) { console.log('Failed to append issue URL to job summary', e); }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
