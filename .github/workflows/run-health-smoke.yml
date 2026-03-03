@@ -178,19 +178,36 @@ jobs:
           URL: 'http://127.0.0.1:1420/'
         run: |
           echo 'Running full stack inside Playwright Docker image (services + browser)'
-          docker run --rm -v "$GITHUB_WORKSPACE":/work -w /work --shm-size=1g mcr.microsoft.com/playwright:focal bash -lc "set -e
-          npm ci --no-audit --no-fund
-          npm run build
-          nohup env PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
-          nohup env PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &
-          nohup python3 -m http.server 1420 --directory dist > /tmp/static.log 2>&1 &
-          sleep 2
-          node .github/workflows/browser-resolve-debug.cjs || true
-          node Tests/playwright/smoke.cjs > .github/actions-runs/last-smoke.log 2>&1 || true
-          echo '--- browser-resolve.json ---'
-          cat builds/diagnostics/browser-resolve.json || true
-          echo '--- smoke-result.full.json ---'
-          cat builds/diagnostics/smoke-result.full.json || true"
+          if command -v docker >/dev/null 2>&1; then
+            docker run --rm -v "$GITHUB_WORKSPACE":/work -w /work --shm-size=1g mcr.microsoft.com/playwright:focal bash -lc "set -e
+            npm ci --no-audit --no-fund
+            npm run build
+            nohup env PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
+            nohup env PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &
+            nohup python3 -m http.server 1420 --directory dist > /tmp/static.log 2>&1 &
+            sleep 2
+            node .github/workflows/browser-resolve-debug.cjs || true
+            node Tests/playwright/smoke.cjs > .github/actions-runs/last-smoke.log 2>&1 || true
+            echo '--- browser-resolve.json ---'
+            cat builds/diagnostics/browser-resolve.json || true
+            echo '--- smoke-result.full.json ---'
+            cat builds/diagnostics/smoke-result.full.json || true"
+          else
+            echo 'Docker not available in this environment; running full stack commands directly in the job container'
+            set -e
+            npm ci --no-audit --no-fund || true
+            npm run build || true
+            nohup env PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
+            nohup env PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &
+            nohup python3 -m http.server 1420 --directory dist > /tmp/static.log 2>&1 &
+            sleep 2
+            node .github/workflows/browser-resolve-debug.cjs || true
+            node Tests/playwright/smoke.cjs > .github/actions-runs/last-smoke.log 2>&1 || true
+            echo '--- browser-resolve.json ---'
+            cat builds/diagnostics/browser-resolve.json || true
+            echo '--- smoke-result.full.json ---'
+            cat builds/diagnostics/smoke-result.full.json || true
+          fi
         shell: bash
 
       - name: Browser preflight (Playwright)
