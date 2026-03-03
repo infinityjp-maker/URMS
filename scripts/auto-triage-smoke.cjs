@@ -98,3 +98,26 @@ try {
   console.error('Failed to write triage file:', e && e.message);
   process.exitCode = 2;
 }
+
+// Also write structured JSON triage into builds/diagnostics/triage.json
+try {
+  const triage = {
+    success: !!(smoke && smoke.success),
+    inferredTags: uniqueTags || [],
+    connectivity: connectivity || null,
+    internalErrors: (smoke && Array.isArray(smoke.internalErrors)) ? smoke.internalErrors.slice(0,200) : [],
+    browserErrors: {
+      browserResolve: browserResolve || null,
+      consoleMessages: (smoke && Array.isArray(smoke.consoleMessages)) ? smoke.consoleMessages.slice(0,200) : [],
+      pageErrors: (smoke && Array.isArray(smoke.pageErrors)) ? smoke.pageErrors.slice(0,200) : []
+    },
+    timestamp: new Date().toISOString()
+  };
+  fs.mkdirSync(path.join('builds','diagnostics'), { recursive: true });
+  fs.writeFileSync(path.join('builds','diagnostics','triage.json'), JSON.stringify(triage, null, 2), 'utf8');
+  // mirror to actions-runs for quick access
+  try { fs.writeFileSync(path.join('.github','actions-runs','triage.json'), JSON.stringify(triage, null, 2), 'utf8'); } catch(e) {}
+  console.log('Wrote builds/diagnostics/triage.json');
+} catch (e) {
+  console.error('Failed to write triage.json:', e && e.message);
+}
