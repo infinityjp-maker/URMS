@@ -53,12 +53,24 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     if (!indexJson || !indexJson.latest) throw new Error('index.json.latest missing');
 
     // Ensure referenced files exist on disk
-    const latestSummaryPath = path.resolve(process.cwd(), BASE_DIR, indexJson.latest.summary || 'reports/latest.md');
-    const diffSummaryPath = path.resolve(process.cwd(), BASE_DIR, indexJson.latest.diffSummary || 'diffs/triage-diff-summary-latest.md');
-    const llmSummaryPath = path.resolve(process.cwd(), BASE_DIR, indexJson.latest.llmSummary || 'diffs/triage-llm-summary-latest.md');
-    const diffLinesPath = path.resolve(process.cwd(), BASE_DIR, indexJson.latest.diffLines || 'diffs/triage-diff-lines-latest.json');
-    if (!fs.existsSync(latestSummaryPath)) throw new Error('Latest summary file not found: ' + latestSummaryPath);
-    if (!fs.existsSync(diffSummaryPath)) throw new Error('Diff summary file not found: ' + diffSummaryPath);
+    const latestSummaryRel = indexJson.latest.summary || 'reports/latest.md';
+    const diffSummaryRel = indexJson.latest.diffSummary || 'diffs/triage-diff-summary-latest.md';
+    const llmSummaryRel = indexJson.latest.llmSummary || 'diffs/triage-llm-summary-latest.md';
+    const diffLinesRel = indexJson.latest.diffLines || 'diffs/triage-diff-lines-latest.json';
+    const latestSummaryPath = path.resolve(process.cwd(), BASE_DIR, latestSummaryRel);
+    const diffSummaryPath = path.resolve(process.cwd(), BASE_DIR, diffSummaryRel);
+    const llmSummaryPath = path.resolve(process.cwd(), BASE_DIR, llmSummaryRel);
+    const diffLinesPath = path.resolve(process.cwd(), BASE_DIR, diffLinesRel);
+    // Accept either .md or .html variants for report summaries to reduce benign 404s
+    const altLatestSummaryPath = latestSummaryPath.replace(/\.md$/i, '.html');
+    const altDiffSummaryPath = diffSummaryPath.replace(/\.md$/i, '.html');
+    const altLlmSummaryPath = llmSummaryPath.replace(/\.md$/i, '.html');
+    if (!(fs.existsSync(latestSummaryPath) || fs.existsSync(altLatestSummaryPath))) {
+      throw new Error('Latest summary file not found: ' + latestSummaryPath + ' (alt: ' + altLatestSummaryPath + ')');
+    }
+    if (!(fs.existsSync(diffSummaryPath) || fs.existsSync(altDiffSummaryPath))) {
+      throw new Error('Diff summary file not found: ' + diffSummaryPath + ' (alt: ' + altDiffSummaryPath + ')');
+    }
     if (!fs.existsSync(diffLinesPath)) {
       console.warn('Diff lines file not found (continuing): ' + diffLinesPath);
       // not fatal: presence of diff summary is sufficient for basic checks
