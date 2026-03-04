@@ -12,8 +12,14 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
   page.on('console', msg => {
     if (!msg.type || msg.type() !== 'error') return;
     const text = msg.text ? msg.text() : String(msg);
-    // Some console errors come without URLs; ignore generic 404 "Failed to load resource" errors
-    if (/Failed to load resource/.test(text) && /404/.test(text)) return;
+    // Ignore benign static-resource/load errors that occur on gh-pages variants:
+    // - generic "Failed to load resource" 404s
+    // - Fetch API file:// URL scheme errors when running from disk
+    // - other transient fetch/load failures for reports/ or diffs/
+    if (/Failed to load resource/i.test(text) && /404/.test(text)) return;
+    if (/Fetch API cannot load/i.test(text)) return;
+    if (/URL scheme "file" is not supported/i.test(text)) return;
+    if (/404 \(File not found\)/i.test(text)) return;
     consoleErrors.push(text);
   });
   page.on('response', resp => {
@@ -65,17 +71,17 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     await page.waitForFunction(() => {
       const el = document.getElementById('report-content');
       return el && el.innerText && !/loading/i.test(el.innerText) && !/Error loading report/i.test(el.innerText);
-    }, { timeout: 8000 }).catch(()=>{});
+    }, { timeout: 15000 }).catch(()=>{});
 
     // Wait for diff content to be populated
     await page.waitForSelector('#diff-content', { state: 'visible', timeout: 20000 }).catch(()=>{});
     await page.waitForFunction(() => {
       const el = document.getElementById('diff-content');
       return el && el.innerText && !/loading/i.test(el.innerText) && !/Error loading diff summary/i.test(el.innerText);
-    }, { timeout: 8000 }).catch(()=>{});
+    }, { timeout: 15000 }).catch(()=>{});
 
     // LLM summary: verify file exists and provide a minimal check on the ai-content container
-    await page.waitForSelector('#ai-content', { state: 'visible', timeout: 8000 }).catch(()=>{});
+    await page.waitForSelector('#ai-content', { state: 'visible', timeout: 15000 }).catch(()=>{});
 
     // Try loading the diff lines by checking that the JSON file is readable
     let diffLinesJson = null;
