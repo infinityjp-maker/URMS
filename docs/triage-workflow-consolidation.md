@@ -1,4 +1,5 @@
-# Triage Workflow Consolidation Report — 2026-03-04
+# Triage Workflow Consolidation Report
+*2026-03-04*
 
 **作業完了レポート — Triage Summary ワークフロー統合**
 
