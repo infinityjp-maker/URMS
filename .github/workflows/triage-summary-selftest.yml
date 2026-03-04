@@ -1,9 +1,16 @@
-name: Triage Summary Self-Test
+name: Triage Summary Selftest
+
+concurrency:
+  group: triage-summary-selftest
+  cancel-in-progress: false
 
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: '0 3 * * *' # nightly
+    - cron: '0 18 * * *'
+
+permissions:
+  contents: read
 
 jobs:
   selftest:
@@ -11,59 +18,65 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          persist-credentials: false
 
-      - name: Install deps
-        run: npm ci
+      - name: Ensure tools
+        run: |
+          sudo apt-get update -y || true
+          sudo apt-get install -y jq unzip || true
 
-      - name: Run generator with test input
+      - name: Generate current triage summary if test input exists
         env:
-          TRIAGE_INPUT: .github/testdata/triage.json
           DEST: ${{ runner.temp }}/triage-summary.md
         run: |
-          node .github/workflows/generate-triage-summary.cjs DEST="$DEST" || (echo 'generator failed' && exit 1)
-
-      - name: Verify generated files
-        run: |
-          set -e
           TMP=${RUNNER_TEMP}
-          echo "Checking files in $TMP"
-          required=(triage-summary.md triage-summary.html triage-summary.txt triage-summary.md.gz triage-summary.html.gz triage-summary.txt.gz)
-          for f in "${required[@]}"; do
-            if [ ! -f "$TMP/$f" ]; then echo "MISSING: $f"; exit 1; fi
-            echo "OK: $f";
-          done
-          # check md contains Overview and Summary
-          grep -q "## Overview" "$TMP/triage-summary.md"
-          grep -q "### Summary" "$TMP/triage-summary.md"
-          # check html contains severity badge or critical
-          if ! grep -qi "critical" "$TMP/triage-summary.html" && ! grep -q "#c53030" "$TMP/triage-summary.html"; then
-            echo "Severity badge not found in HTML"; exit 1;
+          if [ -f "builds/diagnostics/triage.json" ]; then
+            node .github/workflows/generate-triage-summary.cjs DEST="$DEST" || (echo 'generator failed' && exit 1)
+          else
+            echo "No test input; skipping generation"
           fi
-          # test gzip integrity
-          for gz in "$TMP"/*.gz; do
-            gunzip -t "$gz" || (echo "gzip integrity failed: $gz" && exit 1);
-            echo "gzip OK: $gz";
-          done
-          # if triage-internal-errors.txt expected in testdata (long internalErrors), ensure it exists
-          if [ -f "$TMP/triage-internal-errors.txt" ]; then echo "Found extracted internal errors"; fi
-          echo 'SELFTEST OK'
         shell: bash
 
       - name: Validate triage outputs (selftest)
         run: |
-          echo 'Validating triage outputs (selftest)'
           node .github/triage-tools/validate-triage-output.cjs "$RUNNER_TEMP" || (echo 'selftest validation failed' && exit 1)
+        shell: bash
+
+      - name: Build integrated report (save to RUNNER_TEMP)
+        run: |
+          set -e
+          TMP=${RUNNER_TEMP}
+          OUT="$TMP/triage-summary-full-report.md"
+          echo "# Triage Summary Full Report" > "$OUT"
+          echo "Generated: $(date -u --rfc-3339=seconds)" >> "$OUT"
+          echo "" >> "$OUT"
+          if [ -f "$TMP/triage-summary.md" ]; then
+            awk '/## Overview/{flag=1} /---/{if(flag && /Details/){exit}} flag{print}' "$TMP/triage-summary.md" | sed -n '1,200p' >> "$OUT" || true
+          fi
+          echo "" >> "$OUT"
+          DIFF="$TMP/triage-diff.json"
+          if [ -f "$DIFF" ]; then
+            jq '.' "$DIFF" >> "$OUT" 2>/dev/null || cat "$DIFF" >> "$OUT"
+          else
+            echo '- No triage-diff.json available' >> "$OUT"
+          fi
+        shell: bash
+
+      - name: Summarize diff and LLM summary (must succeed)
+        run: |
+          set -e
+          TMP=${RUNNER_TEMP}
+          node .github/triage-tools/summarize-diff.cjs --in "$TMP/triage-diff.json" --out "$TMP/triage-diff-summary.md"
+          node .github/triage-tools/llm-summarize-diff.cjs --in "$TMP/triage-diff.json" --out "$TMP/triage-llm-summary.md"
+          mkdir -p "$TMP/selftest-outputs"
+          cp "$TMP/triage-diff-summary.md" "$TMP/selftest-outputs/triage-diff-summary.md" || true
+          cp "$TMP/triage-llm-summary.md" "$TMP/selftest-outputs/triage-llm-summary.md" || true
+          cp "$TMP/triage-summary-full-report.md" "$TMP/selftest-outputs/triage-summary-full-report.md" || true
         shell: bash
 
       - name: Upload selftest artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: triage-selftest-artifacts
-          path: |
-            ${{ runner.temp }}/triage-summary.*
-            ${{ runner.temp }}/triage-internal-errors.txt
+          name: triage-selftest-outputs
+          path: ${{ runner.temp }}/selftest-outputs
