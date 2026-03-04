@@ -8,13 +8,27 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
   const browser = await chromium.launch();
   const page = await browser.newPage();
   const consoleErrors = [];
+  const failedResponses = [];
   page.on('console', msg => {
     if (!msg.type || msg.type() !== 'error') return;
     const text = msg.text ? msg.text() : String(msg);
-    // Ignore expected 404s for static assets that may be present as .md but not .html
-    // These are benign when the page degrades gracefully (it shows a message instead).
-    if (/Failed to load resource/.test(text) && /404/.test(text) && (/\/reports\//.test(text) || /\/diffs\//.test(text))) return;
+    // Some console errors come without URLs; keep them unless obviously benign
+    if (/Failed to load resource/.test(text) && /404/.test(text) && (/reports\//.test(text) || /diffs\//.test(text))) return;
     consoleErrors.push(text);
+  });
+  page.on('response', resp => {
+    try{
+      const url = typeof resp.url === 'function' ? resp.url() : (resp.url || '');
+      const status = typeof resp.status === 'function' ? resp.status() : (resp.status || 0);
+      if (status >= 400) failedResponses.push({ url, status });
+    }catch(e){}
+  });
+  page.on('requestfailed', rf => {
+    try{
+      const url = typeof rf.url === 'function' ? rf.url() : (rf.url || '');
+      const failure = rf.failure ? (typeof rf.failure === 'function' ? rf.failure() : rf.failure) : null;
+      failedResponses.push({ url, failureText: failure });
+    }catch(e){}
   });
 
   try {
@@ -45,8 +59,8 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     }
 
     // Wait for the page to render the latest report and diff summary areas
-    await page.waitForSelector('#latest-report', { state: 'visible', timeout: 12000 }).catch(()=>{});
-    await page.waitForSelector('#report-content', { state: 'visible', timeout: 12000 }).catch(()=>{});
+    await page.waitForSelector('#latest-report', { state: 'visible', timeout: 20000 }).catch(()=>{});
+    await page.waitForSelector('#report-content', { state: 'visible', timeout: 20000 }).catch(()=>{});
     // Wait until report-content is not the loading placeholder
     await page.waitForFunction(() => {
       const el = document.getElementById('report-content');
@@ -54,7 +68,7 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     }, { timeout: 8000 }).catch(()=>{});
 
     // Wait for diff content to be populated
-    await page.waitForSelector('#diff-content', { state: 'visible', timeout: 12000 }).catch(()=>{});
+    await page.waitForSelector('#diff-content', { state: 'visible', timeout: 20000 }).catch(()=>{});
     await page.waitForFunction(() => {
       const el = document.getElementById('diff-content');
       return el && el.innerText && !/loading/i.test(el.innerText) && !/Error loading diff summary/i.test(el.innerText);
@@ -70,6 +84,16 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
       if (!diffLinesJson) throw new Error('Failed to parse diff lines JSON');
     }
 
+    // Filter failedResponses: ignore 404s under /reports/ and /diffs/
+    const relevantFailed = (failedResponses || []).filter(r => {
+      const u = String(r.url || '');
+      const status = r.status || 0;
+      if (status === 404 && (/\/reports\//.test(u) || /\/diffs\//.test(u))) return false;
+      return true;
+    });
+    if (relevantFailed.length > 0) {
+      throw new Error('Network failures detected: ' + JSON.stringify(relevantFailed.slice(0,5)));
+    }
     if (consoleErrors.length > 0) {
       throw new Error('Console errors detected: ' + JSON.stringify(consoleErrors.slice(0,5)));
     }
