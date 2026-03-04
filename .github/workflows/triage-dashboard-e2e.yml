@@ -4,6 +4,10 @@ on:
   workflow_dispatch: {}
   schedule:
     - cron: '30 18 * * *'
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -72,4 +76,11 @@ jobs:
           BASE_URL: http://127.0.0.1:8000
         run: |
           echo "Executing E2E script via node ./tests/dashboard-e2e.cjs (BASE_URL=$BASE_URL)"
-          node ./tests/dashboard-e2e.cjs
+          # Capture stdout/stderr to e2e_run.log for artifact upload
+          node ./tests/dashboard-e2e.cjs 2>&1 | tee e2e_run.log || true
+
+      - name: Upload E2E run log artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-dashboard-e2e-log
+          path: e2e_run.log
