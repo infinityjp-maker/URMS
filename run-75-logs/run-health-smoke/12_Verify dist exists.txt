@@ -1,0 +1,18 @@
+﻿2026-03-03T14:33:35.5684562Z ##[group]Run echo 'Checking dist directory'
+2026-03-03T14:33:35.5684923Z [36;1mecho 'Checking dist directory'[0m
+2026-03-03T14:33:35.5685728Z [36;1mif [ ! -d "$GITHUB_WORKSPACE/dist" ]; then echo 'dist missing' && ls -la || true; exit 1; fi[0m
+2026-03-03T14:33:35.5686197Z [36;1mls -la "$GITHUB_WORKSPACE/dist" | sed -n '1,80p'[0m
+2026-03-03T14:33:35.5686629Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:35.5686887Z env:
+2026-03-03T14:33:35.5687283Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:35.5687739Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:35.5687924Z ##[endgroup]
+2026-03-03T14:33:35.6268566Z Checking dist directory
+2026-03-03T14:33:35.6289572Z total 36
+2026-03-03T14:33:35.6290187Z drwxr-xr-x  3 root root 4096 Mar  3 14:33 .
+2026-03-03T14:33:35.6290947Z drwxr-xr-x 31 1001 1001 4096 Mar  3 14:33 ..
+2026-03-03T14:33:35.6311765Z drwxr-xr-x  3 root root 4096 Mar  3 14:33 assets
+2026-03-03T14:33:35.6312537Z -rw-r--r--  1 root root 1296 Mar  3 14:33 ci-preflight.html
+2026-03-03T14:33:35.6313742Z -rw-r--r--  1 root root 9749 Mar  3 14:33 index.html
+2026-03-03T14:33:35.6314434Z -rw-r--r--  1 root root 2599 Mar  3 14:33 tauri.svg
+2026-03-03T14:33:35.6315309Z -rw-r--r--  1 root root 1497 Mar  3 14:33 vite.svg

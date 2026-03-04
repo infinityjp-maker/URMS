@@ -1,0 +1,14 @@
+﻿2026-03-03T14:33:36.9066437Z ##[group]Run echo 'Running pre-smoke connectivity probes';
+2026-03-03T14:33:36.9066863Z [36;1mecho 'Running pre-smoke connectivity probes';[0m
+2026-03-03T14:33:36.9067233Z [36;1mnode .github/workflows/pre-smoke-probes.cjs || true[0m
+2026-03-03T14:33:36.9067585Z [36;1mecho '--- connectivity-preflight.json ---';[0m
+2026-03-03T14:33:36.9068008Z [36;1msudo sed -n '1,200p' builds/diagnostics/connectivity-preflight.json || true[0m
+2026-03-03T14:33:36.9068490Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:36.9068756Z env:
+2026-03-03T14:33:36.9069147Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:36.9069621Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:36.9069813Z ##[endgroup]
+2026-03-03T14:33:36.9643596Z Running pre-smoke connectivity probes
+2026-03-03T14:33:37.0149791Z PRE_SMOKE_PROBES [{"port":1420,"tcp":true,"http":false,"host":"127.0.0.1"},{"port":1420,"tcp":true,"http":false,"host":"tauri.localhost"},{"port":8765,"tcp":true,"http":true,"host":"127.0.0.1"},{"port":8765,"tcp":true,"http":true,"host":"tauri.localhost"},{"port":8877,"tcp":true,"http":true,"host":"127.0.0.1"},{"port":8877,"tcp":true,"http":true,"host":"tauri.localhost"}]
+2026-03-03T14:33:37.0178210Z --- connectivity-preflight.json ---
+2026-03-03T14:33:37.0183258Z /__w/_temp/1d0db0f7-c5b0-46b1-ac22-73c4dd2529c7.sh: line 4: sudo: command not found

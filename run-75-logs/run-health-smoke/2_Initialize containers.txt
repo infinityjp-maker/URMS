@@ -1,0 +1,55 @@
+﻿2026-03-03T14:32:16.0094086Z ##[group]Checking docker version
+2026-03-03T14:32:16.0108564Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+2026-03-03T14:32:19.4111221Z '1.48'
+2026-03-03T14:32:19.4124487Z Docker daemon API version: '1.48'
+2026-03-03T14:32:19.4125012Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+2026-03-03T14:32:19.4303259Z '1.48'
+2026-03-03T14:32:19.4317706Z Docker client API version: '1.48'
+2026-03-03T14:32:19.4323167Z ##[endgroup]
+2026-03-03T14:32:19.4326717Z ##[group]Clean up resources from previous jobs
+2026-03-03T14:32:19.4331551Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=75e822"
+2026-03-03T14:32:19.4526975Z ##[command]/usr/bin/docker network prune --force --filter "label=75e822"
+2026-03-03T14:32:19.4664605Z ##[endgroup]
+2026-03-03T14:32:19.4664997Z ##[group]Create local container network
+2026-03-03T14:32:19.4674527Z ##[command]/usr/bin/docker network create --label 75e822 github_network_454323dd307b4820a8b55ab7360231f6
+2026-03-03T14:32:19.5271667Z da00961a53c04f756aedbf1a121bb42319aaebfb604611107ef4f8796f60b590
+2026-03-03T14:32:19.5289345Z ##[endgroup]
+2026-03-03T14:32:19.5312952Z ##[group]Starting job container
+2026-03-03T14:32:19.5332844Z ##[command]/usr/bin/docker pull mcr.microsoft.com/playwright:focal
+2026-03-03T14:32:19.8139347Z focal: Pulling from playwright
+2026-03-03T14:32:19.9481427Z 560c024910be: Pulling fs layer
+2026-03-03T14:32:19.9482011Z 7ebec2dd9830: Pulling fs layer
+2026-03-03T14:32:19.9482436Z d82db91d7999: Pulling fs layer
+2026-03-03T14:32:19.9482826Z bb9b0f907d7d: Pulling fs layer
+2026-03-03T14:32:19.9483200Z bb9b0f907d7d: Waiting
+2026-03-03T14:32:20.0548413Z d82db91d7999: Verifying Checksum
+2026-03-03T14:32:20.0549276Z d82db91d7999: Download complete
+2026-03-03T14:32:20.1917738Z 560c024910be: Download complete
+2026-03-03T14:32:20.4323839Z 7ebec2dd9830: Verifying Checksum
+2026-03-03T14:32:20.4326666Z 7ebec2dd9830: Download complete
+2026-03-03T14:32:21.3332982Z 560c024910be: Pull complete
+2026-03-03T14:32:22.4651547Z bb9b0f907d7d: Verifying Checksum
+2026-03-03T14:32:22.4652645Z bb9b0f907d7d: Download complete
+2026-03-03T14:32:27.9508877Z 7ebec2dd9830: Pull complete
+2026-03-03T14:32:27.9748285Z d82db91d7999: Pull complete
+2026-03-03T14:32:41.9395376Z bb9b0f907d7d: Pull complete
+2026-03-03T14:32:41.9452744Z Digest: sha256:2286c685f2be91dd3ee482f1a3d382af08c9a1049406c9f7b499aec6ad691a2c
+2026-03-03T14:32:41.9471712Z Status: Downloaded newer image for mcr.microsoft.com/playwright:focal
+2026-03-03T14:32:41.9480961Z mcr.microsoft.com/playwright:focal
+2026-03-03T14:32:41.9562480Z ##[command]/usr/bin/docker create --name 030050ec4c1845e2a7735b071562d524_mcrmicrosoftcomplaywrightfocal_5c60dd --label 75e822 --workdir /__w/URMS/URMS --network github_network_454323dd307b4820a8b55ab7360231f6  -e "HOME=/github/home" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work":"/__w" -v "/home/runner/actions-runner/cached/externals":"/__e":ro -v "/home/runner/work/_temp":"/__w/_temp" -v "/home/runner/work/_actions":"/__w/_actions" -v "/opt/hostedtoolcache":"/__t" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" --entrypoint "tail" mcr.microsoft.com/playwright:focal "-f" "/dev/null"
+2026-03-03T14:32:41.9880758Z 85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f
+2026-03-03T14:32:41.9906110Z ##[command]/usr/bin/docker start 85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f
+2026-03-03T14:32:42.6764086Z 85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f
+2026-03-03T14:32:42.6790630Z ##[command]/usr/bin/docker ps --all --filter id=85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+2026-03-03T14:32:42.6913252Z 85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f Up Less than a second
+2026-03-03T14:32:42.6933744Z ##[command]/usr/bin/docker inspect --format "{{range .Config.Env}}{{println .}}{{end}}" 85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f
+2026-03-03T14:32:42.7055245Z HOME=/github/home
+2026-03-03T14:32:42.7055765Z GITHUB_ACTIONS=true
+2026-03-03T14:32:42.7056070Z CI=true
+2026-03-03T14:32:42.7056334Z PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+2026-03-03T14:32:42.7056675Z LANG=C.UTF-8
+2026-03-03T14:32:42.7056849Z LC_ALL=C.UTF-8
+2026-03-03T14:32:42.7057055Z PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+2026-03-03T14:32:42.7074558Z ##[endgroup]
+2026-03-03T14:32:42.7084295Z ##[group]Waiting for all services to be ready
+2026-03-03T14:32:42.7086228Z ##[endgroup]

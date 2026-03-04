@@ -1,0 +1,13 @@
+﻿2026-03-03T14:33:56.8693309Z ##[group]Run node scripts/auto-triage-smoke.cjs || true
+2026-03-03T14:33:56.8693722Z [36;1mnode scripts/auto-triage-smoke.cjs || true[0m
+2026-03-03T14:33:56.8694033Z [36;1mecho '--- auto-triage output ---'[0m
+2026-03-03T14:33:56.8694390Z [36;1msudo sed -n '1,200p' .github/actions-runs/smoke-triage.txt || true[0m
+2026-03-03T14:33:56.8694813Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:56.8695312Z env:
+2026-03-03T14:33:56.8695890Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:56.8696372Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:56.8696560Z ##[endgroup]
+2026-03-03T14:33:56.9461275Z Wrote .github/actions-runs/smoke-triage.txt
+2026-03-03T14:33:56.9471344Z Wrote builds/diagnostics/triage.json
+2026-03-03T14:33:56.9501490Z --- auto-triage output ---
+2026-03-03T14:33:56.9505662Z /__w/_temp/a86699be-ad93-4510-a5a3-78fc50d9423b.sh: line 3: sudo: command not found

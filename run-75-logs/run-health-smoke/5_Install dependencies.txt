@@ -1,0 +1,20 @@
+﻿2026-03-03T14:32:49.7100578Z ##[group]Run npm ci
+2026-03-03T14:32:49.7100882Z [36;1mnpm ci[0m
+2026-03-03T14:32:49.7104150Z shell: sh -e {0}
+2026-03-03T14:32:49.7104377Z env:
+2026-03-03T14:32:49.7104807Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:32:49.7105708Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:32:49.7105926Z ##[endgroup]
+2026-03-03T14:32:51.4876830Z npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+2026-03-03T14:32:55.1799601Z 
+2026-03-03T14:32:55.1800638Z added 358 packages, and audited 359 packages in 5s
+2026-03-03T14:32:55.1801183Z 
+2026-03-03T14:32:55.1801394Z 62 packages are looking for funding
+2026-03-03T14:32:55.1801776Z   run `npm fund` for details
+2026-03-03T14:32:55.1929806Z 
+2026-03-03T14:32:55.1930278Z 2 high severity vulnerabilities
+2026-03-03T14:32:55.1930702Z 
+2026-03-03T14:32:55.1930970Z To address all issues, run:
+2026-03-03T14:32:55.1931369Z   npm audit fix
+2026-03-03T14:32:55.1931584Z 
+2026-03-03T14:32:55.1931727Z Run `npm audit` for details.

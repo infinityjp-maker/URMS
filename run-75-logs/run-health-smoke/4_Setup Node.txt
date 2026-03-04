@@ -1,0 +1,21 @@
+﻿2026-03-03T14:32:44.8661503Z ##[group]Run actions/setup-node@v4
+2026-03-03T14:32:44.8661779Z with:
+2026-03-03T14:32:44.8661954Z   node-version: 20.19.0
+2026-03-03T14:32:44.8662160Z   always-auth: false
+2026-03-03T14:32:44.8662346Z   check-latest: false
+2026-03-03T14:32:44.8662649Z   token: ***
+2026-03-03T14:32:44.8662814Z env:
+2026-03-03T14:32:44.8663399Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:32:44.8663868Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:32:44.8664053Z ##[endgroup]
+2026-03-03T14:32:44.8668086Z ##[command]/usr/bin/docker exec  85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f sh -c "cat /etc/*release | grep ^ID"
+2026-03-03T14:32:45.1592885Z Attempting to download 20.19.0...
+2026-03-03T14:32:46.0142895Z Acquiring 20.19.0 - x64 from https://github.com/actions/node-versions/releases/download/20.19.0-13838090974/node-20.19.0-linux-x64.tar.gz
+2026-03-03T14:32:46.5122879Z Extracting ...
+2026-03-03T14:32:46.5218842Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /__w/_temp/b03fd455-e8ce-4f53-becf-81968c206e90 -f /__w/_temp/0c147b25-9734-437b-9dfa-88b1de8e808c
+2026-03-03T14:32:47.5735222Z Adding to the cache ...
+2026-03-03T14:32:49.4523666Z ##[group]Environment details
+2026-03-03T14:32:49.6902465Z node: v20.19.0
+2026-03-03T14:32:49.6903002Z npm: 10.8.2
+2026-03-03T14:32:49.6903282Z yarn: 1.22.22
+2026-03-03T14:32:49.6903930Z ##[endgroup]

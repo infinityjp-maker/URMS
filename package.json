@@ -16,7 +16,8 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "icons:generate": "node Work/scripts/generate-icons.cjs",
-    "test": "vitest",
+    "test": "vitest && node .github/triage-tools/tests/run-tests.cjs",
+    "test:triage-tools": "node .github/triage-tools/tests/run-tests.cjs && node .github/triage-tools/tests/test-diff.cjs && node .github/triage-tools/tests/test-summarize-diff.cjs && node .github/triage-tools/tests/test-dashboard-structure.cjs && node .github/triage-tools/tests/test-dashboard-ui.cjs",
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {

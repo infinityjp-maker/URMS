@@ -1,0 +1,166 @@
+﻿2026-03-03T14:33:58.4847359Z ##[group]Run echo '--- workspace root ---'
+2026-03-03T14:33:58.4847868Z [36;1mecho '--- workspace root ---'[0m
+2026-03-03T14:33:58.4848168Z [36;1mls -la "$GITHUB_WORKSPACE" | sed -n '1,200p' || true[0m
+2026-03-03T14:33:58.4848483Z [36;1mecho '--- .github/actions-runs ---'[0m
+2026-03-03T14:33:58.4848755Z [36;1mls -la .github/actions-runs || true[0m
+2026-03-03T14:33:58.4849011Z [36;1mecho '--- builds/diagnostics ---'[0m
+2026-03-03T14:33:58.4849267Z [36;1mls -la builds/diagnostics || true[0m
+2026-03-03T14:33:58.4849510Z [36;1mecho '--- screenshots ---'[0m
+2026-03-03T14:33:58.4849739Z [36;1mls -la screenshots || true[0m
+2026-03-03T14:33:58.4849975Z [36;1mecho '--- capture disk usage ---'[0m
+2026-03-03T14:33:58.4850225Z [36;1mdu -sh .github/actions-runs || true[0m
+2026-03-03T14:33:58.4850480Z [36;1mdu -sh builds/diagnostics || true[0m
+2026-03-03T14:33:58.4850713Z [36;1mdu -sh screenshots || true[0m
+2026-03-03T14:33:58.4851028Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:58.4851305Z env:
+2026-03-03T14:33:58.4851699Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:58.4852149Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:58.4852335Z ##[endgroup]
+2026-03-03T14:33:58.5403105Z --- workspace root ---
+2026-03-03T14:33:58.5431942Z total 2364
+2026-03-03T14:33:58.5432662Z drwxr-xr-x  31 1001 1001    4096 Mar  3 14:33 .
+2026-03-03T14:33:58.5433301Z drwxr-xr-x   3 1001 1001    4096 Mar  3 14:32 ..
+2026-03-03T14:33:58.5434368Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 .cargo
+2026-03-03T14:33:58.5434972Z drwxr-xr-x  39 root root    4096 Mar  3 14:32 .gh-logs
+2026-03-03T14:33:58.5436459Z -rw-r--r--   1 root root    3199 Mar  3 14:32 .gh-run-list.json
+2026-03-03T14:33:58.5437246Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 .gh-run-logs
+2026-03-03T14:33:58.5438052Z -rw-r--r--   1 root root     643 Mar  3 14:32 .gh_branch_protection.json
+2026-03-03T14:33:58.5438801Z drwxr-xr-x   8 root root    4096 Mar  3 14:32 .git
+2026-03-03T14:33:58.5439548Z drwxr-xr-x   5 root root    4096 Mar  3 14:32 .github
+2026-03-03T14:33:58.5440225Z -rw-r--r--   1 root root     912 Mar  3 14:32 .gitignore
+2026-03-03T14:33:58.5440880Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 .temp
+2026-03-03T14:33:58.5441506Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 .tmp
+2026-03-03T14:33:58.5442143Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 .vscode
+2026-03-03T14:33:58.5442798Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 Backend
+2026-03-03T14:33:58.5443448Z -rw-r--r--   1 root root    6307 Mar  3 14:32 README.md
+2026-03-03T14:33:58.5444090Z drwxr-xr-x   4 root root    4096 Mar  3 14:32 Source
+2026-03-03T14:33:58.5444722Z drwxr-xr-x   4 root root    4096 Mar  3 14:32 SpecDoc
+2026-03-03T14:33:58.5445591Z drwxr-xr-x   5 root root    4096 Mar  3 14:32 Tests
+2026-03-03T14:33:58.5446203Z drwxr-xr-x   5 root root    4096 Mar  3 14:32 Work
+2026-03-03T14:33:58.5446951Z -rw-r--r--   1 root root     278 Mar  3 14:32 artifact-inventory.json
+2026-03-03T14:33:58.5447799Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22546875022
+2026-03-03T14:33:58.5448637Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22546974945
+2026-03-03T14:33:58.5449464Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22547036071
+2026-03-03T14:33:58.5450277Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22547120311
+2026-03-03T14:33:58.5451094Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22547184938
+2026-03-03T14:33:58.5451906Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22547338521
+2026-03-03T14:33:58.5452715Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22547442521
+2026-03-03T14:33:58.5453527Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 artifacts-22547588923
+2026-03-03T14:33:58.5454227Z drwxr-xr-x   7 root root    4096 Mar  3 14:32 builds
+2026-03-03T14:33:58.5454984Z -rw-r--r--   1 root root     108 Mar  3 14:32 ci-artifact-5433575398.zip
+2026-03-03T14:33:58.5456020Z -rw-r--r--   1 root root     108 Mar  3 14:32 ci-artifact-5433612517.zip
+2026-03-03T14:33:58.5457561Z -rw-r--r--   1 root root    6634 Mar  3 14:32 cleanup-v4-migration.ps1
+2026-03-03T14:33:58.5458298Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 data
+2026-03-03T14:33:58.5459004Z -rw-r--r--   1 root root     958 Mar  3 14:32 dispatch_and_poll.ps1
+2026-03-03T14:33:58.5459699Z drwxr-xr-x   3 root root    4096 Mar  3 14:33 dist
+2026-03-03T14:33:58.5460417Z -rw-r--r--   1 root root       0 Mar  3 14:32 dist_server_pid.txt
+2026-03-03T14:33:58.5461146Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 docs
+2026-03-03T14:33:58.5461825Z -rw-r--r--   1 root root    8344 Mar  3 14:32 index.html
+2026-03-03T14:33:58.5462499Z drwxr-xr-x 220 root root   12288 Mar  3 14:33 node_modules
+2026-03-03T14:33:58.5463228Z -rw-r--r--   1 root root    1175 Mar  3 14:32 out_exe_icon.png
+2026-03-03T14:33:58.5463797Z -rw-r--r--   1 root root    2164 Mar  3 14:32 out_ico_icon.png
+2026-03-03T14:33:58.5464593Z -rw-r--r--   1 root root  230173 Mar  3 14:32 package-lock.json
+2026-03-03T14:33:58.5465667Z -rw-r--r--   1 root root    1528 Mar  3 14:32 package.json
+2026-03-03T14:33:58.5466418Z -rw-r--r--   1 root root     811 Mar  3 14:32 poll_run.ps1
+2026-03-03T14:33:58.5467151Z -rw-r--r--   1 root root     106 Mar  3 14:32 pr_fix_update.json
+2026-03-03T14:33:58.5467882Z -rw-r--r--   1 root root   16934 Mar  3 14:32 pr_info.json
+2026-03-03T14:33:58.5468583Z -rw-r--r--   1 root root   16935 Mar  3 14:32 pr_info_view.txt
+2026-03-03T14:33:58.5469282Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 public
+2026-03-03T14:33:58.5470100Z -rw-r--r--   1 root root   29798 Mar  3 14:32 release-preview-log-2.txt
+2026-03-03T14:33:58.5470974Z -rw-r--r--   1 root root   29805 Mar  3 14:32 release-preview-log-3.txt
+2026-03-03T14:33:58.5471838Z -rw-r--r--   1 root root   30881 Mar  3 14:32 release-preview-log-4.txt
+2026-03-03T14:33:58.5472714Z -rw-r--r--   1 root root   29945 Mar  3 14:32 release-preview-log-5.txt
+2026-03-03T14:33:58.5473560Z -rw-r--r--   1 root root   31409 Mar  3 14:32 release-preview-log.txt
+2026-03-03T14:33:58.5474396Z -rw-r--r--   1 root root       0 Mar  3 14:32 run-21845072004-logs.zip
+2026-03-03T14:33:58.5475411Z drwxr-xr-x   2 root root    4096 Mar  3 14:32 screenshots
+2026-03-03T14:33:58.5476111Z drwxr-xr-x   3 root root    4096 Mar  3 14:32 scripts
+2026-03-03T14:33:58.5476878Z -rw-r--r--   1 root root       0 Mar  3 14:32 stash0.patch
+2026-03-03T14:33:58.5477667Z -rw-r--r--   1 root root     571 Mar  3 14:32 tmp_monitor_pr.ps1
+2026-03-03T14:33:58.5478423Z -rw-r--r--   1 root root     810 Mar  3 14:32 tmp_pr_body.md
+2026-03-03T14:33:58.5479180Z -rw-r--r--   1 root root     782 Mar  3 14:32 tmp_wait_checks.ps1
+2026-03-03T14:33:58.5479922Z -rw-r--r--   1 root root   10937 Mar  3 14:32 tmp_wf_b64.txt
+2026-03-03T14:33:58.5480663Z -rw-r--r--   1 root root    1246 Mar  3 14:32 tmp_wf_main_b64.txt
+2026-03-03T14:33:58.5481400Z -rw-r--r--   1 root root    1048 Mar  3 14:32 tsconfig.json
+2026-03-03T14:33:58.5482162Z -rw-r--r--   1 root root     213 Mar  3 14:32 tsconfig.node.json
+2026-03-03T14:33:58.5482964Z -rw-r--r--   1 root root    2930 Mar  3 14:32 urms_process_info.txt
+2026-03-03T14:33:58.5483802Z -rw-r--r--   1 root root 1711848 Mar  3 14:32 urms_runtime_debug.txt
+2026-03-03T14:33:58.5484582Z -rw-r--r--   1 root root       0 Mar  3 14:32 urms_stderr.txt
+2026-03-03T14:33:58.5485543Z -rw-r--r--   1 root root     230 Mar  3 14:32 urms_stderr_dev.txt
+2026-03-03T14:33:58.5486322Z -rw-r--r--   1 root root     300 Mar  3 14:32 urms_stderr_final.txt
+2026-03-03T14:33:58.5487075Z -rw-r--r--   1 root root       0 Mar  3 14:32 urms_stdout.txt
+2026-03-03T14:33:58.5487846Z -rw-r--r--   1 root root       0 Mar  3 14:32 urms_stdout_dev.txt
+2026-03-03T14:33:58.5488651Z -rw-r--r--   1 root root       0 Mar  3 14:32 urms_stdout_final.txt
+2026-03-03T14:33:58.5489406Z -rw-r--r--   1 root root    2492 Mar  3 14:32 vite.config.ts
+2026-03-03T14:33:58.5490120Z -rw-r--r--   1 root root    1245 Mar  3 14:32 vitest.config.ts
+2026-03-03T14:33:58.5490677Z --- .github/actions-runs ---
+2026-03-03T14:33:58.5507647Z total 204
+2026-03-03T14:33:58.5508460Z drwxr-xr-x 23 root root  4096 Mar  3 14:33 .
+2026-03-03T14:33:58.5509248Z drwxr-xr-x  5 root root  4096 Mar  3 14:32 ..
+2026-03-03T14:33:58.5509986Z drwxr-xr-x  6 root root  4096 Mar  3 14:32 backup-run-22540575287
+2026-03-03T14:33:58.5511171Z -rw-r--r--  1 root root 11197 Mar  3 14:32 candidates.json
+2026-03-03T14:33:58.5512673Z -rw-r--r--  1 root root     0 Mar  3 14:32 kill_all_report.json
+2026-03-03T14:33:58.5514111Z -rw-r--r--  1 root root   628 Mar  3 14:32 kill_all_terminals.ps1
+2026-03-03T14:33:58.5515666Z -rw-r--r--  1 root root   536 Mar  3 14:32 kill_idle_terminals.ps1
+2026-03-03T14:33:58.5516455Z -rw-r--r--  1 root root   395 Mar  3 14:32 kill_idle_terminals2.ps1
+2026-03-03T14:33:58.5517169Z -rw-r--r--  1 root root     0 Mar  3 14:32 killed.json
+2026-03-03T14:33:58.5517872Z -rw-r--r--  1 root root  3717 Mar  3 14:32 killed2.json
+2026-03-03T14:33:58.5518597Z -rw-r--r--  1 root root   587 Mar  3 14:33 last-smoke.log
+2026-03-03T14:33:58.5519377Z -rw-r--r--  1 root root   386 Mar  3 14:32 list_idle_candidates.ps1
+2026-03-03T14:33:58.5520208Z -rw-r--r--  1 root root   509 Mar  3 14:32 list_ps_procs.ps1
+2026-03-03T14:33:58.5521020Z -rw-r--r--  1 root root   616 Mar  3 14:32 poll-run-and-download.ps1
+2026-03-03T14:33:58.5521900Z -rw-r--r--  1 root root   642 Mar  3 14:32 poll-run-and-download2.ps1
+2026-03-03T14:33:58.5522737Z -rw-r--r--  1 root root 18455 Mar  3 14:32 ps_procs.json
+2026-03-03T14:33:58.5523483Z drwxr-xr-x  2 root root  4096 Mar  3 14:32 run-22326601457
+2026-03-03T14:33:58.5524190Z drwxr-xr-x  2 root root  4096 Mar  3 14:32 run-22326768420
+2026-03-03T14:33:58.5524941Z drwxr-xr-x  2 root root  4096 Mar  3 14:32 run-22351239080
+2026-03-03T14:33:58.5525920Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22494809081
+2026-03-03T14:33:58.5526664Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22494960251
+2026-03-03T14:33:58.5527403Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22513094781
+2026-03-03T14:33:58.5528119Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22513848934
+2026-03-03T14:33:58.5528844Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22514795890
+2026-03-03T14:33:58.5529566Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22514950675
+2026-03-03T14:33:58.5530320Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22514950675-2
+2026-03-03T14:33:58.5531085Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22522701124
+2026-03-03T14:33:58.5531842Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22522825377
+2026-03-03T14:33:58.5532599Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22524159218
+2026-03-03T14:33:58.5533338Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22524769890
+2026-03-03T14:33:58.5534068Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22531489604
+2026-03-03T14:33:58.5534796Z drwxr-xr-x  5 root root  4096 Mar  3 14:32 run-22540477809
+2026-03-03T14:33:58.5536130Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22540575287
+2026-03-03T14:33:58.5536874Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22540778119
+2026-03-03T14:33:58.5537626Z drwxr-xr-x  3 root root  4096 Mar  3 14:32 run-22541237203
+2026-03-03T14:33:58.5538369Z drwxr-xr-x  6 root root  4096 Mar  3 14:32 run-22544446505
+2026-03-03T14:33:58.5539102Z -rw-r--r--  1 root root  1879 Mar  3 14:33 smoke-summary.txt
+2026-03-03T14:33:58.5539840Z -rw-r--r--  1 root root  1919 Mar  3 14:33 smoke-triage.txt
+2026-03-03T14:33:58.5540543Z -rw-r--r--  1 root root 26257 Mar  3 14:33 triage.json
+2026-03-03T14:33:58.5541288Z -rw-r--r--  1 root root   133 Mar  3 14:32 watcher-state.json
+2026-03-03T14:33:58.5542143Z -rw-r--r--  1 root root  1044 Mar  3 14:32 workflow-237401233-runs.json
+2026-03-03T14:33:58.5542770Z --- builds/diagnostics ---
+2026-03-03T14:33:58.5543153Z total 132
+2026-03-03T14:33:58.5543574Z drwxr-xr-x 2 root root  4096 Mar  3 14:33 .
+2026-03-03T14:33:58.5544162Z drwxr-xr-x 7 root root  4096 Mar  3 14:32 ..
+2026-03-03T14:33:58.5544874Z -rw-r--r-- 1 root root   382 Mar  3 14:33 browser-preflight.json
+2026-03-03T14:33:58.5546231Z -rw-r--r-- 1 root root 23044 Mar  3 14:33 browser-resolve.json
+2026-03-03T14:33:58.5547519Z -rw-r--r-- 1 root root   538 Mar  3 14:33 connectivity-preflight.json
+2026-03-03T14:33:58.5548653Z -rw-r--r-- 1 root root     2 Mar  3 14:32 consoleMessages.json
+2026-03-03T14:33:58.5549454Z -rw-r--r-- 1 root root  7140 Mar  3 14:32 domSnapshot.json
+2026-03-03T14:33:58.5550264Z -rw-r--r-- 1 root root     2 Mar  3 14:32 networkRequests.json
+2026-03-03T14:33:58.5551054Z -rw-r--r-- 1 root root     2 Mar  3 14:32 networkResponses.json
+2026-03-03T14:33:58.5551876Z -rw-r--r-- 1 root root   106 Mar  3 14:32 readiness-key-html.json
+2026-03-03T14:33:58.5552723Z -rw-r--r-- 1 root root  9690 Mar  3 14:32 smoke-result.full.json
+2026-03-03T14:33:58.5553518Z -rw-r--r-- 1 root root  9690 Mar  3 14:32 smoke-result.json
+2026-03-03T14:33:58.5554411Z -rw-r--r-- 1 root root     2 Mar  3 14:32 timeout-ux-ping.consoleMessages.json
+2026-03-03T14:33:58.5555513Z -rw-r--r-- 1 root root  3814 Mar  3 14:32 timeout-ux-ping.html
+2026-03-03T14:33:58.5556407Z -rw-r--r-- 1 root root     2 Mar  3 14:32 timeout-ux-ping.networkRequests.json
+2026-03-03T14:33:58.5557460Z -rw-r--r-- 1 root root     2 Mar  3 14:32 timeout-ux-ping.networkResponses.json
+2026-03-03T14:33:58.5558284Z -rw-r--r-- 1 root root 26257 Mar  3 14:33 triage.json
+2026-03-03T14:33:58.5558837Z --- screenshots ---
+2026-03-03T14:33:58.5559176Z total 24
+2026-03-03T14:33:58.5559574Z drwxr-xr-x  2 root root 4096 Mar  3 14:32 .
+2026-03-03T14:33:58.5560141Z drwxr-xr-x 31 1001 1001 4096 Mar  3 14:33 ..
+2026-03-03T14:33:58.5560904Z -rw-r--r--  1 root root 5521 Mar  3 14:32 playwright-smoke-full.png
+2026-03-03T14:33:58.5561742Z -rw-r--r--  1 root root 5521 Mar  3 14:32 playwright-smoke.png
+2026-03-03T14:33:58.5562342Z --- capture disk usage ---
+2026-03-03T14:33:58.5570825Z 2.3M	.github/actions-runs
+2026-03-03T14:33:58.5586532Z 128K	builds/diagnostics
+2026-03-03T14:33:58.5599858Z 20K	screenshots

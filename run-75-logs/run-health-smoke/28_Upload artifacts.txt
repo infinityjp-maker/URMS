@@ -1,0 +1,31 @@
+﻿2026-03-03T14:33:58.5698020Z ##[group]Run actions/upload-artifact@v4
+2026-03-03T14:33:58.5698478Z with:
+2026-03-03T14:33:58.5698761Z   name: smoke-artifacts
+2026-03-03T14:33:58.5699796Z   path: .github/actions-runs/last-smoke.log
+.github/actions-runs/smoke-summary.txt
+.github/actions-runs/triage.json
+builds/diagnostics/**
+screenshots/**
+
+2026-03-03T14:33:58.5700958Z   if-no-files-found: warn
+2026-03-03T14:33:58.5701326Z   compression-level: 6
+2026-03-03T14:33:58.5701651Z   overwrite: false
+2026-03-03T14:33:58.5701960Z   include-hidden-files: false
+2026-03-03T14:33:58.5702310Z env:
+2026-03-03T14:33:58.5702970Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:58.5703798Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:58.5704110Z ##[endgroup]
+2026-03-03T14:33:58.5709664Z ##[command]/usr/bin/docker exec  85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f sh -c "cat /etc/*release | grep ^ID"
+2026-03-03T14:33:58.8996050Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-03-03T14:33:58.9000981Z The least common ancestor is /__w/URMS/URMS. This will be the root directory of the artifact
+2026-03-03T14:33:58.9001929Z With the provided path, there will be 20 files uploaded
+2026-03-03T14:33:58.9006296Z Artifact name is valid!
+2026-03-03T14:33:58.9007607Z Root directory input is valid!
+2026-03-03T14:33:59.2004338Z Beginning upload of artifact content to blob storage
+2026-03-03T14:33:59.6243669Z Uploaded bytes 29350
+2026-03-03T14:33:59.7077655Z Finished uploading artifact content to blob storage!
+2026-03-03T14:33:59.7080118Z SHA256 digest of uploaded artifact zip is bffbe4dc72182d5a96454681ac9fa3533fd0a9ddffaf95342c524789cecbc5bd
+2026-03-03T14:33:59.7082007Z Finalizing artifact upload
+2026-03-03T14:33:59.8692257Z Artifact smoke-artifacts.zip successfully finalized. Artifact ID 5742280074
+2026-03-03T14:33:59.8693885Z Artifact smoke-artifacts has been successfully uploaded! Final size is 29350 bytes. Artifact ID is 5742280074
+2026-03-03T14:33:59.8699307Z Artifact download URL: https://github.com/infinityjp-maker/URMS/actions/runs/22627665490/artifacts/5742280074
