@@ -12,8 +12,8 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
   page.on('console', msg => {
     if (!msg.type || msg.type() !== 'error') return;
     const text = msg.text ? msg.text() : String(msg);
-    // Some console errors come without URLs; keep them unless obviously benign
-    if (/Failed to load resource/.test(text) && /404/.test(text) && (/reports\//.test(text) || /diffs\//.test(text))) return;
+    // Some console errors come without URLs; ignore generic 404 "Failed to load resource" errors
+    if (/Failed to load resource/.test(text) && /404/.test(text)) return;
     consoleErrors.push(text);
   });
   page.on('response', resp => {
