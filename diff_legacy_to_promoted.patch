@@ -1,0 +1,139 @@
+diff --git a/.github/workflows/triage-summary-report-legacy.yml b/.github/workflows/triage-summary-report-promoted.yml
+index 8296ea1..2f34bf4 100644
+--- a/.github/workflows/triage-summary-report-legacy.yml
++++ b/.github/workflows/triage-summary-report-promoted.yml
+@@ -1,22 +1,28 @@
+-### DEPRECATED / LEGACY workflow
+-# This file is retained for historical record. Do NOT dispatch this workflow.
+-# Replaced by triage-summary-report.yml (promoted from triage-summary-report-v2.yml).
+-# workflow_dispatch intentionally disabled below.
++name: Triage Summary Full Report (promoted)
+ 
+-name: Triage Summary Full Report (legacy)
++# Promoted copy to force a fresh workflow registration that supports manual dispatch.
+ 
+ concurrency:
+-  group: triage-summary-report
++  group: triage-summary-report-promoted
+   cancel-in-progress: false
+ 
+ on:
+-  workflow_dispatch: false # deprecated - manual dispatch disabled
++  workflow_dispatch:
++    inputs:
++      smoke_run_id:
++        description: 'Optional run id of run-health-smoke to fetch artifacts from'
++        required: false
++        default: ''
++      selftest_run_id:
++        description: 'Optional run id of triage-summary-selftest to fetch artifacts from'
++        required: false
++        default: ''
+   schedule:
+-    - cron: '0 4 * * *' # nightly (kept for historical purposes)
++    - cron: '0 4 * * *'
+ 
+ permissions:
+   actions: read
+-  contents: read
++  contents: write
+   pull-requests: read
+ 
+ jobs:
+@@ -25,6 +31,8 @@ jobs:
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
++        with:
++          persist-credentials: true
+ 
+       - name: Ensure tools
+         run: |
+@@ -40,13 +48,11 @@ jobs:
+           TMP=${RUNNER_TEMP}
+           echo "SMOKE_RUN=$SMOKE_RUN SELFTEST_RUN=$SELFTEST_RUN"
+           if [ -n "$SMOKE_RUN" ]; then
+-            echo "Attempting to download artifacts for smoke run $SMOKE_RUN"
+             gh run download "$SMOKE_RUN" --name triage-summary -D "$TMP" || true
+             gh run download "$SMOKE_RUN" --name triage-summary-html -D "$TMP" || true
+             gh run download "$SMOKE_RUN" --name triage-summary-compressed -D "$TMP" || true
+           fi
+           if [ -n "$SELFTEST_RUN" ]; then
+-            echo "Attempting to download artifacts for selftest run $SELFTEST_RUN"
+             gh run download "$SELFTEST_RUN" --name triage-selftest-artifacts -D "$TMP" || true
+           fi
+ 
+@@ -56,16 +62,67 @@ jobs:
+         run: |
+           TMP=${RUNNER_TEMP}
+           if [ ! -f "$TMP/triage-summary.md" ]; then
+-            echo 'triage-summary.md not found in runner.temp; attempting to run generator using builds/diagnostics/triage.json (if present)'
+             if [ -f "builds/diagnostics/triage.json" ]; then
+               node .github/workflows/generate-triage-summary.cjs DEST="$DEST" || true
+-            else
+-              echo 'No triage.json available to generate summary'
+             fi
+-          else
+-            echo 'triage-summary.md already present'
+           fi
+ 
++      - name: Validate triage outputs (report)
++        run: |
++          node .github/triage-tools/validate-triage-output.cjs "$RUNNER_TEMP" || (echo 'report validation failed' && exit 1)
++        shell: bash
++
+       - name: Build integrated report
+         run: |
+-          echo 'Legacy workflow preserved for history; no active changes applied.'
++          set -e
++          TMP=${RUNNER_TEMP}
++          OUT="$TMP/triage-summary-full-report.md"
++          echo "# Triage Summary Full Report" > "$OUT"
++          echo "Generated: $(date -u --rfc-3339=seconds)" >> "$OUT"
++          echo "" >> "$OUT"
++          if [ -f "$TMP/triage-summary.md" ]; then
++            awk '/## Overview/{flag=1} /---/{if(flag && /Details/){exit}} flag{print}' "$TMP/triage-summary.md" | sed -n '1,200p' >> "$OUT" || true
++          fi
++          echo "" >> "$OUT"
++          DIFF="$TMP/triage-diff.json"
++          if [ -f "$DIFF" ]; then
++            jq '.' "$DIFF" >> "$OUT" 2>/dev/null || cat "$DIFF" >> "$OUT"
++          else
++            echo '- No triage-diff.json available' >> "$OUT"
++          fi
++
++      - name: Upload full report
++        uses: actions/upload-artifact@v4
++        with:
++          name: triage-summary-full-report
++          path: ${{ runner.temp }}/triage-summary-full-report.md
++
++      - name: Summarize diff for dashboard
++        if: always()
++        run: |
++          node .github/triage-tools/summarize-diff.cjs --in "$RUNNER_TEMP/triage-diff.json" --out "$RUNNER_TEMP/triage-diff-summary.md" || true
++          node .github/triage-tools/llm-summarize-diff.cjs --in "$RUNNER_TEMP/triage-diff.json" --out "$RUNNER_TEMP/triage-llm-summary.md" || true
++          mkdir -p dashboard/diffs || true
++          cp "$RUNNER_TEMP/triage-diff-summary.md" "$GITHUB_WORKSPACE/dashboard/diffs/triage-diff-summary-$(date +%s).md" || true
++          cp "$RUNNER_TEMP/triage-llm-summary.md" "$GITHUB_WORKSPACE/dashboard/diffs/triage-llm-summary-$(date +%s).md" || true
++        shell: bash
++
++      - name: Prepare dashboard content
++        if: always()
++        run: |
++          mkdir -p dashboard/reports dashboard/diffs || true
++          if [ -f "$RUNNER_TEMP/triage-summary-full-report.md" ]; then
++            cp "$RUNNER_TEMP/triage-summary-full-report.md" dashboard/reports/latest.md || true
++          fi
++          if [ -f "$RUNNER_TEMP/triage-diff.json" ]; then
++            jq '{mdLines:.changes.C.mdLines, htmlLines:.changes.C.htmlLines}' "$RUNNER_TEMP/triage-diff.json" > "$RUNNER_TEMP/triage-diff-lines.json" || true
++            cp "$RUNNER_TEMP/triage-diff-lines.json" dashboard/diffs/triage-diff-lines-latest.json || true
++          fi
++        shell: bash
++
++      - name: Deploy dashboard to gh-pages
++        if: always()
++        uses: peaceiris/actions-gh-pages@v3
++        with:
++          github_token: ${{ secrets.GITHUB_TOKEN }}
++          publish_dir: ./dashboard
