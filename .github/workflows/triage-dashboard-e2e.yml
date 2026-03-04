@@ -49,5 +49,13 @@ jobs:
         env:
           BASE_DIR: _gh_pages
         run: |
-          if [ ! -f ./tests/dashboard-e2e.cjs ]; then echo "tests/dashboard-e2e.cjs missing"; ls -la || true; exit 1; fi
-          node ./tests/dashboard-e2e.cjs
+          SCRIPT=""
+          if [ -f ./tests/dashboard-e2e.cjs ]; then
+            SCRIPT=./tests/dashboard-e2e.cjs
+          elif [ -f ./Tests/dashboard-e2e.cjs ]; then
+            SCRIPT=./Tests/dashboard-e2e.cjs
+          else
+            echo "dashboard-e2e script not found in ./tests or ./Tests"; ls -la || true; exit 1
+          fi
+          echo "Running script: $SCRIPT"
+          node "$SCRIPT"
