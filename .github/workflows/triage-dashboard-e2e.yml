@@ -39,8 +39,15 @@ jobs:
       - name: List dashboard files
         run: ls -la _gh_pages || true
 
+      - name: Show repository files for debugging
+        run: |
+          echo "Workspace: $PWD"
+          ls -la || true
+          ls -la tests || true
+
       - name: Run Playwright E2E script
         env:
           BASE_DIR: _gh_pages
         run: |
-          node tests/dashboard-e2e.cjs
+          if [ ! -f ./tests/dashboard-e2e.cjs ]; then echo "tests/dashboard-e2e.cjs missing"; ls -la || true; exit 1; fi
+          node ./tests/dashboard-e2e.cjs
