@@ -1,3 +1,4 @@
+# re-register-workflow: automated no-op touch
 name: Triage Summary Full Report
 
 on:
