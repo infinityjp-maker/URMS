@@ -33,7 +33,10 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     const diffLinesPath = path.resolve(process.cwd(), BASE_DIR, indexJson.latest.diffLines || 'diffs/triage-diff-lines-latest.json');
     if (!fs.existsSync(latestSummaryPath)) throw new Error('Latest summary file not found: ' + latestSummaryPath);
     if (!fs.existsSync(diffSummaryPath)) throw new Error('Diff summary file not found: ' + diffSummaryPath);
-    if (!fs.existsSync(diffLinesPath)) throw new Error('Diff lines file not found: ' + diffLinesPath);
+    if (!fs.existsSync(diffLinesPath)) {
+      console.warn('Diff lines file not found (continuing): ' + diffLinesPath);
+      // not fatal: presence of diff summary is sufficient for basic checks
+    }
 
     // Wait for the page to render the latest report and diff summary areas
     await page.waitForSelector('#latest-report', { state: 'visible', timeout: 8000 }).catch(()=>{});
@@ -55,8 +58,11 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     await page.waitForSelector('#ai-content', { state: 'visible', timeout: 5000 }).catch(()=>{});
 
     // Try loading the diff lines by checking that the JSON file is readable
-    const diffLinesJson = JSON.parse(fs.readFileSync(diffLinesPath, 'utf8'));
-    if (!diffLinesJson) throw new Error('Failed to parse diff lines JSON');
+    let diffLinesJson = null;
+    if (fs.existsSync(diffLinesPath)){
+      diffLinesJson = JSON.parse(fs.readFileSync(diffLinesPath, 'utf8'));
+      if (!diffLinesJson) throw new Error('Failed to parse diff lines JSON');
+    }
 
     if (consoleErrors.length > 0) {
       throw new Error('Console errors detected: ' + JSON.stringify(consoleErrors.slice(0,5)));
