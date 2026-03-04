@@ -23,7 +23,7 @@ on:
 
 permissions:
   actions: read
-  contents: read
+  contents: write
   pull-requests: read
 
 jobs:
@@ -32,6 +32,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Ensure tools
         run: |
