@@ -227,6 +227,38 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
       throw new Error('Console errors detected: ' + JSON.stringify(consoleErrors.slice(0,5)));
     }
 
+    // Build auto-fix report and optional patch
+    try{
+      const AUTO_FIX_MODE = process.env.AUTO_FIX_MODE || 'dry-run';
+      class AutoFixEngine {
+        constructor(opts){ this.indexHtml = opts.indexHtml||''; this.selectorMap = opts.selectorMap||{}; this.failedResponses = opts.failedResponses||[]; this.consoleErrors = opts.consoleErrors||[]; this.diffLinesMissing = opts.diffLinesMissing||false; this.baseUrlPresent = !!opts.baseUrlPresent; this.patchesDir = '.github/actions-runs/selfheal-patch'; }
+        ensurePatchDir(){ try{ fs.mkdirSync(this.patchesDir, { recursive: true }); }catch(e){} }
+        generateSelectorFixes(){ const fixes = []; for (const k of Object.keys(this.selectorMap)){ const sel=this.selectorMap[k]; if (sel && !new RegExp(sel.replace(/[#\.]/g,''),'i').test(this.indexHtml)){ const alt=findAlternateSelector(this.indexHtml, sel.replace(/[^a-z0-9]+/ig,'')); if (alt) fixes.push({type:'selector', key:k, from:sel, to:alt}); } } return fixes; }
+        computeScore(){ let score=50; // base
+          // selector matches
+          const selectorFixes=this.generateSelectorFixes(); score -= Math.min(30, selectorFixes.length*10);
+          // 404 frequency
+          const total404 = this.failedResponses.filter(r=>String(r.status||'').includes('404')).length; score -= Math.min(20, total404*2);
+          // diffLines missing
+          if (this.diffLinesMissing) score -= 15; else score += 5;
+          // baseUrl
+          if (this.baseUrlPresent) score += 10; else score -= 5;
+          // console errors
+          score -= Math.min(20, this.consoleErrors.length*3);
+          score = Math.max(0, Math.min(100, Math.round(score)));
+          return {score, selectorFixes}; }
+        writeReport(report){ this.ensurePatchDir(); fs.writeFileSync('selfheal_report.json', JSON.stringify(report, null, 2)); }
+        writePatchFiles(fixes){ this.ensurePatchDir(); // produce a minimal patch representation
+          const file = path.resolve(this.patchesDir, 'proposed_fixes.json'); fs.writeFileSync(file, JSON.stringify(fixes, null, 2)); }
+      }
+      const engine = new AutoFixEngine({ indexHtml, selectorMap, failedResponses, consoleErrors, diffLinesMissing: !fs.existsSync(diffLinesPath), baseUrlPresent: !!baseUrl });
+      const result = engine.computeScore();
+      const report = { autoFixMode: AUTO_FIX_MODE, score: result.score, selectorFixes: result.selectorFixes, diffLinesFound: !!diffLinesJson, baseUrlDetected: !!baseUrl, consoleErrors: consoleErrors.slice(0,10), failedResponses: failedResponses.slice(0,10) };
+      engine.writePatchFiles(result.selectorFixes);
+      engine.writeReport(report);
+      console.log('Wrote selfheal_report.json with score', result.score);
+    }catch(e){ console.error('self-heal engine failed', e && e.message ? e.message : e); }
+
     console.log('E2E checks passed');
     await browser.close();
     process.exit(0);
