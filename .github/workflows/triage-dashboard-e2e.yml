@@ -47,6 +47,12 @@ jobs:
             echo "No legacy Tests/ directory present"
           fi
 
+      - name: Start static server for _gh_pages
+        run: |
+          echo "Starting simple HTTP server for _gh_pages on port 8000"
+          python3 -m http.server 8000 --directory _gh_pages &>/dev/null &
+          sleep 1
+
       - name: List dashboard files
         run: ls -la _gh_pages || true
 
@@ -63,6 +69,7 @@ jobs:
       - name: Run Playwright E2E script
         env:
           BASE_DIR: _gh_pages
+          BASE_URL: http://127.0.0.1:8000
         run: |
-          echo "Executing E2E script via node ./tests/dashboard-e2e.cjs"
+          echo "Executing E2E script via node ./tests/dashboard-e2e.cjs (BASE_URL=$BASE_URL)"
           node ./tests/dashboard-e2e.cjs

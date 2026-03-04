@@ -15,7 +15,8 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
   try {
     const indexHtmlPath = path.resolve(process.cwd(), BASE_DIR, 'index.html');
     if (!fs.existsSync(indexHtmlPath)) throw new Error('index.html not found in ' + indexHtmlPath);
-    const indexUrl = 'file://' + indexHtmlPath;
+    const baseUrl = process.env.BASE_URL && String(process.env.BASE_URL).trim() !== '' ? String(process.env.BASE_URL).replace(/\/$/, '') : null;
+    const indexUrl = baseUrl ? `${baseUrl}/index.html` : 'file://' + indexHtmlPath;
 
     const resp = await page.goto(indexUrl, { waitUntil: 'networkidle' });
     if (!resp && !page.url().startsWith('file://')) throw new Error('Failed to load index.html');
