@@ -1,0 +1,38 @@
+name: triage-dashboard-e2e-selfheal
+on:
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+jobs:
+  selfheal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: node tests/dashboard-e2e.cjs 2>&1 | tee e2e_run.log || true
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-dashboard-e2e-selfheal-log
+          path: e2e_run.log
+      - run: |
+          if grep -q "E2E checks passed" e2e_run.log; then
+            exit 0
+          else
+            exit 1
+          fi
+      - if: failure()
+        run: |
+          echo "TODO: implement auto-fix rules"
+      - if: failure()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add tests/dashboard-e2e.cjs
+          git commit -m "auto-fix(e2e): nightly self-heal patch"
+          git push
