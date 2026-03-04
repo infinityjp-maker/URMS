@@ -19,35 +19,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install dependencies
         run: |
           npm ci --prefer-offline --no-audit --progress=false || npm install --no-audit --no-fund
 
-      - name: Install Playwright browsers and deps
-        run: npx playwright install --with-deps
-
-      - name: Ensure Playwright Test runner is installed
+      - name: Install Playwright dependencies
         run: |
-          # Install @playwright/test if not present so `npx playwright test` can run
-          npm list @playwright/test || npm install --no-audit --no-fund --no-save @playwright/test
+          # Ensure Playwright test package is available for the node-runner
+          npm install --no-audit --no-fund --no-save @playwright/test
+          npx playwright install --with-deps
 
-      - name: Fetch gh-pages branch
+      - name: Fetch gh-pages branch (clone)
         run: |
-          git fetch origin gh-pages:gh-pages || true
           rm -rf _gh_pages || true
-          mkdir -p _gh_pages
-          git --work-tree=_gh_pages checkout gh-pages -- dashboard || true
-          if [ ! -d _gh_pages/dashboard ] && [ -f _gh_pages/index.html ]; then
-            echo "using root _gh_pages"
-          fi
+          git clone --branch gh-pages --depth 1 https://github.com/infinityjp-maker/URMS.git _gh_pages || true
 
       - name: List dashboard files
         run: ls -la _gh_pages || true
 
       - name: Run Playwright E2E script
         env:
-          BASE_URL: https://infinityjp-maker.github.io/URMS
+          BASE_DIR: _gh_pages
         run: |
           node tests/dashboard-e2e.cjs
