@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,6 +38,15 @@ jobs:
           rm -rf _gh_pages || true
           git clone --branch gh-pages --depth 1 https://github.com/infinityjp-maker/URMS.git _gh_pages || true
 
+      - name: Remove legacy Tests/ directory if present
+        run: |
+          if [ -d Tests ]; then
+            echo "Removing legacy Tests/ directory"
+            rm -rf Tests || true
+          else
+            echo "No legacy Tests/ directory present"
+          fi
+
       - name: List dashboard files
         run: ls -la _gh_pages || true
 
@@ -43,14 +54,15 @@ jobs:
         run: |
           echo "Workspace: $PWD"
           ls -la || true
-          ls -la tests || true
+
+      - name: List tests directory recursively
+        run: |
+          echo "Listing ./tests recursively"
+          ls -R tests || true
 
       - name: Run Playwright E2E script
         env:
           BASE_DIR: _gh_pages
         run: |
-          if [ ! -f ./tests/dashboard-e2e.cjs ]; then
-            echo "dashboard-e2e script not found at ./tests/dashboard-e2e.cjs"; ls -la tests || true; exit 1
-          fi
-          echo "Running script: ./tests/dashboard-e2e.cjs"
+          echo "Executing E2E script via node ./tests/dashboard-e2e.cjs"
           node ./tests/dashboard-e2e.cjs
