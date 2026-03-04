@@ -26,7 +26,17 @@ function listFiles(dir) {
 }
 
 function main() {
-  const argv = require('minimist')(process.argv.slice(2));
+  // simple argv parser to avoid external deps
+  const argv = {};
+  const raw = process.argv.slice(2);
+  for (let i = 0; i < raw.length; i++) {
+    const a = raw[i];
+    if (a.startsWith('--')) {
+      const key = a.slice(2);
+      const val = raw[i+1] && !raw[i+1].startsWith('--') ? raw[++i] : true;
+      argv[key] = val;
+    }
+  }
   const reportsDir = argv.reportsDir || 'dashboard/reports';
   const diffsDir = argv.diffsDir || 'dashboard/diffs';
   const out = argv.out || path.join(reportsDir, 'index.json');
