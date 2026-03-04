@@ -28,6 +28,11 @@ jobs:
       - name: Install Playwright browsers and deps
         run: npx playwright install --with-deps
 
+      - name: Ensure Playwright Test runner is installed
+        run: |
+          # Install @playwright/test if not present so `npx playwright test` can run
+          npm list @playwright/test || npm install --no-audit --no-fund --no-save @playwright/test
+
       - name: Fetch gh-pages branch
         run: |
           git fetch origin gh-pages:gh-pages || true
