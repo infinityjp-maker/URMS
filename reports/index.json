@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-03-04T05:27:10.447Z",
+  "latest": {
+    "summary": "reports/latest.md",
+    "diffSummary": "diffs/triage-diff-summary-latest.md",
+    "llmSummary": "diffs/triage-llm-summary-latest.md",
+    "diffLines": "diffs/triage-diff-lines-latest.json"
+  },
+  "history": []
+}
