@@ -1,0 +1,48 @@
+name: Triage Dashboard E2E Test
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '30 18 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: Run Playwright E2E against gh-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit --progress=false || npm install --no-audit --no-fund
+
+      - name: Install Playwright browsers and deps
+        run: npx playwright install --with-deps
+
+      - name: Fetch gh-pages branch
+        run: |
+          git fetch origin gh-pages:gh-pages || true
+          rm -rf _gh_pages || true
+          mkdir -p _gh_pages
+          git --work-tree=_gh_pages checkout gh-pages -- dashboard || true
+          if [ ! -d _gh_pages/dashboard ] && [ -f _gh_pages/index.html ]; then
+            echo "using root _gh_pages"
+          fi
+
+      - name: List dashboard files
+        run: ls -la _gh_pages || true
+
+      - name: Run Playwright tests
+        env:
+          BASE_URL: https://infinityjp-maker.github.io/URMS
+        run: |
+          npx playwright test tests/dashboard-e2e.spec.ts --reporter=list
