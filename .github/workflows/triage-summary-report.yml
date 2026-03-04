@@ -120,6 +120,12 @@ jobs:
           fi
         shell: bash
 
+      - name: Generate dashboard index.json
+        if: always()
+        run: |
+          node .github/triage-tools/generate-dashboard-index.cjs --reportsDir dashboard/reports --diffsDir dashboard/diffs --out dashboard/reports/index.json || true
+        shell: bash
+
       - name: Deploy dashboard to gh-pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
