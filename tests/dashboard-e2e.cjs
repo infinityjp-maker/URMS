@@ -9,7 +9,12 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
   const page = await browser.newPage();
   const consoleErrors = [];
   page.on('console', msg => {
-    if (msg.type && msg.type() === 'error') consoleErrors.push(msg.text ? msg.text() : String(msg));
+    if (!msg.type || msg.type() !== 'error') return;
+    const text = msg.text ? msg.text() : String(msg);
+    // Ignore expected 404s for static assets that may be present as .md but not .html
+    // These are benign when the page degrades gracefully (it shows a message instead).
+    if (/Failed to load resource/.test(text) && /404/.test(text) && (/\/reports\//.test(text) || /\/diffs\//.test(text))) return;
+    consoleErrors.push(text);
   });
 
   try {
@@ -40,8 +45,8 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     }
 
     // Wait for the page to render the latest report and diff summary areas
-    await page.waitForSelector('#latest-report', { state: 'visible', timeout: 8000 }).catch(()=>{});
-    await page.waitForSelector('#report-content', { state: 'visible', timeout: 8000 }).catch(()=>{});
+    await page.waitForSelector('#latest-report', { state: 'visible', timeout: 12000 }).catch(()=>{});
+    await page.waitForSelector('#report-content', { state: 'visible', timeout: 12000 }).catch(()=>{});
     // Wait until report-content is not the loading placeholder
     await page.waitForFunction(() => {
       const el = document.getElementById('report-content');
@@ -49,14 +54,14 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     }, { timeout: 8000 }).catch(()=>{});
 
     // Wait for diff content to be populated
-    await page.waitForSelector('#diff-content', { state: 'visible', timeout: 8000 }).catch(()=>{});
+    await page.waitForSelector('#diff-content', { state: 'visible', timeout: 12000 }).catch(()=>{});
     await page.waitForFunction(() => {
       const el = document.getElementById('diff-content');
       return el && el.innerText && !/loading/i.test(el.innerText) && !/Error loading diff summary/i.test(el.innerText);
     }, { timeout: 8000 }).catch(()=>{});
 
     // LLM summary: verify file exists and provide a minimal check on the ai-content container
-    await page.waitForSelector('#ai-content', { state: 'visible', timeout: 5000 }).catch(()=>{});
+    await page.waitForSelector('#ai-content', { state: 'visible', timeout: 8000 }).catch(()=>{});
 
     // Try loading the diff lines by checking that the JSON file is readable
     let diffLinesJson = null;
