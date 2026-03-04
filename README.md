@@ -243,3 +243,7 @@ Copilot は以下を参照して動作します。
 ---
 
 ## ✔ 以上で README.md（v3.3.2）の完成です
+## CI / Triage System
+
+- Triage Workflow Consolidation Report: [Triage Workflow Consolidation Report](docs/triage-workflow-consolidation.md)
+
