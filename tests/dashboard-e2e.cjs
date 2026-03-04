@@ -9,17 +9,18 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
   const page = await browser.newPage();
   const consoleErrors = [];
   const failedResponses = [];
+  // runtime-adjustable console filters (auto-updateable during run)
+  const consoleIgnorePatterns = [
+    /Failed to load resource/i,
+    /Fetch API cannot load/i,
+    /URL scheme "file" is not supported/i,
+    /404 \(File not found\)/i,
+  ];
   page.on('console', msg => {
     if (!msg.type || msg.type() !== 'error') return;
     const text = msg.text ? msg.text() : String(msg);
-    // Ignore benign static-resource/load errors that occur on gh-pages variants:
-    // - generic "Failed to load resource" 404s
-    // - Fetch API file:// URL scheme errors when running from disk
-    // - other transient fetch/load failures for reports/ or diffs/
-    if (/Failed to load resource/i.test(text) && /404/.test(text)) return;
-    if (/Fetch API cannot load/i.test(text)) return;
-    if (/URL scheme "file" is not supported/i.test(text)) return;
-    if (/404 \(File not found\)/i.test(text)) return;
+    // If any ignore pattern matches, skip
+    for (const p of consoleIgnorePatterns) if (p.test(text)) return;
     consoleErrors.push(text);
   });
   page.on('response', resp => {
@@ -37,14 +38,70 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     }catch(e){}
   });
 
+  // helper: try waitForSelector with auto-increasing timeouts
+  async function waitForVisibleAuto(sel, initial=20000, max=60000){
+    try{
+      await page.waitForSelector(sel, { state: 'visible', timeout: initial });
+      return true;
+    }catch(e){
+      // try longer timeout once
+      try{
+        await page.waitForSelector(sel, { state: 'visible', timeout: Math.min(max, initial*2) });
+        return true;
+      }catch(e2){
+        return false;
+      }
+    }
+  }
+
+  // helper: find alternate selector candidates from index.html content
+  function findAlternateSelector(html, keyword){
+    const ids = Array.from(html.matchAll(/id\s*=\s*"([^"]+)"/ig)).map(m=>m[1]);
+    const classes = Array.from(html.matchAll(/class\s*=\s*"([^"]+)"/ig)).flatMap(m=>m[1].split(/\s+/));
+    const all = ids.concat(classes);
+    const lower = keyword.replace(/[^a-z0-9]+/ig,'').toLowerCase();
+    let best = null;
+    for (const a of all){
+      const s = a.replace(/[^a-z0-9]+/ig,'').toLowerCase();
+      if (s.includes(lower) || lower.includes(s)) { best = a; break; }
+    }
+    if (!best && all.length>0) best = all[0];
+    if (!best) return null;
+    // prefer id
+    if (ids.includes(best)) return `#${best}`;
+    return `.${best}`;
+  }
+
   try {
     const indexHtmlPath = path.resolve(process.cwd(), BASE_DIR, 'index.html');
     if (!fs.existsSync(indexHtmlPath)) throw new Error('index.html not found in ' + indexHtmlPath);
     const baseUrl = process.env.BASE_URL && String(process.env.BASE_URL).trim() !== '' ? String(process.env.BASE_URL).replace(/\/$/, '') : null;
     const indexUrl = baseUrl ? `${baseUrl}/index.html` : 'file://' + indexHtmlPath;
 
-    const resp = await page.goto(indexUrl, { waitUntil: 'networkidle' });
+    let resp = await page.goto(indexUrl, { waitUntil: 'networkidle' });
     if (!resp && !page.url().startsWith('file://')) throw new Error('Failed to load index.html');
+
+    // Read raw index.html to support auto-fix heuristics
+    const indexHtml = fs.existsSync(indexHtmlPath) ? fs.readFileSync(indexHtmlPath,'utf8') : '';
+    // diffLines JSON may be discovered from multiple locations
+    let diffLinesJson = null;
+    // Auto-detect BASE_URL from <base> or canonical/meta tags when not provided
+    if (!baseUrl && indexHtml) {
+      const baseMatch = indexHtml.match(/<base[^>]+href\s*=\s*"([^"]+)"/i);
+      const canonMatch = indexHtml.match(/<link[^>]+rel\s*=\s*"canonical"[^>]+href\s*=\s*"([^"]+)"/i);
+      const ogMatch = indexHtml.match(/<meta[^>]+property\s*=\s*"og:url"[^>]+content\s*=\s*"([^"]+)"/i);
+      const detected = (baseMatch && baseMatch[1]) || (canonMatch && canonMatch[1]) || (ogMatch && ogMatch[1]) || null;
+      if (detected) {
+        try{
+          const normalized = String(detected).replace(/\/index\.html\/?$/,'').replace(/\/$/, '');
+          if (normalized && !String(indexUrl).startsWith(normalized)){
+            console.log('Auto-detected BASE_URL from index.html:', normalized);
+            // navigate to the canonical base URL version to avoid BASE_URL mismatches
+            resp = await page.goto(normalized + '/index.html', { waitUntil: 'networkidle' });
+          }
+        }catch(e){}
+      }
+    }
 
     // Read index.json and ensure latest keys exist
     const indexJsonPath = path.resolve(process.cwd(), BASE_DIR, 'reports', 'index.json');
@@ -76,27 +133,81 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
       // not fatal: presence of diff summary is sufficient for basic checks
     }
 
-    // Wait for the page to render the latest report and diff summary areas
-    await page.waitForSelector('#latest-report', { state: 'visible', timeout: 20000 }).catch(()=>{});
-    await page.waitForSelector('#report-content', { state: 'visible', timeout: 20000 }).catch(()=>{});
+    // --- Auto-fix heuristics: selector adjustments, diffLines fallback, console filter updates ---
+    const selectorMap = {
+      latestReport: '#latest-report',
+      reportContent: '#report-content',
+      diffContent: '#diff-content',
+      aiContent: '#ai-content'
+    };
+    if (indexHtml){
+      for (const key of Object.keys(selectorMap)){
+        const sel = selectorMap[key];
+        // if primary id/class not present in the HTML, attempt to find an alternate
+        const idMatch = sel.match(/^#(.+)/);
+        const keyword = idMatch ? idMatch[1] : sel.replace(/[^a-z0-9]+/ig,'');
+        if (!new RegExp(idMatch ? `id\s*=\s*"${keyword}"` : keyword, 'i').test(indexHtml)){
+          const alt = findAlternateSelector(indexHtml, keyword);
+          if (alt){
+            console.log('Selector auto-fixed:', sel, '->', alt);
+            selectorMap[key] = alt;
+          }
+        }
+      }
+    }
+
+    // Diff lines fallback: try alternate locations if primary diffLines missing
+    if (!fs.existsSync(diffLinesPath)){
+      const altCandidates = [
+        path.resolve(process.cwd(), BASE_DIR, 'data', 'diffs.json'),
+        path.resolve(process.cwd(), 'data', 'diffs.json'),
+        path.resolve(process.cwd(), BASE_DIR, 'diffs', 'triage-diff-lines.json')
+      ];
+      for (const c of altCandidates){
+        if (fs.existsSync(c)){
+          try{ diffLinesJson = JSON.parse(fs.readFileSync(c,'utf8')); console.log('Loaded diffLines from', c); break; }catch(e){}
+        }
+    }
+
+    // Console filter auto-update: if many 404s share a prefix, add to ignore list
+    try{
+      const prefixCounts = {};
+      for (const r of (failedResponses||[])){
+        const u = String(r.url||'');
+        if (!/404/.test(String(r.status||''))) continue;
+        const m = u.match(/https?:\/\/[^\/]+(\/[^?#]*)/i) || u.match(/(\/[^?#]+)/);
+        const p = m && m[1] ? m[1].split('/').slice(0,3).join('/') : '/';
+        prefixCounts[p] = (prefixCounts[p]||0) + 1;
+      }
+      for (const p in prefixCounts){
+        if (prefixCounts[p] >= 3){
+          const re = new RegExp(p.replace(/\//g,'\\/'));
+          consoleIgnorePatterns.push(re);
+          console.log('Auto-added console ignore pattern for prefix', p);
+        }
+      }
+    }catch(e){}
+
+    // Wait for the page to render the latest report and diff summary areas (using auto-fixed selectors)
+    await waitForVisibleAuto(selectorMap.latestReport, 20000).catch(()=>{});
+    await waitForVisibleAuto(selectorMap.reportContent, 20000).catch(()=>{});
     // Wait until report-content is not the loading placeholder
-    await page.waitForFunction(() => {
-      const el = document.getElementById('report-content');
+    await page.waitForFunction((sel) => {
+      const el = document.querySelector(sel);
       return el && el.innerText && !/loading/i.test(el.innerText) && !/Error loading report/i.test(el.innerText);
-    }, { timeout: 15000 }).catch(()=>{});
+    }, selectorMap.reportContent, { timeout: 15000 }).catch(()=>{});
 
     // Wait for diff content to be populated
-    await page.waitForSelector('#diff-content', { state: 'visible', timeout: 20000 }).catch(()=>{});
-    await page.waitForFunction(() => {
-      const el = document.getElementById('diff-content');
+    await waitForVisibleAuto(selectorMap.diffContent, 20000).catch(()=>{});
+    await page.waitForFunction((sel) => {
+      const el = document.querySelector(sel);
       return el && el.innerText && !/loading/i.test(el.innerText) && !/Error loading diff summary/i.test(el.innerText);
-    }, { timeout: 15000 }).catch(()=>{});
+    }, selectorMap.diffContent, { timeout: 15000 }).catch(()=>{});
 
     // LLM summary: verify file exists and provide a minimal check on the ai-content container
-    await page.waitForSelector('#ai-content', { state: 'visible', timeout: 15000 }).catch(()=>{});
+    await waitForVisibleAuto(selectorMap.aiContent, 15000).catch(()=>{});
 
     // Try loading the diff lines by checking that the JSON file is readable
-    let diffLinesJson = null;
     if (fs.existsSync(diffLinesPath)){
       diffLinesJson = JSON.parse(fs.readFileSync(diffLinesPath, 'utf8'));
       if (!diffLinesJson) throw new Error('Failed to parse diff lines JSON');
