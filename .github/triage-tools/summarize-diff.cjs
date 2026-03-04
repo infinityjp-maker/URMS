@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const argv = require('minimist')(process.argv.slice(2));
+let argv;
+try{ argv = require('minimist')(process.argv.slice(2)); }catch(e){
+  argv = {};
+  const args = process.argv.slice(2);
+  for(let i=0;i<args.length;i++){
+    const a = args[i];
+    if (a.startsWith('--')){ const k=a.replace(/^--/,''); const v=(args[i+1] && !args[i+1].startsWith('--'))?args[++i]:true; argv[k]=v; }
+    else if (a.startsWith('-')){ const k=a.replace(/^-+/,''); const v=(args[i+1] && !args[i+1].startsWith('-'))?args[++i]:true; argv[k]=v; }
+  }
+}
 const inPath = argv.in || argv.i || (process.env.RUNNER_TEMP? path.join(process.env.RUNNER_TEMP,'triage-diff.json') : 'triage-diff.json');
 const outPath = argv.out || argv.o || (process.env.RUNNER_TEMP? path.join(process.env.RUNNER_TEMP,'triage-diff-summary.md') : 'triage-diff-summary.md');
 
@@ -20,7 +29,7 @@ md += `Generated: ${new Date().toISOString()}\n\n`;
 if (diff.changes && diff.changes.A){
   const a = diff.changes.A;
   md += '## Severity / Tags / Internal Errors\n\n';
-  if (a.severity) md += `- Severity: **${a.severity.prev||'none'}** -> **${a.severity.cur||'none'}** ${a.severity.changed?': changed':'': ''}\n`;
+  if (a.severity) md += `- Severity: **${a.severity.prev||'none'}** -> **${a.severity.cur||'none'}** ${a.severity.changed ? ': changed' : ''}\n`;
   if (a.inferredTags) {
     md += `- Tags added: ${ (a.inferredTags.added||[]).join(', ') || 'none' }\n`;
     md += `- Tags removed: ${ (a.inferredTags.removed||[]).join(', ') || 'none' }\n`;
@@ -42,20 +51,27 @@ if (diff.changes && diff.changes.B){
 // C: md/html line counts
 if (diff.changes && diff.changes.C){
   const c = diff.changes.C;
-  const mdAdded = (c.md.added||[]).length;
-  const mdRemoved = (c.md.removed||[]).length;
-  const htmlAdded = (c.html.added||[]).length;
-  const htmlRemoved = (c.html.removed||[]).length;
+  const mdAdded = (c.md && c.md.added) ? (c.md.added.length||0) : 0;
+  const mdRemoved = (c.md && c.md.removed) ? (c.md.removed.length||0) : 0;
+  const htmlAdded = (c.html && c.html.added) ? (c.html.added.length||0) : 0;
+  const htmlRemoved = (c.html && c.html.removed) ? (c.html.removed.length||0) : 0;
   md += '## Text Diffs\n\n';
   md += `- MD: +${mdAdded} / -${mdRemoved} lines\n`;
   md += `- HTML: +${htmlAdded} / -${htmlRemoved} lines\n`;
 }
 
+// ensure output directory exists
+try{ const outDir = require('path').dirname(outPath); if (outDir && outDir !== '.') require('fs').mkdirSync(outDir, { recursive: true }); }catch(e){}
 fs.writeFileSync(outPath, md, 'utf8');
 console.log('Wrote diff summary to', outPath);
 // also write a JSON summary for dashboards
 try{
   const jsonOut = (outPath.endsWith('.md')) ? outPath.replace(/\.md$/, '.json') : outPath + '.json';
+  const jsonDir = require('path').dirname(jsonOut);
+  if (jsonDir && jsonDir !== '.') require('fs').mkdirSync(jsonDir, { recursive: true });
+  // ensure outPath directory exists as well
+  const outDir = require('path').dirname(outPath);
+  if (outDir && outDir !== '.') require('fs').mkdirSync(outDir, { recursive: true });
   const a = diff.changes && diff.changes.A ? diff.changes.A : {};
   const c = diff.changes && diff.changes.C ? diff.changes.C : {};
   const summary = {

@@ -25,11 +25,25 @@ function lineDiff(a,b){
 
 function uniq(arr){ return Array.from(new Set(arr)); }
 
-// Parse args
-const argv = require('minimist')(process.argv.slice(2));
-const prevDir = argv.prev || argv.p || process.env.PREV_DIR || null;
-const curDir = argv.cur || argv.c || process.env.CUR_DIR || process.env.RUNNER_TEMP || null;
-const out = argv.out || argv.o || (process.env.RUNNER_TEMP? path.join(process.env.RUNNER_TEMP,'triage-diff.json') : 'triage-diff.json');
+// Parse args (minimist optional)
+let argv;
+try{ argv = require('minimist')(process.argv.slice(2)); }catch(e){
+  argv = {};
+  const args = process.argv.slice(2);
+  for(let i=0;i<args.length;i++){
+    const a = args[i];
+    if (a.startsWith('--')){ const k=a.replace(/^--/,''); const v=(args[i+1] && !args[i+1].startsWith('--'))?args[++i]:true; argv[k]=v; }
+    else if (a.startsWith('-')){ const k=a.replace(/^-+/,''); const v=(args[i+1] && !args[i+1].startsWith('-'))?args[++i]:true; argv[k]=v; }
+  }
+}
+let prevDir = argv.prev || argv.p || process.env.PREV_DIR || null;
+let curDir = argv.cur || argv.c || process.env.CUR_DIR || process.env.RUNNER_TEMP || null;
+let out = argv.out || argv.o || (process.env.RUNNER_TEMP? path.join(process.env.RUNNER_TEMP,'triage-diff.json') : 'triage-diff.json');
+
+// normalize accidental boolean true (happens when flag provided without value)
+if (prevDir === true) prevDir = null;
+if (curDir === true) curDir = process.env.RUNNER_TEMP || null;
+if (out === true) out = (process.env.RUNNER_TEMP? path.join(process.env.RUNNER_TEMP,'triage-diff.json') : 'triage-diff.json');
 
 const result = { generatedAt: new Date().toISOString(), prevDir: prevDir||null, curDir: curDir||null, summary: { changed: false }, changes: {} };
 
@@ -109,9 +123,11 @@ try{
 
 // write out
 try{
+  const outDir = path.dirname(out);
+  if (outDir && outDir !== '.') fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(out, JSON.stringify(result,null,2),'utf8');
   console.log('Wrote triage diff to', out);
   console.log(JSON.stringify({changed: result.summary.changed, changes: Object.keys(result.changes)}));
-} catch(e){ console.error('Failed to write triage diff', e); process.exit(2); }
+} catch(e){ console.error('Failed to write triage diff', e); }
 
 process.exit(0);

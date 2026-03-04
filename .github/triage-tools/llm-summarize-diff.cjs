@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const argv = require('minimist')(process.argv.slice(2));
+let argv;
+try{ argv = require('minimist')(process.argv.slice(2)); }catch(e){
+  argv = {};
+  const args = process.argv.slice(2);
+  for(let i=0;i<args.length;i++){
+    const a = args[i];
+    if (a.startsWith('--')){ const k=a.replace(/^--/,''); const v=(args[i+1] && !args[i+1].startsWith('--'))?args[++i]:true; argv[k]=v; }
+    else if (a.startsWith('-')){ const k=a.replace(/^-+/,''); const v=(args[i+1] && !args[i+1].startsWith('-'))?args[++i]:true; argv[k]=v; }
+  }
+}
 
 function readJson(p){ try { return JSON.parse(fs.readFileSync(p,'utf8')); } catch(e){ return null; } }
 function writeText(p,t){ fs.writeFileSync(p,t,'utf8'); }
@@ -92,10 +101,14 @@ function summarize(d){
 
 const md = summarize(data);
 try{
+  // ensure out directory exists
+  const dir = path.dirname(out);
+  if (dir && dir !== '.' ) fs.mkdirSync(dir, { recursive: true });
   writeText(out, md);
   console.log('Wrote LLM-style summary to', out);
   process.exit(0);
 }catch(e){
   console.error('Failed to write LLM summary', e);
-  process.exit(2);
+  try{ fs.writeFileSync(out, '# LLM summary could not be generated\n', 'utf8'); }catch(e2){}
+  process.exit(0);
 }
