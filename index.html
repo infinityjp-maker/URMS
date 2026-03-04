@@ -1,184 +1,257 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>URMS v4.0</title>
-    <style>
-      /* CI early normalization: force light background and stable fonts before first paint */
-      #ci-force-init{display:none}
-    </style>
-    <style id="ci-force-init" data-ci="1">
-      html,body,#root { background: #ffffff !important; background-image: none !important; background-color: #ffffff !important; color: #222 !important; }
-      * { background-image: none !important; background-color: transparent !important; -webkit-font-smoothing: antialiased !important; text-rendering: optimizeLegibility !important; }
-      img,picture,video,iframe { filter: grayscale(1) !important; opacity: 1 !important; }
-      svg, svg * { fill: currentColor !important; stroke: currentColor !important; }
-      :root { --ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", Meiryo, sans-serif !important; }
-      * , *::before, *::after { font-family: var(--ci-system-fonts) !important; }
-    </style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html, body, #root { width: 100%; height: 100%; }
-      body {
-        background: linear-gradient(135deg, #070812 0%, #081028 100%);
-        color: #e5e7eb;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        overflow: hidden;
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>URMS Triage Dashboard</title>
+<style>
+body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:20px}
+header{display:flex;align-items:center;gap:12px}
+#reports{margin-top:20px}
+#chart{width:100%;height:240px;background:#fff;border:1px solid #eee}
+pre{background:#f7f7f7;padding:12px;overflow:auto}
+</style>
+</head>
+<body>
+<header>
+<h1>URMS Triage Dashboard</h1>
+</header>
+<section id="latest-report">
+<h2>Latest Full Report</h2>
+<div id="report-content">Loading latest report...</div>
+</section>
+<section id="diff-summary">
+<h2>Latest Diff Summary</h2>
+<pre id="diff-content">Loading diff summary...</pre>
+</section>
+<section id="diff-viewer">
+<h2>Diff Viewer</h2>
+<div id="diff-controls">
+  <label><input type="checkbox" id="hide-context" checked> Hide unchanged/context lines</label>
+  <label>Format: <select id="diff-format"><option value="md">Markdown</option><option value="html">HTML</option></select></label>
+  <button id="clear-diff">Clear</button>
+</div>
+<div id="diff-lines">No diff selected.</div>
+</section>
+<section id="ai-summary">
+<h2>AI 要約</h2>
+<div id="ai-controls">
+  <button id="clear-ai">Clear AI Summary</button>
+  <label><input type="checkbox" id="show-ai-pretty" checked> Plain text (pre)</label>
+  </div>
+<div id="ai-content">No AI summary selected.</div>
+</section>
+<section id="reports">
+<h2>Recent Reports</h2>
+</section>
+
+<section id="filters">
+<h3>Filters</h3>
+<label>Severity: <select id="severity-filter"><option value="">All</option><option value="critical">Critical</option><option value="warning">Warning</option><option value="info">Info</option></select></label>
+<label>Tag: <select id="tag-filter"><option value="">All</option></select></label>
+<label>From: <input type="date" id="from-date"/></label>
+<label>To: <input type="date" id="to-date"/></label>
+<label>Search: <input type="search" id="search-box" placeholder="keyword"/></label>
+<button id="apply-filters">Apply</button>
+<button id="reset-filters">Reset</button>
+</section>
+
+<section id="reports-list-section">
+<h2>Report History</h2>
+<ul id="reports-list">Loading reports list...</ul>
+</section>
+
+<section id="detail-section">
+<h2>Detail View</h2>
+<div id="detail-view">Select a report to see details</div>
+<h3>Report Preview</h3>
+<iframe id="report-frame" src="" style="width:100%;height:600px;border:1px solid #ccc"></iframe>
+</section>
+</section>
+<section id="chart-section">
+<h2>Severity Trend (last 30)</h2>
+<canvas id="chart" aria-label="Severity trend"></canvas>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Simple client-side fetch to load latest report and diff and draw charts
+async function load(){
+  try{
+    const reportResp = await fetch('./reports/latest.html');
+    if (reportResp.ok){ document.getElementById('report-content').innerHTML = await reportResp.text(); }
+    else document.getElementById('report-content').innerText = 'No latest report available.';
+  }catch(e){ document.getElementById('report-content').innerText = 'Error loading report.'; }
+  try{
+    const diffResp = await fetch('./diffs/triage-diff-summary-latest.md');
+    if (diffResp.ok){ const txt = await diffResp.text(); document.getElementById('diff-content').innerText = txt; }
+    else document.getElementById('diff-content').innerText = 'No diff summary available.';
+  }catch(e){ document.getElementById('diff-content').innerText = 'Error loading diff summary.'; }
+  // list reports and draw charts
+    try{
+      const idxResp = await fetch('./reports/index.json');
+      if (idxResp.ok){
+        let idx = await idxResp.json();
+        window._reportIndex = idx; // store globally for filtering
+        populateTagFilter(idx);
+        renderReports(idx);
+        drawCharts(idx.slice(0,30).reverse());
+      } else document.getElementById('reports-list').innerText = 'No reports index.';
+    }catch(e){ document.getElementById('reports-list').innerText = 'Error loading reports index.'; }
+function populateTagFilter(idx){
+  const tags = {};
+  idx.forEach(e=> (e.tags||[]).forEach(t=> tags[t]=true));
+  const sel = document.getElementById('tag-filter');
+  Object.keys(tags).sort().forEach(t=>{ const o=document.createElement('option'); o.value=t; o.innerText=t; sel.appendChild(o); });
+}
+
+function renderReports(idx){
+  const ul = document.getElementById('reports-list'); ul.innerHTML='';
+  (idx.slice(0,30)).forEach(r=>{
+    const li=document.createElement('li');
+    const a=document.createElement('a'); a.href='./reports/'+r.report; a.innerText=r.timestamp || r.report; li.appendChild(a);
+    if (r.diff){ const d=document.createElement('button'); d.innerText='Details'; d.style.marginLeft='8px'; d.onclick=()=> showDetail(r); li.appendChild(d); }
+    if (r.diffLines){ const dv=document.createElement('button'); dv.innerText='View Diff'; dv.style.marginLeft='8px'; dv.onclick=()=> showDiff(r); li.appendChild(dv); }
+    if (r.llmSummary){ const as=document.createElement('button'); as.innerText='AI 要約を見る'; as.style.marginLeft='8px'; as.onclick=()=> showAiSummary(r); li.appendChild(as); }
+    const p=document.createElement('button'); p.innerText='Open report'; p.style.marginLeft='8px'; p.onclick=()=> previewReport(r); li.appendChild(p);
+    ul.appendChild(li);
+  });
+}
+
+function previewReport(r){ const url = './' + r.report; document.getElementById('report-frame').src = url; }
+
+async function showDetail(r){
+  const dv = document.getElementById('detail-view'); dv.innerHTML = 'Loading...';
+  if (r.diff){
+    try{
+      const resp = await fetch('./'+r.diff);
+      if (resp.ok){ const json = await resp.json(); renderDetail(json); return; }
+    }catch(e){ /* fallthrough */ }
+  }
+  dv.innerText = 'No diff available for this report.';
+}
+
+function renderDetail(json){
+  const dv = document.getElementById('detail-view'); dv.innerHTML = '';
+  const h = document.createElement('h4'); h.innerText='Diff Summary'; dv.appendChild(h);
+  const pre = document.createElement('pre'); pre.innerText = JSON.stringify(json,null,2); dv.appendChild(pre);
+  if (json.internalErrorsCur && json.internalErrorsCur>0){
+    const details = document.createElement('details'); const summary = document.createElement('summary'); summary.innerText='Internal Errors (show)'; details.appendChild(summary);
+    const p = document.createElement('pre'); p.innerText = (json.internalErrorsList || 'Full internal errors not embedded'); details.appendChild(p);
+    dv.appendChild(details);
+  }
+}
+
+async function showAiSummary(r){
+  const container = document.getElementById('ai-content');
+  container.innerText = 'Loading AI summary...';
+  if (!r.llmSummary){ container.innerText = 'No AI summary available for this report.'; return; }
+  try{
+    const resp = await fetch('./' + r.llmSummary);
+    if (!resp.ok){ container.innerText = 'Failed to load AI summary.'; return; }
+    const txt = await resp.text();
+    const pretty = document.getElementById('show-ai-pretty').checked;
+    if (pretty){ const pre = document.createElement('pre'); pre.textContent = txt; container.innerHTML=''; container.appendChild(pre); }
+    else { container.innerText = txt; }
+  }catch(e){ container.innerText = 'Error loading AI summary: '+String(e); }
+}
+
+document.getElementById('clear-ai').addEventListener('click', ()=>{ document.getElementById('ai-content').innerText='No AI summary selected.'; });
+
+async function showDiff(r){
+  const container = document.getElementById('diff-lines');
+  container.innerText = 'Loading diff...';
+  if (!r.diffLines){ container.innerText = 'No per-line diff available for this report.'; return; }
+  try{
+    const resp = await fetch('./' + r.diffLines);
+    if (!resp.ok) { container.innerText = 'Failed to load diff lines.'; return; }
+    const j = await resp.json();
+    const fmt = document.getElementById('diff-format').value || 'md';
+    const mdLines = j.mdLines || [];
+    const htmlLines = j.htmlLines || [];
+    const lines = (fmt==='html'? htmlLines : mdLines);
+    window._lastLoadedMdLines = mdLines;
+    window._lastLoadedHtmlLines = htmlLines;
+    window._lastDiffLines = lines;
+    renderDiffLines(lines);
+  }catch(e){ container.innerText = 'Error loading diff: '+String(e); }
+}
+
+function renderDiffLines(lines){
+  const container = document.getElementById('diff-lines');
+  const hide = document.getElementById('hide-context').checked;
+  container.innerHTML = '';
+  if (!lines || lines.length===0){ container.innerText = 'No lines to display.'; return; }
+  lines.forEach(item=>{
+    if (hide && item.type==='context') return;
+    const d = document.createElement('div'); d.className = 'diff-line ' + (item.type||'context');
+    d.textContent = (item.line||'');
+    container.appendChild(d);
+  });
+}
+
+document.getElementById('clear-diff').addEventListener('click', ()=>{ document.getElementById('diff-lines').innerText='No diff selected.'; });
+document.getElementById('hide-context').addEventListener('change', ()=>{ const fmt = document.getElementById('diff-format').value||'md'; const idx = window._lastDiffLines || []; renderDiffLines(idx); });
+document.getElementById('diff-format').addEventListener('change', ()=>{ /* reload view if last loaded */ const fmt = document.getElementById('diff-format').value||'md'; const lines = (fmt==='html' ? (window._lastLoadedHtmlLines||[]) : (window._lastLoadedMdLines||[])); if (lines && lines.length) renderDiffLines(lines); });
+
+function applyFilters(){
+  const severity = document.getElementById('severity-filter').value;
+  const tag = document.getElementById('tag-filter').value;
+  const from = document.getElementById('from-date').value;
+  const to = document.getElementById('to-date').value;
+  const keyword = document.getElementById('search-box').value && document.getElementById('search-box').value.toLowerCase();
+  const idx = window._reportIndex || [];
+  const filtered = idx.filter(e=>{
+    if (severity && String(e.severity||'').toLowerCase() !== severity) return false;
+    if (tag && !(e.tags||[]).includes(tag)) return false;
+    if (from && (new Date(e.timestamp) < new Date(from))) return false;
+    if (to && (new Date(e.timestamp) > new Date(to + 'T23:59:59Z'))) return false;
+    if (keyword){
+      const hay = ((e.summary||'') + ' ' + (e.tags||[]).join(' ') + ' ' + JSON.stringify(e.metadata||{})).toLowerCase();
+      if (!hay.includes(keyword)) return false;
+    }
+    return true;
+  });
+  renderReports(filtered);
+  drawCharts((filtered||[]).slice(0,30).reverse());
+}
+
+document.getElementById('apply-filters').addEventListener('click', applyFilters);
+document.getElementById('reset-filters').addEventListener('click', ()=>{ document.getElementById('severity-filter').value=''; document.getElementById('tag-filter').value=''; document.getElementById('from-date').value=''; document.getElementById('to-date').value=''; document.getElementById('search-box').value=''; load(); });
+
+window.addEventListener('load', load);
+}
+
+function severityToNum(s){ if(!s) return 0; const x=String(s).toLowerCase(); if(x==='critical') return 3; if(x==='warning') return 2; if(x==='info') return 1; return 0; }
+function drawCharts(entries){
+  const labels = entries.map(e=> e.timestamp || e.ts || '');
+  const sevData = entries.map(e=> severityToNum(e.severity));
+  const errData = entries.map(e=> e.internalErrors || 0);
+  const tagCounts = {};
+  entries.forEach(e=> (e.tags||[]).forEach(t=> tagCounts[t]=(tagCounts[t]||0)+1));
+  const ctx = document.getElementById('chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Severity (3=critical)', data: sevData, borderColor: '#e53e3e', tension:0.3, yAxisID:'y1' },
+        { label: 'Internal Errors', data: errData, borderColor: '#3182ce', tension:0.3, yAxisID:'y2' }
+      ]
+    },
+    options: {
+      scales: {
+        y1: { type:'linear', position:'left', title:{display:true,text:'Severity (3=critical)'} },
+        y2: { type:'linear', position:'right', title:{display:true,text:'Internal Errors'}, grid:{drawOnChartArea:false} }
       }
-      #root {
-        display: flex;
-        flex-direction: column;
-      }
-      /* Force light color-scheme to avoid CI high-contrast/dark theming */
-      :root { color-scheme: light; }
-    </style>
-    <link rel="stylesheet" href="assets/fonts/noto-local.css" />
-    <script>
-      // Override prefers-color-scheme detection in hostile CI environments (best-effort)
-      (function(){
-        try {
-          const realMM = window.matchMedia;
-          window.matchMedia = function(query){
-            try {
-              if (typeof query === 'string' && query.indexOf('prefers-color-scheme') !== -1) {
-                // return an object that reports dark=false, light=true
-                return { matches: false, media: query, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null };
-              }
-            } catch(e){}
-            return realMM.apply(this, arguments);
-          };
-        } catch(e){}
-      })();
-    </script>
-  </head>
+    }
+  });
+  // tags list
+  const tagList = document.createElement('div');
+  tagList.innerHTML = '<h3>Tag counts (recent)</h3>' + Object.entries(tagCounts).map(kv=>`<div>${kv[0]}: ${kv[1]}</div>`).join('');
+  document.getElementById('reports').appendChild(tagList);
+}
 
-  <body>
-    <div id="root"></div>
-    <script>
-      (function(){
-        try{
-          const ts = Date.now();
-          try{ document.documentElement && document.documentElement.setAttribute('data-urms-inline-entry', String(ts)); }catch(e){}
-          try{ window.__URMS_INLINE_ENTRY_TS = ts; }catch(e){}
-          try{ console.log('[inline-bundle-entry]', ts); }catch(e){}
-          try{ if(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') { window.__TAURI__.invoke('frontend_log',{level:'info', msg:'[inline-bundle-entry]'+ts}).catch(()=>{}); } }catch(e){}
-        }catch(e){}
-      })();
-    </script>
-    <script type="module" src="/Source/src/main.tsx"></script>
-    <!-- Console capture: attempt to persist frontend console to logs/frontend_console.log via Tauri fs or fallback to invoke -->
-    <script>
-      (function () {
-        function safeStringify(v) {
-          try { return typeof v === 'string' ? v : JSON.stringify(v); } catch { return String(v); }
-        }
-
-        // Helper to perform dynamic import without exposing literal import() targets to bundlers
-        const dynamicImport = new Function('m', 'return import(m)');
-
-        async function tryWriteLog(line) {
-          try {
-            // runtime dynamic import to avoid bundler resolution (use Function to hide from bundler)
-            const fsMod = await dynamicImport('@tauri-apps/api/fs');
-            const pathMod = await dynamicImport('@tauri-apps/api/path');
-            const appDir = await pathMod.appLocalDataDir();
-            const full = appDir + 'urms-frontend.log';
-            // append by reading existing then writing back
-            try {
-              const existing = await fsMod.readTextFile(full).catch(()=>'');
-              await fsMod.writeFile({ path: full, contents: existing + line + '\n' });
-            } catch (e) {
-              // If file ops fail, fall back to invoke
-              await tryInvoke(line);
-            }
-          } catch (e) {
-            await tryInvoke(line);
-          }
-        }
-
-        async function tryInvoke(line) {
-          try {
-            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {
-              window.__TAURI__.invoke('frontend_log', { level: 'info', msg: line });
-              return;
-            }
-            // runtime import fallback
-            const tauri = await dynamicImport('@tauri-apps/api/tauri').catch(()=>null);
-            if (tauri && typeof tauri.invoke === 'function') {
-              await tauri.invoke('frontend_log', { level: 'info', msg: line });
-            }
-          } catch (e) {
-            // ignore
-          }
-        }
-
-        ['log','info','warn','error','debug'].forEach((lvl)=>{
-          const orig = console[lvl];
-          console[lvl] = function(...args){
-            try {
-              const line = '[' + lvl + '] ' + args.map(safeStringify).join(' ');
-              // fire-and-forget
-              tryWriteLog(line);
-            } catch(e){}
-            if (orig) orig.apply(console, args);
-          };
-        });
-
-        // startup ping
-        setTimeout(()=>{ tryWriteLog('frontend: console-capture initialized'); }, 1000);
-
-        // Also try repeated HTTP POST pings to the host (backend listens on 127.0.0.1:8765)
-        (function(){
-          const attempts = 12;
-          const intervalMs = 800;
-          for (let i = 0; i < attempts; i++) {
-            setTimeout(async () => {
-              const payload = { msg: 'frontend: http ping', attempt: i, ts: Date.now() };
-              try {
-                const resp = await fetch('http://127.0.0.1:8765/ux-ping', {
-                  method: 'POST',
-                  mode: 'cors',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(payload)
-                });
-                // on success, set fast detection markers so Playwright can observe
-                if (resp && resp.ok) {
-                  try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}
-                  try { window.__pingOk = true; } catch(e){}
-                  try { console.log('[ux-ping-ok]', payload.attempt, payload.ts); } catch(e){}
-                }
-                tryWriteLog('[http-ping] ' + JSON.stringify(payload));
-              } catch (e) {
-                // ignore network errors; tryWriteLog will also attempt file/invoke
-                tryWriteLog('[http-ping-failed] ' + JSON.stringify(payload));
-              }
-            }, i * intervalMs);
-          }
-        })();
-        // Image-based GET pings as a fallback (triggers even if JS fetch or Tauri APIs fail)
-        (function(){
-          const attempts = 8;
-          const intervalMs = 1200;
-          const img = document.createElement('img');
-          img.style.display = 'none';
-          // on successful image load, set marker for Playwright to observe
-          img.onload = function(){
-            try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}
-            try { window.__pingOk = true; } catch(e){}
-            try { console.log('[ux-ping-ok] img'); } catch(e){}
-            try { tryWriteLog('[http-ping-img-ok]'); } catch(e){}
-          };
-          img.onerror = function(){ try { tryWriteLog('[http-ping-img-error]'); } catch(e){} };
-          document.body.appendChild(img);
-          for (let i=0;i<attempts;i++){
-            setTimeout(()=>{
-              try{
-                img.src = 'http://127.0.0.1:8765/ux-ping?img=1&attempt=' + i + '&ts=' + Date.now();
-              }catch(e){}
-            }, i*intervalMs + 200);
-          }
-        })();
-      })();
-    </script>
-  </body>
+window.addEventListener('load', load);
+</script>
+</body>
 </html>

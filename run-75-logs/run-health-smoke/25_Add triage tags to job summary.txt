@@ -1,8 +1,0 @@
-﻿2026-03-03T14:33:56.9560553Z ##[group]Run node -e "const fs=require('fs'); const p='builds/diagnostics/triage.json'; const sum=process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt'; if (fs.existsSync(p)){ const f=require('./'+p); const tags=(f.inferredTags||[]).join(', '); const sev=f.severity||'unknown'; fs.appendFileSync(sum, '## Smoke triage\n- inferredTags: '+(tags||'none')+'\n- severity: '+sev+'\n'); console.log('Appended triage tags and severity to job summary'); } else { console.log('triage.json not found'); }"
-2026-03-03T14:33:56.9563737Z [36;1mnode -e "const fs=require('fs'); const p='builds/diagnostics/triage.json'; const sum=process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt'; if (fs.existsSync(p)){ const f=require('./'+p); const tags=(f.inferredTags||[]).join(', '); const sev=f.severity||'unknown'; fs.appendFileSync(sum, '## Smoke triage\n- inferredTags: '+(tags||'none')+'\n- severity: '+sev+'\n'); console.log('Appended triage tags and severity to job summary'); } else { console.log('triage.json not found'); }"[0m
-2026-03-03T14:33:56.9565726Z shell: bash --noprofile --norc -e -o pipefail {0}
-2026-03-03T14:33:56.9565993Z env:
-2026-03-03T14:33:56.9566372Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
-2026-03-03T14:33:56.9566839Z   CORS_ALLOW_ORIGIN: *
-2026-03-03T14:33:56.9567028Z ##[endgroup]
-2026-03-03T14:33:57.0361544Z Appended triage tags and severity to job summary
