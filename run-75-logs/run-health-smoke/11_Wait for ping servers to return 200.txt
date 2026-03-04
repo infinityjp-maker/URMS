@@ -1,0 +1,14 @@
+﻿2026-03-03T14:33:35.4896795Z ##[group]Run for i in {1..20}; do
+2026-03-03T14:33:35.4897108Z [36;1mfor i in {1..20}; do[0m
+2026-03-03T14:33:35.4897483Z [36;1m  c1=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8765/ux-ping || true)[0m
+2026-03-03T14:33:35.4898020Z [36;1m  c2=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8877/ux-ping || true)[0m
+2026-03-03T14:33:35.4898518Z [36;1m  if [ "$c1" = "200" ] && [ "$c2" = "200" ]; then echo "ping servers ready"; exit 0; fi[0m
+2026-03-03T14:33:35.4898959Z [36;1m  echo "waiting for ping servers ($i) - 8765=$c1 8877=$c2"; sleep 1[0m
+2026-03-03T14:33:35.4899291Z [36;1mdone[0m
+2026-03-03T14:33:35.4900021Z [36;1mecho 'ping servers did not become ready'; echo '--- /tmp/ux-ping-8765.log ---'; sudo sed -n '1,200p' /tmp/ux-ping-8765.log || true; echo '--- /tmp/ux-ping-8877.log ---'; sudo sed -n '1,200p' /tmp/ux-ping-8877.log || true; exit 1[0m
+2026-03-03T14:33:35.4900941Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:35.4901210Z env:
+2026-03-03T14:33:35.4901621Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:35.4902085Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:35.4902272Z ##[endgroup]
+2026-03-03T14:33:35.5631135Z ping servers ready

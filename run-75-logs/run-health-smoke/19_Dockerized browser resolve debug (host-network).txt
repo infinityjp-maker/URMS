@@ -1,0 +1,22 @@
+﻿2026-03-03T14:33:37.7650713Z ##[group]Run echo 'Running browser resolve debug inside Docker container with --network host'
+2026-03-03T14:33:37.7651393Z [36;1mecho 'Running browser resolve debug inside Docker container with --network host'[0m
+2026-03-03T14:33:37.7651983Z [36;1m# Prefer host networking, but fall back to regular Docker if not supported in runner[0m
+2026-03-03T14:33:37.7652610Z [36;1mif docker run --rm --network host --help >/dev/null 2>&1; then[0m
+2026-03-03T14:33:37.7653584Z [36;1m  docker run --rm --network host -v "$GITHUB_WORKSPACE":/work -w /work mcr.microsoft.com/playwright:focal bash -lc "npm ci --no-audit --no-fund >/dev/null 2>&1 || true; node .github/workflows/browser-resolve-debug.cjs || true" || true[0m
+2026-03-03T14:33:37.7654463Z [36;1melse[0m
+2026-03-03T14:33:37.7654802Z [36;1m  echo 'Host networking not supported; running Docker without --network host'[0m
+2026-03-03T14:33:37.7656165Z [36;1m  docker run --rm -v "$GITHUB_WORKSPACE":/work -w /work mcr.microsoft.com/playwright:focal bash -lc "npm ci --no-audit --no-fund >/dev/null 2>&1 || true; node .github/workflows/browser-resolve-debug.cjs || true" || true[0m
+2026-03-03T14:33:37.7657086Z [36;1mfi[0m
+2026-03-03T14:33:37.7657343Z [36;1mecho '--- browser-resolve.json (from Docker run) ---'[0m
+2026-03-03T14:33:37.7657800Z [36;1msudo sed -n '1,200p' builds/diagnostics/browser-resolve.json || true[0m
+2026-03-03T14:33:37.7658281Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:37.7658560Z env:
+2026-03-03T14:33:37.7658937Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:37.7659395Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:37.7659596Z   URL: http://127.0.0.1:1420/
+2026-03-03T14:33:37.7659815Z ##[endgroup]
+2026-03-03T14:33:37.8212622Z Running browser resolve debug inside Docker container with --network host
+2026-03-03T14:33:37.8220432Z Host networking not supported; running Docker without --network host
+2026-03-03T14:33:37.8225690Z /__w/_temp/12640285-d870-4acf-8c17-f2ae928f93a7.sh: line 7: docker: command not found
+2026-03-03T14:33:37.8226638Z --- browser-resolve.json (from Docker run) ---
+2026-03-03T14:33:37.8230175Z /__w/_temp/12640285-d870-4acf-8c17-f2ae928f93a7.sh: line 10: sudo: command not found

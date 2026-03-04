@@ -1,0 +1,14 @@
+﻿2026-03-03T14:33:36.6943326Z ##[group]Run for i in {1..60}; do
+2026-03-03T14:33:36.6943630Z [36;1mfor i in {1..60}; do[0m
+2026-03-03T14:33:36.6944025Z [36;1m  code1=$(curl -s -o /dev/null -w "%{http_code}" http://tauri.localhost:1420/ || true)[0m
+2026-03-03T14:33:36.6944545Z [36;1m  code2=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:1420/ || true)[0m
+2026-03-03T14:33:36.6945021Z [36;1m  if [ "$code1" = "200" ] || [ "$code2" = "200" ]; then echo "static ready"; exit 0; fi[0m
+2026-03-03T14:33:36.6945775Z [36;1m  echo "waiting for static ($i) - codes: tauri.localhost=$code1, 127.0.0.1=$code2"; sleep 1[0m
+2026-03-03T14:33:36.6946174Z [36;1mdone[0m
+2026-03-03T14:33:36.6946570Z [36;1mecho "static did not become ready"; echo "--- /tmp/static.log ---"; sudo cat /tmp/static.log || true; exit 1[0m
+2026-03-03T14:33:36.6947166Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:36.6947442Z env:
+2026-03-03T14:33:36.6947816Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:36.6948300Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:36.6948486Z ##[endgroup]
+2026-03-03T14:33:36.7729130Z static ready

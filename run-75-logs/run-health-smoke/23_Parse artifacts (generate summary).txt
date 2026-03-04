@@ -1,0 +1,8 @@
+﻿2026-03-03T14:33:56.7802538Z ##[group]Run node scripts/parse-smoke-artifacts.cjs || true
+2026-03-03T14:33:56.7802976Z [36;1mnode scripts/parse-smoke-artifacts.cjs || true[0m
+2026-03-03T14:33:56.7803306Z shell: sh -e {0}
+2026-03-03T14:33:56.7803490Z env:
+2026-03-03T14:33:56.7803878Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:56.7804341Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:56.7804573Z ##[endgroup]
+2026-03-03T14:33:56.8600693Z wrote .github/actions-runs/smoke-summary.txt

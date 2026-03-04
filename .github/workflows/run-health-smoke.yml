@@ -369,16 +369,51 @@ jobs:
         if: always()
         run: |
           set -e
-          dest="${RUNNER_TEMP}/triage-summary.txt"
-          src="${GITHUB_STEP_SUMMARY:-.github/actions-runs/step-summary.txt}"
-          if [ -f "$src" ] && [ -s "$src" ]; then
-            cat "$src" > "$dest"
+          dest="${RUNNER_TEMP}/triage-summary.md"
+          node .github/workflows/generate-triage-summary.cjs DEST="$dest" || echo "generate triage summary failed"
+          # ensure compatibility: also write plain txt
+          if [ -f "$dest" ]; then cp "$dest" "${RUNNER_TEMP}/triage-summary.txt" || true; fi
+          echo "Wrote triage summary to ${RUNNER_TEMP}/triage-summary.md"
+        shell: bash
+
+      - name: Validate triage outputs
+        if: always()
+        run: |
+          echo 'Running triage output validation'
+          node .github/triage-tools/validate-triage-output.cjs "$RUNNER_TEMP" || (echo 'triage validation failed' && exit 1)
+        shell: bash
+
+      - name: Attempt download previous triage artifacts
+        if: always()
+        env:
+          TMP_PREV: ${{ runner.temp }}/prev-triage
+        run: |
+          set -e
+          mkdir -p "$TMP_PREV"
+          # Find previous run id (exclude current run)
+          PREV_ID=$(gh run list --limit 10 --json id -q '.[].id' | grep -v "${GITHUB_RUN_ID}" | head -n1 || true)
+          if [ -n "$PREV_ID" ]; then
+            echo "Found previous run id: $PREV_ID; attempting to download triage artifacts"
+            gh run download "$PREV_ID" --name triage-summary -D "$TMP_PREV" || true
+            gh run download "$PREV_ID" --name triage-summary-html -D "$TMP_PREV" || true
+            gh run download "$PREV_ID" --name triage-summary-compressed -D "$TMP_PREV" || true
           else
-            echo '--- job summary (fallback) ---' > "$dest"
-            [ -f .github/actions-runs/step-summary.txt ] && sed -n '1,200p' .github/actions-runs/step-summary.txt >> "$dest" || true
-            [ -f builds/diagnostics/triage.json ] && sed -n '1,200p' builds/diagnostics/triage.json >> "$dest" || true
+            echo 'No previous run id found; skipping previous artifact download'
           fi
-          echo "Wrote triage summary to $dest"
+        shell: bash
+
+      - name: Run triage diff against previous (if any)
+        if: always()
+        run: |
+          set -e
+          PREV_DIR="${{ runner.temp }}/prev-triage"
+          CUR_DIR="${RUNNER_TEMP}"
+          OUT="$RUNNER_TEMP/triage-diff.json"
+          node .github/triage-tools/diff-triage.cjs --prev "$PREV_DIR" --cur "$CUR_DIR" --out "$OUT" || true
+          echo 'Triage diff:'
+          cat "$OUT" || true
+          # preserve diff for potential issue comment
+          if [ -f "$OUT" ]; then cp "$OUT" "${{ runner.temp }}/triage-diff.json" || true; fi
         shell: bash
 
       - name: Upload triage summary
@@ -387,3 +422,60 @@ jobs:
         with:
           name: triage-summary
           path: ${{ runner.temp }}/triage-summary.txt
+      - name: Upload triage summary HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-summary-html
+          path: ${{ runner.temp }}/triage-summary.html
+
+      - name: Upload triage summary compressed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-summary-compressed
+          path: |
+            ${{ runner.temp }}/triage-summary.md.gz
+            ${{ runner.temp }}/triage-summary.txt.gz
+            ${{ runner.temp }}/triage-summary.html.gz
+            ${{ runner.temp }}/triage-internal-errors.txt
+
+      - name: Post triage Overview+Summary to Issue (if any)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const sumPath = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
+            let sumRaw = '';
+            if (fs.existsSync(sumPath)) sumRaw = fs.readFileSync(sumPath,'utf8');
+            const triageLine = (sumRaw.match(/- triage issue: .*$/m)||[])[0] || '';
+            if (!triageLine) { console.log('No triage issue recorded in job summary; skipping comment.'); return; }
+            const m = triageLine.match(/#(\d+)/);
+            if (!m) { console.log('No issue number parsed from triage issue line; skipping comment.'); return; }
+            const issueNumber = Number(m[1]);
+            const commentFile = `${process.env.RUNNER_TEMP}/triage-summary-comment.txt`;
+            let body = '';
+            if (fs.existsSync(commentFile)) {
+              body = fs.readFileSync(commentFile,'utf8');
+            } else {
+              console.log('Comment file not found at', commentFile, '; attempting to read triage-summary.md');
+              const mdFile = `${process.env.RUNNER_TEMP}/triage-summary.md`;
+              if (fs.existsSync(mdFile)) {
+                const md = fs.readFileSync(mdFile,'utf8');
+                // attempt to extract Overview + Summary sections
+                const ov = (md.match(/## Overview[\s\S]*?\n\n/)||[''])[0];
+                const su = (md.match(/### Summary[\s\S]*?\n\n/)||[''])[0];
+                body = (ov + '\n' + su).replace(/<[^>]+>/g,'');
+              } else {
+                body = 'Triage summary not available.';
+              }
+            }
+            // append run and artifact links
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            const artifactLink = `${runUrl}/artifacts`;
+            body += `\n\nRun: ${runUrl}\nArtifacts: ${artifactLink}`;
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body });
+            console.log('Posted triage overview+summary to issue #' + issueNumber);
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

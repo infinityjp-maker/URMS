@@ -1,0 +1,71 @@
+name: Validate Triage Outputs on Pull Request
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run generator using testdata
+        env:
+          TRIAGE_INPUT: .github/testdata/triage.json
+          DEST: ${{ runner.temp }}/triage-summary.md
+        run: |
+          node .github/workflows/generate-triage-summary.cjs DEST="$DEST" || (echo 'generator failed' && exit 1)
+
+      - name: Validate triage outputs
+        run: |
+          node .github/triage-tools/validate-triage-output.cjs || (echo 'triage validation failed' && exit 1)
+
+      - name: Run diff against baseline (testdata)
+        run: |
+          PREV_DIR="${{ runner.temp }}/prev-baseline"
+          mkdir -p "$PREV_DIR"
+          # For PR validation we treat the testdata as both prev and cur variants to simulate changes when present
+          # write testdata as prev baseline
+          cp .github/testdata/triage.json "$PREV_DIR/triage.json" || true
+          # cur is runner.temp where generator wrote outputs
+          node .github/triage-tools/diff-triage.cjs --prev "$PREV_DIR" --cur "$RUNNER_TEMP" --out "$RUNNER_TEMP/triage-diff.json" || true
+          if [ -f "$RUNNER_TEMP/triage-diff.json" ]; then
+            cp "$RUNNER_TEMP/triage-diff.json" "${{ runner.temp }}/triage-diff-pr.json" || true
+            # upload for debugging if changes
+            if node -e "const j=require(process.env.RUNNER_TEMP+'/triage-diff.json'); process.exit(j.summary && j.summary.changed?0:0)"; then
+              echo 'Diff generated'
+            fi
+          fi
+
+      - name: Upload triage validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-validation-artifacts
+          path: |
+            ${{ runner.temp }}/triage-summary.*
+            ${{ runner.temp }}/triage-internal-errors.txt
+            ${{ runner.temp }}/triage-diff-pr.json
+
+      - name: Upload triage validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-validation-artifacts
+          path: |
+            ${{ runner.temp }}/triage-summary.*
+            ${{ runner.temp }}/triage-internal-errors.txt

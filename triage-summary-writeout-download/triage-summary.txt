@@ -1,0 +1,156 @@
+--- job summary (fallback) ---
+{
+  "success": true,
+  "inferredTags": [
+    "ConnectionRefused",
+    "Static1420NotHttp"
+  ],
+  "connectivity": [
+    {
+      "port": 1420,
+      "tcp": true,
+      "http": false,
+      "host": "127.0.0.1"
+    },
+    {
+      "port": 1420,
+      "tcp": true,
+      "http": false,
+      "host": "tauri.localhost"
+    },
+    {
+      "port": 8765,
+      "tcp": true,
+      "http": true,
+      "host": "127.0.0.1"
+    },
+    {
+      "port": 8765,
+      "tcp": true,
+      "http": true,
+      "host": "tauri.localhost"
+    },
+    {
+      "port": 8877,
+      "tcp": true,
+      "http": true,
+      "host": "127.0.0.1"
+    },
+    {
+      "port": 8877,
+      "tcp": true,
+      "http": true,
+      "host": "tauri.localhost"
+    }
+  ],
+  "internalErrors": [
+    "DISABLE_CDP=1, skipping CDP discovery",
+    "GOTO_ATTEMPT_FAILED: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/\nCall log:\n\u001b[2m  - navigating to \"http://tauri.localhost/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "GOTO_ATTEMPT_FAILED: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/\nCall log:\n\u001b[2m  - navigating to \"http://tauri.localhost/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "nav-failure-content failed: Error: page.content: Unable to retrieve content because the page is navigating and changing the content.",
+    "gotoWithRetry initial: page.goto: net::ERR_CONNECTION_REFUSED at http://tauri.localhost/\nCall log:\n\u001b[2m  - navigating to \"http://tauri.localhost/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "INJECT_NOTE_ADD_FAILED: page.addStyleTag: Event",
+    "pre-capture repaint attempt failed: page.evaluate: Execution context was destroyed, most likely because of a navigation.",
+    "pre-capture repaint: not applied after retries",
+    "waitForSelector [data-ux-ping]: page.waitForSelector: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-ux-ping=\"ok\"]') to be visible\u001b[22m\n\n    at D:\\GitHub\\URMS\\Tests\\playwright\\smoke.cjs:309:24",
+    "waitForEvent(console [ux-ping-ok]): page.waitForEvent: Timeout 8000ms exceeded while waiting for event \"console\"\n=========================== logs ===========================\nwaiting for event \"console\"\n============================================================\n    at D:\\GitHub\\URMS\\Tests\\playwright\\smoke.cjs:312:24",
+    "waitForSelector .dashboard-grid: page.waitForSelector: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.dashboard-grid') to be visible\u001b[22m\n",
+    "ux-ping fetch failed: connect ECONNREFUSED 127.0.0.1:8765",
+    "ux-ping fetch failed: connect ECONNREFUSED 127.0.0.1:8877"
+  ],
+  "browserErrors": {
+    "browserResolve": {
+      "timestamp": 1772577283683,
+      "envURL": "http://127.0.0.1:1420/",
+      "attempts": [
+        {
+          "host": "tauri.localhost",
+          "port": 1420,
+          "target": "http://tauri.localhost:1420/",
+          "result": {
+            "ok": false,
+            "error": "TypeError: Failed to fetch"
+          }
+        },
+        {
+          "host": "tauri.localhost",
+          "port": 8765,
+          "target": "http://tauri.localhost:8765/ux-ping",
+          "result": {
+            "ok": true,
+            "status": 200,
+            "text": "{\"ok\":true}"
+          }
+        },
+        {
+          "host": "tauri.localhost",
+          "port": 8877,
+          "target": "http://tauri.localhost:8877/ux-ping",
+          "result": {
+            "ok": true,
+            "status": 200,
+            "text": "{\"ok\":true}"
+          }
+        },
+        {
+          "host": "127.0.0.1",
+          "port": 1420,
+          "target": "http://127.0.0.1:1420/",
+          "result": {
+            "ok": true,
+            "status": 200,
+            "text": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"./vite.svg\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>URMS v4.0</title>\n    <style>\n      /* CI early normalization: force light background and stable fonts before first paint */\n      #ci-force-init{display:none}\n    </style>\n    <style id=\"ci-force-init\" data-ci=\"1\">\n      html,body,#root { background: #ffffff !important; background-image: none !important; background-color: #ffffff !important; color: #222 !important; }\n      * { background-image: none !important; background-color: transparent !important; -webkit-font-smoothing: antialiased !important; text-rendering: optimizeLegibility !important; }\n      img,picture,video,iframe { filter: grayscale(1) !important; opacity: 1 !important; }\n      svg, svg * { fill: currentColor !important; stroke: currentColor !important; }\n      :root { --ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans JP\", Meiryo, sans-serif !important; }\n      * , *::before, *::after { font-family: var(--ci-system-fonts) !important; }\n    </style>\n      * { margin: 0; padding: 0; box-sizing: border-box; }\n      html, body, #root { width: 100%; height: 100%; }\n      body {\n        background: linear-gradient(135deg, #070812 0%, #081028 100%);\n        color: #e5e7eb;\n        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;\n        overflow: hidden;\n      }\n      #root {\n        display: flex;\n        flex-direction: column;\n      }\n      /* Force light color-scheme to avoid CI high-contrast/dark theming */\n      :root { color-scheme: light; }\n    </style>\n    <link rel=\"stylesheet\" href=\"assets/fonts/noto-local.css\" />\n    <script>\n      // Override prefers-color-scheme detection in hostile CI environments (best-effort)\n      (function(){\n        try {\n          const realMM = window.matchMedia;\n          window.matchMedia = function(query){\n            try {\n              if (typeof query === 'string' && query.indexOf('prefers-color-scheme') !== -1) {\n                // return an object that reports dark=false, light=true\n                return { matches: false, media: query, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null };\n              }\n            } catch(e){}\n            return realMM.apply(this, arguments);\n          };\n        } catch(e){}\n      })();\n    </script>\n    <script type=\"module\" crossorigin src=\"./assets/index-c5fvZBtT.js\"></script>\n    <link rel=\"modulepreload\" crossorigin href=\"./assets/vendor-Cp5YrUBL.js\">\n    <link rel=\"stylesheet\" crossorigin href=\"./assets/index-Dszm4068.css\">\n    <script type=\"module\">import.meta.url;import(\"_\").catch(()=>1);(async function*(){})().next();window.__vite_is_modern_browser=true</script>\n    <script type=\"module\">!function(){if(window.__vite_is_modern_browser)return;console.warn(\"vite: loading legacy chunks, syntax error above and the same error below should be ignored\");var e=document.getElementById(\"vite-legacy-polyfill\"),n=document.createElement(\"script\");n.src=e.src,n.onload=function(){System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))},document.body.appendChild(n)}();</script>\n  </head>\n\n  <body>\n    <div id=\"root\"></div>\n    <script>\n      (function(){\n        try{\n          const ts = Date.now();\n          try{ document.documentElement && document.documentElement.setAttribute('data-urms-inline-entry', String(ts)); }catch(e){}\n          try{ window.__URMS_INLINE_ENTRY_TS = ts; }catch(e){}\n          try{ console.log('[inline-bundle-entry]', ts); }catch(e){}\n          try{ if(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') { window.__TAURI__.invoke('frontend_log',{level:'info', msg:'[inline-bundle-entry]'+ts}).catch(()=>{}); } }catch(e){}\n        }catch(e){}\n      })();\n    </script>\n    <!-- Console capture: attempt to persist frontend console to logs/frontend_console.log via Tauri fs or fallback to invoke -->\n    <script>\n      (function () {\n        function safeStringify(v) {\n          try { return typeof v === 'string' ? v : JSON.stringify(v); } catch { return String(v); }\n        }\n\n        // Helper to perform dynamic import without exposing literal import() targets to bundlers\n        const dynamicImport = new Function('m', 'return import(m)');\n\n        async function tryWriteLog(line) {\n          try {\n            // runtime dynamic import to avoid bundler resolution (use Function to hide from bundler)\n            const fsMod = await dynamicImport('@tauri-apps/api/fs');\n            const pathMod = await dynamicImport('@tauri-apps/api/path');\n            const appDir = await pathMod.appLocalDataDir();\n            const full = appDir + 'urms-frontend.log';\n            // append by reading existing then writing back\n            try {\n              const existing = await fsMod.readTextFile(full).catch(()=>'');\n              await fsMod.writeFile({ path: full, contents: existing + line + '\\n' });\n            } catch (e) {\n              // If file ops fail, fall back to invoke\n              await tryInvoke(line);\n            }\n          } catch (e) {\n            await tryInvoke(line);\n          }\n        }\n\n        async function tryInvoke(line) {\n          try {\n            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {\n              window.__TAURI__.invoke('frontend_log', { level: 'info', msg: line });\n              return;\n            }\n            // runtime import fallback\n            const tauri = await dynamicImport('@tauri-apps/api/tauri').catch(()=>null);\n            if (tauri && typeof tauri.invoke === 'function') {\n              await tauri.invoke('frontend_log', { level: 'info', msg: line });\n            }\n          } catch (e) {\n            // ignore\n          }\n        }\n\n        ['log','info','warn','error','debug'].forEach((lvl)=>{\n          const orig = console[lvl];\n          console[lvl] = function(...args){\n            try {\n              const line = '[' + lvl + '] ' + args.map(safeStringify).join(' ');\n              // fire-and-forget\n              tryWriteLog(line);\n            } catch(e){}\n            if (orig) orig.apply(console, args);\n          };\n        });\n\n        // startup ping\n        setTimeout(()=>{ tryWriteLog('frontend: console-capture initialized'); }, 1000);\n\n        // Also try repeated HTTP POST pings to the host (backend listens on 127.0.0.1:8765)\n        (function(){\n          const attempts = 12;\n          const intervalMs = 800;\n          for (let i = 0; i < attempts; i++) {\n            setTimeout(async () => {\n              const payload = { msg: 'frontend: http ping', attempt: i, ts: Date.now() };\n              try {\n                const resp = await fetch('http://127.0.0.1:8765/ux-ping', {\n                  method: 'POST',\n                  mode: 'cors',\n                  headers: { 'Content-Type': 'application/json' },\n                  body: JSON.stringify(payload)\n                });\n                // on success, set fast detection markers so Playwright can observe\n                if (resp && resp.ok) {\n                  try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}\n                  try { window.__pingOk = true; } catch(e){}\n                  try { console.log('[ux-ping-ok]', payload.attempt, payload.ts); } catch(e){}\n                }\n                tryWriteLog('[http-ping] ' + JSON.stringify(payload));\n              } catch (e) {\n                // ignore network errors; tryWriteLog will also attempt file/invoke\n                tryWriteLog('[http-ping-failed] ' + JSON.stringify(payload));\n              }\n            }, i * intervalMs);\n          }\n        })();\n        // Image-based GET pings as a fallback (triggers even if JS fetch or Tauri APIs fail)\n        (function(){\n          const attempts = 8;\n          const intervalMs = 1200;\n          const img = document.createElement('img');\n          img.style.display = 'none';\n          // on successful image load, set marker for Playwright to observe\n          img.onload = function(){\n            try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}\n            try { window.__pingOk = true; } catch(e){}\n            try { console.log('[ux-ping-ok] img'); } catch(e){}\n            try { tryWriteLog('[http-ping-img-ok]'); } catch(e){}\n          };\n          img.onerror = function(){ try { tryWriteLog('[http-ping-img-error]'); } catch(e){} };\n          document.body.appendChild(img);\n          for (let i=0;i<attempts;i++){\n            setTimeout(()=>{\n              try{\n                img.src = 'http://127.0.0.1:8765/ux-ping?img=1&attempt=' + i + '&ts=' + Date.now();\n              }catch(e){}\n            }, i*intervalMs + 200);\n          }\n        })();\n      })();\n    </script>\n    <script nomodule>!function(){var e=document,t=e.createElement(\"script\");if(!(\"noModule\"in t)&&\"onbeforeload\"in t){var n=!1;e.addEventListener(\"beforeload\",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute(\"nomodule\")||!n)return;e.preventDefault()}),!0),t.type=\"module\",t.src=\".\",e.head.appendChild(t),t.remove()}}();</script>\n    <script nomodule crossorigin id=\"vite-legacy-polyfill\" src=\"./assets/polyfills-legacy-J6gA_dBX.js\"></script>\n    <script nomodule crossorigin id=\"vite-legacy-entry\" data-src=\"./assets/index-legacy-Bb8P7OSX.js\">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>\n  </body>\n</html>\n"
+          }
+        },
+        {
+          "host": "127.0.0.1",
+          "port": 8765,
+          "target": "http://127.0.0.1:8765/ux-ping",
+          "result": {
+            "ok": true,
+            "status": 200,
+            "text": "{\"ok\":true}"
+          }
+        },
+        {
+          "host": "127.0.0.1",
+          "port": 8877,
+          "target": "http://127.0.0.1:8877/ux-ping",
+          "result": {
+            "ok": true,
+            "status": 200,
+            "text": "{\"ok\":true}"
+          }
+        }
+      ],
+      "console": [
+        {
+          "type": "log",
+          "text": "[CI-PREFLIGHT] {\n  \"k\": \"fetch\",\n  \"v\": {\n    \"target\": \"http://127.0.0.1:1420/\",\n    \"ok\": true,\n    \"status\": 200,\n    \"text\": \"<!doctype html>\\n<html lang=\\\"en\\\">\\n  <head>\\n    <meta charset=\\\"UTF-8\\\" />\\n    <link rel=\\\"icon\\\" type=\\\"image/svg+xml\\\" href=\\\"./vite.svg\\\" />\\n    <meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1.0\\\" />\\n    <title>URMS v4.0</title>\\n    <style>\\n      /* CI early normalization: force light background and stable fonts before first paint */\\n      #ci-force-init{display:none}\\n    </style>\\n    <style id=\\\"ci-force-init\\\" data-ci=\\\"1\\\">\\n      html,body,#root { background: #ffffff !important; background-image: none !important; background-color: #ffffff !important; color: #222 !important; }\\n      * { background-image: none !important; background-color: transparent !important; -webkit-font-smoothing: antialiased !important; text-rendering: optimizeLegibility !important; }\\n      img,picture,video,iframe { filter: grayscale(1) !important; opacity: 1 !important; }\\n      svg, svg * { fill: currentColor !important; stroke: currentColor !important; }\\n      :root { --ci-system-fonts: 'URMS-Embedded-JP', -apple-system, BlinkMacSystemFont, \\\"Segoe UI\\\", Roboto, \\\"Helvetica Neue\\\", Arial, \\\"Noto Sans JP\\\", Meiryo, sans-serif !important; }\\n      * , *::before, *::after { font-family: var(--ci-system-fonts) !important; }\\n    </style>\\n      * { margin: 0; padding: 0; box-sizing: border-box; }\\n      html, body, #root { width: 100%; height: 100%; }\\n      body {\\n        background: linear-gradient(135deg, #070812 0%, #081028 100%);\\n        color: #e5e7eb;\\n        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;\\n        overflow: hidden;\\n      }\\n      #root {\\n        display: flex;\\n        flex-direction: column;\\n      }\\n      /* Force light color-scheme to avoid CI high-contrast/dark theming */\\n      :root { color-scheme: light; }\\n    </style>\\n    <link rel=\\\"stylesheet\\\" href=\\\"assets/fonts/noto-local.css\\\" />\\n    <script>\\n      // Override prefers-color-scheme detection in hostile CI environments (best-effort)\\n      (function(){\\n        try {\\n          const realMM = window.matchMedia;\\n          window.matchMedia = function(query){\\n            try {\\n              if (typeof query === 'string' && query.indexOf('prefers-color-scheme') !== -1) {\\n                // return an object that reports dark=false, light=true\\n                return { matches: false, media: query, addListener(){}, removeListener(){}, addEventListener(){}, removeEventListener(){}, onchange: null };\\n              }\\n            } catch(e){}\\n            return realMM.apply(this, arguments);\\n          };\\n        } catch(e){}\\n      })();\\n    </script>\\n    <script type=\\\"module\\\" crossorigin src=\\\"./assets/index-c5fvZBtT.js\\\"></script>\\n    <link rel=\\\"modulepreload\\\" crossorigin href=\\\"./assets/vendor-Cp5YrUBL.js\\\">\\n    <link rel=\\\"stylesheet\\\" crossorigin href=\\\"./assets/index-Dszm4068.css\\\">\\n    <script type=\\\"module\\\">import.meta.url;import(\\\"_\\\").catch(()=>1);(async function*(){})().next();window.__vite_is_modern_browser=true</script>\\n    <script type=\\\"module\\\">!function(){if(window.__vite_is_modern_browser)return;console.warn(\\\"vite: loading legacy chunks, syntax error above and the same error below should be ignored\\\");var e=document.getElementById(\\\"vite-legacy-polyfill\\\"),n=document.createElement(\\\"script\\\");n.src=e.src,n.onload=function(){System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))},document.body.appendChild(n)}();</script>\\n  </head>\\n\\n  <body>\\n    <div id=\\\"root\\\"></div>\\n    <script>\\n      (function(){\\n        try{\\n          const ts = Date.now();\\n          try{ document.documentElement && document.documentElement.setAttribute('data-urms-inline-entry', String(ts)); }catch(e){}\\n          try{ window.__URMS_INLINE_ENTRY_TS = ts; }catch(e){}\\n          try{ console.log('[inline-bundle-entry]', ts); }catch(e){}\\n          try{ if(window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') { window.__TAURI__.invoke('frontend_log',{level:'info', msg:'[inline-bundle-entry]'+ts}).catch(()=>{}); } }catch(e){}\\n        }catch(e){}\\n      })();\\n    </script>\\n    <!-- Console capture: attempt to persist frontend console to logs/frontend_console.log via Tauri fs or fallback to invoke -->\\n    <script>\\n      (function () {\\n        function safeStringify(v) {\\n          try { return typeof v === 'string' ? v : JSON.stringify(v); } catch { return String(v); }\\n        }\\n\\n        // Helper to perform dynamic import without exposing literal import() targets to bundlers\\n        const dynamicImport = new Function('m', 'return import(m)');\\n\\n        async function tryWriteLog(line) {\\n          try {\\n            // runtime dynamic import to avoid bundler resolution (use Function to hide from bundler)\\n            const fsMod = await dynamicImport('@tauri-apps/api/fs');\\n            const pathMod = await dynamicImport('@tauri-apps/api/path');\\n            const appDir = await pathMod.appLocalDataDir();\\n            const full = appDir + 'urms-frontend.log';\\n            // append by reading existing then writing back\\n            try {\\n              const existing = await fsMod.readTextFile(full).catch(()=>'');\\n              await fsMod.writeFile({ path: full, contents: existing + line + '\\\\n' });\\n            } catch (e) {\\n              // If file ops fail, fall back to invoke\\n              await tryInvoke(line);\\n            }\\n          } catch (e) {\\n            await tryInvoke(line);\\n          }\\n        }\\n\\n        async function tryInvoke(line) {\\n          try {\\n            if (window.__TAURI__ && typeof window.__TAURI__.invoke === 'function') {\\n              window.__TAURI__.invoke('frontend_log', { level: 'info', msg: line });\\n              return;\\n            }\\n            // runtime import fallback\\n            const tauri = await dynamicImport('@tauri-apps/api/tauri').catch(()=>null);\\n            if (tauri && typeof tauri.invoke === 'function') {\\n              await tauri.invoke('frontend_log', { level: 'info', msg: line });\\n            }\\n          } catch (e) {\\n            // ignore\\n          }\\n        }\\n\\n        ['log','info','warn','error','debug'].forEach((lvl)=>{\\n          const orig = console[lvl];\\n          console[lvl] = function(...args){\\n            try {\\n              const line = '[' + lvl + '] ' + args.map(safeStringify).join(' ');\\n              // fire-and-forget\\n              tryWriteLog(line);\\n            } catch(e){}\\n            if (orig) orig.apply(console, args);\\n          };\\n        });\\n\\n        // startup ping\\n        setTimeout(()=>{ tryWriteLog('frontend: console-capture initialized'); }, 1000);\\n\\n        // Also try repeated HTTP POST pings to the host (backend listens on 127.0.0.1:8765)\\n        (function(){\\n          const attempts = 12;\\n          const intervalMs = 800;\\n          for (let i = 0; i < attempts; i++) {\\n            setTimeout(async () => {\\n              const payload = { msg: 'frontend: http ping', attempt: i, ts: Date.now() };\\n              try {\\n                const resp = await fetch('http://127.0.0.1:8765/ux-ping', {\\n                  method: 'POST',\\n                  mode: 'cors',\\n                  headers: { 'Content-Type': 'application/json' },\\n                  body: JSON.stringify(payload)\\n                });\\n                // on success, set fast detection markers so Playwright can observe\\n                if (resp && resp.ok) {\\n                  try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}\\n                  try { window.__pingOk = true; } catch(e){}\\n                  try { console.log('[ux-ping-ok]', payload.attempt, payload.ts); } catch(e){}\\n                }\\n                tryWriteLog('[http-ping] ' + JSON.stringify(payload));\\n              } catch (e) {\\n                // ignore network errors; tryWriteLog will also attempt file/invoke\\n                tryWriteLog('[http-ping-failed] ' + JSON.stringify(payload));\\n              }\\n            }, i * intervalMs);\\n          }\\n        })();\\n        // Image-based GET pings as a fallback (triggers even if JS fetch or Tauri APIs fail)\\n        (function(){\\n          const attempts = 8;\\n          const intervalMs = 1200;\\n          const img = document.createElement('img');\\n          img.style.display = 'none';\\n          // on successful image load, set marker for Playwright to observe\\n          img.onload = function(){\\n            try { document.documentElement && document.documentElement.setAttribute('data-ux-ping','ok'); } catch(e){}\\n            try { window.__pingOk = true; } catch(e){}\\n            try { console.log('[ux-ping-ok] img'); } catch(e){}\\n            try { tryWriteLog('[http-ping-img-ok]'); } catch(e){}\\n          };\\n          img.onerror = function(){ try { tryWriteLog('[http-ping-img-error]'); } catch(e){} };\\n          document.body.appendChild(img);\\n          for (let i=0;i<attempts;i++){\\n            setTimeout(()=>{\\n              try{\\n                img.src = 'http://127.0.0.1:8765/ux-ping?img=1&attempt=' + i + '&ts=' + Date.now();\\n              }catch(e){}\\n            }, i*intervalMs + 200);\\n          }\\n        })();\\n      })();\\n    </script>\\n    <script nomodule>!function(){var e=document,t=e.createElement(\\\"script\\\");if(!(\\\"noModule\\\"in t)&&\\\"onbeforeload\\\"in t){var n=!1;e.addEventListener(\\\"beforeload\\\",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute(\\\"nomodule\\\")||!n)return;e.preventDefault()}),!0),t.type=\\\"module\\\",t.src=\\\".\\\",e.head.appendChild(t),t.remove()}}();</script>\\n    <script nomodule crossorigin id=\\\"vite-legacy-polyfill\\\" src=\\\"./assets/polyfills-legacy-J6gA_dBX.js\\\"></script>\\n    <script nomodule crossorigin id=\\\"vite-legacy-entry\\\" data-src=\\\"./assets/index-legacy-Bb8P7OSX.js\\\">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>\\n  </body>\\n</html>\\n\"\n  }\n}"
+        },
+        {
+          "type": "log",
+          "text": "[CI-PREFLIGHT] {\n  \"k\": \"fetch\",\n  \"v\": {\n    \"target\": \"http://127.0.0.1:8765/ux-ping\",\n    \"ok\": true,\n    \"status\": 200,\n    \"text\": \"{\\\"ok\\\":true}\"\n  }\n}"
+        },
+        {
+          "type": "log",
+          "text": "[CI-PREFLIGHT] {\n  \"k\": \"fetch\",\n  \"v\": {\n    \"target\": \"http://127.0.0.1:8877/ux-ping\",\n    \"ok\": true,\n    \"status\": 200,\n    \"text\": \"{\\\"ok\\\":true}\"\n  }\n}"
+        },
+        {
+          "type": "error",
+          "text": "Access to fetch at 'http://tauri.localhost:1420/' from origin 'http://127.0.0.1:1420' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_FAILED"
+        }
+      ],
+      "pagePreflight": null,
+      "localFetch": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"./vite.svg\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-sca"
+    },
+    "consoleMessages": [],
+    "pageErrors": []
+  },
+  "timestamp": "2026-03-03T22:34:45.070Z",
+  "severity": "critical"
+}

@@ -1,0 +1,9 @@
+﻿2026-03-03T14:33:34.3275597Z ##[group]Run nohup env PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &
+2026-03-03T14:33:34.3276343Z [36;1mnohup env PORT=8765 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8765.log 2>&1 &[0m
+2026-03-03T14:33:34.3276974Z [36;1mnohup env PORT=8877 node .github/workflows/ping-server.cjs > /tmp/ux-ping-8877.log 2>&1 &[0m
+2026-03-03T14:33:34.3277408Z [36;1msleep 1[0m
+2026-03-03T14:33:34.3277777Z shell: bash --noprofile --norc -e -o pipefail {0}
+2026-03-03T14:33:34.3278035Z env:
+2026-03-03T14:33:34.3278456Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:34.3278913Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:34.3279098Z ##[endgroup]

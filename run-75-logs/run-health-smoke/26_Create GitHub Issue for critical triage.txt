@@ -1,0 +1,74 @@
+﻿2026-03-03T14:33:57.0480332Z ##[group]Run actions/github-script@v6
+2026-03-03T14:33:57.0480607Z with:
+2026-03-03T14:33:57.0492276Z   script: const fs = require('fs');
+const p = 'builds/diagnostics/triage.json';
+if (!fs.existsSync(p)) { console.log('triage.json not found; skipping issue creation'); return; }
+const t = JSON.parse(fs.readFileSync(p, 'utf8'));
+if ((t.severity || '').toLowerCase() !== 'critical') { console.log('severity is not critical (actual='+t.severity+'); skipping issue creation'); return; }
+const inferred = (t.inferredTags || []).slice(0, 10);
+const bodyObj = {
+  success: t.success,
+  inferredTags: t.inferredTags || [],
+  severity: t.severity,
+  internalErrors: (t.internalErrors || []).slice(0, 10)
+};
+const excerpt = JSON.stringify(bodyObj, null, 2);
+const title = 'CI auto-triage: critical failure detected';
+const owner = context.repo.owner;
+const repo = context.repo.repo;
+
+// Search for existing open issues with same title and any matching inferred tag
+console.log('Searching for existing open issues with title and inferredTags:', inferred);
+const listRes = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+let candidates = (listRes && listRes.data || []).filter(issue => {
+  if (!issue || !issue.title) return false;
+  if (issue.title !== title) return false;
+  const issueLabels = (issue.labels || []).map(l => (typeof l === 'string') ? l : (l && l.name)).filter(Boolean);
+  return issueLabels.some(l => inferred.includes(l));
+});
+
+if (candidates.length > 0) {
+  // pick the most recently created open issue
+  candidates.sort((a,b) => new Date(b.created_at || b.createdAt) - new Date(a.created_at || a.createdAt));
+  const existing = candidates[0];
+  const now = new Date().toISOString();
+  const comment = `triage 自動診断により同一カテゴリの critical failure が再検出されました。最新 triage.json の抜粋を以下に記録します。\n\n\`\`\`json\n${excerpt}\n\`\`\`\n\n(commented at ${now})`;
+  const commentRes = await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body: comment });
+  const commentUrl = commentRes && commentRes.data && commentRes.data.html_url ? commentRes.data.html_url : (existing.html_url || `https://github.com/${owner}/${repo}/issues/${existing.number}`);
+  const commentCreatedAt = commentRes && commentRes.data && commentRes.data.created_at ? commentRes.data.created_at : now;
+  const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
+  try {
+    fs.appendFileSync(sum, `- triage issue: appended to existing #${existing.number} ${existing.html_url} (commented: ${commentCreatedAt}) comment: ${commentUrl}\n`);
+    console.log('Appended issue comment and wrote summary for existing issue:', existing.number, commentUrl, commentCreatedAt);
+  } catch (e) { console.log('Failed to append existing issue info to job summary', e); }
+  return;
+}
+
+// No existing matching issue found — create a new one
+const labels = inferred;
+const body = `Auto-triage detected a critical smoke failure.\n\n**triage.json (excerpt)**:\n\n\`\`\`json\n${excerpt}\n\`\`\``;
+console.log('Creating issue with labels:', labels);
+const res = await github.rest.issues.create({ owner, repo, title, body, labels });
+const issueUrl = (res && res.data && (res.data.html_url || (`https://github.com/${owner}/${repo}/issues/${res.data.number}`))) || 'unknown';
+const issueNumber = res && res.data && res.data.number ? res.data.number : 'unknown';
+const issueCreatedAt = res && res.data && (res.data.created_at || res.data.createdAt) ? (res.data.created_at || res.data.createdAt) : 'unknown';
+const sum = process.env.GITHUB_STEP_SUMMARY || '.github/actions-runs/step-summary.txt';
+try {
+    fs.appendFileSync(sum, `- triage issue: #${issueNumber} ${issueUrl} (created: ${issueCreatedAt})\n`);
+  console.log('Appended issue info to job summary:', issueNumber, issueUrl, issueCreatedAt);
+} catch (e) { console.log('Failed to append issue URL to job summary', e); }
+
+2026-03-03T14:33:57.0504711Z   github-token: ***
+2026-03-03T14:33:57.0504903Z   debug: false
+2026-03-03T14:33:57.0505223Z   user-agent: actions/github-script
+2026-03-03T14:33:57.0505650Z   result-encoding: json
+2026-03-03T14:33:57.0505831Z   retries: 0
+2026-03-03T14:33:57.0506032Z   retry-exempt-status-codes: 400,401,403,404,422
+2026-03-03T14:33:57.0506297Z env:
+2026-03-03T14:33:57.0506684Z   CI_BROWSER_ARGS: --disable-site-isolation-trials --disable-features=IsolateOrigins,site-per-process
+2026-03-03T14:33:57.0507138Z   CORS_ALLOW_ORIGIN: *
+2026-03-03T14:33:57.0507445Z   GITHUB_TOKEN: ***
+2026-03-03T14:33:57.0507627Z ##[endgroup]
+2026-03-03T14:33:57.0522259Z ##[command]/usr/bin/docker exec  85f1e72fac3e8cc651fff6238e076b62cb5ce72ab34854faf7f801c4d045325f sh -c "cat /etc/*release | grep ^ID"
+2026-03-03T14:33:57.2282390Z Searching for existing open issues with title and inferredTags: [ 'ConnectionRefused', 'Static1420NotHttp' ]
+2026-03-03T14:33:58.4730914Z Appended issue comment and wrote summary for existing issue: 35 https://github.com/infinityjp-maker/URMS/issues/35#issuecomment-3991482921 2026-03-03T14:33:58Z
