@@ -6,7 +6,6 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  # Enable manual dispatch for this workflow so we can trigger reports from branches
   workflow_dispatch:
     inputs:
       smoke_run_id:

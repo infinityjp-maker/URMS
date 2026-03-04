@@ -1,0 +1,71 @@
+### DEPRECATED / LEGACY workflow
+# This file is retained for historical record. Do NOT dispatch this workflow.
+# Replaced by triage-summary-report.yml (promoted from triage-summary-report-v2.yml).
+# workflow_dispatch intentionally disabled below.
+
+name: Triage Summary Full Report (legacy)
+
+concurrency:
+  group: triage-summary-report
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch: false # deprecated - manual dispatch disabled
+  schedule:
+    - cron: '0 4 * * *' # nightly (kept for historical purposes)
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure tools
+        run: |
+          sudo apt-get update -y || true
+          sudo apt-get install -y jq unzip || true
+
+      - name: Optionally download artifacts from provided runs
+        env:
+          SMOKE_RUN: ${{ github.event.inputs.smoke_run_id }}
+          SELFTEST_RUN: ${{ github.event.inputs.selftest_run_id }}
+        run: |
+          set -e
+          TMP=${RUNNER_TEMP}
+          echo "SMOKE_RUN=$SMOKE_RUN SELFTEST_RUN=$SELFTEST_RUN"
+          if [ -n "$SMOKE_RUN" ]; then
+            echo "Attempting to download artifacts for smoke run $SMOKE_RUN"
+            gh run download "$SMOKE_RUN" --name triage-summary -D "$TMP" || true
+            gh run download "$SMOKE_RUN" --name triage-summary-html -D "$TMP" || true
+            gh run download "$SMOKE_RUN" --name triage-summary-compressed -D "$TMP" || true
+          fi
+          if [ -n "$SELFTEST_RUN" ]; then
+            echo "Attempting to download artifacts for selftest run $SELFTEST_RUN"
+            gh run download "$SELFTEST_RUN" --name triage-selftest-artifacts -D "$TMP" || true
+          fi
+
+      - name: Generate current triage summary if missing
+        env:
+          DEST: ${{ runner.temp }}/triage-summary.md
+        run: |
+          TMP=${RUNNER_TEMP}
+          if [ ! -f "$TMP/triage-summary.md" ]; then
+            echo 'triage-summary.md not found in runner.temp; attempting to run generator using builds/diagnostics/triage.json (if present)'
+            if [ -f "builds/diagnostics/triage.json" ]; then
+              node .github/workflows/generate-triage-summary.cjs DEST="$DEST" || true
+            else
+              echo 'No triage.json available to generate summary'
+            fi
+          else
+            echo 'triage-summary.md already present'
+          fi
+
+      - name: Build integrated report
+        run: |
+          echo 'Legacy workflow preserved for history; no active changes applied.'
