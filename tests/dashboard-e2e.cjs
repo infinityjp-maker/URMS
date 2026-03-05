@@ -381,5 +381,6 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     await browser.close();
     process.exit(1);
   }
+  }
 
 })();
