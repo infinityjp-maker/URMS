@@ -1,5 +1,7 @@
 name: triage-dashboard-e2e-selfheal
 on:
+  push:
+    branches: [ main ]
   schedule:
     - cron: "0 18 * * *"
   workflow_dispatch:
