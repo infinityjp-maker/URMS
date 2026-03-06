@@ -227,6 +227,152 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
       throw new Error('Console errors detected: ' + JSON.stringify(consoleErrors.slice(0,5)));
     }
 
+    // Build auto-fix report and optional patch
+    try{
+      const AUTO_FIX_MODE = process.env.AUTO_FIX_MODE || 'dry-run';
+      class AutoFixEngine {
+        constructor(opts){
+          this.indexHtml = opts.indexHtml||'';
+          this.selectorMap = opts.selectorMap||{};
+          this.failedResponses = opts.failedResponses||[];
+          this.consoleErrors = opts.consoleErrors||[];
+          this.diffLinesMissing = opts.diffLinesMissing||false;
+          this.baseUrlPresent = !!opts.baseUrlPresent;
+          this.patchesDir = '.github/actions-runs/selfheal-patch';
+        }
+        ensurePatchDir(){ try{ fs.mkdirSync(this.patchesDir, { recursive: true }); }catch(e){} }
+        generateSelectorFixes(){
+          const fixes = [];
+          for (const k of Object.keys(this.selectorMap)){
+            const sel=this.selectorMap[k];
+            if (sel && !new RegExp(sel.replace(/[#\.]/g,''),'i').test(this.indexHtml)){
+              const alt=findAlternateSelector(this.indexHtml, sel.replace(/[^a-z0-9]+/ig,''));
+              if (alt) fixes.push({type:'selector', key:k, from:sel, to:alt});
+            }
+          }
+          return fixes;
+        }
+        // generate diff excerpts for proposed fixes (before/after snippets around change)
+        generateDiffExcerpts(fixes){
+          const excerpts = [];
+          try{
+            const testFile = path.resolve(process.cwd(),'tests','dashboard-e2e.cjs');
+            const content = fs.existsSync(testFile) ? fs.readFileSync(testFile,'utf8') : '';
+            const lines = content.split(/\r?\n/);
+            for (const f of fixes){
+              if (f.type==='selector'){
+                const needle = f.from;
+                const replaceTo = f.to;
+                // find line indices containing needle
+                const idx = lines.findIndex(l=>l.includes(needle));
+                const start = Math.max(0, idx-5);
+                const end = Math.min(lines.length-1, idx+5);
+                const before = lines.slice(start, end+1).join('\n');
+                // produce after snippet by replacing first occurrence
+                const afterLines = lines.slice(start, end+1).map(l=>{ if (l.includes(needle)) return l.replace(needle, replaceTo); return l; });
+                const after = afterLines.join('\n');
+                excerpts.push({ key: f.key, from: needle, to: replaceTo, before: before.split(/\r?\n/).slice(0,10), after: after.split(/\r?\n/).slice(0,10) });
+              }
+            }
+          }catch(e){}
+          return excerpts;
+        }
+        // compute detailed scoring with heuristics
+        computeScore(){
+          const selectorFixes = this.generateSelectorFixes();
+          const selectorDetails = [];
+          let selectorPenalty = 0;
+          let domDistanceScore = 0;
+          let textMatchScore = 0;
+          let attributeScore = 0;
+          for (const k of Object.keys(this.selectorMap)){
+            const sel = this.selectorMap[k];
+            let detail = { key: k, original: sel, candidate: null, scores: {} };
+            if (!sel) { selectorDetails.push(detail); continue; }
+            if (new RegExp(sel.replace(/[#\.]/g,''),'i').test(this.indexHtml)){
+              // perfect match
+              detail.scores.match = 100; detail.candidate = sel; selectorDetails.push(detail); continue;
+            }
+            const alt = findAlternateSelector(this.indexHtml, sel.replace(/[^a-z0-9]+/ig,''));
+            if (!alt){ detail.scores.match=0; selectorPenalty += 10; selectorDetails.push(detail); continue; }
+            detail.candidate = alt;
+            // dom distance heuristic: index distance in HTML
+            const posOrig = this.indexHtml.indexOf(sel.replace(/[^a-z0-9]+/ig,''));
+            const posAlt = this.indexHtml.indexOf(alt.replace(/[^a-z0-9]+/ig,''));
+            const dist = posOrig>=0 && posAlt>=0 ? Math.abs(posOrig-posAlt) : Infinity;
+            const domScore = dist===Infinity ? 40 : Math.max(20, 100 - Math.floor(dist/50));
+            domDistanceScore += domScore;
+            // attribute match: presence of data- or aria- near alt
+            const attrWindow = this.indexHtml.substring(Math.max(0,posAlt-100), posAlt+100);
+            const attrMatch = /data-|aria-/.test(attrWindow) ? 20 : 0;
+            attributeScore += attrMatch;
+            // text match: presence of keyword near alt
+            const keyword = sel.replace(/[^a-z0-9]+/ig,'').toLowerCase();
+            const textWindow = this.indexHtml.substring(Math.max(0,posAlt-200), posAlt+200).toLowerCase();
+            const textScore = textWindow.includes(keyword) ? 30 : 0;
+            textMatchScore += textScore;
+            detail.scores = { domDistanceScore: domScore, attributeScore: attrMatch, textMatchScore: textScore };
+            selectorDetails.push(detail);
+            selectorPenalty += Math.max(0, 50 - domScore);
+          }
+          // aggregate scores
+          const totalSelectors = Math.max(1, selectorDetails.length);
+          domDistanceScore = Math.round(domDistanceScore / totalSelectors);
+          attributeScore = Math.round(attributeScore / totalSelectors);
+          textMatchScore = Math.round(textMatchScore / totalSelectors);
+
+          // 404 penalty
+          const total404 = this.failedResponses.filter(r=>String(r.status||'').includes('404')).length;
+          const penalty404 = Math.min(30, total404 * 3);
+
+          // diffLines penalty
+          const diffPenalty = this.diffLinesMissing ? 10 : 0;
+
+          // baseUrl score
+          const baseUrlScore = this.baseUrlPresent ? 10 : 0;
+
+          // console errors penalty
+          const consolePenalty = Math.min(20, this.consoleErrors.length * 2);
+
+          // raw score starts at 80, subtract penalties, add bonuses
+          let raw = 80 - selectorPenalty - penalty404 - diffPenalty - consolePenalty + baseUrlScore + Math.round((attributeScore+textMatchScore)/10);
+          raw = Math.max(0, Math.min(100, Math.round(raw)));
+
+          const warnings = [];
+          if (raw < 40) warnings.push('Low confidence: score < 40');
+          if (total404 > 5) warnings.push('Many 404s detected');
+          if (this.diffLinesMissing) warnings.push('diffLines missing');
+
+          return { score: raw, selectorFixes: selectorFixes, selectorDetails, baseUrlScore, domDistanceScore, textMatchScore, warnings };
+        }
+        writeReport(report){ this.ensurePatchDir(); fs.writeFileSync('selfheal_report.json', JSON.stringify(report, null, 2)); }
+        writePatchFiles(fixes, excerpts){ this.ensurePatchDir(); // produce a minimal patch representation
+          const file = path.resolve(this.patchesDir, 'proposed_fixes.json'); fs.writeFileSync(file, JSON.stringify({ fixes, excerpts }, null, 2)); }
+      }
+      const engine = new AutoFixEngine({ indexHtml, selectorMap, failedResponses, consoleErrors, diffLinesMissing: !fs.existsSync(diffLinesPath), baseUrlPresent: !!baseUrl });
+      const result = engine.computeScore();
+      // generate diff excerpts for proposed fixes
+      const excerpts = engine.generateDiffExcerpts(result.selectorFixes || []);
+      const report = {
+        autoFixMode: AUTO_FIX_MODE,
+        score: result.score,
+        selectorFixes: result.selectorFixes,
+        selectorScoreDetails: result.selectorDetails,
+        diffLinesFound: !!diffLinesJson,
+        diffExcerpt: excerpts,
+        baseUrlDetected: !!baseUrl,
+        baseUrlScore: result.baseUrlScore || 0,
+        domDistanceScore: result.domDistanceScore || 0,
+        textMatchScore: result.textMatchScore || 0,
+        consoleErrors: consoleErrors.slice(0,10),
+        failedResponses: failedResponses.slice(0,10),
+        warnings: result.warnings || []
+      };
+      engine.writePatchFiles(result.selectorFixes, excerpts);
+      engine.writeReport(report);
+      console.log('Wrote selfheal_report.json with score', result.score);
+    }catch(e){ console.error('self-heal engine failed', e && e.message ? e.message : e); }
+
     console.log('E2E checks passed');
     await browser.close();
     process.exit(0);
