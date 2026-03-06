@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   selfheal:
+    name: selfheal
     runs-on: ubuntu-latest
     env:
       AUTO_FIX_MODE: ${{ github.event.inputs.AUTO_FIX_MODE || 'dry-run' }}
