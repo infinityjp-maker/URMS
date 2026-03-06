@@ -371,7 +371,7 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
       engine.writePatchFiles(result.selectorFixes, excerpts);
       engine.writeReport(report);
       console.log('Wrote selfheal_report.json with score', result.score);
-    }catch(e){ console.error('self-heal engine failed', e && e.message ? e.message : e); }
+    } catch (e) { console.error('self-heal engine failed', e && e.message ? e.message : e); }
 
     console.log('E2E checks passed');
     await browser.close();
@@ -381,5 +381,4 @@ const BASE_DIR = process.env.BASE_DIR || '_gh_pages';
     await browser.close();
     process.exit(1);
   }
-
 })();

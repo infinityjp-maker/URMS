@@ -55,17 +55,17 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: triage-validation-artifacts
+          name: triage-validation-artifacts-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/triage-summary.*
             ${{ runner.temp }}/triage-internal-errors.txt
             ${{ runner.temp }}/triage-diff-pr.json
 
-      - name: Upload triage validation artifacts
+      - name: Upload triage validation artifacts (backup)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: triage-validation-artifacts
+          name: triage-validation-artifacts-2-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/triage-summary.*
             ${{ runner.temp }}/triage-internal-errors.txt
