@@ -50,6 +50,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Validation start marker
+        run: |
+          echo "start:${{ github.sha }}" > start_marker.txt
+      - name: Upload start marker
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-start-marker-${{ github.sha }}
+          path: start_marker.txt
       - name: Save workflow snapshot
         run: |
           mkdir -p .github/actions-runs || true
