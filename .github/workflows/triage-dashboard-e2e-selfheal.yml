@@ -13,6 +13,8 @@ on:
 permissions:
   contents: write
   actions: read
+  id-token: write
+  checks: write
 concurrency:
   group: triage-dashboard-e2e-selfheal-${{ github.ref }}
   cancel-in-progress: true
@@ -57,6 +59,9 @@ jobs:
         with:
           name: selfheal-workflow-snapshot-${{ github.sha }}
           path: workflow-snapshot.yml
+      - name: Pre-test sleep to stabilize runner
+        run: |
+          sleep 5
       - uses: actions/setup-node@v4
         with:
           node-version: 20
