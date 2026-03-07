@@ -2,6 +2,8 @@ name: triage-dashboard-e2e-selfheal
 on:
   push:
     branches: [ main, 'validate/**' ]
+  pull_request:
+    branches: [ main, 'validate/**' ]
   schedule:
     - cron: "0 18 * * *"
   workflow_dispatch:
