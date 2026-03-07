@@ -45,6 +45,14 @@ jobs:
         with:
           name: selfheal-diagnostic-${{ github.sha }}
           path: diag.txt
+      - name: Diagnostic - v11 marker
+        run: |
+          echo "v11-marker:${{ github.sha }}" > v11_marker.txt
+      - name: Upload v11 marker
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-diagnostic-v11-${{ github.sha }}
+          path: v11_marker.txt
 
   selfheal:
     name: selfheal
