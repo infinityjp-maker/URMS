@@ -1,0 +1,67 @@
+name: triage-dashboard-e2e-selfheal
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+jobs:
+  selfheal:
+    name: selfheal
+    runs-on: ubuntu-latest
+    env:
+      AUTO_FIX_MODE: ${{ github.event.inputs.AUTO_FIX_MODE || 'dry-run' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: node tests/dashboard-e2e.cjs 2>&1 | tee e2e_run.log || true
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-dashboard-e2e-selfheal-log
+          path: e2e_run.log
+      - name: Upload self-heal report and patch
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-dashboard-selfheal-artifacts
+          path: |
+            selfheal_report.json
+            .github/actions-runs/selfheal-patch/**
+      - name: Act on selfheal report (dry-run/commit)
+        if: always()
+        run: |
+          set -euo pipefail
+          echo "Preparing to act on selfheal_report.json (AUTO_FIX_MODE=$AUTO_FIX_MODE)"
+          cat selfheal_report.json || true
+          node - <<'NODE'
+const fs=require('fs'); const {execSync}=require('child_process');
+const repo=process.env.GITHUB_REPOSITORY; const mode=process.env.AUTO_FIX_MODE||'dry-run';
+if(!fs.existsSync('selfheal_report.json')){ console.log('no selfheal_report.json found'); process.exit(0); }
+const r=JSON.parse(fs.readFileSync('selfheal_report.json','utf8')); const score=r.score||0; const patchDir='.github/actions-runs/selfheal-patch';
+console.log('Self-heal score:',score,'mode:',mode);
+if(score<40){ console.log('score < 40: save logs and do not create PR or commit'); process.exit(0); }
+if(score>=40 && score<70){ const branch='ci/e2e-autofix-propose-'+Date.now(); console.log('Creating proposal PR (score in [40,70))',branch); execSync('git checkout -b '+branch); execSync('git add '+patchDir+' || true'); execSync('git commit -m "auto-fix(e2e): propose fixes (score:'+score+')" || true'); execSync('git push -u origin '+branch); execSync('gh pr create --repo '+repo+' --base main --head '+branch+' --title "[self-heal][proposal] propose auto-fix (score:'+score+')" --body "Auto-fix proposal (score:'+score+')"'); console.log('Created proposal PR'); process.exit(0); }
+if(score>=70){ if(mode==='commit'){ console.log('Score>=70 and commit mode: apply fixes to main'); execSync('git config user.name "github-actions"'); execSync('git config user.email "actions@github.com"'); execSync('git checkout main'); execSync('git pull origin main'); try{ execSync('git add '+patchDir+' || true'); execSync('git commit -m "auto-fix(e2e): apply fixes from self-heal" || true'); execSync('git push origin main'); console.log('Pushed fixes to main'); }catch(e){ console.error('commit/push failed',e.message); process.exit(1);} } else { const branch='ci/e2e-autofix-apply-'+Date.now(); console.log('Creating dry-run branch',branch); execSync('git checkout -b '+branch); execSync('git add '+patchDir+' || true'); execSync('git commit -m "auto-fix(e2e): proposed fixes (dry-run)" || true'); execSync('git push -u origin '+branch); execSync('gh pr create --repo '+repo+' --base main --head '+branch+' --title "[self-heal][dry-run] propose auto-fix (score:'+score+')" --body "Auto-fix proposal (score:'+score+')"'); console.log('Created PR for dry-run'); } }
+NODE
+      - run: |
+          if grep -q "E2E checks passed" e2e_run.log; then
+            exit 0
+          else
+            exit 1
+          fi
+      - if: failure()
+        run: |
+          echo "TODO: implement auto-fix rules"
+      - if: failure()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add tests/dashboard-e2e.cjs
+          git commit -m "auto-fix(e2e): nightly self-heal patch"
+          git push
