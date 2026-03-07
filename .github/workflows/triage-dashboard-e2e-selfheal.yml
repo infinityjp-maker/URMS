@@ -6,6 +6,7 @@ on:
     branches: [ main, 'validate/**' ]
   repository_dispatch:
     types: [ "selfheal-validate" ]
+  workflow_call: {}
   schedule:
     - cron: "0 18 * * *"
   workflow_dispatch:
