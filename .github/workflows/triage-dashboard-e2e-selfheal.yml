@@ -4,6 +4,8 @@ on:
     branches: [ main, 'validate/**' ]
   pull_request:
     branches: [ main, 'validate/**' ]
+  repository_dispatch:
+    types: [ "selfheal-validate" ]
   schedule:
     - cron: "0 18 * * *"
   workflow_dispatch:
