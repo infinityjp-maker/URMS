@@ -1,0 +1,16 @@
+name: selfheal-validation-helper-v20
+on:
+  push:
+    branches:
+      - 'validate/**'
+jobs:
+  helper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload validation marker
+        run: |
+          echo "validation_marker: $GITHUB_REF" > validation_marker.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-validation-helper-marker
+          path: validation_marker.txt
