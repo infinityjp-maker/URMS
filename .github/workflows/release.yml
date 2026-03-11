@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches-ignore:
+      - 'validate/**'
   workflow_dispatch: {}
 
 jobs:
