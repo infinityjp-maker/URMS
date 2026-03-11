@@ -1,8 +1,6 @@
 name: Self-heal: Validate push triggers
 
-on:
-  push:
-    branches: [ 'validate/**' ]
+on:\n  push:\n    branches:\n      - 'validate/**'\n      - 'validate/*'
 
 permissions:
   actions: read
@@ -22,3 +20,4 @@ jobs:
         with:
           name: selfheal-validate-marker
           path: selfheal-validate.txt
+
