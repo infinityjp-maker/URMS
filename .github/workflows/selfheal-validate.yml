@@ -1,0 +1,51 @@
+name: Self-heal: Validate push triggers
+
+on:
+  push:
+    branches:
+      - "validate/**"
+      - "validate/*"
+      - validate
+      - validate/final-trigger-test
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  selfheal-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Write diagnostic marker
+        run: |
+          echo "selfheal validate triggered by $GITHUB_REF" > selfheal-validate.txt
+      - name: Upload marker
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-validate-marker
+          path: selfheal-validate.txt
+name: Self-heal: Validate push triggers
+
+on:\n  push:\n    branches:\n      - 'validate/**'\n      - 'validate/*'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  selfheal-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Write diagnostic marker
+        run: |
+          echo "selfheal validate triggered by $GITHUB_REF" > selfheal-validate.txt
+      - name: Upload marker
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-validate-marker
+          path: selfheal-validate.txt
+
