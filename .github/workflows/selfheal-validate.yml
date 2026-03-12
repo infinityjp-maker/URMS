@@ -1,11 +1,12 @@
-name: Self-heal: Validate push triggers
+﻿name: Self-heal: Validate push triggers
 
 on:
-  push:
-    branches:
-      - 'validate/**'
-      - 'validate/*'
-
+    push:
+        branches:
+            - "validate/**"
+            - "validate/*"
+            - validate
+            - validate/final-trigger-test
 permissions:
   actions: read
   contents: read
