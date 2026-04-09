@@ -10,15 +10,4 @@ jobs:
         uses: actions/checkout@v4
       - name: Echo
         run: echo OK
-name: test-hosted-runner
-on:
-  workflow_dispatch:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Echo
-        run: echo OK
