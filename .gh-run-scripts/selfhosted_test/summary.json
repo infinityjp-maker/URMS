@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-03-13T22:16:18+09:00",
+  "runner_files": [
+    {
+      "file": "config.cmd",
+      "path": ".github-runner\\config.cmd",
+      "exists": true
+    },
+    {
+      "file": "run.cmd",
+      "path": ".github-runner\\run.cmd",
+      "exists": true
+    },
+    {
+      "file": "svc.cmd",
+      "path": ".github-runner\\svc.cmd",
+      "exists": false
+    }
+  ],
+  "pid": "447728",
+  "listening": true,
+  "tested_branch": "validate/final-trigger-test",
+  "run_found": true,
+  "run_id": 23052785075,
+  "jobs_count": 0,
+  "runner_recognized": false,
+  "runner_service_running": false,
+  "service_status_file": " .gh-run-scripts/selfhosted_test/service_status_after.txt",
+  "ui_approval_required": "unknown",
+  "notes": "After service install/start (assumed), Get-Service shows no runner-named service. API returned jobs.total_count==0. Candidate causes: org-level Actions policies, workflow approval required, or runner not registered as service.",
+  "next_todo": "(1) Confirm Windows service exists and is running after '.\\svc.cmd install' / '.\\svc.cmd start'. (2) If service is running and jobs still 0, request org-admin to check Actions policies and workflow approval."
+}

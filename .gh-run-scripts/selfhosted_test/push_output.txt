@@ -1,0 +1,2 @@
+To github.com:infinityjp-maker/URMS.git
+   470f1d7..e2c85f9  validate/final-trigger-test -> validate/final-trigger-test

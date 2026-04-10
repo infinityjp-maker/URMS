@@ -1,0 +1,301 @@
+timestamp: 2026-03-16T23:53:18.9313182+09:00
+
+re_registered: True
+
+runner_online: False
+
+jobs_count: 0
+
+needs_approval: False
+
+service_status_after:
+
+
+
+diag_latest:
+
+Collected files:
+D:\GitHub\URMS\.github-runner\_diag\Runner_20260314-201741-utc.log
+ D:\GitHub\URMS\.github-runner\_diag\Runner_20260314-201711-utc.log
+
+=== FILE: Runner_20260314-201741-utc.log ===
+
+[2026-03-14 20:17:41Z INFO HostContext] No proxy settings were found based on environmental variables (http_proxy/https_proxy/HTTP_PROXY/HTTPS_PROXY)
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO HostContext] Well known config file 'Credentials': 'D:\GitHub\URMS\.github-runner\.credentials'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO HostContext] Well known config file 'Runner': 'D:\GitHub\URMS\.github-runner\.runner'
+[2026-03-14 20:17:41Z INFO Listener] Runner is built for Windows (X64) - win-x64.
+[2026-03-14 20:17:41Z INFO Listener] RuntimeInformation: Microsoft Windows 10.0.26200.
+[2026-03-14 20:17:41Z INFO Listener] Version: 2.311.0
+[2026-03-14 20:17:41Z INFO Listener] Commit: f5cff308c83746dddd726a9a28a1583872305aaa
+[2026-03-14 20:17:41Z INFO Listener] Culture: ja-JP
+[2026-03-14 20:17:41Z INFO Listener] UI Culture: ja-JP
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO Listener] Validating directory permissions for: 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO CommandLineParser] Parse
+[2026-03-14 20:17:41Z INFO CommandLineParser] Parsing 7 args
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: False
+[2026-03-14 20:17:41Z INFO CommandLineParser] Adding Command: configure
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:41Z INFO CommandLineParser] arg: url
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:41Z INFO CommandLineParser] Adding option 'url': 'https://github.com/infinityjp-maker/URMS'
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:41Z INFO CommandLineParser] arg: token
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:41Z INFO CommandLineParser] Adding option 'token': '***'
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:41Z INFO CommandLineParser] arg: unattended
+[2026-03-14 20:17:41Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:41Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:41Z INFO CommandLineParser] arg: replace
+[2026-03-14 20:17:41Z INFO CommandLineParser] Adding flag: unattended
+[2026-03-14 20:17:41Z INFO Listener] Arguments parsed
+[2026-03-14 20:17:41Z INFO Runner] ExecuteCommand
+[2026-03-14 20:17:41Z INFO ConfigurationStore] currentAssemblyLocation: D:\GitHub\URMS\.github-runner\bin\Runner.Listener.dll
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO ConfigurationStore] binPath: D:\GitHub\URMS\.github-runner\bin
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO ConfigurationStore] RootFolder: D:\GitHub\URMS\.github-runner
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO HostContext] Well known config file 'Runner': 'D:\GitHub\URMS\.github-runner\.runner'
+[2026-03-14 20:17:41Z INFO ConfigurationStore] ConfigFilePath: D:\GitHub\URMS\.github-runner\.runner
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO HostContext] Well known config file 'Credentials': 'D:\GitHub\URMS\.github-runner\.credentials'
+[2026-03-14 20:17:41Z INFO ConfigurationStore] CredFilePath: D:\GitHub\URMS\.github-runner\.credentials
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO HostContext] Well known config file 'MigratedCredentials': 'D:\GitHub\URMS\.github-runner\.credentials_migrated'
+[2026-03-14 20:17:41Z INFO ConfigurationStore] MigratedCredFilePath: D:\GitHub\URMS\.github-runner\.credentials_migrated
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:41Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:41Z INFO HostContext] Well known config file 'Service': 'D:\GitHub\URMS\.github-runner\.service'
+[2026-03-14 20:17:41Z INFO ConfigurationStore] ServiceConfigFilePath: D:\GitHub\URMS\.github-runner\.service
+[2026-03-14 20:17:41Z INFO CommandSettings] Flag 'help': 'False'
+[2026-03-14 20:17:41Z INFO CommandSettings] Flag 'version': 'False'
+[2026-03-14 20:17:41Z INFO CommandSettings] Flag 'commit': 'False'
+[2026-03-14 20:17:41Z INFO CommandSettings] Flag 'check': 'False'
+[2026-03-14 20:17:42Z INFO CommandSettings] Command 'configure': 'True'
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: --------------------------------------------------------------------------------
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |        ____ _ _   _   _       _          _        _   _                      |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |       / ___(_) |_| | | |_   _| |__      / \   ___| |_(_) ___  _ __  ___      |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |      | |  _| | __| |_| | | | | '_ \    / _ \ / __| __| |/ _ \| '_ \/ __|     |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |      | |_| | | |_|  _  | |_| | |_) |  / ___ \ (__| |_| | (_) | | | \__ \     |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |       \____|_|\__|_| |_|\__,_|_.__/  /_/   \_\___|\__|_|\___/|_| |_|___/     |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |                                                                              |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE: |                       
+[2026-03-14 20:17:42Z INFO Terminal] WRITE: Self-hosted runner registration
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE:                         |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: |                                                                              |
+[2026-03-14 20:17:42Z INFO Terminal] WRITE LINE: --------------------------------------------------------------------------------
+[2026-03-14 20:17:42Z INFO ConfigurationManager] ConfigureAsync
+[2026-03-14 20:17:42Z INFO CommandSettings] Flag 'generateServiceConfig': 'False'
+[2026-03-14 20:17:42Z INFO ConfigurationStore] IsConfigured()
+[2026-03-14 20:17:42Z INFO ConfigurationStore] IsConfigured: True
+[2026-03-14 20:17:42Z INFO ConfigurationManager] Is configured: True
+[2026-03-14 20:17:42Z ERR  Runner] System.InvalidOperationException: Cannot configure the runner because it is already configured. To reconfigure the runner, run 'config.cmd remove' or './config.sh remove' first.
+   at GitHub.Runner.Listener.Configuration.ConfigurationManager.ConfigureAsync(CommandSettings command)
+   at GitHub.Runner.Listener.Runner.ExecuteCommand(CommandSettings command)
+[2026-03-14 20:17:42Z ERR  Terminal] WRITE ERROR: Cannot configure the runner because it is already configured. To reconfigure the runner, run 'config.cmd remove' or './config.sh remove' first.
+[2026-03-14 20:17:42Z INFO Listener] Runner execution has finished with return code 1
+
+
+
+=== FILE: Runner_20260314-201711-utc.log ===
+
+[2026-03-14 20:17:11Z INFO HostContext] No proxy settings were found based on environmental variables (http_proxy/https_proxy/HTTP_PROXY/HTTPS_PROXY)
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO HostContext] Well known config file 'Credentials': 'D:\GitHub\URMS\.github-runner\.credentials'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO HostContext] Well known config file 'Runner': 'D:\GitHub\URMS\.github-runner\.runner'
+[2026-03-14 20:17:11Z INFO Listener] Runner is built for Windows (X64) - win-x64.
+[2026-03-14 20:17:11Z INFO Listener] RuntimeInformation: Microsoft Windows 10.0.26200.
+[2026-03-14 20:17:11Z INFO Listener] Version: 2.311.0
+[2026-03-14 20:17:11Z INFO Listener] Commit: f5cff308c83746dddd726a9a28a1583872305aaa
+[2026-03-14 20:17:11Z INFO Listener] Culture: ja-JP
+[2026-03-14 20:17:11Z INFO Listener] UI Culture: ja-JP
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO Listener] Validating directory permissions for: 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO CommandLineParser] Parse
+[2026-03-14 20:17:11Z INFO CommandLineParser] Parsing 7 args
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: False
+[2026-03-14 20:17:11Z INFO CommandLineParser] Adding Command: configure
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:11Z INFO CommandLineParser] arg: url
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:11Z INFO CommandLineParser] Adding option 'url': 'https://github.com/infinityjp-maker/URMS'
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:11Z INFO CommandLineParser] arg: token
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:11Z INFO CommandLineParser] Adding option 'token': '***'
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:11Z INFO CommandLineParser] arg: unattended
+[2026-03-14 20:17:11Z INFO CommandLineParser] parsing argument
+[2026-03-14 20:17:11Z INFO CommandLineParser] HasArgs: True
+[2026-03-14 20:17:11Z INFO CommandLineParser] arg: replace
+[2026-03-14 20:17:11Z INFO CommandLineParser] Adding flag: unattended
+[2026-03-14 20:17:11Z INFO Listener] Arguments parsed
+[2026-03-14 20:17:11Z INFO Runner] ExecuteCommand
+[2026-03-14 20:17:11Z INFO ConfigurationStore] currentAssemblyLocation: D:\GitHub\URMS\.github-runner\bin\Runner.Listener.dll
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] binPath: D:\GitHub\URMS\.github-runner\bin
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] RootFolder: D:\GitHub\URMS\.github-runner
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO HostContext] Well known config file 'Runner': 'D:\GitHub\URMS\.github-runner\.runner'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] ConfigFilePath: D:\GitHub\URMS\.github-runner\.runner
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO HostContext] Well known config file 'Credentials': 'D:\GitHub\URMS\.github-runner\.credentials'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] CredFilePath: D:\GitHub\URMS\.github-runner\.credentials
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO HostContext] Well known config file 'MigratedCredentials': 'D:\GitHub\URMS\.github-runner\.credentials_migrated'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] MigratedCredFilePath: D:\GitHub\URMS\.github-runner\.credentials_migrated
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:11Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:11Z INFO HostContext] Well known config file 'Service': 'D:\GitHub\URMS\.github-runner\.service'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] ServiceConfigFilePath: D:\GitHub\URMS\.github-runner\.service
+[2026-03-14 20:17:11Z INFO CommandSettings] Flag 'help': 'False'
+[2026-03-14 20:17:11Z INFO CommandSettings] Flag 'version': 'False'
+[2026-03-14 20:17:11Z INFO CommandSettings] Flag 'commit': 'False'
+[2026-03-14 20:17:11Z INFO CommandSettings] Flag 'check': 'False'
+[2026-03-14 20:17:11Z INFO CommandSettings] Command 'configure': 'True'
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: --------------------------------------------------------------------------------
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |        ____ _ _   _   _       _          _        _   _                      |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |       / ___(_) |_| | | |_   _| |__      / \   ___| |_(_) ___  _ __  ___      |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |      | |  _| | __| |_| | | | | '_ \    / _ \ / __| __| |/ _ \| '_ \/ __|     |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |      | |_| | | |_|  _  | |_| | |_) |  / ___ \ (__| |_| | (_) | | | \__ \     |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |       \____|_|\__|_| |_|\__,_|_.__/  /_/   \_\___|\__|_|\___/|_| |_|___/     |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |                                                                              |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE: |                       
+[2026-03-14 20:17:11Z INFO Terminal] WRITE: Self-hosted runner registration
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE:                         |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: |                                                                              |
+[2026-03-14 20:17:11Z INFO Terminal] WRITE LINE: --------------------------------------------------------------------------------
+[2026-03-14 20:17:11Z INFO ConfigurationManager] ConfigureAsync
+[2026-03-14 20:17:11Z INFO CommandSettings] Flag 'generateServiceConfig': 'False'
+[2026-03-14 20:17:11Z INFO ConfigurationStore] IsConfigured()
+[2026-03-14 20:17:11Z INFO ConfigurationStore] IsConfigured: False
+[2026-03-14 20:17:11Z INFO ConfigurationManager] Is configured: False
+[2026-03-14 20:17:11Z INFO CommandSettings] Arg 'url': 'https://github.com/infinityjp-maker/URMS'
+[2026-03-14 20:17:11Z INFO CommandSettings] Remove url from Arg dictionary.
+[2026-03-14 20:17:11Z INFO CommandSettings] Arg 'token': '***'
+[2026-03-14 20:17:11Z INFO CommandSettings] Remove token from Arg dictionary.
+[2026-03-14 20:17:11Z INFO ConfigurationManager] Http response code: OK from 'POST https://api.github.com/actions/runner-registration' (DAB9:31EABD:6FFA83:924AA4:69B5C248)
+[2026-03-14 20:17:11Z INFO ConfigurationManager] Using V2 flow: False
+[2026-03-14 20:17:11Z INFO ConfigurationManager] cred retrieved via GitHub auth
+[2026-03-14 20:17:11Z INFO RunnerServer] EstablishVssConnection
+[2026-03-14 20:17:11Z INFO RunnerServer] Establish connection with 100 seconds timeout.
+[2026-03-14 20:17:12Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2026-03-14 20:17:12Z INFO RunnerServer] EstablishVssConnection
+[2026-03-14 20:17:12Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2026-03-14 20:17:12Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2026-03-14 20:17:12Z INFO RunnerServer] EstablishVssConnection
+[2026-03-14 20:17:12Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2026-03-14 20:17:12Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2026-03-14 20:17:12Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2026-03-14 20:17:12Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2026-03-14 20:17:12Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2026-03-14 20:17:13Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:13Z INFO ConfigurationManager] Test Connection complete.
+[2026-03-14 20:17:13Z INFO HostContext] Well known directory 'Bin': 'D:\GitHub\URMS\.github-runner\bin'
+[2026-03-14 20:17:13Z INFO HostContext] Well known directory 'Root': 'D:\GitHub\URMS\.github-runner'
+[2026-03-14 20:17:13Z INFO HostContext] Well known config file 'RSACredentials': 'D:\GitHub\URMS\.github-runner\.credentials_rsaparams'
+[2026-03-14 20:17:13Z INFO RSAEncryptedFileKeyManager] Creating new RSA key using 2048-bit key length
+[2026-03-14 20:17:13Z INFO RSAEncryptedFileKeyManager] Successfully saved RSA key parameters to file D:\GitHub\URMS\.github-runner\.credentials_rsaparams
+[2026-03-14 20:17:13Z INFO CommandSettings] Arg 'runnergroup': ''
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'unattended': 'True'
+[2026-03-14 20:17:13Z INFO PromptManager] ReadValue
+[2026-03-14 20:17:13Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:13Z INFO ConfigurationManager] Found a self-hosted runner group with id 1 and name Default
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'disableupdate': 'False'
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'ephemeral': 'False'
+[2026-03-14 20:17:13Z INFO CommandSettings] Arg 'name': ''
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'unattended': 'True'
+[2026-03-14 20:17:13Z INFO PromptManager] ReadValue
+[2026-03-14 20:17:13Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:13Z INFO CommandSettings] Arg 'labels': ''
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'unattended': 'True'
+[2026-03-14 20:17:13Z INFO PromptManager] ReadValue
+[2026-03-14 20:17:13Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:13Z INFO Terminal] WRITE LINE: A runner exists with the same name
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'replace': 'True'
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'disableupdate': 'False'
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'no-default-labels': 'False'
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'disableupdate': 'False'
+[2026-03-14 20:17:13Z INFO CommandSettings] Flag 'ephemeral': 'False'
+[2026-03-14 20:17:13Z INFO ConfigurationStore] Saving OAuth credential @ D:\GitHub\URMS\.github-runner\.credentials
+[2026-03-14 20:17:13Z INFO ConfigurationStore] Credentials Saved.
+[2026-03-14 20:17:13Z INFO ConfigurationStore] HasCredentials()
+[2026-03-14 20:17:13Z INFO ConfigurationStore] stored True
+[2026-03-14 20:17:13Z INFO CredentialManager] GetCredentialProvider
+[2026-03-14 20:17:13Z INFO CredentialManager] Creating type OAuth
+[2026-03-14 20:17:13Z INFO CredentialManager] Creating credential type: OAuth
+[2026-03-14 20:17:13Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file D:\GitHub\URMS\.github-runner\.credentials_rsaparams
+[2026-03-14 20:17:13Z INFO RunnerServer] EstablishVssConnection
+[2026-03-14 20:17:13Z INFO RunnerServer] Establish connection with 100 seconds timeout.
+[2026-03-14 20:17:13Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2026-03-14 20:17:13Z INFO RunnerServer] EstablishVssConnection
+[2026-03-14 20:17:13Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2026-03-14 20:17:13Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2026-03-14 20:17:13Z INFO RunnerServer] EstablishVssConnection
+[2026-03-14 20:17:13Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2026-03-14 20:17:14Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2026-03-14 20:17:14Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2026-03-14 20:17:14Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2026-03-14 20:17:14Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2026-03-14 20:17:15Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file D:\GitHub\URMS\.github-runner\.credentials_rsaparams
+[2026-03-14 20:17:15Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file D:\GitHub\URMS\.github-runner\.credentials_rsaparams
+[2026-03-14 20:17:15Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2026-03-14 20:17:16Z INFO CommandSettings] Arg 'work': ''
+[2026-03-14 20:17:16Z INFO CommandSettings] Flag 'unattended': 'True'
+[2026-03-14 20:17:16Z INFO PromptManager] ReadValue
+[2026-03-14 20:17:16Z INFO ConfigurationStore] Saving runner settings.
+[2026-03-14 20:17:16Z INFO ConfigurationStore] Settings Saved.
+[2026-03-14 20:17:16Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:16Z INFO Terminal] WRITE LINE: 
+[2026-03-14 20:17:16Z INFO CommandSettings] Flag 'runasservice': 'False'
+[2026-03-14 20:17:16Z INFO CommandSettings] Flag 'unattended': 'True'
+[2026-03-14 20:17:16Z INFO PromptManager] ReadValue
+[2026-03-14 20:17:16Z INFO Listener] Runner execution has finished with return code 0
+
+
+
+
+
+run.json:
+
+{"total_count":43,"workflow_runs":[{"id":23149962343,"name":".github/workflows/selfheal-validate.yml","node_id":"WFR_kwLORDWmps8AAAAFY9hkZw","head_branch":"validate/final-trigger-test","head_sha":"bcfbf05a0e00e4468aa527dfdf7968d634bda818","path":".github/workflows/selfheal-validate.yml","display_title":"runner rebuild verification","run_number":43,"event":"push","status":"completed","conclusion":"failure","workflow_id":244654296,"check_suite_id":60777492111,"check_suite_node_id":"CS_kwDORDWmps8AAAAOJp7ujw","url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/runs/23149962343","html_url":"https://github.com/infinityjp-maker/URMS/actions/runs/23149962343","pull_requests":[{"url":"https://api.github.com/repos/infinityjp-maker/URMS/pulls/69","id":3384836909,"number":69,"head":{"ref":"validate/final-trigger-test","sha":"bcfbf05a0e00e4468aa527dfdf7968d634bda818","repo":{"id":1144366758,"url":"https://api.github.com/repos/infinityjp-maker/URMS","name":"URMS"}},"base":{"ref":"main","sha":"bf577a54214e5f6bd9696b29913c67c0db44db2e","repo":{"id":1144366758,"url":"https://api.github.com/repos/infinityjp-maker/URMS","name":"URMS"}}}],"created_at":"2026-03-16T14:53:17Z","updated_at":"2026-03-16T14:53:17Z","actor":{"login":"infinityjp-maker","id":257793200,"node_id":"U_kgDOD12csA","avatar_url":"https://avatars.githubusercontent.com/u/257793200?v=4","gravatar_id":"","url":"https://api.github.com/users/infinityjp-maker","html_url":"https://github.com/infinityjp-maker","followers_url":"https://api.github.com/users/infinityjp-maker/followers","following_url":"https://api.github.com/users/infinityjp-maker/following{/other_user}","gists_url":"https://api.github.com/users/infinityjp-maker/gists{/gist_id}","starred_url":"https://api.github.com/users/infinityjp-maker/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/infinityjp-maker/subscriptions","organizations_url":"https://api.github.com/users/infinityjp-maker/orgs","repos_url":"https://api.github.com/users/infinityjp-maker/repos","events_url":"https://api.github.com/users/infinityjp-maker/events{/privacy}","received_events_url":"https://api.github.com/users/infinityjp-maker/received_events","type":"User","user_view_type":"public","site_admin":false},"run_attempt":1,"referenced_workflows":[],"run_started_at":"2026-03-16T14:53:17Z","triggering_actor":{"login":"infinityjp-maker","id":257793200,"node_id":"U_kgDOD12csA","avatar_url":"https://avatars.githubusercontent.com/u/257793200?v=4","gravatar_id":"","url":"https://api.github.com/users/infinityjp-maker","html_url":"https://github.com/infinityjp-maker","followers_url":"https://api.github.com/users/infinityjp-maker/followers","following_url":"https://api.github.com/users/infinityjp-maker/following{/other_user}","gists_url":"https://api.github.com/users/infinityjp-maker/gists{/gist_id}","starred_url":"https://api.github.com/users/infinityjp-maker/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/infinityjp-maker/subscriptions","organizations_url":"https://api.github.com/users/infinityjp-maker/orgs","repos_url":"https://api.github.com/users/infinityjp-maker/repos","events_url":"https://api.github.com/users/infinityjp-maker/events{/privacy}","received_events_url":"https://api.github.com/users/infinityjp-maker/received_events","type":"User","user_view_type":"public","site_admin":false},"jobs_url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/runs/23149962343/jobs","logs_url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/runs/23149962343/logs","check_suite_url":"https://api.github.com/repos/infinityjp-maker/URMS/check-suites/60777492111","artifacts_url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/runs/23149962343/artifacts","cancel_url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/runs/23149962343/cancel","rerun_url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/runs/23149962343/rerun","previous_attempt_url":null,"workflow_url":"https://api.github.com/repos/infinityjp-maker/URMS/actions/workflows/244654296","head_commit":{"id":"bcfbf05a0e00e4468aa527dfdf7968d634bda818","tree_id":"f71056da73653babaa09af3cf50d3afab08a2de5","message":"runner rebuild verification","timestamp":"2026-03-16T14:53:08Z","author":{"name":"infinityjp-maker","email":"infinity.jp@gmail.com"},"committer":{"name":"infinityjp-maker","email":"infinity.jp@gmail.com"}},"repository":{"id":1144366758,"node_id":"R_kgDORDWmpg","name":"URMS","full_name":"infinityjp-maker/URMS","private":false,"owner":{"login":"infinityjp-maker","id":257793200,"node_id":"U_kgDOD12csA","avatar_url":"https://avatars.githubusercontent.com/u/257793200?v=4","gravatar_id":"","url":"https://api.github.com/users/infinityjp-maker","html_url":"https://github.com/infinityjp-maker","followers_url":"https://api.github.com/users/infinityjp-maker/followers","following_url":"https://api.github.com/users/infinityjp-maker/following{/other_user}","gists_url":"https://api.github.com/users/infinityjp-maker/gists{/gist_id}","starred_url":"https://api.github.com/users/infinityjp-maker/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/infinityjp-maker/subscriptions","organizations_url":"https://api.github.com/users/infinityjp-maker/orgs","repos_url":"https://api.github.com/users/infinityjp-maker/repos","events_url":"https://api.github.com/users/infinityjp-maker/events{/privacy}","received_events_url":"https://api.github.com/users/infinityjp-maker/received_events","type":"User","user_view_type":"public","site_admin":false},"html_url":"https://github.com/infinityjp-maker/URMS","description":null,"fork":false,"url":"https://api.github.com/repos/infinityjp-maker/URMS","forks_url":"https://api.github.com/repos/infinityjp-maker/URMS/forks","keys_url":"https://api.github.com/repos/infinityjp-maker/URMS/keys{/key_id}","collaborators_url":"https://api.github.com/repos/infinityjp-maker/URMS/collaborators{/collaborator}","teams_url":"https://api.github.com/repos/infinityjp-maker/URMS/teams","hooks_url":"https://api.github.com/repos/infinityjp-maker/URMS/hooks","issue_events_url":"https://api.github.com/repos/infinityjp-maker/URMS/issues/events{/number}","events_url":"https://api.github.com/repos/infinityjp-maker/URMS/events","assignees_url":"https://api.github.com/repos/infinityjp-maker/URMS/assignees{/user}","branches_url":"https://api.github.com/repos/infinityjp-maker/URMS/branches{/branch}","tags_url":"https://api.github.com/repos/infinityjp-maker/URMS/tags","blobs_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/blobs{/sha}","git_tags_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/tags{/sha}","git_refs_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/refs{/sha}","trees_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/trees{/sha}","statuses_url":"https://api.github.com/repos/infinityjp-maker/URMS/statuses/{sha}","languages_url":"https://api.github.com/repos/infinityjp-maker/URMS/languages","stargazers_url":"https://api.github.com/repos/infinityjp-maker/URMS/stargazers","contributors_url":"https://api.github.com/repos/infinityjp-maker/URMS/contributors","subscribers_url":"https://api.github.com/repos/infinityjp-maker/URMS/subscribers","subscription_url":"https://api.github.com/repos/infinityjp-maker/URMS/subscription","commits_url":"https://api.github.com/repos/infinityjp-maker/URMS/commits{/sha}","git_commits_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/commits{/sha}","comments_url":"https://api.github.com/repos/infinityjp-maker/URMS/comments{/number}","issue_comment_url":"https://api.github.com/repos/infinityjp-maker/URMS/issues/comments{/number}","contents_url":"https://api.github.com/repos/infinityjp-maker/URMS/contents/{+path}","compare_url":"https://api.github.com/repos/infinityjp-maker/URMS/compare/{base}...{head}","merges_url":"https://api.github.com/repos/infinityjp-maker/URMS/merges","archive_url":"https://api.github.com/repos/infinityjp-maker/URMS/{archive_format}{/ref}","downloads_url":"https://api.github.com/repos/infinityjp-maker/URMS/downloads","issues_url":"https://api.github.com/repos/infinityjp-maker/URMS/issues{/number}","pulls_url":"https://api.github.com/repos/infinityjp-maker/URMS/pulls{/number}","milestones_url":"https://api.github.com/repos/infinityjp-maker/URMS/milestones{/number}","notifications_url":"https://api.github.com/repos/infinityjp-maker/URMS/notifications{?since,all,participating}","labels_url":"https://api.github.com/repos/infinityjp-maker/URMS/labels{/name}","releases_url":"https://api.github.com/repos/infinityjp-maker/URMS/releases{/id}","deployments_url":"https://api.github.com/repos/infinityjp-maker/URMS/deployments"},"head_repository":{"id":1144366758,"node_id":"R_kgDORDWmpg","name":"URMS","full_name":"infinityjp-maker/URMS","private":false,"owner":{"login":"infinityjp-maker","id":257793200,"node_id":"U_kgDOD12csA","avatar_url":"https://avatars.githubusercontent.com/u/257793200?v=4","gravatar_id":"","url":"https://api.github.com/users/infinityjp-maker","html_url":"https://github.com/infinityjp-maker","followers_url":"https://api.github.com/users/infinityjp-maker/followers","following_url":"https://api.github.com/users/infinityjp-maker/following{/other_user}","gists_url":"https://api.github.com/users/infinityjp-maker/gists{/gist_id}","starred_url":"https://api.github.com/users/infinityjp-maker/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/infinityjp-maker/subscriptions","organizations_url":"https://api.github.com/users/infinityjp-maker/orgs","repos_url":"https://api.github.com/users/infinityjp-maker/repos","events_url":"https://api.github.com/users/infinityjp-maker/events{/privacy}","received_events_url":"https://api.github.com/users/infinityjp-maker/received_events","type":"User","user_view_type":"public","site_admin":false},"html_url":"https://github.com/infinityjp-maker/URMS","description":null,"fork":false,"url":"https://api.github.com/repos/infinityjp-maker/URMS","forks_url":"https://api.github.com/repos/infinityjp-maker/URMS/forks","keys_url":"https://api.github.com/repos/infinityjp-maker/URMS/keys{/key_id}","collaborators_url":"https://api.github.com/repos/infinityjp-maker/URMS/collaborators{/collaborator}","teams_url":"https://api.github.com/repos/infinityjp-maker/URMS/teams","hooks_url":"https://api.github.com/repos/infinityjp-maker/URMS/hooks","issue_events_url":"https://api.github.com/repos/infinityjp-maker/URMS/issues/events{/number}","events_url":"https://api.github.com/repos/infinityjp-maker/URMS/events","assignees_url":"https://api.github.com/repos/infinityjp-maker/URMS/assignees{/user}","branches_url":"https://api.github.com/repos/infinityjp-maker/URMS/branches{/branch}","tags_url":"https://api.github.com/repos/infinityjp-maker/URMS/tags","blobs_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/blobs{/sha}","git_tags_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/tags{/sha}","git_refs_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/refs{/sha}","trees_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/trees{/sha}","statuses_url":"https://api.github.com/repos/infinityjp-maker/URMS/statuses/{sha}","languages_url":"https://api.github.com/repos/infinityjp-maker/URMS/languages","stargazers_url":"https://api.github.com/repos/infinityjp-maker/URMS/stargazers","contributors_url":"https://api.github.com/repos/infinityjp-maker/URMS/contributors","subscribers_url":"https://api.github.com/repos/infinityjp-maker/URMS/subscribers","subscription_url":"https://api.github.com/repos/infinityjp-maker/URMS/subscription","commits_url":"https://api.github.com/repos/infinityjp-maker/URMS/commits{/sha}","git_commits_url":"https://api.github.com/repos/infinityjp-maker/URMS/git/commits{/sha}","comments_url":"https://api.github.com/repos/infinityjp-maker/URMS/comments{/number}","issue_comment_url":"https://api.github.com/repos/infinityjp-maker/URMS/issues/comments{/number}","contents_url":"https://api.github.com/repos/infinityjp-maker/URMS/contents/{+path}","compare_url":"https://api.github.com/repos/infinityjp-maker/URMS/compare/{base}...{head}","merges_url":"https://api.github.com/repos/infinityjp-maker/URMS/merges","archive_url":"https://api.github.com/repos/infinityjp-maker/URMS/{archive_format}{/ref}","downloads_url":"https://api.github.com/repos/infinityjp-maker/URMS/downloads","issues_url":"https://api.github.com/repos/infinityjp-maker/URMS/issues{/number}","pulls_url":"https://api.github.com/repos/infinityjp-maker/URMS/pulls{/number}","milestones_url":"https://api.github.com/repos/infinityjp-maker/URMS/milestones{/number}","notifications_url":"https://api.github.com/repos/infinityjp-maker/URMS/notifications{?since,all,participating}","labels_url":"https://api.github.com/repos/infinityjp-maker/URMS/labels{/name}","releases_url":"https://api.github.com/repos/infinityjp-maker/URMS/releases{/id}","deployments_url":"https://api.github.com/repos/infinityjp-maker/URMS/deployments"}}]}
+
+
+jobs.json:
+
+{"total_count":0,"jobs":[]}
+

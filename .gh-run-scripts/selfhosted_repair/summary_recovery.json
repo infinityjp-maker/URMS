@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-03-15T22:18:16.3354427+09:00",
+  "service_status_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\service_status_after2.txt",
+  "diag_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\diag_latest.txt",
+  "runner_state_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\runner_state.json",
+  "run_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\run2.json",
+  "jobs_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\jobs2.json",
+  "initial_need_remove": true,
+  "reconfig_performed": true,
+  "runner_found_online": false,
+  "run_id": null,
+  "jobs_count": 0,
+  "needs_approval": false,
+  "notes": "Runner did not come online within timeout. Check service and logs."
+}

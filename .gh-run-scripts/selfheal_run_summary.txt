@@ -1,0 +1,13 @@
+
+Name                           Value
+----                           -----
+jobs                           {}
+conclusion                     failure
+branch                         validate/final-trigger-test
+run_id                         23149962343
+commit                         bcfbf05a0e00e4468aa527dfdf7968d634bda818
+status                         completed
+html_url                       https://github.com/infinityjp-maker/URMS/actions…
+run_name                       .github/workflows/selfheal-validate.yml
+
+

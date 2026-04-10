@@ -1,0 +1,26 @@
+[
+  {
+    "workflow_path": ".github/workflows/selfheal-validate-test-A.yml",
+    "workflow_id": 259030176,
+    "run_id": 24247877022,
+    "check_suite_id": 64117982984,
+    "jobs_count": 0,
+    "check_runs_total": 0
+  },
+  {
+    "workflow_path": ".github/workflows/selfheal-validate-test-B.yml",
+    "workflow_id": 259030167,
+    "run_id": 24247877273,
+    "check_suite_id": 64117984335,
+    "jobs_count": 0,
+    "check_runs_total": 0
+  },
+  {
+    "workflow_path": ".github/workflows/selfheal-validate-test-C.yml",
+    "workflow_id": 259038532,
+    "run_id": 24247902689,
+    "check_suite_id": 64118068539,
+    "jobs_count": 1,
+    "check_runs_total": 1
+  }
+]

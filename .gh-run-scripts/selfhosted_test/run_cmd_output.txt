@@ -1,0 +1,10 @@
+        1 個のファイルをコピーしました。
+
+√ Connected to GitHub
+
+Current runner version: '2.332.0'
+2026-03-13 13:07:40Z: Listening for Jobs
+2026-03-13 14:49:03Z: Runner connect error: RSA key file D:\GitHub\URMS\.github-runner\.credentials_rsaparams was not found. Retrying until reconnected.
+An error occurred: RSA key file D:\GitHub\URMS\.github-runner\.credentials_rsaparams was not found
+バッチ ファイルが見つかりません。
+バッチ ファイルが見つかりません。
