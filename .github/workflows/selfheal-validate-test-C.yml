@@ -1,0 +1,23 @@
+name: selfheal-validate-test-C
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  selfheal-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Write diagnostic marker
+        run: |
+          echo "selfheal validate test C triggered by $GITHUB_REF" > selfheal-validate-test-C.txt
+      - name: Upload marker
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-validate-test-C-marker
+          path: selfheal-validate-test-C.txt
