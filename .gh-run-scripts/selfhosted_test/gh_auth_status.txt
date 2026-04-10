@@ -1,0 +1,6 @@
+github.com
+  笨・Logged in to github.com account infinityjp-maker (keyring)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: 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
+  - Token scopes: 'gist', 'read:org', 'repo', 'workflow'

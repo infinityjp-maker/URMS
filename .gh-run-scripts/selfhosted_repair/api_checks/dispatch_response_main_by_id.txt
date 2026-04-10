@@ -1,0 +1,2 @@
+gh: Invalid Argument - failed to parse workflow: (Line: 13, Col: 1): 'name' is already defined, (Line: 14, Col: 1): 'on' is already defined, (Line: 17, Col: 1): 'jobs' is already defined (HTTP 422)
+{"message":"Invalid Argument - failed to parse workflow: (Line: 13, Col: 1): 'name' is already defined, (Line: 14, Col: 1): 'on' is already defined, (Line: 17, Col: 1): 'jobs' is already defined","documentation_url":"https://docs.github.com/rest/actions/workflows#create-a-workflow-dispatch-event","status":"422"}

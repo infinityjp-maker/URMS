@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-03-16T23:53:18.9210427+09:00",
+  "diag_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\diag_latest.txt",
+  "remove_token_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\remove_token.json",
+  "remove_output": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\config_remove_output.txt",
+  "registration_token_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\token.json",
+  "config_output": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\config_output_after_reregister.txt",
+  "service_status_after": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\service_status_after.txt",
+  "run_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\run.json",
+  "jobs_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\jobs.json",
+  "runner_online": false,
+  "jobs_count": 0,
+  "needs_approval": false,
+  "re_registered": true,
+  "notes": "Runner offline or not recognized by GitHub."
+}

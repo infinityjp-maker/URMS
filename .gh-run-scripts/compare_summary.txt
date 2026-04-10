@@ -1,0 +1,24 @@
+
+Name                           Value
+----                           -----
+local_tab                      0
+server_fullwidth_space         0
+local_length                   578
+server_literal_backslash_n     0
+server_crlf                    0
+server_lf                      26
+sample_diffs                   {System.Collections.Hashtable, System.Collections.Hashtable, System.Collections.Hashtable, System.Collections.Hashtable…}
+local_zwsp                     0
+difference_count               151
+local_crlf                     25
+server_tab                     0
+length_diff                    -2
+local_fullwidth_space          0
+server_bom                     False
+local_literal_backslash_n      0
+local_bom                      False
+server_zwsp                    0
+server_length                  576
+local_lf                       0
+
+
