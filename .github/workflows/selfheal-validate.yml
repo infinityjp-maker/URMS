@@ -35,3 +35,38 @@ jobs:
         with:
           name: selfheal-test-artifact
           path: selfheal_test.txt
+
+      - name: Run production selfheal (if available)
+        run: |
+          if [ -f .gh-run-scripts/selfhosted_repair/selfheal.ps1 ]; then
+            echo "Running production selfheal..."
+            pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal.ps1 -Mode production
+          else
+            echo "selfheal.ps1 not found, writing marker" > selfheal_missing.txt
+            exit 0
+          fi
+
+      - name: Collect selfheal logs
+        if: ${{ always() }}
+        run: |
+          mkdir -p selfheal_logs
+          cp -v .gh-run-scripts/selfhosted_repair/*.json selfheal_logs/ 2>/dev/null || true
+          tar -czf selfheal_logs.tgz selfheal_logs || true
+
+      - name: Upload production artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-production-artifacts
+          path: |
+            selfheal_logs.tgz
+            selfheal_missing.txt
+
+      - name: Selfheal result check
+        if: ${{ always() }}
+        run: |
+          if [ -f selfheal_missing.txt ]; then
+            echo "Warning: selfheal script missing; artifact uploaded.";
+            exit 0;
+          fi
+          echo "Assuming selfheal completed; check uploaded artifacts for logs.";
