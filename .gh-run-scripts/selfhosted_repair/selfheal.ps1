@@ -78,4 +78,72 @@ try {
 	exit 1
 }
 
-exit 0
+# Phase4: attempt safe repair when truncated runner detected
+Write-Output "[selfheal] Phase4 start"
+try {
+	$logPath4 = Join-Path $PSScriptRoot "selfheal_log_phase4.txt"
+	$repairLog = Join-Path $PSScriptRoot "selfheal_repair_log.txt"
+
+	# If a detected issue file exists or size was detected earlier, re-check
+	$issueFile = Join-Path $PSScriptRoot "selfheal_detected_issue.txt"
+	if (Test-Path $issueFile -PathType Leaf) {
+		"Detected issue file present: $issueFile" | Out-File -FilePath $logPath4 -Encoding utf8
+	}
+
+	if ($found -and (Get-Item $found.FullName).Length -eq 16384) {
+		# Start repair
+		"Repair start: $(Get-Date -Format o)" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_repair_start.txt") -Encoding utf8
+
+		# Find a ZIP in the repair folder
+		$zip = Get-ChildItem -Path $PSScriptRoot -Filter *.zip -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+		if (-not $zip) {
+			"No zip found to extract; aborting repair" | Out-File -FilePath $repairLog -Encoding utf8
+			exit 20
+		}
+
+		$tmpDir = Join-Path $PSScriptRoot "repair_tmp"
+		if (Test-Path $tmpDir) { Remove-Item -Recurse -Force $tmpDir }
+		New-Item -ItemType Directory -Path $tmpDir | Out-Null
+
+		# Attempt to extract RunnerService.exe from the zip
+		try {
+			Expand-Archive -Path $zip.FullName -DestinationPath $tmpDir -Force
+		} catch {
+			"Expand-Archive failed: $_" | Out-File -FilePath $repairLog -Encoding utf8
+			exit 20
+		}
+
+		$extracted = Get-ChildItem -Path $tmpDir -Filter RunnerService.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+		if (-not $extracted) {
+			"RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $repairLog -Encoding utf8
+			exit 20
+		}
+
+		# Copy over (overwrite) to original location
+		try {
+			Copy-Item -Path $extracted.FullName -Destination $found.FullName -Force
+			$newSize = (Get-Item $found.FullName).Length
+			"Replaced RunnerService.exe; NewSize: $newSize" | Out-File -FilePath $repairLog -Encoding utf8
+			try {
+				$newHash = Get-FileHash -Path $found.FullName -Algorithm SHA256
+				"NewSHA256: $($newHash.Hash)" | Out-File -FilePath $repairLog -Append -Encoding utf8
+			} catch {
+				"Failed to compute new hash: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+			}
+			# cleanup
+			Remove-Item -Recurse -Force $tmpDir
+			exit 0
+		} catch {
+			"Failed to copy extracted RunnerService.exe: $_" | Out-File -FilePath $repairLog -Encoding utf8
+			Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
+			exit 20
+		}
+	} else {
+		"RunnerService.exe appears normal or not found; no repair needed" | Out-File -FilePath $logPath4 -Encoding utf8
+		exit 0
+	}
+} catch {
+	Write-Output "[selfheal] Exception during phase4 repair: $_"
+	try { "Exception: $_" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_error_phase4.txt") -Encoding utf8 } catch {}
+	exit 1
+}
