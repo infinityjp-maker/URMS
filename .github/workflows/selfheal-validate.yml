@@ -62,6 +62,20 @@ jobs:
           name: selfheal-phase2-error
           path: .gh-run-scripts/selfhosted_repair/selfheal_error_phase2.txt
 
+      - name: Upload selfheal phase3 log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-phase3-log
+          path: .gh-run-scripts/selfhosted_repair/selfheal_log_phase3.txt
+
+      - name: Upload selfheal phase3 detected issue
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-phase3-detected
+          path: .gh-run-scripts/selfhosted_repair/selfheal_detected_issue.txt
+
       - name: Collect selfheal logs
         if: ${{ always() }}
         run: |

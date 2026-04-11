@@ -39,4 +39,43 @@ try {
 }
 
 # If reached here, exit success
+# Phase3: runner diagnostics
+Write-Output "[selfheal] Phase3 start"
+try {
+	# Determine repository root (two levels up from script folder)
+	$repoRoot = (Get-Item $PSScriptRoot).Parent.Parent.FullName
+	Write-Output "[selfheal] Repo root: $repoRoot"
+
+	$found = Get-ChildItem -Path $repoRoot -Filter RunnerService.exe -Recurse -ErrorAction SilentlyContinue -Force | Select-Object -First 1
+	$logPath3 = Join-Path $PSScriptRoot "selfheal_log_phase3.txt"
+	if ($found) {
+		$exePath = $found.FullName
+		"Found RunnerService.exe at: $exePath" | Out-File -FilePath $logPath3 -Encoding utf8
+		$size = (Get-Item $exePath).Length
+		"SizeBytes: $size" | Out-File -FilePath $logPath3 -Append -Encoding utf8
+
+		if ($size -eq 16384) {
+			"Detected truncated RunnerService.exe (16KB)" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_detected_issue.txt") -Encoding utf8
+			exit 10
+		}
+
+		# Compute SHA256
+		try {
+			$hash = Get-FileHash -Path $exePath -Algorithm SHA256
+			"SHA256: $($hash.Hash)" | Out-File -FilePath $logPath3 -Append -Encoding utf8
+		} catch {
+			"Failed to compute hash: $_" | Out-File -FilePath $logPath3 -Append -Encoding utf8
+		}
+	} else {
+		"RunnerService.exe not found under repo root" | Out-File -FilePath $logPath3 -Encoding utf8
+	}
+} catch {
+	Write-Output "[selfheal] Exception during phase3 diagnostics: $_"
+	try {
+		$errPath3 = Join-Path $PSScriptRoot "selfheal_error_phase3.txt"
+		"Exception: $_" | Out-File -FilePath $errPath3 -Encoding utf8
+	} catch {}
+	exit 1
+}
+
 exit 0
