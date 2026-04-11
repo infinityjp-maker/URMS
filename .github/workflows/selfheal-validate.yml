@@ -48,6 +48,20 @@ jobs:
           name: selfheal-phase1-log
           path: .gh-run-scripts/selfhosted_repair/selfheal_log_phase1.txt
 
+      - name: Upload selfheal phase2 log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-phase2-log
+          path: .gh-run-scripts/selfhosted_repair/selfheal_log_phase2.txt
+
+      - name: Upload selfheal phase2 error
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-phase2-error
+          path: .gh-run-scripts/selfhosted_repair/selfheal_error_phase2.txt
+
       - name: Collect selfheal logs
         if: ${{ always() }}
         run: |
