@@ -153,3 +153,4 @@ try {
 	try { "Exception: $_" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_error_phase4.txt") -Encoding utf8 } catch {}
 	exit 1
 }
+# Flowfix finalized for PR
