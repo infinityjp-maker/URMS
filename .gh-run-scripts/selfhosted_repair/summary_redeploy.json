@@ -1,9 +1,0 @@
-{
-  "timestamp": "2026-03-17T00:03:07.0991666+09:00",
-  "runner_dir": "D:\\GitHub\\URMS\\.github-runner",
-  "zip": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\actions-runner-win-x64-latest.zip",
-  "asset_url": "https://github.com/actions/runner/releases/download/v2.332.0/actions-runner-win-x64-2.332.0.zip",
-  "token_file": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\registration_token.json",
-  "config_output": "D:\\GitHub\\URMS\\.gh-run-scripts\\selfhosted_repair\\config_output_redeploy.txt",
-  "config_excerpt": "\r\n--------------------------------------------------------------------------------\r\n|        ____ _ _   _   _       _          _        _   _                      |\r\n|       / ___(_) |_| | | |_   _| |__      / \\   ___| |_(_) ___  _ __  ___      |\r\n|      | |  _| | __| |_| | | | | '_ \\    / _ \\ / __| __| |/ _ \\| '_ \\/ __|     |\r\n|      | |_| | | |_|  _  | |_| | |_) |  / ___ \\ (__| |_| | (_) | | | \\__ \\     |\r\n|       \\____|_|\\__|_| |_|\\__,_|_.__/  /_/   \\_\\___|\\__|_|\\___/|_| |_|___/     |\r\n|                                                                              |\r\n|                       Self-hosted runner registration                        |\r\n|                                                                              |\r\n--------------------------------------------------------------------------------\r\n\r\n# Authentication\r\n\r\n\r\n√ Connected to GitHub\r\n\r\n# Runner Registration\r\n\r\n\r\n\r\n\r\nA runner exists with the same name\r\nA runner exists with the same name DESKTOP-HUU77M6.\r\n"
-}

@@ -1,5 +1,0 @@
-
-FullName   : D:\GitHub\URMS\actions-runner-extracted\bin\RunnerService.exe
-Length     : 16384
-Attributes : Archive
-

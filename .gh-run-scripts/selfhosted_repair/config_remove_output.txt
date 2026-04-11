@@ -1,7 +1,0 @@
-
-# Runner removal
-
-Cannot connect to server, because config files are missing. Skipping removing runner from the server.
-Does not exist. Skipping Removing .credentials
-Does not exist. Skipping Removing .runner
-
