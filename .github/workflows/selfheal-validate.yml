@@ -134,7 +134,8 @@ jobs:
         run: |
           mkdir -p selfheal_logs
           # copy logs produced by selfheal into the archive directory
-          cp -v .gh-run-scripts/selfhosted_repair/*.txt .gh-run-scripts/selfhosted_repair/*.log .gh-run-scripts/selfhosted_repair/*.json .gh-run-scripts/selfhosted_repair/selfheal_repair_trace.txt selfheal_logs/ 2>/dev/null || true
+          # copy specific important logs first to ensure inclusion
+          cp -v .gh-run-scripts/selfhosted_repair/selfheal_repair_trace.txt .gh-run-scripts/selfhosted_repair/selfheal_repair_log.txt .gh-run-scripts/selfhosted_repair/selfheal_repair_start.txt .gh-run-scripts/selfhosted_repair/selfheal_log_phase4.txt .gh-run-scripts/selfhosted_repair/selfheal_detected_issue.txt .gh-run-scripts/selfhosted_repair/*.txt .gh-run-scripts/selfhosted_repair/*.log .gh-run-scripts/selfhosted_repair/*.json selfheal_logs/ 2>/dev/null || true
           # include nested selfheal_logs if script aggregated them
           cp -rv .gh-run-scripts/selfhosted_repair/selfheal_logs/* selfheal_logs/ 2>/dev/null || true
           tar -czf selfheal_logs.tgz selfheal_logs || true
