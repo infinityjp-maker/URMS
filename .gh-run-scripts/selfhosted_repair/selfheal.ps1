@@ -101,6 +101,7 @@ try {
 	# Trace file for step-by-step repair trace
 	$tracePath = Join-Path $PSScriptRoot "selfheal_repair_trace.txt"
 	"${prodPrefix}Repair trace start: $(Get-Date -Format o)" | Out-File -FilePath $tracePath -Encoding utf8
+	"${prodPrefix}Phase4 start: $(Get-Date -Format o)" | Out-File -FilePath $logPath4 -Encoding utf8
 
 	# If a detected issue file exists or size was detected earlier, re-check
 	$issueFile = Join-Path $PSScriptRoot "selfheal_detected_issue.txt"
@@ -125,6 +126,7 @@ try {
 		if (-not $zip) {
 			"${prodPrefix}No zip found to extract; aborting repair" | Out-File -FilePath $repairLog -Encoding utf8
 			"${prodPrefix}No zip found to extract; aborting repair" | Out-File -FilePath $tracePath -Append -Encoding utf8
+			"${prodPrefix}Phase4 aborted: no zip" | Out-File -FilePath $logPath4 -Append -Encoding utf8
 			exit 20
 		}
 
@@ -151,6 +153,7 @@ try {
 				"Expanding: $($zip.FullName) -> $tmpDir" | Out-File -FilePath $tracePath -Append -Encoding utf8
 				Expand-Archive -Path $zip.FullName -DestinationPath $tmpDir -Force
 				"${prodPrefix}Expand-Archive completed" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}Expand-Archive completed" | Out-File -FilePath $logPath4 -Append -Encoding utf8
 				"Expand-Archive completed" | Out-File -FilePath $tracePath -Append -Encoding utf8
 				"${prodPrefix}Extracted files:" | Out-File -FilePath $repairLog -Append -Encoding utf8
 				Get-ChildItem -Path $tmpDir -Recurse | ForEach-Object { "${prodPrefix}$($_.FullName) : $($_.Length)" } | Out-File -FilePath $repairLog -Append -Encoding utf8
@@ -171,6 +174,7 @@ try {
 				$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
 				"${prodPrefix}RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $prodErr -Encoding utf8
 				Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
+				"${prodPrefix}Phase4 failed: RunnerService.exe not found in zip" | Out-File -FilePath $logPath4 -Append -Encoding utf8
 				exit 20
 			}
 
@@ -180,6 +184,7 @@ try {
 				"Copying: $($extracted.FullName) -> $($found.FullName)" | Out-File -FilePath $tracePath -Append -Encoding utf8
 				Copy-Item -Path $extracted.FullName -Destination $found.FullName -Force -ErrorAction Stop
 				"${prodPrefix}Copy-Item completed" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}Copy-Item completed" | Out-File -FilePath $logPath4 -Append -Encoding utf8
 				"Copy-Item completed" | Out-File -FilePath $tracePath -Append -Encoding utf8
 				$newSize = (Get-Item $found.FullName).Length
 				"${prodPrefix}Replaced RunnerService.exe; NewSize: $newSize" | Out-File -FilePath $repairLog -Append -Encoding utf8
@@ -203,7 +208,8 @@ try {
 					# ensure trace is included
 					if (Test-Path $tracePath) { Copy-Item -Path $tracePath -Destination $logsDir -Force }
 					"${prodPrefix}Aggregated logs to $logsDir" | Out-File -FilePath $repairLog -Append -Encoding utf8
-					"Aggregated logs to $logsDir" | Out-File -FilePath $tracePath -Append -Encoding utf8
+						"Aggregated logs to $logsDir" | Out-File -FilePath $tracePath -Append -Encoding utf8
+						"${prodPrefix}Phase4 completed: repair successful" | Out-File -FilePath $logPath4 -Append -Encoding utf8
 				} catch {
 					"${prodPrefix}Failed to aggregate logs: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
 					"Failed to aggregate logs: $_" | Out-File -FilePath $tracePath -Append -Encoding utf8
