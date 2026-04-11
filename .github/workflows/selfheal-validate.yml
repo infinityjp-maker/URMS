@@ -4,8 +4,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  echo:
+  validate:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Node version
+        run: node --version
+
       - name: Echo marker
         run: echo "selfheal-validate"
