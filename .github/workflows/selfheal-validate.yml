@@ -41,6 +41,31 @@ jobs:
           echo "Running production selfheal (pwsh)"
           pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal.ps1 -Mode production
 
+      - name: Record RunnerService.exe final size and SHA256
+        if: ${{ always() }}
+        run: |
+          set -eux
+          OUTFILE=.gh-run-scripts/selfhosted_repair/selfheal_final_info.txt
+          echo "[PRODUCTION RUN] RunnerService final info" > $OUTFILE || true
+          exe=$(find "$GITHUB_WORKSPACE" -type f -name RunnerService.exe -print -quit || true)
+          if [ -n "$exe" ]; then
+            echo "Path: $exe" >> $OUTFILE || true
+            size=$(stat -c%s "$exe" || true)
+            echo "SizeBytes: ${size}" >> $OUTFILE || true
+            sha=$(sha256sum "$exe" 2>/dev/null | awk '{print $1}' || true)
+            echo "SHA256: ${sha}" >> $OUTFILE || true
+          else
+            echo "RunnerService.exe not found" >> $OUTFILE || true
+          fi
+
+      - name: Upload selfheal final info
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-final-info
+          path: .gh-run-scripts/selfhosted_repair/selfheal_final_info.txt
+
+
       - name: Upload selfheal phase1 log
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
@@ -61,6 +86,13 @@ jobs:
         with:
           name: selfheal-phase2-error
           path: .gh-run-scripts/selfhosted_repair/selfheal_error_phase2.txt
+
+      - name: Upload selfheal production error
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-production-error
+          path: .gh-run-scripts/selfhosted_repair/selfheal_error_production.txt
 
       - name: Upload selfheal phase3 log
         if: ${{ always() }}
