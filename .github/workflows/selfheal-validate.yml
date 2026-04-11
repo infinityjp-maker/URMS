@@ -53,6 +53,13 @@ jobs:
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
           pwsh -NoProfile -Command "Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Depth 3 | Select-Object FullName,Length"
 
+      - name: Download runner_production.zip from Release
+        run: |
+          echo "=== Download runner_production.zip from Release ==="
+          curl -L -o .gh-run-scripts/selfhosted_repair/runner_production.zip \
+            https://github.com/infinityjp-maker/URMS/releases/latest/download/runner_production.zip || true
+          ls -l .gh-run-scripts/selfhosted_repair || true
+
       - name: Run production selfheal
         run: |
           echo "Running production selfheal (pwsh)"
