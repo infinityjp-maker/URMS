@@ -3,44 +3,52 @@
 # User will provide full logic later
 
 # Phase1: basic logging
-Write-Output "[selfheal] Phase1 start"
-Write-Output "[selfheal] Timestamp: $(Get-Date -Format o)"
+$prodPrefix = "[PRODUCTION RUN] "
+Write-Output "${prodPrefix}[selfheal] Phase1 start"
+Write-Output "${prodPrefix}[selfheal] Timestamp: $(Get-Date -Format o)"
 try {
 	$logPath = Join-Path $PSScriptRoot "selfheal_log_phase1.txt"
-	"Phase1 start" | Out-File -FilePath $logPath -Encoding utf8
-	"Timestamp: $(Get-Date -Format o)" | Out-File -FilePath $logPath -Append -Encoding utf8
+	"${prodPrefix}Phase1 start" | Out-File -FilePath $logPath -Encoding utf8
+	"${prodPrefix}Timestamp: $(Get-Date -Format o)" | Out-File -FilePath $logPath -Append -Encoding utf8
 } catch {
-	Write-Output "[selfheal] Failed to write log: $_"
+	Write-Output "${prodPrefix}[selfheal] Failed to write log: $_"
 }
 
 # Phase2: environment diagnostics and detailed logging
 Write-Output "[selfheal] Phase2 start"
 try {
 	$logPath2 = Join-Path $PSScriptRoot "selfheal_log_phase2.txt"
-	"Phase2 start" | Out-File -FilePath $logPath2 -Encoding utf8
-	"Timestamp: $(Get-Date -Format o)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	"${prodPrefix}Phase2 start" | Out-File -FilePath $logPath2 -Encoding utf8
+	"${prodPrefix}Timestamp: $(Get-Date -Format o)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
 
-	"PS Script Path: $PSCommandPath" | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	"${prodPrefix}PS Script Path: $PSCommandPath" | Out-File -FilePath $logPath2 -Append -Encoding utf8
 
-	"OS Version: $([System.Environment]::OSVersion)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
-	"PowerShell Version: $($PSVersionTable.PSVersion)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
-	"Current Location: $(Get-Location)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	"${prodPrefix}OS Version: $([System.Environment]::OSVersion)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	"${prodPrefix}PowerShell Version: $($PSVersionTable.PSVersion)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	"${prodPrefix}Current Location: $(Get-Location)" | Out-File -FilePath $logPath2 -Append -Encoding utf8
 
-	"Drives and Free Space:" | Out-File -FilePath $logPath2 -Append -Encoding utf8
-	Get-PSDrive | Where-Object { $_.Free -ne $null } | ForEach-Object { "$($_.Name): Free=$($_.Free) Used=$($_.Used)" } | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	"${prodPrefix}Drives and Free Space:" | Out-File -FilePath $logPath2 -Append -Encoding utf8
+	Get-PSDrive | Where-Object { $_.Free -ne $null } | ForEach-Object { "${prodPrefix}$($_.Name): Free=$($_.Free) Used=$($_.Used)" } | Out-File -FilePath $logPath2 -Append -Encoding utf8
 
 } catch {
-	Write-Output "[selfheal] Exception during phase2 diagnostics: $_"
+	Write-Output "${prodPrefix}[selfheal] Exception during phase2 diagnostics: $_"
 	try {
 		$errPath = Join-Path $PSScriptRoot "selfheal_error_phase2.txt"
-		"Exception: $_" | Out-File -FilePath $errPath -Encoding utf8
+		"${prodPrefix}Exception: $_" | Out-File -FilePath $errPath -Encoding utf8
+		# production-specific error file
+		$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
+		"${prodPrefix}Exception during Phase2: $_" | Out-File -FilePath $prodErr -Encoding utf8
 	} catch {}
-	exit 1
+	exit 30
 }
 
 # If reached here, exit success
 # Phase3: runner diagnostics
-Write-Output "[selfheal] Phase3 start"
+# Phase3: runner diagnostics
+Write-Output "${prodPrefix}[selfheal] Phase3 start"
+# initialize repair flag
+$doRepair = $false
+try {
 # initialize repair flag
 $doRepair = $false
 try {
@@ -57,10 +65,10 @@ try {
 		"SizeBytes: $size" | Out-File -FilePath $logPath3 -Append -Encoding utf8
 
 		if ($size -eq 16384) {
-			"Detected truncated RunnerService.exe (16KB)" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_detected_issue.txt") -Encoding utf8
+			"${prodPrefix}Detected truncated RunnerService.exe (16KB)" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_detected_issue.txt") -Encoding utf8
 			# mark for repair and continue to Phase4
 			$doRepair = $true
-			"Marked for repair (doRepair=$doRepair)" | Out-File -FilePath $logPath3 -Append -Encoding utf8
+			"${prodPrefix}Marked for repair (doRepair=$doRepair)" | Out-File -FilePath $logPath3 -Append -Encoding utf8
 		}
 
 		# Compute SHA256
@@ -74,16 +82,18 @@ try {
 		"RunnerService.exe not found under repo root" | Out-File -FilePath $logPath3 -Encoding utf8
 	}
 } catch {
-	Write-Output "[selfheal] Exception during phase3 diagnostics: $_"
+	Write-Output "${prodPrefix}[selfheal] Exception during phase3 diagnostics: $_"
 	try {
 		$errPath3 = Join-Path $PSScriptRoot "selfheal_error_phase3.txt"
-		"Exception: $_" | Out-File -FilePath $errPath3 -Encoding utf8
+		"${prodPrefix}Exception: $_" | Out-File -FilePath $errPath3 -Encoding utf8
+		$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
+		"${prodPrefix}Exception during Phase3: $_" | Out-File -FilePath $prodErr -Encoding utf8
 	} catch {}
-	exit 1
+	exit 30
 }
 
 # Phase4: attempt safe repair when truncated runner detected
-Write-Output "[selfheal] Phase4 start"
+Write-Output "${prodPrefix}[selfheal] Phase4 start"
 try {
 	$logPath4 = Join-Path $PSScriptRoot "selfheal_log_phase4.txt"
 	$repairLog = Join-Path $PSScriptRoot "selfheal_repair_log.txt"
@@ -91,7 +101,7 @@ try {
 	# If a detected issue file exists or size was detected earlier, re-check
 	$issueFile = Join-Path $PSScriptRoot "selfheal_detected_issue.txt"
 	if (Test-Path $issueFile -PathType Leaf) {
-		"Detected issue file present: $issueFile" | Out-File -FilePath $logPath4 -Encoding utf8
+		"${prodPrefix}Detected issue file present: $issueFile" | Out-File -FilePath $logPath4 -Encoding utf8
 	}
 
 	# Determine whether to attempt repair: flagged during Phase3 or issue file exists or current size indicates truncation
@@ -103,7 +113,7 @@ try {
 		# Find a ZIP in the repair folder
 		$zip = Get-ChildItem -Path $PSScriptRoot -Filter *.zip -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
 		if (-not $zip) {
-			"No zip found to extract; aborting repair" | Out-File -FilePath $repairLog -Encoding utf8
+			"${prodPrefix}No zip found to extract; aborting repair" | Out-File -FilePath $repairLog -Encoding utf8
 			exit 20
 		}
 
@@ -115,13 +125,13 @@ try {
 		try {
 			Expand-Archive -Path $zip.FullName -DestinationPath $tmpDir -Force
 		} catch {
-			"Expand-Archive failed: $_" | Out-File -FilePath $repairLog -Encoding utf8
+			"${prodPrefix}Expand-Archive failed: $_" | Out-File -FilePath $repairLog -Encoding utf8
 			exit 20
 		}
 
 		$extracted = Get-ChildItem -Path $tmpDir -Filter RunnerService.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
 		if (-not $extracted) {
-			"RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $repairLog -Encoding utf8
+			"${prodPrefix}RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $repairLog -Encoding utf8
 			exit 20
 		}
 
@@ -129,28 +139,32 @@ try {
 		try {
 			Copy-Item -Path $extracted.FullName -Destination $found.FullName -Force
 			$newSize = (Get-Item $found.FullName).Length
-			"Replaced RunnerService.exe; NewSize: $newSize" | Out-File -FilePath $repairLog -Encoding utf8
+			"${prodPrefix}Replaced RunnerService.exe; NewSize: $newSize" | Out-File -FilePath $repairLog -Encoding utf8
 			try {
 				$newHash = Get-FileHash -Path $found.FullName -Algorithm SHA256
-				"NewSHA256: $($newHash.Hash)" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}NewSHA256: $($newHash.Hash)" | Out-File -FilePath $repairLog -Append -Encoding utf8
 			} catch {
-				"Failed to compute new hash: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}Failed to compute new hash: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
 			}
 			# cleanup
 			Remove-Item -Recurse -Force $tmpDir
 			exit 0
 		} catch {
-			"Failed to copy extracted RunnerService.exe: $_" | Out-File -FilePath $repairLog -Encoding utf8
+			"${prodPrefix}Failed to copy extracted RunnerService.exe: $_" | Out-File -FilePath $repairLog -Encoding utf8
 			Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
 			exit 20
 		}
 	} else {
-		"RunnerService.exe appears normal or not found; no repair needed" | Out-File -FilePath $logPath4 -Encoding utf8
+		"${prodPrefix}RunnerService.exe appears normal or not found; no repair needed" | Out-File -FilePath $logPath4 -Encoding utf8
 		exit 0
 	}
 } catch {
-	Write-Output "[selfheal] Exception during phase4 repair: $_"
-	try { "Exception: $_" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_error_phase4.txt") -Encoding utf8 } catch {}
-	exit 1
+	Write-Output "${prodPrefix}[selfheal] Exception during phase4 repair: $_"
+	try {
+		"${prodPrefix}Exception: $_" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_error_phase4.txt") -Encoding utf8
+		$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
+		"${prodPrefix}Exception during Phase4: $_" | Out-File -FilePath $prodErr -Encoding utf8
+	} catch {}
+	exit 30
 }
 # Flowfix finalized for PR
