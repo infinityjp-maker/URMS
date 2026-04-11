@@ -36,15 +36,10 @@ jobs:
           name: selfheal-test-artifact
           path: selfheal_test.txt
 
-      - name: Run production selfheal (if available)
+      - name: Run production selfheal
         run: |
-          if [ -f .gh-run-scripts/selfhosted_repair/selfheal.ps1 ]; then
-            echo "Running production selfheal..."
-            pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal.ps1 -Mode production
-          else
-            echo "selfheal.ps1 not found, writing marker" > selfheal_missing.txt
-            exit 0
-          fi
+          echo "Running production selfheal (pwsh)"
+          pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal.ps1 -Mode production
 
       - name: Collect selfheal logs
         if: ${{ always() }}
