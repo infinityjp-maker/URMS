@@ -48,3 +48,19 @@ Security and cleanup
 - Do not commit production runner binaries to public repos. If you must keep them near the repo, use a private repo or a secure artifact store and restrict access.
 - After repair, consider rotating the runner or verifying the service status manually.
 
+Verification (quick dispatch)
+----------------------------
+
+1. Ensure `runner_production.zip` exists at `.gh-run-scripts/selfhosted_repair/runner_production.zip` on the runner checkout.
+2. Trigger the workflow from the repository (Actions -> selfheal-validate -> Run workflow) or using the GitHub CLI:
+
+```bash
+gh workflow run selfheal-validate --repo <owner>/<repo> --ref main
+```
+
+3. Poll the run or use `production_dispatch_poll.ps1` to wait for completion and download artifacts.
+
+4. After the run, confirm the artifacts: `selfheal_detected_issue.txt`, `selfheal_repair_start.txt`, `selfheal_repair_log.txt`, `selfheal_repair_trace.txt`, `selfheal_log_phase4.txt`, `selfheal_final_info.txt`, and `selfheal_logs.tgz` (the tar should include the trace and all logs).
+
+If any file is missing, inspect `selfheal_error_production.txt` and `selfheal_error_phase4.txt` for details.
+
