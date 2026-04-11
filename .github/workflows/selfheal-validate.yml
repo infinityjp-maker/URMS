@@ -41,6 +41,13 @@ jobs:
           echo "Running production selfheal (pwsh)"
           pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal.ps1 -Mode production
 
+      - name: Upload selfheal phase1 log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-phase1-log
+          path: .gh-run-scripts/selfhosted_repair/selfheal_log_phase1.txt
+
       - name: Collect selfheal logs
         if: ${{ always() }}
         run: |
