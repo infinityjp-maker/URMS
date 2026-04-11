@@ -40,6 +40,18 @@ jobs:
           name: selfheal-test-artifact
           path: selfheal_test.txt
 
+      - name: Workspace debug listing
+        run: |
+          echo "=== WORKSPACE ROOT ==="
+          pwd
+          echo "=== LIST ROOT ==="
+          ls -R .
+          echo "=== LIST .gh-run-scripts/selfhosted_repair ==="
+          ls -R .gh-run-scripts/selfhosted_repair || true
+          echo "=== ENV VARS ==="
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          pwsh -NoProfile -Command "Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Depth 3 | Select-Object FullName,Length"
+
       - name: Run production selfheal
         run: |
           echo "Running production selfheal (pwsh)"
