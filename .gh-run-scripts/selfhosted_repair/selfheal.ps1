@@ -41,6 +41,8 @@ try {
 # If reached here, exit success
 # Phase3: runner diagnostics
 Write-Output "[selfheal] Phase3 start"
+# initialize repair flag
+$doRepair = $false
 try {
 	# Determine repository root (two levels up from script folder)
 	$repoRoot = (Get-Item $PSScriptRoot).Parent.Parent.FullName
@@ -56,7 +58,9 @@ try {
 
 		if ($size -eq 16384) {
 			"Detected truncated RunnerService.exe (16KB)" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_detected_issue.txt") -Encoding utf8
-			exit 10
+			# mark for repair and continue to Phase4
+			$doRepair = $true
+			"Marked for repair (doRepair=$doRepair)" | Out-File -FilePath $logPath3 -Append -Encoding utf8
 		}
 
 		# Compute SHA256
@@ -90,7 +94,9 @@ try {
 		"Detected issue file present: $issueFile" | Out-File -FilePath $logPath4 -Encoding utf8
 	}
 
-	if ($found -and (Get-Item $found.FullName).Length -eq 16384) {
+	# Determine whether to attempt repair: flagged during Phase3 or issue file exists or current size indicates truncation
+	$shouldRepair = $doRepair -or (Test-Path $issueFile -PathType Leaf) -or ($found -and (Get-Item $found.FullName).Length -eq 16384)
+	if ($shouldRepair) {
 		# Start repair
 		"Repair start: $(Get-Date -Format o)" | Out-File -FilePath (Join-Path $PSScriptRoot "selfheal_repair_start.txt") -Encoding utf8
 
