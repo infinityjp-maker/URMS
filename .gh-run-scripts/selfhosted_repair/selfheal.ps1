@@ -121,39 +121,64 @@ try {
 		if (Test-Path $tmpDir) { Remove-Item -Recurse -Force $tmpDir }
 		New-Item -ItemType Directory -Path $tmpDir | Out-Null
 
-		# Attempt to extract RunnerService.exe from the zip
-		try {
-			Expand-Archive -Path $zip.FullName -DestinationPath $tmpDir -Force
-		} catch {
-			"${prodPrefix}Expand-Archive failed: $_" | Out-File -FilePath $repairLog -Encoding utf8
-			exit 20
-		}
-
-		$extracted = Get-ChildItem -Path $tmpDir -Filter RunnerService.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-		if (-not $extracted) {
-			"${prodPrefix}RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $repairLog -Encoding utf8
-			exit 20
-		}
-
-		# Copy over (overwrite) to original location
-		try {
-			Copy-Item -Path $extracted.FullName -Destination $found.FullName -Force
-			$newSize = (Get-Item $found.FullName).Length
-			"${prodPrefix}Replaced RunnerService.exe; NewSize: $newSize" | Out-File -FilePath $repairLog -Encoding utf8
+			# Attempt to extract RunnerService.exe from the zip
 			try {
-				$newHash = Get-FileHash -Path $found.FullName -Algorithm SHA256
-				"${prodPrefix}NewSHA256: $($newHash.Hash)" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}Expanding zip: $($zip.FullName) to $tmpDir" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				Expand-Archive -Path $zip.FullName -DestinationPath $tmpDir -Force
+				"${prodPrefix}Expand-Archive completed" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}Extracted files:" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				Get-ChildItem -Path $tmpDir -Recurse | ForEach-Object { "${prodPrefix}$($_.FullName) : $($_.Length)" } | Out-File -FilePath $repairLog -Append -Encoding utf8
 			} catch {
-				"${prodPrefix}Failed to compute new hash: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				"${prodPrefix}Expand-Archive failed: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
+				"${prodPrefix}Expand-Archive failed: $_" | Out-File -FilePath $prodErr -Encoding utf8
+				Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
+				exit 20
 			}
-			# cleanup
-			Remove-Item -Recurse -Force $tmpDir
-			exit 0
-		} catch {
-			"${prodPrefix}Failed to copy extracted RunnerService.exe: $_" | Out-File -FilePath $repairLog -Encoding utf8
-			Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
-			exit 20
-		}
+
+			$extracted = Get-ChildItem -Path $tmpDir -Filter RunnerService.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+			if (-not $extracted) {
+				"${prodPrefix}RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
+				"${prodPrefix}RunnerService.exe not found inside zip: $($zip.FullName)" | Out-File -FilePath $prodErr -Encoding utf8
+				Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
+				exit 20
+			}
+
+			# Copy over (overwrite) to original location with detailed logging
+			try {
+				"${prodPrefix}Copying extracted RunnerService.exe from $($extracted.FullName) to $($found.FullName)" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				Copy-Item -Path $extracted.FullName -Destination $found.FullName -Force -ErrorAction Stop
+				"${prodPrefix}Copy-Item completed" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				$newSize = (Get-Item $found.FullName).Length
+				"${prodPrefix}Replaced RunnerService.exe; NewSize: $newSize" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				try {
+					$newHash = Get-FileHash -Path $found.FullName -Algorithm SHA256
+					"${prodPrefix}NewSHA256: $($newHash.Hash)" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				} catch {
+					"${prodPrefix}Failed to compute new hash: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				}
+				# cleanup
+				Remove-Item -Recurse -Force $tmpDir
+
+				# aggregate logs into selfheal_logs directory
+				try {
+					$logsDir = Join-Path $PSScriptRoot "selfheal_logs"
+					if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir | Out-Null }
+					Get-ChildItem -Path $PSScriptRoot -Include "selfheal_*.*","*.log","*.txt","*.json" -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item -Path $_.FullName -Destination $logsDir -Force }
+					"${prodPrefix}Aggregated logs to $logsDir" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				} catch {
+					"${prodPrefix}Failed to aggregate logs: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				}
+
+				exit 0
+			} catch {
+				"${prodPrefix}Failed to copy extracted RunnerService.exe: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
+				$prodErr = Join-Path $PSScriptRoot "selfheal_error_production.txt"
+				"${prodPrefix}Failed to copy extracted RunnerService.exe: $_" | Out-File -FilePath $prodErr -Encoding utf8
+				Remove-Item -Recurse -Force $tmpDir -ErrorAction SilentlyContinue
+				exit 20
+			}
 	} else {
 		"${prodPrefix}RunnerService.exe appears normal or not found; no repair needed" | Out-File -FilePath $logPath4 -Encoding utf8
 		exit 0

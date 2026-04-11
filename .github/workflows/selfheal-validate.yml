@@ -133,7 +133,10 @@ jobs:
         if: ${{ always() }}
         run: |
           mkdir -p selfheal_logs
-          cp -v .gh-run-scripts/selfhosted_repair/*.json selfheal_logs/ 2>/dev/null || true
+          # copy logs produced by selfheal into the archive directory
+          cp -v .gh-run-scripts/selfhosted_repair/*.txt .gh-run-scripts/selfhosted_repair/*.log .gh-run-scripts/selfhosted_repair/*.json selfheal_logs/ 2>/dev/null || true
+          # include nested selfheal_logs if script aggregated them
+          cp -rv .gh-run-scripts/selfhosted_repair/selfheal_logs/* selfheal_logs/ 2>/dev/null || true
           tar -czf selfheal_logs.tgz selfheal_logs || true
 
       - name: Upload production artifacts
