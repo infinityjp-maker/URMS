@@ -139,6 +139,10 @@ try {
 			"ZipPath: $zipPath" | Out-File -FilePath $tracePath -Append -Encoding utf8
 			"ZipAbsolutePath: $zipPath" | Out-File -FilePath $tracePath -Append -Encoding utf8
 			"ZipSize: $zipSize" | Out-File -FilePath $tracePath -Append -Encoding utf8
+			# Additional explicit trace entries to capture execution environment
+			Add-Content -Path (Join-Path $PSScriptRoot "selfheal_repair_trace.txt") -Value ("Trace: ZIP path = $zipPath")
+			Add-Content -Path (Join-Path $PSScriptRoot "selfheal_repair_trace.txt") -Value ("Trace: PSScriptRoot=$PSScriptRoot")
+			Add-Content -Path (Join-Path $PSScriptRoot "selfheal_repair_trace.txt") -Value ("Trace: GITHUB_WORKSPACE=$env:GITHUB_WORKSPACE")
 		} catch {
 			"${prodPrefix}Failed to stat zip: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
 			"Failed to stat zip: $_" | Out-File -FilePath $tracePath -Append -Encoding utf8
