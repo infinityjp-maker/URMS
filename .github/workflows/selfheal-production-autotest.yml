@@ -1,0 +1,45 @@
+name: Selfheal Production AutoTest
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  autotest:
+    name: Selfheal Production AutoTest
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          clean: true
+          submodules: recursive
+          path: .
+
+      - name: Run corruption script (overwrite RunnerService.exe with 16KB dummy)
+        run: |
+          echo "Running corruption script"
+          pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/corrupt_runner_and_restart.ps1
+
+      - name: Run production selfheal
+        run: |
+          echo "Running production selfheal (pwsh)"
+          pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal.ps1 -Mode production
+
+      - name: Collect selfheal outputs (monitor and summarize)
+        run: |
+          echo "Collecting selfheal outputs"
+          pwsh -NoProfile -NonInteractive -File .gh-run-scripts/selfhosted_repair/selfheal-production-run.ps1 -TimeoutMinutes 30
+
+      - name: Upload autotest artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfheal-production-autotest-artifacts
+          path: |
+            .gh-run-scripts/selfhosted_repair/selfheal_results_*
+            .gh-run-scripts/selfhosted_repair/selfheal_summary.txt
+            .gh-run-scripts/selfhosted_repair/selfheal_logs.tgz
