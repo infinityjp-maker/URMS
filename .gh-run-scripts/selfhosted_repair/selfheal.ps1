@@ -137,6 +137,7 @@ try {
 			"${prodPrefix}Zip found: $zipPath" | Out-File -FilePath $repairLog -Append -Encoding utf8
 			"${prodPrefix}Zip size: $zipSize" | Out-File -FilePath $repairLog -Append -Encoding utf8
 			"ZipPath: $zipPath" | Out-File -FilePath $tracePath -Append -Encoding utf8
+			"ZipAbsolutePath: $zipPath" | Out-File -FilePath $tracePath -Append -Encoding utf8
 			"ZipSize: $zipSize" | Out-File -FilePath $tracePath -Append -Encoding utf8
 		} catch {
 			"${prodPrefix}Failed to stat zip: $_" | Out-File -FilePath $repairLog -Append -Encoding utf8
