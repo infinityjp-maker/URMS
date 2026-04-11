@@ -48,7 +48,6 @@ try {
 Write-Output "${prodPrefix}[selfheal] Phase3 start"
 # initialize repair flag
 $doRepair = $false
-try {
 # initialize repair flag
 $doRepair = $false
 try {
@@ -244,6 +243,5 @@ try {
 	exit 30
 }
 # Close outermost blocks
-}
 
 # Flowfix finalized for PR
