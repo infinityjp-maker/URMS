@@ -53,6 +53,7 @@ jobs:
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
           pwsh -NoProfile -Command "Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -Depth 3 | Select-Object FullName,Length"
 
+      # Official: download runner_production.zip from Release for stable selfheal
       - name: Download runner_production.zip from Release
         run: |
           echo "=== Download runner_production.zip from Release ==="
