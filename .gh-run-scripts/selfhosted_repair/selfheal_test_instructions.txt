@@ -1,0 +1,24 @@
+【本番ランナー selfheal 自動復旧テスト手順】
+
+1. RunnerService.exe を破損させる（管理者で実行推奨）
+   pwsh -NoProfile -File .gh-run-scripts\selfhosted_repair\corrupt_runner_and_restart.ps1
+
+2. selfheal の実行を監視し、ログを収集する
+   pwsh -NoProfile -File .gh-run-scripts\selfhosted_repair\selfheal-production-run.ps1 -TimeoutMinutes 30
+
+3. 出力ディレクトリ:
+   .gh-run-scripts/selfhosted_repair/selfheal_results_<timestamp>
+
+4. 確認ファイル:
+   - selfheal_repair_start.txt
+   - selfheal_repair_log.txt
+   - selfheal_repair_trace.txt
+   - selfheal_log_phase4.txt
+   - selfheal_final_info.txt
+   - selfheal_summary.txt
+
+5. selfheal_summary.txt を Copilot チャットに貼り付けて解析を依頼する。
+
+注意:
+- 実行は管理者権限（サービス再起動を行う場合）で行ってください。
+- 本番環境での実行は運用ポリシーに従ってください。
