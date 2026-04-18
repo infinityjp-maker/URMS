@@ -1,0 +1,47 @@
+name: CI Audit PowerShell
+
+on:
+  push: {}
+  pull_request: {}
+
+jobs:
+  ci-audit:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run CI PowerShell audit
+        id: run_audit
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\ci-audit-powershell.ps1 2>&1 | Tee-Object -FilePath audit-output.txt
+          exit $LASTEXITCODE
+
+      - name: Upload audit output artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-audit-output
+          path: audit-output.txt
+
+      - name: Prepare PR comment body
+        if: failure() && github.event_name == 'pull_request'
+        id: prepare_comment
+        shell: pwsh
+        run: |
+          $content = ''
+          if (Test-Path audit-output.txt) { $content = Get-Content audit-output.txt -Raw }
+          $snippet = ($content -split "`n") | Select-Object -First 200 -join "`n"
+          $body = "### CI Audit failed\n<details><summary>Audit output (first 200 lines)</summary>\n\n```\n$snippet\n```\n</details>\n"
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo $body >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR with audit output
+        if: failure() && github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.prepare_comment.outputs.body }}
