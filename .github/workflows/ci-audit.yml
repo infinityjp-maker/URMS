@@ -59,6 +59,34 @@ jobs:
           pwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\run-local-tests.ps1 -RepoRoot ${{ github.workspace }} -MaxAttempts 3 2>&1 | Tee-Object -FilePath test-run-output.txt
           exit $LASTEXITCODE
 
+      - name: Generate test results JSON
+        if: always()
+        id: gen_test_json
+        shell: pwsh
+        run: |
+          $out = ''
+          if (Test-Path test-run-output.txt) { $out = Get-Content test-run-output.txt -Raw }
+          $results = @()
+          if (-not [string]::IsNullOrWhiteSpace($out)) {
+            $matches = Select-String -InputObject $out -Pattern '=== Running\s+(?<name>.+?)\s+===' -AllMatches
+            foreach ($m in $matches.Matches) {
+              $name = $m.Groups['name'].Value.Trim()
+              $pass = -not ($out -match "TEST-FAILED:$([regex]::Escape($name))")
+              $results += [pscustomobject]@{ test = $name; passed = $pass }
+            }
+          }
+          $jsonPath = 'actions-runner/test-results.json'
+          if (-not (Test-Path (Split-Path $jsonPath))) { New-Item -ItemType Directory -Path (Split-Path $jsonPath) -Force | Out-Null }
+          $results | ConvertTo-Json -Depth 3 | Set-Content -Path $jsonPath -Encoding utf8
+          Write-Output "WROTE:$jsonPath"
+
+      - name: Upload test results JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: powershell-test-json
+          path: actions-runner/test-results.json
+
       - name: Prepare PowerShell test summary
         if: github.event_name == 'pull_request'
         id: prepare_test_summary
@@ -115,10 +143,51 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.prepare_test_summary.outputs.body }}
 
+      - name: Self-heal attempt
+        if: failure() && github.event_name == 'pull_request'
+        id: selfheal
+        shell: pwsh
+        run: |
+          # Determine PR branch and compute previous selfheal attempts
+          $branch = $env:GITHUB_HEAD_REF
+          if ([string]::IsNullOrWhiteSpace($branch)) { $branch = (git rev-parse --abbrev-ref HEAD) }
+          $count = 0
+          try {
+            $count = (git log --pretty=%B -n 50 | Select-String -Pattern 'ci(selfheal): attempt' | Measure-Object).Lines
+          } catch {
+            $count = 0
+          }
+          $next = $count + 1
+          $reason = ''
+          # quick reason extraction
+          if (Test-Path audit-output.txt) { $a = Get-Content audit-output.txt -Raw; if ($a -match 'ParserError|Exception|Traceback') { $reason = ($Matches[0]) } }
+          if (-not $reason -and Test-Path test-run-output.txt) { $t = Get-Content test-run-output.txt -Raw; if ($t -match 'ParserError|Exception|Traceback') { $reason = ($Matches[0]) } }
+          if ($next -le 3) {
+            try {
+              git config user.name "github-actions[bot]"
+              git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git commit --allow-empty -m "ci(selfheal): attempt $next"
+              git push origin HEAD:$branch
+              $needs = 'true'
+            } catch {
+              $needs = 'false'
+              $reason = "push failed: $($_.Exception.Message)"
+            }
+          } else {
+            $needs = 'false'
+          }
+          # write outputs
+          try { if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null } } catch {}
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "needs_retry=$needs"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "attempt=$next"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "reason=$reason"
+
       - name: Prepare audit PR comment body
         if: failure() && github.event_name == 'pull_request'
         id: prepare_comment
         shell: pwsh
+        env:
+          SELFHEAL_ATTEMPT: ${{ steps.selfheal.outputs.attempt || '' }}
         run: |
           $content = ''
           if (Test-Path audit-output.txt) { $content = Get-Content audit-output.txt -Raw }
@@ -130,7 +199,13 @@ jobs:
           if ($content -match 'No audit violations found') { $auditStatus = 'PASS' }
           if ($auditStatus -eq 'PASS') { $auditBadge = '![PASS](https://img.shields.io/badge/Audit-PASS-brightgreen)' } else { $auditBadge = '![FAIL](https://img.shields.io/badge/Audit-FAIL-red)' }
 
-          $body = "## CI Audit Results `n$auditBadge `n`n<details><summary>Audit output (first 200 lines)</summary>`n`n" + "````" + [char]10 + $snippet + [char]10 + "````" + [char]10 + "</details>" + [char]10
+          # build artifacts link as button-like text
+          $artifactLink = "[Artifacts ▶](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)"
+
+          $attemptInfo = ''
+          if (-not [string]::IsNullOrWhiteSpace($env:SELFHEAL_ATTEMPT)) { $attemptInfo = "*Self-heal attempt:* $env:SELFHEAL_ATTEMPT`n`n" }
+
+          $body = "## CI Audit Results `n$auditBadge `n`n$attemptInfo<details><summary>Audit output (first 200 lines)</summary>`n`n```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
 
           try {
             if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
