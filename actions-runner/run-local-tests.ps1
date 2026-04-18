@@ -67,27 +67,27 @@ function Apply-Minimal-Patch {
             if ($new -ne $modified) { $modified = $new; $patched = $true }
         }
         if ($issues -contains 'converttojson_depth_missing') {
-            # add -Depth 5 to ConvertTo-Json calls (simple heuristic)
+            # add -Depth 5 to JSON conversion calls (heuristic)
             try {
                 $new = $modified -replace 'ConvertTo-Json(\s*\|)','ConvertTo-Json -Depth 5$1'
                 if ($new -ne $modified) { $modified = $new; $patched = $true }
             } catch {
-                Write-Warning "Apply-Minimal-Patch: ConvertTo-Json replacement failed for $scriptPath: $($_.Exception.Message)"
+                Write-Warning "Apply-Minimal-Patch: JSON conversion replacement failed for $scriptPath"
             }
         }
         if ($issues -contains 'outfile_encoding_missing') {
-            # add -Encoding utf8 to Out-File calls
+            # add -Encoding utf8 to file write calls
             try {
                 $new = $modified -replace 'Out-File\s+-FilePath','Out-File -FilePath'
             } catch {
-                Write-Warning "Apply-Minimal-Patch: Out-File filename replacement failed for $scriptPath: $($_.Exception.Message)"
+                Write-Warning "Apply-Minimal-Patch: filename replacement failed for $scriptPath"
                 $new = $modified
             }
             try {
                 # naive: append -Encoding utf8 when not present
                 $new = $new -replace '(Out-File\s+[^\n\r]*?)(\r?\n)','$1 -Encoding utf8`n'
             } catch {
-                Write-Warning "Apply-Minimal-Patch: Out-File encoding append failed for $scriptPath: $($_.Exception.Message)"
+                Write-Warning "Apply-Minimal-Patch: encoding append failed for $scriptPath"
                 $new = $modified
             }
             if ($new -ne $modified) { $modified = $new; $patched = $true }
