@@ -161,7 +161,7 @@ jobs:
           $reason = ''
           # quick reason extraction
           if (Test-Path audit-output.txt) { $a = Get-Content audit-output.txt -Raw; if ($a -match 'ParserError|Exception|Traceback') { $reason = ($Matches[0]) } }
-          if (-not $reason -and Test-Path test-run-output.txt) { $t = Get-Content test-run-output.txt -Raw; if ($t -match 'ParserError|Exception|Traceback') { $reason = ($Matches[0]) } }
+          if (-not $reason -and (Test-Path test-run-output.txt)) { $t = Get-Content test-run-output.txt -Raw; if ($t -match 'ParserError|Exception|Traceback') { $reason = ($Matches[0]) } }
           if ($next -le 3) {
             try {
               git config user.name "github-actions[bot]"
@@ -204,8 +204,7 @@ jobs:
 
           $attemptInfo = ''
           if (-not [string]::IsNullOrWhiteSpace($env:SELFHEAL_ATTEMPT)) { $attemptInfo = "*Self-heal attempt:* $env:SELFHEAL_ATTEMPT`n`n" }
-
-          $body = "## CI Audit Results `n$auditBadge `n`n$attemptInfo<details><summary>Audit output (first 200 lines)</summary>`n`n```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
+$body = "## CI Audit Results `n$auditBadge `n`n$attemptInfo<details><summary>Audit output (first 200 lines)</summary>`n`n```" + [char]10 + $snippet + [char]10 + "```" + [char]10 + "</details>"
 
           try {
             if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
@@ -223,4 +222,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.prepare_comment.outputs.body }}
+
 
