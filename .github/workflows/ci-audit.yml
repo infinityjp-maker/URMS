@@ -25,6 +25,32 @@ jobs:
           name: ci-audit-output
           path: audit-output.txt
 
+      - name: Run PowerShell tests
+        id: run_tests
+        shell: pwsh
+        run: |
+          $tests = Get-ChildItem -Path .\actions-runner\test-*.ps1 -File -ErrorAction SilentlyContinue
+          if (-not $tests) { Write-Output 'No tests found'; exit 0 }
+          if (-not (Test-Path .\actions-runner\test-results)) { New-Item -Path .\actions-runner\test-results -ItemType Directory | Out-Null }
+          $overall = $true
+          $outFile = 'test-run-output.txt'
+          Remove-Item -Force -ErrorAction SilentlyContinue $outFile
+          foreach ($t in $tests) {
+            Write-Output "=== Running $($t.Name) ===" | Tee-Object -FilePath $outFile -Append
+            pwsh -NoProfile -ExecutionPolicy Bypass -File $t.FullName 2>&1 | Tee-Object -FilePath $outFile -Append
+            if ($LASTEXITCODE -ne 0) { $overall = $false; Write-Output "TEST-FAILED:$($t.Name)" | Tee-Object -FilePath $outFile -Append }
+          }
+          if ($overall) { Write-Output 'ALL TESTS PASSED' ; exit 0 } else { Write-Output 'SOME TESTS FAILED' ; exit 1 }
+
+      - name: Upload test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: powershell-test-output
+          path: |
+            test-run-output.txt
+            actions-runner/test-results
+
       - name: Prepare PR comment body
         if: failure() && github.event_name == 'pull_request'
         id: prepare_comment
