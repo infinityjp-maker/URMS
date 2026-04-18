@@ -64,21 +64,48 @@ jobs:
         id: prepare_test_summary
         shell: pwsh
         run: |
+          # load test output (prefer workspace root)
           $out = ''
           if (Test-Path test-run-output.txt) { $out = Get-Content test-run-output.txt -Raw } elseif (Test-Path .\actions-runner\test-run-output.txt) { $out = Get-Content .\actions-runner\test-run-output.txt -Raw }
-          $lines = $out -split "`n"
-          $snippet = (($lines) | Select-Object -First 20) -join "`n"
+          $lines = @()
+          if (-not [string]::IsNullOrWhiteSpace($out)) { $lines = $out -split "`n" }
+
+          # determine status
           $status = 'PASS'
           if ($out -match 'TEST-FAILED:') { $status = 'FAIL' }
-          # ensure at least a minimal status output for GITHUB_OUTPUT
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status"
 
+          # badge for quick visibility
+          if ($status -eq 'PASS') { $badge = '![PASS](https://img.shields.io/badge/Tests-PASS-brightgreen)' } else { $badge = '![FAIL](https://img.shields.io/badge/Tests-FAIL-red)' }
+
+          # build simple test results table from run markers
+          $tests = @()
+          $running = Select-String -InputObject $out -Pattern '=== Running\s+(?<name>.+?)\s+===' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups['name'].Value.Trim() }
+          foreach ($t in $running) {
+            $res = 'PASS'
+            if ($out -match "TEST-FAILED:$([regex]::Escape($t))") { $res = 'FAIL' }
+            $tests += "| $t | $res |"
+          }
+          if (-not $tests) { $testsTable = '| Test | Result |\n|---|---|\n|(<no tests run>)| - |' } else { $testsTable = '| Test | Result |\n|---|---|' + [char]10 + ($tests -join [char]10) }
+
+          # snippet for collapsed output (limit 20 lines)
+          $snippet = ($lines | Select-Object -First 20) -join "`n"
           if ([string]::IsNullOrWhiteSpace($snippet)) { $snippet = '(<no test output>)' }
+
           $artifactLink = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
-          $body = "### PowerShell Test Summary" + [char]10 + "- Status: $status" + [char]10 + "- Artifact: $artifactLink" + [char]10 + [char]10 + "<details><summary>test-run-output.txt (first 20 lines)</summary>" + [char]10 + [char]10 + "```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
+
+          $body = "## PowerShell Test Summary `n$badge `n`n**Status:** $status`n`n**Artifact:** $artifactLink`n`n**Results:**`n`n$testsTable`n`n<details><summary>test-run-output.txt (first 20 lines)</summary>`n`n```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>"
+
+          # robustly write outputs to GITHUB_OUTPUT
+          try {
+            if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status"
             Add-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF"
             Add-Content -Path $env:GITHUB_OUTPUT -Value $body
             Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
+          } catch {
+            # fallback: ensure minimal outputs
+            try { Set-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status`nbody<<EOF`n$body`nEOF" -Force } catch { Write-Warning "Failed to write GITHUB_OUTPUT: $($_.Exception.Message)" }
+          }
 
       - name: Comment on PR with PowerShell test summary
         if: github.event_name == 'pull_request'
@@ -96,10 +123,23 @@ jobs:
           $content = ''
           if (Test-Path audit-output.txt) { $content = Get-Content audit-output.txt -Raw }
           $snippet = (($content -split "`n") | Select-Object -First 200) -join "`n"
-          $body = "### CI Audit failed" + [char]10 + "<details><summary>Audit output (first 200 lines)</summary>" + [char]10 + [char]10 + "```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
+          if ([string]::IsNullOrWhiteSpace($snippet)) { $snippet = '(<no audit output>)' }
+
+          # audit badge
+          $auditStatus = 'FAIL'
+          if ($content -match 'No audit violations found') { $auditStatus = 'PASS' }
+          if ($auditStatus -eq 'PASS') { $auditBadge = '![PASS](https://img.shields.io/badge/Audit-PASS-brightgreen)' } else { $auditBadge = '![FAIL](https://img.shields.io/badge/Audit-FAIL-red)' }
+
+          $body = "## CI Audit Results `n$auditBadge `n`n<details><summary>Audit output (first 200 lines)</summary>`n`n```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
+
+          try {
+            if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
             Add-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF"
             Add-Content -Path $env:GITHUB_OUTPUT -Value $body
             Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
+          } catch {
+            try { Set-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF`n$body`nEOF" -Force } catch { Write-Warning "Failed to write GITHUB_OUTPUT for audit: $($_.Exception.Message)" }
+          }
 
       - name: Comment on PR with audit output
         if: failure() && github.event_name == 'pull_request'
