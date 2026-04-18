@@ -130,7 +130,7 @@ jobs:
           if ($content -match 'No audit violations found') { $auditStatus = 'PASS' }
           if ($auditStatus -eq 'PASS') { $auditBadge = '![PASS](https://img.shields.io/badge/Audit-PASS-brightgreen)' } else { $auditBadge = '![FAIL](https://img.shields.io/badge/Audit-FAIL-red)' }
 
-          $body = "## CI Audit Results `n$auditBadge `n`n<details><summary>Audit output (first 200 lines)</summary>`n`n```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
+          $body = "## CI Audit Results `n$auditBadge `n`n<details><summary>Audit output (first 200 lines)</summary>`n`n" + "````" + [char]10 + $snippet + [char]10 + "````" + [char]10 + "</details>" + [char]10
 
           try {
             if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
@@ -148,3 +148,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.prepare_comment.outputs.body }}
+
