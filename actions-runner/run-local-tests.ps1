@@ -41,43 +41,62 @@ function Analyze-Failures {
 
 function Quick-AnalyzeScript {
     param([string]$scriptPath)
-    $content = Get-Content $scriptPath -Raw -ErrorAction SilentlyContinue
-    $issues = @()
-    if ($content -match "(^|\n)\s*exit\b") { $issues += 'exit_statement' }
-    if ($content -match 'ConvertTo-Json' -and $content -notmatch '-Depth') { $issues += 'converttojson_depth_missing' }
-    if ($content -match 'Out-File' -and $content -notmatch '-Encoding') { $issues += 'outfile_encoding_missing' }
-    if ($content -notmatch 'try\s*\{') { $issues += 'no_try_block_detected' }
-    return $issues
+    try {
+        $content = Get-Content $scriptPath -Raw -ErrorAction SilentlyContinue
+        $issues = @()
+        if ($content -match "(^|\n)\s*exit\b") { $issues += 'exit_statement' }
+        if ($content -match 'ConvertTo-Json' -and $content -notmatch '-Depth') { $issues += 'converttojson_depth_missing' }
+        if ($content -match 'Out-File' -and $content -notmatch '-Encoding') { $issues += 'outfile_encoding_missing' }
+        if ($content -notmatch 'try\s*\{') { $issues += 'no_try_block_detected' }
+        return $issues
+    } catch {
+        Write-Warning "Quick-AnalyzeScript: failed to read/parse $scriptPath: $($_.Exception.Message)"
+        return @()
+    }
 }
 
 function Apply-Minimal-Patch {
     param([string]$scriptPath, [string[]]$issues)
-    $orig = Get-Content $scriptPath -Raw
-    $modified = $orig
-    $patched = $false
-    if ($issues -contains 'exit_statement') {
-        # replace top-level "exit <n>" with "return <n>" to avoid killing process
-        $new = $modified -replace "(?m)^[ \t]*exit\s+(\d+)","return $1"
-        if ($new -ne $modified) { $modified = $new; $patched = $true }
+    try {
+        $orig = Get-Content $scriptPath -Raw
+        $modified = $orig
+        $patched = $false
+        if ($issues -contains 'exit_statement') {
+            # replace top-level "exit <n>" with "return <n>" to avoid killing process
+            $new = $modified -replace "(?m)^[ \t]*exit\s+(\d+)","return $1"
+            if ($new -ne $modified) { $modified = $new; $patched = $true }
+        }
+        if ($issues -contains 'converttojson_depth_missing') {
+            # add -Depth 5 to ConvertTo-Json calls (simple heuristic)
+            $new = $modified -replace 'ConvertTo-Json(\s*\|)','ConvertTo-Json -Depth 5$1'
+            if ($new -ne $modified) { $modified = $new; $patched = $true }
+        }
+        if ($issues -contains 'outfile_encoding_missing') {
+            # add -Encoding utf8 to Out-File calls
+            $new = $modified -replace 'Out-File\s+-FilePath','Out-File -FilePath'
+            # naive: append -Encoding utf8 when not present
+            $new = $new -replace '(Out-File\s+[^\n\r]*?)(\r?\n)','$1 -Encoding utf8`n'
+            if ($new -ne $modified) { $modified = $new; $patched = $true }
+        }
+        if ($patched) {
+            # write backup and overwrite
+            try {
+                Copy-Item $scriptPath "$scriptPath.bak" -Force
+            } catch {
+                Write-Warning "Apply-Minimal-Patch: failed to create backup for $scriptPath: $($_.Exception.Message)"
+            }
+            try {
+                Set-Content -Path $scriptPath -Value $modified -Encoding utf8
+            } catch {
+                Write-Warning "Apply-Minimal-Patch: failed to write patched content to $scriptPath: $($_.Exception.Message)"
+                return $false
+            }
+        }
+        return $patched
+    } catch {
+        Write-Warning "Apply-Minimal-Patch failed for $scriptPath: $($_.Exception.Message)"
+        return $false
     }
-    if ($issues -contains 'converttojson_depth_missing') {
-        # add -Depth 5 to ConvertTo-Json calls (simple heuristic)
-        $new = $modified -replace 'ConvertTo-Json(\s*\|)','ConvertTo-Json -Depth 5$1'
-        if ($new -ne $modified) { $modified = $new; $patched = $true }
-    }
-    if ($issues -contains 'outfile_encoding_missing') {
-        # add -Encoding utf8 to Out-File calls
-        $new = $modified -replace 'Out-File\s+-FilePath','Out-File -FilePath'
-        # naive: append -Encoding utf8 when not present
-        $new = $new -replace '(Out-File\s+[^\n\r]*?)(\r?\n)','$1 -Encoding utf8`n'
-        if ($new -ne $modified) { $modified = $new; $patched = $true }
-    }
-    if ($patched) {
-        # write backup and overwrite
-        Copy-Item $scriptPath "$scriptPath.bak" -Force
-        Set-Content -Path $scriptPath -Value $modified -Encoding utf8
-    }
-    return $patched
 }
 
 # Loop attempts
