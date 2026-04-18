@@ -59,7 +59,7 @@ jobs:
           $out = ''
           if (Test-Path test-run-output.txt) { $out = Get-Content test-run-output.txt -Raw } elseif (Test-Path .\actions-runner\test-run-output.txt) { $out = Get-Content .\actions-runner\test-run-output.txt -Raw }
           $lines = $out -split "`n"
-          $snippet = ($lines | Select-Object -First 20) -join "`n"
+          $snippet = (($lines) | Select-Object -First 20) -join "`n"
           $status = 'PASS'
           if ($out -match 'TEST-FAILED:') { $status = 'FAIL' }
           $artifactLink = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
@@ -90,7 +90,7 @@ jobs:
         run: |
           $content = ''
           if (Test-Path audit-output.txt) { $content = Get-Content audit-output.txt -Raw }
-          $snippet = ($content -split "`n") | Select-Object -First 200 -join "`n"
+          $snippet = (($content -split "`n") | Select-Object -First 200) -join "`n"
           $body = "### CI Audit failed\n<details><summary>Audit output (first 200 lines)</summary>\n\n```\n$snippet\n```\n</details>\n"
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo $body >> $GITHUB_OUTPUT

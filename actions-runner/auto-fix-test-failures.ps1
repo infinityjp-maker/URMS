@@ -32,10 +32,14 @@ if (Test-Path $tuPath) {
 }
 
 if ($patched) {
-    git add $tuPath
-    git commit -m "chore(tests): make Save-TestResult robust to ConvertTo-Json failures" || Write-Output "No commit needed"
-    git push origin HEAD:$Branch
-    Write-Output "Pushed patch to $Branch"
+    try {
+        git add $tuPath
+        git commit -m "chore(tests): make Save-TestResult robust to ConvertTo-Json failures" || Write-Output "No commit needed"
+        git push origin HEAD:$Branch
+        Write-Output "Pushed patch to $Branch"
+    } catch {
+        Write-Warning "auto-fix: git commands failed: $($_.Exception.Message)"
+    }
 } else {
     Write-Output "No modifications required by auto-fix policy"
 }
