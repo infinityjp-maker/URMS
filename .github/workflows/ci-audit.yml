@@ -51,6 +51,14 @@ jobs:
             test-run-output.txt
             actions-runner/test-results
 
+      - name: Run local test runner
+        id: run_local_runner
+        shell: pwsh
+        run: |
+          # Run the existing local test runner which includes an auto-fix loop
+          pwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\run-local-tests.ps1 -RepoRoot ${{ github.workspace }} -MaxAttempts 3 2>&1 | Tee-Object -FilePath test-run-output.txt
+          exit $LASTEXITCODE
+
       - name: Prepare PowerShell test summary
         if: github.event_name == 'pull_request'
         id: prepare_test_summary
@@ -62,6 +70,10 @@ jobs:
           $snippet = (($lines) | Select-Object -First 20) -join "`n"
           $status = 'PASS'
           if ($out -match 'TEST-FAILED:') { $status = 'FAIL' }
+          # ensure at least a minimal status output for GITHUB_OUTPUT
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status"
+
+          if ([string]::IsNullOrWhiteSpace($snippet)) { $snippet = '(<no test output>)' }
           $artifactLink = "https://github.com/${\{ github.repository \}}/actions/runs/${\{ github.run_id \}}/artifacts"
           $body = "### PowerShell Test Summary" + [char]10 + "- Status: $status" + [char]10 + "- Artifact: $artifactLink" + [char]10 + [char]10 + "<details><summary>test-run-output.txt (first 20 lines)</summary>" + [char]10 + [char]10 + "```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>" + [char]10
             Add-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF"
