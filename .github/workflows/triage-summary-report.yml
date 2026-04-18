@@ -80,6 +80,12 @@ jobs:
           echo "# Triage Summary Full Report" > "$OUT"
           echo "Generated: $(date -u --rfc-3339=seconds)" >> "$OUT"
           echo "" >> "$OUT"
+          # Append runner status if available
+          if [ -f "actions-runner/runner_auto_start.status.json" ]; then
+            echo "" >> "$OUT"
+            echo "## Runner Auto Start Status" >> "$OUT"
+            jq '.' actions-runner/runner_auto_start.status.json >> "$OUT" || cat actions-runner/runner_auto_start.status.json >> "$OUT"
+          fi
           if [ -f "$TMP/triage-summary.md" ]; then
             awk '/## Overview/{flag=1} /---/{if(flag && /Details/){exit}} flag{print}' "$TMP/triage-summary.md" | sed -n '1,200p' >> "$OUT" || true
           fi
@@ -119,6 +125,18 @@ jobs:
             cp "$RUNNER_TEMP/triage-diff-lines.json" dashboard/diffs/triage-diff-lines-latest.json || true
           fi
         shell: bash
+
+      - name: Upload runner artifacts if present
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-artifacts
+          path: |
+            actions-runner/runner_auto_start.status.json
+            actions-runner/runner_auto_start.json.log
+            actions-runner/runner_auto_start.log
+            actions-runner/runner_logs_*.zip
+            actions-runner/collect-runner-logs*.zip
 
       - name: Generate dashboard index.json
         if: always()
