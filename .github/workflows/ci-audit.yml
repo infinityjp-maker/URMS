@@ -36,7 +36,7 @@ jobs:
           $outFile = 'test-run-output.txt'
           Remove-Item -Force -ErrorAction SilentlyContinue $outFile
           $tests | ForEach-Object {
-            $t = $_
+            $t = $PSItem
             Write-Output "=== Running $($t.Name) ===" | Tee-Object -FilePath $outFile -Append
             pwsh -NoProfile -ExecutionPolicy Bypass -File $t.FullName 2>&1 | Tee-Object -FilePath $outFile -Append
             if ($LASTEXITCODE -ne 0) { $overall = $false; Write-Output "TEST-FAILED:$($t.Name)" | Tee-Object -FilePath $outFile -Append }
@@ -56,7 +56,7 @@ jobs:
         id: run_local_runner
         shell: pwsh
         run: |
-          # Run the existing local test runner which includes an auto-fix loop
+          # Run the existing local test runner which includes an auto-fix loop  
           pwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\run-local-tests.ps1 -RepoRoot ${{ github.workspace }} -MaxAttempts 3 2>&1 | Tee-Object -FilePath test-run-output.txt
           exit $LASTEXITCODE
 
@@ -75,7 +75,7 @@ jobs:
                 $name = $m.Groups['name'].Value.Trim()
                 $pass = $true
                 if ($out -and ($out -match "TEST-FAILED:$([regex]::Escape($name))")) { $pass = $false }
-                $results += [pscustomobject]@{ test = $name; passed = $pass }
+                $results += [pscustomobject]@{ test = $name; passed = $pass }   
               }
             }
           }
@@ -100,11 +100,12 @@ jobs:
           $out = ''
           if (Test-Path test-run-output.txt) { $out = Get-Content test-run-output.txt -Raw } elseif (Test-Path .\actions-runner\test-run-output.txt) { $out = Get-Content .\actions-runner\test-run-output.txt -Raw }
           $lines = @()
-          if (-not [string]::IsNullOrWhiteSpace($out)) { $lines = $out -split "`n" }
+          if (-not [string]::IsNullOrWhiteSpace($out)) { $lines = $out -split "
+" }
 
           # determine status
           $status = 'PASS'
-          if ($out -and ($out -match 'TEST-FAILED:')) { $status = 'FAIL' }
+          if ($out -and ($out -match 'TEST-FAILED:')) { $status = 'FAIL' }      
 
           # badge for quick visibility
           if ($status -eq 'PASS') { $badge = '![PASS](https://img.shields.io/badge/Tests-PASS-brightgreen)' } else { $badge = '![FAIL](https://img.shields.io/badge/Tests-FAIL-red)' }
@@ -124,22 +125,39 @@ jobs:
 
           # snippet for collapsed output (limit 20 lines)
           $snippet = '(<no test output>)'
-          if ($lines) { $snippet = ($lines | Select-Object -First 20) -join "`n" }
+          if ($lines) { $snippet = ($lines | Select-Object -First 20) -join "
+" }
 
           $artifactLink = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
 
-          $body = "## PowerShell Test Summary `n$badge `n`n**Status:** $status`n`n**Artifact:** $artifactLink`n`n**Results:**`n`n$testsTable`n`n<details><summary>test-run-output.txt (first 20 lines)</summary>`n`n```" + [char]10 + "$snippet" + [char]10 + "```" + [char]10 + "</details>"
+          $body = "## PowerShell Test Summary 
+$badge 
+
+**Status:** $status
+
+**Artifact:** $artifactLink
+
+**Results:**
+
+$testsTable
+
+<details><summary>test-run-output.txt (first 20 lines)</summary>
+
+" + '`' + [char]10 + "$snippet" + [char]10 + '`' + [char]10 + "</details>"
 
           # robustly write outputs to GITHUB_OUTPUT
           try {
             if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
-            Add-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status"
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status"   
             Add-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF"
             Add-Content -Path $env:GITHUB_OUTPUT -Value $body
             Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
           } catch {
             # fallback: ensure minimal outputs
-            try { Set-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status`nbody<<EOF`n$body`nEOF" -Force } catch { Write-Warning "Failed to write GITHUB_OUTPUT: $($_.Exception.Message)" }
+            try { Set-Content -Path $env:GITHUB_OUTPUT -Value "test_status=$status
+body<<EOF
+$body
+EOF" -Force } catch { Write-Warning "Failed to write GITHUB_OUTPUT: $($PSItem.Exception.Message)" }
           }
 
       - name: Comment on PR with PowerShell test summary
@@ -178,14 +196,14 @@ jobs:
               $needs = 'true'
             } catch {
               $needs = 'false'
-              $reason = "push failed: $($_.Exception.Message)"
+              $reason = "push failed: $($PSItem.Exception.Message)"
             }
           } else {
             $needs = 'false'
           }
           # write outputs
           try { if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null } } catch {}
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "needs_retry=$needs"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "needs_retry=$needs"      
           Add-Content -Path $env:GITHUB_OUTPUT -Value "attempt=$next"
           Add-Content -Path $env:GITHUB_OUTPUT -Value "reason=$reason"
 
@@ -198,7 +216,9 @@ jobs:
         run: |
           $content = ''
           if (Test-Path audit-output.txt) { $content = Get-Content audit-output.txt -Raw }
-          $snippet = (($content -split "`n") | Select-Object -First 200) -join "`n"
+          $snippet = (($content -split "
+") | Select-Object -First 200) -join "
+"
           if ([string]::IsNullOrWhiteSpace($snippet)) { $snippet = '(<no audit output>)' }
 
           # audit badge
@@ -210,8 +230,15 @@ jobs:
           $artifactLink = "[Artifacts ▶](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)"
 
           $attemptInfo = ''
-          if (-not [string]::IsNullOrWhiteSpace($env:SELFHEAL_ATTEMPT)) { $attemptInfo = "*Self-heal attempt:* $env:SELFHEAL_ATTEMPT`n`n" }
-$body = "## CI Audit Results `n$auditBadge `n`n$attemptInfo<details><summary>Audit output (first 200 lines)</summary>`n`n```" + [char]10 + $snippet + [char]10 + "```" + [char]10 + "</details>"
+          if (-not [string]::IsNullOrWhiteSpace($env:SELFHEAL_ATTEMPT)) { $attemptInfo = "*Self-heal attempt:* $env:SELFHEAL_ATTEMPT
+
+" }
+          $body = "## CI Audit Results 
+$auditBadge 
+
+$attemptInfo<details><summary>Audit output (first 200 lines)</summary>
+
+" + '`' + [char]10 + $snippet + [char]10 + '`' + [char]10 + "</details>"
 
           try {
             if (-not (Test-Path $env:GITHUB_OUTPUT)) { New-Item -Path $env:GITHUB_OUTPUT -ItemType File -Force | Out-Null }
@@ -219,7 +246,9 @@ $body = "## CI Audit Results `n$auditBadge `n`n$attemptInfo<details><summary>Aud
             Add-Content -Path $env:GITHUB_OUTPUT -Value $body
             Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
           } catch {
-            try { Set-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF`n$body`nEOF" -Force } catch { Write-Warning "Failed to write GITHUB_OUTPUT for audit: $($_.Exception.Message)" }
+            try { Set-Content -Path $env:GITHUB_OUTPUT -Value "body<<EOF
+$body
+EOF" -Force } catch { Write-Warning "Failed to write GITHUB_OUTPUT for audit: $($PSItem.Exception.Message)" }
           }
 
       - name: Comment on PR with audit output
@@ -229,5 +258,3 @@ $body = "## CI Audit Results `n$auditBadge `n`n$attemptInfo<details><summary>Aud
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.prepare_comment.outputs.body }}
-
-
