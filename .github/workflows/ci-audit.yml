@@ -35,7 +35,8 @@ jobs:
           $overall = $true
           $outFile = 'test-run-output.txt'
           Remove-Item -Force -ErrorAction SilentlyContinue $outFile
-          foreach ($t in $tests) {
+          $tests | ForEach-Object {
+            $t = $_
             Write-Output "=== Running $($t.Name) ===" | Tee-Object -FilePath $outFile -Append
             pwsh -NoProfile -ExecutionPolicy Bypass -File $t.FullName 2>&1 | Tee-Object -FilePath $outFile -Append
             if ($LASTEXITCODE -ne 0) { $overall = $false; Write-Output "TEST-FAILED:$($t.Name)" | Tee-Object -FilePath $outFile -Append }
@@ -68,11 +69,14 @@ jobs:
           if (Test-Path test-run-output.txt) { $out = Get-Content test-run-output.txt -Raw }
           $results = @()
           if (-not [string]::IsNullOrWhiteSpace($out)) {
-            $matches = Select-String -InputObject $out -Pattern '=== Running\s+(?<name>.+?)\s+===' -AllMatches
-            foreach ($m in $matches.Matches) {
-              $name = $m.Groups['name'].Value.Trim()
-              $pass = -not ($out -match "TEST-FAILED:$([regex]::Escape($name))")
-              $results += [pscustomobject]@{ test = $name; passed = $pass }
+            $matches = Select-String -InputObject $out -Pattern '=== Running\s+(?<name>.+?)\s+===' -AllMatches -ErrorAction SilentlyContinue
+            if ($matches) {
+              foreach ($m in $matches.Matches) {
+                $name = $m.Groups['name'].Value.Trim()
+                $pass = $true
+                if ($out -and ($out -match "TEST-FAILED:$([regex]::Escape($name))")) { $pass = $false }
+                $results += [pscustomobject]@{ test = $name; passed = $pass }
+              }
             }
           }
           $jsonPath = 'actions-runner/test-results.json'
@@ -100,24 +104,27 @@ jobs:
 
           # determine status
           $status = 'PASS'
-          if ($out -match 'TEST-FAILED:') { $status = 'FAIL' }
+          if ($out -and ($out -match 'TEST-FAILED:')) { $status = 'FAIL' }
 
           # badge for quick visibility
           if ($status -eq 'PASS') { $badge = '![PASS](https://img.shields.io/badge/Tests-PASS-brightgreen)' } else { $badge = '![FAIL](https://img.shields.io/badge/Tests-FAIL-red)' }
 
           # build simple test results table from run markers
           $tests = @()
-          $running = Select-String -InputObject $out -Pattern '=== Running\s+(?<name>.+?)\s+===' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups['name'].Value.Trim() }
-          foreach ($t in $running) {
-            $res = 'PASS'
-            if ($out -match "TEST-FAILED:$([regex]::Escape($t))") { $res = 'FAIL' }
-            $tests += "| $t | $res |"
+          $matches = Select-String -InputObject $out -Pattern '=== Running\s+(?<name>.+?)\s+===' -AllMatches -ErrorAction SilentlyContinue
+          if ($matches) {
+            foreach ($m in $matches.Matches) {
+              $tname = $m.Groups['name'].Value.Trim()
+              $res = 'PASS'
+              if ($out -and ($out -match "TEST-FAILED:$([regex]::Escape($tname))")) { $res = 'FAIL' }
+              $tests += "| $tname | $res |"
+            }
           }
           if (-not $tests) { $testsTable = '| Test | Result |\n|---|---|\n|(<no tests run>)| - |' } else { $testsTable = '| Test | Result |\n|---|---|' + [char]10 + ($tests -join [char]10) }
 
           # snippet for collapsed output (limit 20 lines)
-          $snippet = ($lines | Select-Object -First 20) -join "`n"
-          if ([string]::IsNullOrWhiteSpace($snippet)) { $snippet = '(<no test output>)' }
+          $snippet = '(<no test output>)'
+          if ($lines) { $snippet = ($lines | Select-Object -First 20) -join "`n" }
 
           $artifactLink = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
 

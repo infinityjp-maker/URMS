@@ -23,59 +23,63 @@ function Run-OnePass {
         $exit = $ps.ExitCode
         # append child output to aggregate log
         if (Test-Path $tempOut) { Get-Content $tempOut -ErrorAction SilentlyContinue | Tee-Object -FilePath $absOut -Append; Remove-Item -Force $tempOut -ErrorAction SilentlyContinue }
-        if ($exit -ne 0) {
-            $overall = $false
-            "TEST-FAILED:$name" | Tee-Object -FilePath $absOut -Append
+        param(
+            [string]$RepoRoot = (Get-Location).Path,
+            [int]$MaxAttempts = 3
+        )
+
+        $absOut = Join-Path $RepoRoot 'test-run-output.txt'
+        if (Test-Path $absOut) { Remove-Item -Force $absOut -ErrorAction SilentlyContinue }
+
+        function Run-OnePass {
+            $tests = Get-ChildItem -Path (Join-Path $RepoRoot 'actions-runner') -Filter 'test-*.ps1' -File -ErrorAction SilentlyContinue
+            if (-not $tests) { Write-Output "No tests found"; return 0 }
+            $overall = $true
+            $tests | ForEach-Object {
+                $t = $_
+                $name = $t.Name
+                $scriptPath = $t.FullName
+                $header = "=== Running $name ==="
+                $header | Tee-Object -FilePath $absOut -Append
+                # Run in child pwsh process; write stdout/stderr to a temp file and then append to the aggregate output
+                $cmd = ". '$scriptPath'"
+                $safeName = ($name -replace '[^0-9A-Za-z_.-]','_')
+                $tempOut = Join-Path $RepoRoot ("actions-runner\temp-$($safeName)-output.txt")
+                if (Test-Path $tempOut) { Remove-Item -Force $tempOut -ErrorAction SilentlyContinue }
+                $proc = Start-Process pwsh -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-Command',$cmd -NoNewWindow -PassThru -Wait -RedirectStandardOutput $tempOut -RedirectStandardError $tempOut
+                $exit = $proc.ExitCode
+                # append child output to aggregate log
+                if (Test-Path $tempOut) { Get-Content $tempOut -ErrorAction SilentlyContinue | Tee-Object -FilePath $absOut -Append; Remove-Item -Force $tempOut -ErrorAction SilentlyContinue }
+                if ($exit -ne 0) {
+                    $overall = $false
+                    "TEST-FAILED:$name" | Tee-Object -FilePath $absOut -Append
+                }
+            }
+            return ([int]($overall -eq $true))
         }
-    }
-    return ([int]($overall -eq $true))
-}
 
-function Analyze-Failures {
-    param([string]$outPath)
-    if (-not (Test-Path $outPath)) { return @() }
-    $lines = Get-Content $outPath -ErrorAction SilentlyContinue
-    $fails = $lines | Where-Object { $_ -match '^TEST-FAILED:' } | ForEach-Object { $_ -replace '^TEST-FAILED:','' }
-    return $fails
-}
+        function Analyze-Failures {
+            param([string]$outPath)
+            if (-not (Test-Path $outPath)) { return @() }
+            $lines = Get-Content $outPath -ErrorAction SilentlyContinue
+            $fails = $lines | Where-Object { $_ -match '^TEST-FAILED:' } | ForEach-Object { $_ -replace '^TEST-FAILED:','' }
+            return $fails
+        }
 
-function Quick-AnalyzeScript {
-    param([string]$scriptPath)
-    try {
-        $content = Get-Content $scriptPath -Raw -ErrorAction SilentlyContinue
-        $issues = @()
-        if ($content -match "(^|\n)\s*exit\b") { $issues += 'exit_statement' }
-        if ($content -match 'ConvertTo-Json' -and $content -notmatch '-Depth') { $issues += 'converttojson_depth_missing' }
-        if ($content -match 'Out-File' -and $content -notmatch '-Encoding') { $issues += 'outfile_encoding_missing' }
-        if ($content -notmatch 'try\s*\{') { $issues += 'no_try_block_detected' }
-        return $issues
-    } catch {
-        Write-Warning "Quick-AnalyzeScript: failed to read/parse ${scriptPath}: $(param(
-    [string]$RepoRoot = (Get-Location).Path,
-    [int]$MaxAttempts = 3
-)
-
-$absOut = Join-Path $RepoRoot 'test-run-output.txt'
-if (Test-Path $absOut) { Remove-Item -Force $absOut }
-
-function Run-OnePass {
-    $tests = Get-ChildItem -Path (Join-Path $RepoRoot 'actions-runner') -Filter 'test-*.ps1' -File -ErrorAction SilentlyContinue
-    if (-not $tests) { Write-Output "No tests found"; return 0 }
-    $overall = $true
-    foreach ($t in $tests) {
-        $name = $t.Name
-        $scriptPath = $t.FullName
-        $header = "=== Running $name ==="
-        $header | Tee-Object -FilePath $absOut -Append
-        # Run in child pwsh process; write stdout/stderr to a temp file and then append to the aggregate output
-        $cmd = ". '$scriptPath'"
-        $tempOut = Join-Path $RepoRoot ("actions-runner\temp-$($name)-output.txt")
-        if (Test-Path $tempOut) { Remove-Item -Force $tempOut -ErrorAction SilentlyContinue }
-        $ps = Start-Process pwsh -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-Command',$cmd -NoNewWindow -PassThru -Wait -RedirectStandardOutput $tempOut
-        $exit = $ps.ExitCode
-        # append child output to aggregate log
-        if (Test-Path $tempOut) { Get-Content $tempOut -ErrorAction SilentlyContinue | Tee-Object -FilePath $absOut -Append; Remove-Item -Force $tempOut -ErrorAction SilentlyContinue }
-        if ($exit -ne 0) {
+        function Quick-AnalyzeScript {
+            param([string]$scriptPath)
+            try {
+                $content = Get-Content $scriptPath -Raw -ErrorAction SilentlyContinue
+                $issues = @()
+                if ($content -and ($content -match "(^|\n)\s*exit\b")) { $issues += 'exit_statement' }
+                if ($content -and ($content -match 'ConvertTo-Json') -and ($content -notmatch '-Depth')) { $issues += 'converttojson_depth_missing' }
+                if ($content -and ($content -match 'Out-File') -and ($content -notmatch '-Encoding')) { $issues += 'outfile_encoding_missing' }
+                if ($content -and ($content -notmatch 'try\s*\{')) { $issues += 'no_try_block_detected' }
+                return $issues
+            } catch {
+                Write-Warning ("Quick-AnalyzeScript: failed to read/parse {0}: {1}" -f $scriptPath, $_.Exception.Message)
+                return @()
+            }
             $overall = $false
             "TEST-FAILED:$name" | Tee-Object -FilePath $absOut -Append
         }
