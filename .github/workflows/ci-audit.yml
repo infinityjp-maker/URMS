@@ -1,0 +1,70 @@
+name: CI Audit PowerShell
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  ci-audit:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run CI PowerShell audit
+        id: run_audit
+        shell: pwsh
+        run: |
+          if (Test-Path .\actions-runner\ci-audit-powershell.ps1) {
+            pwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\ci-audit-powershell.ps1 2>&1 | Tee-Object -FilePath audit-output.txt
+          } else {
+            Write-Output 'Audit script not found' | Tee-Object -FilePath audit-output.txt
+          }
+          exit 0
+
+      - name: Upload audit output artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-audit-output
+          path: audit-output.txt
+
+      - name: Run PowerShell tests
+        id: run_tests
+        shell: pwsh
+        run: |
+          $outFile = 'test-run-output.txt'
+          Remove-Item -Force -ErrorAction SilentlyContinue $outFile
+          $tests = Get-ChildItem -Path .\actions-runner\test-*.ps1 -File -ErrorAction SilentlyContinue
+          if (-not $tests) {
+            Write-Output 'No tests found' | Tee-Object -FilePath $outFile
+            exit 0
+          }
+          $overall = $true
+          foreach ($t in $tests) {
+            Write-Output "=== Running $($t.Name) ===" | Tee-Object -FilePath $outFile -Append
+            pwsh -NoProfile -ExecutionPolicy Bypass -File $t.FullName 2>&1 | Tee-Object -FilePath $outFile -Append
+            if ($LASTEXITCODE -ne 0) {
+              $overall = $false
+              Write-Output "TEST-FAILED:$($t.Name)" | Tee-Object -FilePath $outFile -Append
+            }
+          }
+          if ($overall) { Write-Output 'ALL TESTS PASSED' } else { Write-Output 'SOME TESTS FAILED' }
+          exit 0
+
+      - name: Upload test results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: powershell-test-output
+          path: test-run-output.txt
+
+      - name: Comment on PR (PATCH)
+        if: always() && github.event_name == 'pull_request'
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\update-pr-comment.ps1 -Pr ${{ github.event.pull_request.number }} -RunId ${{ github.run_id }}
