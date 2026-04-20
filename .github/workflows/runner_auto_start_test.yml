@@ -1,0 +1,14 @@
+name: Runner Auto Start - Dispatch Test
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  dispatch-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Echo test
+        run: |
+          echo "runner_auto_start test workflow dispatched"

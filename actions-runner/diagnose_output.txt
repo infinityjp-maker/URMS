@@ -1,0 +1,2 @@
+Running D:\GitHub\URMS\actions-runner\run_runner_auto_start.cmd --diagnose 
+'D:\GitHub\URMS\actions-runner\runner_auto_start.pid' ‚Ìg‚¢•û‚ªŒë‚Á‚Ä‚¢‚Ü‚·B

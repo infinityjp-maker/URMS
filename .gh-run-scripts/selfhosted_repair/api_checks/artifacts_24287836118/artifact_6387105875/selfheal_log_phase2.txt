@@ -1,0 +1,9 @@
+[PRODUCTION RUN] Phase2 start
+[PRODUCTION RUN] Timestamp: 2026-04-11T17:34:21.4362531+00:00
+[PRODUCTION RUN] PS Script Path: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/selfheal.ps1
+[PRODUCTION RUN] OS Version: Unix 6.17.0.1010
+[PRODUCTION RUN] PowerShell Version: 7.4.14
+[PRODUCTION RUN] Current Location: /home/runner/work/URMS/URMS
+[PRODUCTION RUN] Drives and Free Space:
+[PRODUCTION RUN] /: Free=95020953600 Used=59873234944
+[PRODUCTION RUN] Temp: Free=95020953600 Used=59873234944

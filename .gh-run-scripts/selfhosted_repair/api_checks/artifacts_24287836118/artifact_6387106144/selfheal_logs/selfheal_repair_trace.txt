@@ -1,0 +1,14 @@
+[PRODUCTION RUN] Repair trace start: 2026-04-11T17:34:21.5068999+00:00
+ZipPath: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/runner_production.zip
+ZipAbsolutePath: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/runner_production.zip
+ZipSize: 65690
+Trace: ZIP path = /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/runner_production.zip
+Trace: PSScriptRoot=/home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair
+Trace: GITHUB_WORKSPACE=/home/runner/work/URMS/URMS
+Expanding: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/runner_production.zip -> /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/repair_tmp
+Expand-Archive completed
+Extracted: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/repair_tmp/RunnerService.exe : 65536
+Copying: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/repair_tmp/RunnerService.exe -> /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/RunnerService.exe
+Copy-Item completed
+NewSize: 65536
+NewSHA256: E97ABAD1FA3D7EE06D9954888D4F9D6EF7187ED655BA4176151FE2166AC3AF24

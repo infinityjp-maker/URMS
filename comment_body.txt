@@ -1,0 +1,28 @@
+## CI Audit & PowerShell Test Final Summary
+
+![PASS](https://img.shields.io/badge/Audit-PASS-brightgreen)
+
+**Audit**
+- No audit violations found. 
+
+![PASS](https://img.shields.io/badge/Tests-PASS-brightgreen)
+
+**Tests**
+- Status: PASS
+
+**Artifact**
+- https://github.com/infinityjp-maker/URMS/actions/runs/24612255313/artifacts
+
+**Results**
+
+| Test | Result |
+|---|---|
+| test-utils.ps1 | PASS |
+
+<details><summary>test-run-output.txt (first 20 lines)</summary>
+
+``n=== Running test-utils.ps1 ===
+
+``n
+</details>
+

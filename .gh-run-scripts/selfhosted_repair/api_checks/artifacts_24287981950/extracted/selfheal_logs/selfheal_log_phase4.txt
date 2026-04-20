@@ -1,0 +1,3 @@
+[PRODUCTION RUN] Detected issue file present: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/selfheal_detected_issue.txt
+[PRODUCTION RUN] Expand-Archive completed
+[PRODUCTION RUN] Copy-Item completed

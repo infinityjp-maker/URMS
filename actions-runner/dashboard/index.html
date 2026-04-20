@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>URMS Runner Status</title>
+<style>
+body{font-family:Segoe UI,Arial;margin:20px}
+.bad{color:#c00}
+.ok{color:#0a0}
+</style>
+</head>
+<body>
+<h1>Runner Auto Start — Status</h1>
+<div id="status">Loading...</div>
+<pre id="details"></pre>
+<h2>State Diagram</h2>
+<div class="mermaid">
+stateDiagram-v2
+  [*] --> Idle
+  Idle --> Waiting : Detect queued run
+  Waiting --> Running : Start run.cmd
+  Running --> Idle : Successful completion (exit 0)
+  Running --> Error : Abnormal exit (exit != 0)
+  Error --> Recovering : collect logs & auto-restart
+  Recovering --> Running : restart succeeded
+  Recovering --> Error : restart failed
+</div>
+<h2>Latest Errors</h2>
+<pre id="errors">Loading...</pre>
+<h2>Retry Queue</h2>
+<div id="retry-card">
+  <div id="retry">Loading...</div>
+  <div id="deletion">Deletion waiting: -</div>
+  <div id="schemecard">Schema check: -</div>
+</div>
+
+<h2>Test Status</h2>
+<div id="tests">Loading tests...</div>
+
+<h2>Runner Health</h2>
+<div id="runner-health">Loading...</div>
+
+<h3>Last Schema Check</h3>
+<pre id="schemacheck">Loading...</pre>
+<script>
+async function fetchStatus(){
+    try{
+    const r = await fetch('runner_auto_start.status.json?_=' + Date.now());
+    if(!r.ok){ document.getElementById('status').innerText='Status file not found'; return }
+    const j = await r.json();
+    document.getElementById('status').innerHTML = `<strong>State:</strong> ${j.state} <br/><strong>Last Success:</strong> ${j.last_success || '-'} `;
+    document.getElementById('details').innerText = JSON.stringify(j, null, 2);
+  }catch(e){ document.getElementById('status').innerText='Error reading status: '+e.message }
+}
+
+async function fetchErrors(){
+  try{
+    const r = await fetch('runner_auto_start.json.log?_=' + Date.now());
+    if(!r.ok){ document.getElementById('errors').innerText='No JSON log found'; return }
+    const txt = await r.text();
+    const lines = txt.trim().split('\n').reverse();
+    const errs = lines.map(l=>{ try { return JSON.parse(l) } catch(e){ return null } }).filter(x=>x && x.level==='ERROR');
+    document.getElementById('errors').innerText = JSON.stringify(errs.slice(0,5), null, 2);
+  }catch(e){ document.getElementById('errors').innerText='Error reading JSON logs: '+e.message }
+}
+
+// auto update interval from config
+async function getInterval(){
+  try{
+    const r = await fetch('runner_auto_start.dashboard.config.json?_=' + Date.now());
+    if(!r.ok) return 5000;
+    const c = await r.json();
+    return (c.updateIntervalSeconds||5)*1000;
+  } catch { return 5000 }
+}
+
+fetchStatus(); fetchErrors(); (async ()=>{ const i = await getInterval(); setInterval(fetchStatus,i); setInterval(fetchErrors,i); })();
+// fetch retry queue index
+async function fetchRetryQueue(){
+  try{
+    const r = await fetch('retry-queue/index.json?_=' + Date.now());
+    if(!r.ok){ document.getElementById('retry').innerText='No retry-queue'; return }
+    const j = await r.json();
+    document.getElementById('retry').innerText = 'Items: ' + (j.count||0) + '\n' + JSON.stringify(j.files||[], null, 2);
+    document.getElementById('deletion').innerText = 'Deletion waiting: ' + (j.count||0) + '\n' + 'Deleted: ' + (j.deleted_count||0);
+    // fetch last schema check
+    try{
+      const s = await fetch('retry-queue/last_schema_check.json?_=' + Date.now());
+      if (s.ok) { const sc = await s.text(); document.getElementById('schemacheck').innerText = sc } else { document.getElementById('schemacheck').innerText = 'No schema check available' }
+    } catch(e){ document.getElementById('schemacheck').innerText = 'Error fetching schema check: '+e.message }
+  } catch(e){ document.getElementById('retry').innerText='Error reading retry-queue: '+e.message }
+</script>
+<script>
+// retry queue fetch + test results
+async function fetchRetryQueue(){
+  try{
+    const r = await fetch('retry-queue/index.json?_=' + Date.now());
+    if(!r.ok){ document.getElementById('retry').innerText='No retry-queue'; return }
+    const j = await r.json();
+    document.getElementById('retry').innerText = 'Items: ' + (j.count||0) + '\n' + JSON.stringify(j.files||[], null, 2);
+    document.getElementById('deletion').innerText = 'Waiting: ' + (j.count||0) + ' | Deleted: ' + (j.deleted_count||0);
+    try{
+      const s = await fetch('retry-queue/last_schema_check.json?_=' + Date.now());
+      if (s.ok) { const sc = await s.json(); document.getElementById('schemacheck').innerText = JSON.stringify(sc, null, 2); document.getElementById('schemecard').innerText = 'Schema valid: ' + sc.valid + ' | errors: ' + (sc.errors ? sc.errors.join(',') : '-') } else { document.getElementById('schemacheck').innerText = 'No schema check available'; document.getElementById('schemecard').innerText = 'Schema check: -' }
+    } catch(e){ document.getElementById('schemacheck').innerText = 'Error fetching schema check: '+e.message; document.getElementById('schemecard').innerText = 'Schema check: error' }
+  } catch(e){ document.getElementById('retry').innerText='Error reading retry-queue: '+e.message }
+}
+fetchRetryQueue(); setInterval(fetchRetryQueue,5000);
+
+async function fetchTestResults(){
+  const tests = ['test-upload-runner-logs.json','test-retry-queue.json','test-schema-validation.json','test-dashboard-data.json','test-log-consistency.json','test-queue-integrity.json','test-runner-auto-start.json'];
+  const container = document.getElementById('tests');
+  container.innerHTML = '';
+  for (const t of tests){
+    try{
+      const r = await fetch('test-results/' + t + '?_=' + Date.now());
+      if (!r.ok) { const el = document.createElement('div'); el.innerText = t + ': not found'; container.appendChild(el); continue }
+      const j = await r.json();
+      const el = document.createElement('div'); el.innerText = (j.name||t) + ': ' + (j.pass ? 'PASS' : 'FAIL'); el.style.color = j.pass ? '#0a0' : '#c00'; container.appendChild(el);
+    } catch(e){ const el = document.createElement('div'); el.innerText = t + ': error'; container.appendChild(el) }
+  }
+}
+fetchTestResults(); setInterval(fetchTestResults, 8000);
+
+// fetch runner health monitor result
+async function fetchRunnerHealth(){
+  try{
+    const r = await fetch('monitor-latest.json?_=' + Date.now());
+    if (!r.ok) { document.getElementById('runner-health').innerText = 'No monitor result'; return }
+    const j = await r.json();
+    const state = j.state || 'Unknown'
+    let color = '#999'
+    if (state === 'Idle') color = '#0a0'
+    else if (state === 'Running') color = '#06c'
+    else if (state === 'Error') color = '#c00'
+    else if (state === 'Recovering') color = '#f80'
+    document.getElementById('runner-health').innerHTML = `<div style="padding:8px;border:1px solid #ddd;background:#fff"><strong>State:</strong> <span style="color:${color}">${state}</span><br/><strong>Last error:</strong> ${j.last_error ? JSON.stringify(j.last_error) : '-'}<br/><strong>Last success:</strong> ${j.last_success || '-'}</div>`
+  } catch(e){ document.getElementById('runner-health').innerText = 'Error fetching monitor result: '+e.message }
+}
+fetchRunnerHealth(); setInterval(fetchRunnerHealth, 7000);
+</script>
+</body>
+</html>

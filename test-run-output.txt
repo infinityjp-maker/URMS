@@ -1,0 +1,87 @@
+Attempt 1
+=== Running test-dashboard-data.ps1 ===
+Generated dashboard JSON fixtures:
+{"state":"Idle","timestamp":"2026-04-19T03:31:24.7275099+09:00","last_error":null,"last_success":"2026-04-19T03:26:24.7323121+09:00"}
+
+{"files":["test1.zip","test2.zip"],"count":2,"deleted_count":1,"updated":"2026-04-19T03:31:24.7880284+09:00"}
+
+{"parsed":{"ok":true},"errors":["missing_delete"],"valid":false,"time":"2026-04-19T03:31:24.7901678+09:00"}
+
+OK: status.json state=Idle
+OK: retry-queue index.json has expected count and deleted_count
+OK: last_schema_check.json matches expected sample
+Dashboard JSON fixtures integrity: PASS
+Open actions-runner/dashboard/index.html in a browser to visually verify the dashboard.
+=== Running test-log-consistency.ps1 ===
+OK: schema invalid and WARN present in JSON log
+=== Running test-queue-integrity.ps1 ===
+count is not integer; repairing
+Attempting minimal repair of index.json
+Repair complete. New index:
+{"updated":"2026-04-19T03:31:27.8471862+09:00","files":"test_upload.zip","deleted_count":1,"count":1}
+=== Running test-retry-queue.ps1 ===
+Simulating runner_auto_start retry processing with schema-invalid response...
+Schema check failed; invoking selfheal collect + upload (simulated)
+Check retry-queue/index.json after simulated processing:
+{"updated":"2026-04-19T03:31:32.7894249+09:00","deleted_count":1,"files":["test_upload.zip","sample_retry.zip"],"count":2}
+Inspect runner_auto_start.json.log for schema/selfheal related entries
+OK: runner_auto_start.json.log shows schema/selfheal related entries
+False
+test-retry-queue completed.
+=== Running test-schema-validation.ps1 ===
+Running case: valid-ok-delete
+ExitCode=0
+Output:\n{"time":"2026-04-19T03:31:33.8467186+09:00","parsed":{"ok":true,"delete":true},"errors":[],"valid":true}
+Running case: missing-delete
+ExitCode=1
+Output:\n{"time":"2026-04-19T03:31:33.8853088+09:00","parsed":{"ok":true},"errors":["missing_delete"],"valid":false}
+Running case: ok-not-bool
+ExitCode=1
+Output:\n{"time":"2026-04-19T03:31:33.9010453+09:00","parsed":{"ok":"yes","delete":false},"errors":["ok_not_bool"],"valid":false}
+Running case: non-json
+ExitCode=1
+Output:\n{"time":"2026-04-19T03:31:33.9234146+09:00","parsed":null,"errors":["invalid_json"],"valid":false}
+Running case: empty-response
+[31;1mcheck-upload-response-schema.ps1: [0mD:\GitHub\URMS\actions-runner\test-schema-validation.ps1:17:37[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  17 | [0m     $out = & $checker -ResponseJson [36;1m$inputJson[0m -QueueDir (Join-Path $ �c[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m                                     ~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mCannot bind argument to parameter 'ResponseJson' because it is an empty string.[0m
+ExitCode=1
+Output:\n
+Running case: missing-ok
+ExitCode=1
+Output:\n{"time":"2026-04-19T03:31:34.1150941+09:00","parsed":{"delete":true},"errors":["missing_ok"],"valid":false}
+False
+test-schema-validation completed. Inspect test-results/test-schema-validation.json for summary.
+=== Running test-upload-runner-logs.ps1 ===
+test_upload.zip
+Running uploader (ok+delete) against queued zip...
+DEBUG: parsed.ok=True parsed.delete=True ZipPath=D:\GitHub\URMS\actions-runner\retry-queue\test_upload.zip
+[33;1mWARNING: upload-runner-logs: schema checker failed (outer); treating response as schema-invalid[0m
+Index before:
+{"updated":"2026-04-19T03:31:36.253637+09:00","count":1,"files":["test_upload.zip"],"deleted_count":0}
+Index after:
+{"updated":"2026-04-19T03:31:36.3272881+09:00","count":0,"files":[],"deleted_count":1}
+OK: queued zip deleted and index updated (ok+delete)
+OK: queued zip deleted and index updated (ok+delete)
+Running uploader (ok+delete=false) against queued zip...
+DEBUG: parsed.ok=True parsed.delete=False ZipPath=D:\GitHub\URMS\actions-runner\retry-queue\test_upload.zip
+Index before:
+{"updated":"2026-04-19T03:31:36.3613862+09:00","count":1,"files":["test_upload.zip"],"deleted_count":0}
+Index after:
+{"updated":"2026-04-19T03:31:36.3613862+09:00","count":1,"files":["test_upload.zip"],"deleted_count":0}
+OK: queued zip retained (ok+delete=false)
+OK: queued zip retained (ok+delete=false)
+Running uploader (invalid schema) against queued zip...
+DEBUG: parsed.ok= parsed.delete= ZipPath=D:\GitHub\URMS\actions-runner\retry-queue\test_upload.zip
+Index before:
+{"updated":"2026-04-19T03:31:36.4163373+09:00","count":1,"files":["test_upload.zip"],"deleted_count":0}
+Index after:
+{"updated":"2026-04-19T03:31:36.4163373+09:00","count":1,"files":["test_upload.zip"],"deleted_count":0}
+OK: schema invalid -> file retained and index unchanged
+OK: schema invalid -> file retained and index unchanged
+False
+test-upload-runner-logs completed.
+=== Running test-utils.ps1 ===
+All tests passed on attempt 1
