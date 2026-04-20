@@ -108,6 +108,30 @@ function runSmoke() {
 
 function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true }); }
 
+function loadExclusions() {
+  try {
+    const p = path.join('Tests','playwright','exclusions.json');
+    if (!fs.existsSync(p)) return null;
+    return JSON.parse(fs.readFileSync(p,'utf8'));
+  } catch (e) { console.warn('Failed to load exclusions.json', e && e.message); return null; }
+}
+
+function applyMaskToPng(png, rect) {
+  if (!rect || rect.w <= 0 || rect.h <= 0) return;
+  const {x, y, w, h} = rect;
+  for (let row = 0; row < h; row++) {
+    const srcStart = ((y + row) * png.width + x) * 4;
+    for (let col = 0; col < w; col++) {
+      const idx = srcStart + col * 4;
+      // set to neutral white pixels (opaque)
+      png.data[idx] = 255; // R
+      png.data[idx+1] = 255; // G
+      png.data[idx+2] = 255; // B
+      png.data[idx+3] = 255; // A
+    }
+  }
+}
+
 (async ()=>{
   try{
     const baselineDir = path.join('Tests','playwright','baseline');
@@ -343,6 +367,36 @@ function ensureDir(dir){ if(!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: 
         continue;
       }
       const {width,height} = curP;
+      // Apply exclusions/masks (if configured) to reduce false positives from dynamic areas
+      try {
+        const exclusions = loadExclusions();
+        if (exclusions && Array.isArray(exclusions.rules) && smoke && smoke.domSnapshot && Array.isArray(smoke.domSnapshot.elems)) {
+          for (const rule of exclusions.rules) {
+            try {
+              let rect = null;
+              if (rule.bbox && typeof rule.bbox === 'object') {
+                rect = { x: Math.max(0, rule.bbox.x||0), y: Math.max(0, rule.bbox.y||0), w: Math.max(0, rule.bbox.w||0), h: Math.max(0, rule.bbox.h||0) };
+              } else if (rule.selector) {
+                const sel = String(rule.selector || '').trim();
+                const found = smoke.domSnapshot.elems.find(e => e.selector === sel || (e.class && sel.startsWith('.') && e.class && e.class.split(/\s+/).includes(sel.slice(1))));
+                if (found && found.rect && typeof found.rect === 'object') {
+                  rect = { x: found.rect.x||0, y: found.rect.y||0, w: found.rect.w||0, h: found.rect.h||0 };
+                }
+              }
+              if (rect) {
+                // clamp
+                rect.x = Math.max(0, Math.min(rect.x, width-1));
+                rect.y = Math.max(0, Math.min(rect.y, height-1));
+                rect.w = Math.max(0, Math.min(rect.w, width - rect.x));
+                rect.h = Math.max(0, Math.min(rect.h, height - rect.y));
+                applyMaskToPng(curP, rect);
+                applyMaskToPng(baseP, rect);
+              }
+            } catch (e) { console.warn('exclusion rule apply failed', e && e.message); }
+          }
+        }
+      } catch (e) { console.warn('exclusions processing failed', e && e.message); }
+
       const diff = new PNG({width,height});
       const diffPixels = pixelmatch(baseP.data, curP.data, diff.data, width, height, {threshold: 0.12, includeAA: true});
       fs.writeFileSync(diffPath, PNG.sync.write(diff));
