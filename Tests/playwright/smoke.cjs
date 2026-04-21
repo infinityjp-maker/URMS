@@ -4,6 +4,10 @@ const path = require('path');
 const { PNG } = require('pngjs');
 const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
 
+// timestamped logger for richer CI diagnostics
+const now = () => (new Date()).toISOString();
+const tlog = (...args) => { try { console.log.apply(console, ([`[smoke ${now()}]`]).concat(args)); } catch(e){} };
+
 // Configuration
 let DEFAULT_WAIT = process.env.DEFAULT_WAIT ? Number(process.env.DEFAULT_WAIT) : 30000; // ms - prefer >= 20000 for GitHub Actions
 // FAST_SMOKE overrides to keep local runs quick (set FAST_SMOKE=1 to enable)
@@ -131,19 +135,20 @@ async function waitForStableHeight(page, duration = 500) {
     let url = process.env.URL || 'http://localhost:1420/';
     let preferUrl = process.env.URL || 'http://tauri.localhost/';
     // Emit environment diagnostics so CI logs include the effective targets
-    try { console.log('SMOKE_ENV', JSON.stringify({ URL: process.env.URL || null, url, preferUrl })); } catch (e) { /* noop */ }
+    try { console.log('SMOKE_ENV', JSON.stringify({ URL: process.env.URL || null, url, preferUrl })); tlog('env', { URL: process.env.URL || null, url, preferUrl }); } catch (e) { /* noop */ }
 
     // Discover or launch browser
     let res;
     const disableCdp = process.env.DISABLE_CDP === '1';
     if (!disableCdp) {
       for (let attempt = 1; attempt <= CDP_DISCOVERY_ATTEMPTS; attempt++) {
-          try { res = await getTargetWebSocket(); if (res) break; } catch (e) { pushInternalError(internalErrors, 'CDP_DISCOVERY_FAILED: ' + String(e && e.message)); }
+          tlog('cdp discovery attempt', attempt);
+          try { res = await getTargetWebSocket(); tlog('cdp discovery result', { attempt, res }); if (res) break; } catch (e) { pushInternalError(internalErrors, 'CDP_DISCOVERY_FAILED: ' + String(e && e.message)); tlog('cdp discovery error', attempt, String(e && e.message)); }
           await new Promise(r => setTimeout(r, CDP_BACKOFF_BASE * attempt));
         }
-        if (!res) pushInternalError(internalErrors, 'CDP_DISCOVERY_GAVE_UP');
+        if (!res) { pushInternalError(internalErrors, 'CDP_DISCOVERY_GAVE_UP'); tlog('cdp discovery gave up'); }
       } else {
-        pushInternalError(internalErrors, 'DISABLE_CDP=1, skipping CDP discovery');
+        pushInternalError(internalErrors, 'DISABLE_CDP=1, skipping CDP discovery'); tlog('CDP disabled via env');
     }
 
     const wsUrl = res && res.ws;
@@ -163,9 +168,10 @@ async function waitForStableHeight(page, duration = 500) {
     if (wsUrl) {
       const httpBase = wsUrl.replace(/^ws:/,'http:').replace(/\/devtools\/page.*$/, '');
       for (let ctry = 1; ctry <= CDP_CONNECT_RETRIES; ctry++) {
-        try { browser = await chromium.connectOverCDP(httpBase); connectedOverCDP = true; break; } catch (e) { pushInternalError(internalErrors, 'CDP_CONNECT_ERROR: ' + String(e && e.message)); browser = undefined; await new Promise(r => setTimeout(r, 1000 * ctry)); }
+        tlog('cdp connect attempt', ctry, httpBase);
+        try { browser = await chromium.connectOverCDP(httpBase); connectedOverCDP = true; tlog('cdp connect success', ctry); break; } catch (e) { pushInternalError(internalErrors, 'CDP_CONNECT_ERROR: ' + String(e && e.message)); tlog('cdp connect error', ctry, String(e && e.message)); browser = undefined; await new Promise(r => setTimeout(r, 1000 * ctry)); }
       }
-      if (!browser) pushInternalError(internalErrors, 'CDP_CONNECT_GAVE_UP');
+      if (!browser) { pushInternalError(internalErrors, 'CDP_CONNECT_GAVE_UP'); tlog('cdp connect gave up'); }
     }
 
     if (!browser) {
@@ -174,7 +180,9 @@ async function waitForStableHeight(page, duration = 500) {
         // Allow CI-only additional Chromium args via env var `CI_BROWSER_ARGS`
         const extra = process.env.CI_BROWSER_ARGS ? String(process.env.CI_BROWSER_ARGS).trim().split(/\s+/).filter(Boolean) : [];
         const args = baseArgs.concat(extra);
+        tlog('browser launch args', args.slice(0,10));
         browser = await chromium.launch({ args });
+        tlog('browser launched');
       } catch (e) { pushInternalError(internalErrors, 'BROWSER_LAUNCH_ERROR: ' + String(e && e.message)); pushInternalError(internalErrors, 'BROWSER_LAUNCH_STACK: ' + ((e && e.stack) || '').slice(0,2000)); throw e; }
     }
 // //     }
@@ -220,8 +228,11 @@ async function waitForStableHeight(page, duration = 500) {
           try { await runConnectivityChecks(internalErrors); } catch (e) { pushInternalError(internalErrors, 'connectivity check failed: '+String(e && e.message)); }
           const initialTarget = process.env.URL || preferUrl;
           try {
+            tlog('gotoWithRetry initial target', initialTarget);
             await gotoWithRetry(page, initialTarget, 2, internalErrors);
+            tlog('gotoWithRetry initial success', initialTarget);
           } catch (e) {
+            tlog('gotoWithRetry initial failed', String(e && (e.message || e)));
             pushInternalError(internalErrors, 'gotoWithRetry initial: '+String(e && e.message));
             try {
               // If connection refused to tauri.localhost/localhost, try loopback IP fallback
@@ -306,18 +317,18 @@ async function waitForStableHeight(page, duration = 500) {
 
     // Ensure page loaded and network/font readiness
     try {
-      console.log('MARK: before waitForLoadState domcontentloaded');
-      await page.waitForLoadState('domcontentloaded', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'waitForLoadState(domcontentloaded): '+String(e && (e.message||e))));
-      console.log('MARK: after waitForLoadState domcontentloaded');
-      console.log('MARK: before waitForLoadState load');
-      await page.waitForLoadState('load', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'waitForLoadState(load): '+String(e && (e.message||e))));
-      console.log('MARK: after waitForLoadState load');
+      tlog('MARK: before waitForLoadState domcontentloaded');
+      await page.waitForLoadState('domcontentloaded', { timeout: DEFAULT_WAIT }).catch(e => { tlog('waitForLoadState domcontentloaded error', String(e && (e.message||e))); pushInternalError(internalErrors, 'waitForLoadState(domcontentloaded): '+String(e && (e.message||e))); });
+      tlog('MARK: after waitForLoadState domcontentloaded');
+      tlog('MARK: before waitForLoadState load');
+      await page.waitForLoadState('load', { timeout: DEFAULT_WAIT }).catch(e => { tlog('waitForLoadState load error', String(e && (e.message||e))); pushInternalError(internalErrors, 'waitForLoadState(load): '+String(e && (e.message||e))); });
+      tlog('MARK: after waitForLoadState load');
       for (let ni = 0; ni < NETWORKIDLE_TRIES; ni++) { try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }); break; } catch (e) { pushInternalError(internalErrors, 'waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); try { await saveDiagnosticsSnapshot(page, 'timeout-networkidle', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } await page.waitForTimeout(500); } }
       await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'fonts.ready: '+String(e && (e.message||e))));
       await page.waitForTimeout(200);
     } catch (e) { pushInternalError(internalErrors, 'PAGE_METRICS_ERROR: '+String(e && (e.message||e))); }
 
-    try { console.log('MARK: before stabilizePage'); await stabilizePage(page); console.log('MARK: after stabilizePage'); } catch (e) { pushInternalError(internalErrors, 'stabilizePage: '+String(e && (e.message||e))); }
+    try { tlog('MARK: before stabilizePage'); await stabilizePage(page); tlog('MARK: after stabilizePage'); } catch (e) { tlog('stabilizePage error', String(e && (e.message||e))); pushInternalError(internalErrors, 'stabilizePage: '+String(e && (e.message||e))); }
 
     try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
     try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'after-stabilize fonts.ready: '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize fonts.ready outer: '+String(e && (e.message||e))); }
@@ -387,11 +398,11 @@ async function waitForStableHeight(page, duration = 500) {
     await waitForStableHeight(page).catch(e => pushInternalError(internalErrors, 'waitForStableHeight: '+String(e && (e.message||e))));
 
     // Capture screenshot (clip) with retries
-    console.log('MARK: before screenshot flow');
+    tlog('MARK: before screenshot flow');
     let buf;
     const enforceClip = (process.env.ENFORCE_CLIP === '0') ? false : true;
     try {
-      try { await page.setViewportSize(VIEWPORT); } catch (e) { pushInternalError(internalErrors, 'setViewportSize before capture: '+String(e && (e.message||e))); }
+      try { await page.setViewportSize(VIEWPORT); tlog('setViewportSize applied', VIEWPORT); } catch (e) { tlog('setViewportSize error', String(e && (e.message||e))); pushInternalError(internalErrors, 'setViewportSize before capture: '+String(e && (e.message||e))); }
       await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'post-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))));
       try { await page.waitForTimeout(1500); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(1500) failed: '+String(e && (e.message||e))); }
       await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'waitForSelector .dashboard-grid: '+String(e && (e.message||e))));
@@ -399,6 +410,7 @@ async function waitForStableHeight(page, duration = 500) {
       let attempts = 0;
       while (attempts < SCREENSHOT_ATTEMPTS) {
         try {
+          tlog('screenshot attempt', attempts+1);
           buf = await page.screenshot({ clip: CLIP });
           fs.writeFileSync(screenshotPath, buf);
           try {
