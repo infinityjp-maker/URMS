@@ -7,8 +7,10 @@ permissions:
 
 on:
   push:
-    branches: [ feat/di-navigation-scaffold, main ]
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, 'feat/di-navigation-scaffold' ]
+
 jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
@@ -219,5 +221,3 @@ PY
           path: |
             builds/screenshots/**
             dist/**
-
-
