@@ -6,17 +6,14 @@ permissions:
   id-token: write
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ main, feat/di-navigation-scaffold ]
-  pull_request:
-    branches: [ main, feat/di-navigation-scaffold ]
+    branches: [ main ]
 
 jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 35
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
       ENFORCE_CLIP: '1'
@@ -79,10 +76,11 @@ jobs:
         run: |
           echo "node_modules cache hit; skipping npm ci"
 
-      - name: Install Playwright and browsers
+      - name: Install Playwright and browsers (only on cache miss)
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: |
           npm explore playwright -- npm i >/dev/null || true
-          # ensure browsers and native deps are installed (idempotent)
+          # install browsers and native deps only when cache miss
           npx playwright install --with-deps
         shell: bash
 
@@ -209,15 +207,15 @@ PY
           echo "ux-ping health: 8765=$ok8765 8877=$ok8877"
           echo "--- ux_ping.log ---" ; tail -n +1 ux_ping.log || true
           echo "--- process list ---" ; ps -ef | grep ux_ping_server.py || true
-          # run with a safety timeout to avoid long-running hangs (60m)
-          timeout 3600s node Tests/playwright/exec_smoke_save.cjs
+          # run with a safety timeout to avoid long-running hangs (30m)
+          timeout 1800s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
 
       - name: Upload artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-screenshots
+          name: playwright-screenshots-fixed
           path: |
             builds/screenshots/**
             dist/**
