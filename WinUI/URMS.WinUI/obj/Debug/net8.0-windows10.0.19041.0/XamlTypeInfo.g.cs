@@ -224,67 +224,71 @@ namespace URMS.WinUI.URMS_WinUI_XamlTypeInfo
 
         private void InitTypeTables()
         {
-            _typeNameTable = new string[29];
+            _typeNameTable = new string[31];
             _typeNameTable[0] = "Microsoft.UI.Xaml.Controls.XamlControlsResources";
             _typeNameTable[1] = "Microsoft.UI.Xaml.ResourceDictionary";
             _typeNameTable[2] = "Object";
             _typeNameTable[3] = "Boolean";
             _typeNameTable[4] = "URMS.WinUI.MainWindow";
             _typeNameTable[5] = "Microsoft.UI.Xaml.Window";
-            _typeNameTable[6] = "URMS.WinUI.Views.Cards.AISummaryCard";
-            _typeNameTable[7] = "Microsoft.UI.Xaml.Controls.UserControl";
-            _typeNameTable[8] = "URMS.WinUI.Views.Cards.AssetManagerCard";
-            _typeNameTable[9] = "URMS.WinUI.Views.Cards.CalendarCard";
-            _typeNameTable[10] = "URMS.WinUI.Views.Cards.CurrentStatusCard";
-            _typeNameTable[11] = "URMS.WinUI.Views.Cards.ErrorsTrendCard";
-            _typeNameTable[12] = "URMS.WinUI.Views.Cards.FileOrganizerCard";
-            _typeNameTable[13] = "URMS.WinUI.Views.Cards.LanguageSwitchCard";
-            _typeNameTable[14] = "URMS.WinUI.Views.Cards.LatestResultCard";
-            _typeNameTable[15] = "URMS.WinUI.Views.Cards.LauncherCard";
-            _typeNameTable[16] = "URMS.WinUI.Views.Cards.NotificationsCard";
-            _typeNameTable[17] = "URMS.WinUI.Views.Cards.RunTriageCard";
-            _typeNameTable[18] = "URMS.WinUI.Views.Cards.SeverityTrendCard";
-            _typeNameTable[19] = "URMS.WinUI.Views.Cards.ShortcutsCard";
-            _typeNameTable[20] = "URMS.WinUI.Views.Cards.SystemCard";
-            _typeNameTable[21] = "URMS.WinUI.Views.Cards.TagsTrendCard";
-            _typeNameTable[22] = "URMS.WinUI.Views.Cards.ThemeSwitchCard";
-            _typeNameTable[23] = "URMS.WinUI.Views.Cards.VersionCard";
-            _typeNameTable[24] = "URMS.WinUI.Views.Cards.WeatherCard";
-            _typeNameTable[25] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
-            _typeNameTable[26] = "Microsoft.UI.Xaml.DependencyObject";
-            _typeNameTable[27] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
-            _typeNameTable[28] = "Int32";
+            _typeNameTable[6] = "URMS.WinUI.Pages.HomePage";
+            _typeNameTable[7] = "Microsoft.UI.Xaml.Controls.Page";
+            _typeNameTable[8] = "Microsoft.UI.Xaml.Controls.UserControl";
+            _typeNameTable[9] = "URMS.WinUI.Views.Cards.AISummaryCard";
+            _typeNameTable[10] = "URMS.WinUI.Views.Cards.AssetManagerCard";
+            _typeNameTable[11] = "URMS.WinUI.Views.Cards.CalendarCard";
+            _typeNameTable[12] = "URMS.WinUI.Views.Cards.CurrentStatusCard";
+            _typeNameTable[13] = "URMS.WinUI.Views.Cards.ErrorsTrendCard";
+            _typeNameTable[14] = "URMS.WinUI.Views.Cards.FileOrganizerCard";
+            _typeNameTable[15] = "URMS.WinUI.Views.Cards.LanguageSwitchCard";
+            _typeNameTable[16] = "URMS.WinUI.Views.Cards.LatestResultCard";
+            _typeNameTable[17] = "URMS.WinUI.Views.Cards.LauncherCard";
+            _typeNameTable[18] = "URMS.WinUI.Views.Cards.NotificationsCard";
+            _typeNameTable[19] = "URMS.WinUI.Views.Cards.RunTriageCard";
+            _typeNameTable[20] = "URMS.WinUI.Views.Cards.SeverityTrendCard";
+            _typeNameTable[21] = "URMS.WinUI.Views.Cards.ShortcutsCard";
+            _typeNameTable[22] = "URMS.WinUI.Views.Cards.SystemCard";
+            _typeNameTable[23] = "URMS.WinUI.Views.Cards.TagsTrendCard";
+            _typeNameTable[24] = "URMS.WinUI.Views.Cards.ThemeSwitchCard";
+            _typeNameTable[25] = "URMS.WinUI.Views.Cards.VersionCard";
+            _typeNameTable[26] = "URMS.WinUI.Views.Cards.WeatherCard";
+            _typeNameTable[27] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
+            _typeNameTable[28] = "Microsoft.UI.Xaml.DependencyObject";
+            _typeNameTable[29] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
+            _typeNameTable[30] = "Int32";
 
-            _typeTable = new global::System.Type[29];
+            _typeTable = new global::System.Type[31];
             _typeTable[0] = typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources);
             _typeTable[1] = typeof(global::Microsoft.UI.Xaml.ResourceDictionary);
             _typeTable[2] = typeof(global::System.Object);
             _typeTable[3] = typeof(global::System.Boolean);
             _typeTable[4] = typeof(global::URMS.WinUI.MainWindow);
             _typeTable[5] = typeof(global::Microsoft.UI.Xaml.Window);
-            _typeTable[6] = typeof(global::URMS.WinUI.Views.Cards.AISummaryCard);
-            _typeTable[7] = typeof(global::Microsoft.UI.Xaml.Controls.UserControl);
-            _typeTable[8] = typeof(global::URMS.WinUI.Views.Cards.AssetManagerCard);
-            _typeTable[9] = typeof(global::URMS.WinUI.Views.Cards.CalendarCard);
-            _typeTable[10] = typeof(global::URMS.WinUI.Views.Cards.CurrentStatusCard);
-            _typeTable[11] = typeof(global::URMS.WinUI.Views.Cards.ErrorsTrendCard);
-            _typeTable[12] = typeof(global::URMS.WinUI.Views.Cards.FileOrganizerCard);
-            _typeTable[13] = typeof(global::URMS.WinUI.Views.Cards.LanguageSwitchCard);
-            _typeTable[14] = typeof(global::URMS.WinUI.Views.Cards.LatestResultCard);
-            _typeTable[15] = typeof(global::URMS.WinUI.Views.Cards.LauncherCard);
-            _typeTable[16] = typeof(global::URMS.WinUI.Views.Cards.NotificationsCard);
-            _typeTable[17] = typeof(global::URMS.WinUI.Views.Cards.RunTriageCard);
-            _typeTable[18] = typeof(global::URMS.WinUI.Views.Cards.SeverityTrendCard);
-            _typeTable[19] = typeof(global::URMS.WinUI.Views.Cards.ShortcutsCard);
-            _typeTable[20] = typeof(global::URMS.WinUI.Views.Cards.SystemCard);
-            _typeTable[21] = typeof(global::URMS.WinUI.Views.Cards.TagsTrendCard);
-            _typeTable[22] = typeof(global::URMS.WinUI.Views.Cards.ThemeSwitchCard);
-            _typeTable[23] = typeof(global::URMS.WinUI.Views.Cards.VersionCard);
-            _typeTable[24] = typeof(global::URMS.WinUI.Views.Cards.WeatherCard);
-            _typeTable[25] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
-            _typeTable[26] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
-            _typeTable[27] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
-            _typeTable[28] = typeof(global::System.Int32);
+            _typeTable[6] = typeof(global::URMS.WinUI.Pages.HomePage);
+            _typeTable[7] = typeof(global::Microsoft.UI.Xaml.Controls.Page);
+            _typeTable[8] = typeof(global::Microsoft.UI.Xaml.Controls.UserControl);
+            _typeTable[9] = typeof(global::URMS.WinUI.Views.Cards.AISummaryCard);
+            _typeTable[10] = typeof(global::URMS.WinUI.Views.Cards.AssetManagerCard);
+            _typeTable[11] = typeof(global::URMS.WinUI.Views.Cards.CalendarCard);
+            _typeTable[12] = typeof(global::URMS.WinUI.Views.Cards.CurrentStatusCard);
+            _typeTable[13] = typeof(global::URMS.WinUI.Views.Cards.ErrorsTrendCard);
+            _typeTable[14] = typeof(global::URMS.WinUI.Views.Cards.FileOrganizerCard);
+            _typeTable[15] = typeof(global::URMS.WinUI.Views.Cards.LanguageSwitchCard);
+            _typeTable[16] = typeof(global::URMS.WinUI.Views.Cards.LatestResultCard);
+            _typeTable[17] = typeof(global::URMS.WinUI.Views.Cards.LauncherCard);
+            _typeTable[18] = typeof(global::URMS.WinUI.Views.Cards.NotificationsCard);
+            _typeTable[19] = typeof(global::URMS.WinUI.Views.Cards.RunTriageCard);
+            _typeTable[20] = typeof(global::URMS.WinUI.Views.Cards.SeverityTrendCard);
+            _typeTable[21] = typeof(global::URMS.WinUI.Views.Cards.ShortcutsCard);
+            _typeTable[22] = typeof(global::URMS.WinUI.Views.Cards.SystemCard);
+            _typeTable[23] = typeof(global::URMS.WinUI.Views.Cards.TagsTrendCard);
+            _typeTable[24] = typeof(global::URMS.WinUI.Views.Cards.ThemeSwitchCard);
+            _typeTable[25] = typeof(global::URMS.WinUI.Views.Cards.VersionCard);
+            _typeTable[26] = typeof(global::URMS.WinUI.Views.Cards.WeatherCard);
+            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
+            _typeTable[28] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
+            _typeTable[29] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
+            _typeTable[30] = typeof(global::System.Int32);
         }
 
         private int LookupTypeIndexByName(string typeName)
@@ -321,25 +325,26 @@ namespace URMS.WinUI.URMS_WinUI_XamlTypeInfo
 
         private object Activate_0_XamlControlsResources() { return new global::Microsoft.UI.Xaml.Controls.XamlControlsResources(); }
         private object Activate_4_MainWindow() { return new global::URMS.WinUI.MainWindow(); }
-        private object Activate_6_AISummaryCard() { return new global::URMS.WinUI.Views.Cards.AISummaryCard(); }
-        private object Activate_8_AssetManagerCard() { return new global::URMS.WinUI.Views.Cards.AssetManagerCard(); }
-        private object Activate_9_CalendarCard() { return new global::URMS.WinUI.Views.Cards.CalendarCard(); }
-        private object Activate_10_CurrentStatusCard() { return new global::URMS.WinUI.Views.Cards.CurrentStatusCard(); }
-        private object Activate_11_ErrorsTrendCard() { return new global::URMS.WinUI.Views.Cards.ErrorsTrendCard(); }
-        private object Activate_12_FileOrganizerCard() { return new global::URMS.WinUI.Views.Cards.FileOrganizerCard(); }
-        private object Activate_13_LanguageSwitchCard() { return new global::URMS.WinUI.Views.Cards.LanguageSwitchCard(); }
-        private object Activate_14_LatestResultCard() { return new global::URMS.WinUI.Views.Cards.LatestResultCard(); }
-        private object Activate_15_LauncherCard() { return new global::URMS.WinUI.Views.Cards.LauncherCard(); }
-        private object Activate_16_NotificationsCard() { return new global::URMS.WinUI.Views.Cards.NotificationsCard(); }
-        private object Activate_17_RunTriageCard() { return new global::URMS.WinUI.Views.Cards.RunTriageCard(); }
-        private object Activate_18_SeverityTrendCard() { return new global::URMS.WinUI.Views.Cards.SeverityTrendCard(); }
-        private object Activate_19_ShortcutsCard() { return new global::URMS.WinUI.Views.Cards.ShortcutsCard(); }
-        private object Activate_20_SystemCard() { return new global::URMS.WinUI.Views.Cards.SystemCard(); }
-        private object Activate_21_TagsTrendCard() { return new global::URMS.WinUI.Views.Cards.TagsTrendCard(); }
-        private object Activate_22_ThemeSwitchCard() { return new global::URMS.WinUI.Views.Cards.ThemeSwitchCard(); }
-        private object Activate_23_VersionCard() { return new global::URMS.WinUI.Views.Cards.VersionCard(); }
-        private object Activate_24_WeatherCard() { return new global::URMS.WinUI.Views.Cards.WeatherCard(); }
-        private object Activate_25_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
+        private object Activate_6_HomePage() { return new global::URMS.WinUI.Pages.HomePage(); }
+        private object Activate_9_AISummaryCard() { return new global::URMS.WinUI.Views.Cards.AISummaryCard(); }
+        private object Activate_10_AssetManagerCard() { return new global::URMS.WinUI.Views.Cards.AssetManagerCard(); }
+        private object Activate_11_CalendarCard() { return new global::URMS.WinUI.Views.Cards.CalendarCard(); }
+        private object Activate_12_CurrentStatusCard() { return new global::URMS.WinUI.Views.Cards.CurrentStatusCard(); }
+        private object Activate_13_ErrorsTrendCard() { return new global::URMS.WinUI.Views.Cards.ErrorsTrendCard(); }
+        private object Activate_14_FileOrganizerCard() { return new global::URMS.WinUI.Views.Cards.FileOrganizerCard(); }
+        private object Activate_15_LanguageSwitchCard() { return new global::URMS.WinUI.Views.Cards.LanguageSwitchCard(); }
+        private object Activate_16_LatestResultCard() { return new global::URMS.WinUI.Views.Cards.LatestResultCard(); }
+        private object Activate_17_LauncherCard() { return new global::URMS.WinUI.Views.Cards.LauncherCard(); }
+        private object Activate_18_NotificationsCard() { return new global::URMS.WinUI.Views.Cards.NotificationsCard(); }
+        private object Activate_19_RunTriageCard() { return new global::URMS.WinUI.Views.Cards.RunTriageCard(); }
+        private object Activate_20_SeverityTrendCard() { return new global::URMS.WinUI.Views.Cards.SeverityTrendCard(); }
+        private object Activate_21_ShortcutsCard() { return new global::URMS.WinUI.Views.Cards.ShortcutsCard(); }
+        private object Activate_22_SystemCard() { return new global::URMS.WinUI.Views.Cards.SystemCard(); }
+        private object Activate_23_TagsTrendCard() { return new global::URMS.WinUI.Views.Cards.TagsTrendCard(); }
+        private object Activate_24_ThemeSwitchCard() { return new global::URMS.WinUI.Views.Cards.ThemeSwitchCard(); }
+        private object Activate_25_VersionCard() { return new global::URMS.WinUI.Views.Cards.VersionCard(); }
+        private object Activate_26_WeatherCard() { return new global::URMS.WinUI.Views.Cards.WeatherCard(); }
+        private object Activate_27_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
         private void MapAdd_0_XamlControlsResources(object instance, object key, object item)
         {
             var collection = (global::System.Collections.Generic.IDictionary<global::System.Object, global::System.Object>)instance;
@@ -347,7 +352,7 @@ namespace URMS.WinUI.URMS_WinUI_XamlTypeInfo
             var newItem = (global::System.Object)item;
             collection.Add(newKey, newItem);
         }
-        private void VectorAdd_27_IList(object instance, object item)
+        private void VectorAdd_29_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Controls.TreeViewNode>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)item;
@@ -395,139 +400,150 @@ namespace URMS.WinUI.URMS_WinUI_XamlTypeInfo
                 xamlType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 6:   //  URMS.WinUI.Views.Cards.AISummaryCard
-                userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_6_AISummaryCard;
+            case 6:   //  URMS.WinUI.Pages.HomePage
+                userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
+                userType.Activator = Activate_6_HomePage;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 7:   //  Microsoft.UI.Xaml.Controls.UserControl
+            case 7:   //  Microsoft.UI.Xaml.Controls.Page
                 xamlType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 8:   //  URMS.WinUI.Views.Cards.AssetManagerCard
+            case 8:   //  Microsoft.UI.Xaml.Controls.UserControl
+                xamlType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
+                break;
+
+            case 9:   //  URMS.WinUI.Views.Cards.AISummaryCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_8_AssetManagerCard;
+                userType.Activator = Activate_9_AISummaryCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 9:   //  URMS.WinUI.Views.Cards.CalendarCard
+            case 10:   //  URMS.WinUI.Views.Cards.AssetManagerCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_9_CalendarCard;
+                userType.Activator = Activate_10_AssetManagerCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 10:   //  URMS.WinUI.Views.Cards.CurrentStatusCard
+            case 11:   //  URMS.WinUI.Views.Cards.CalendarCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_10_CurrentStatusCard;
+                userType.Activator = Activate_11_CalendarCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 11:   //  URMS.WinUI.Views.Cards.ErrorsTrendCard
+            case 12:   //  URMS.WinUI.Views.Cards.CurrentStatusCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_11_ErrorsTrendCard;
+                userType.Activator = Activate_12_CurrentStatusCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 12:   //  URMS.WinUI.Views.Cards.FileOrganizerCard
+            case 13:   //  URMS.WinUI.Views.Cards.ErrorsTrendCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_12_FileOrganizerCard;
+                userType.Activator = Activate_13_ErrorsTrendCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 13:   //  URMS.WinUI.Views.Cards.LanguageSwitchCard
+            case 14:   //  URMS.WinUI.Views.Cards.FileOrganizerCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_13_LanguageSwitchCard;
+                userType.Activator = Activate_14_FileOrganizerCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 14:   //  URMS.WinUI.Views.Cards.LatestResultCard
+            case 15:   //  URMS.WinUI.Views.Cards.LanguageSwitchCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_14_LatestResultCard;
+                userType.Activator = Activate_15_LanguageSwitchCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 15:   //  URMS.WinUI.Views.Cards.LauncherCard
+            case 16:   //  URMS.WinUI.Views.Cards.LatestResultCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_15_LauncherCard;
+                userType.Activator = Activate_16_LatestResultCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 16:   //  URMS.WinUI.Views.Cards.NotificationsCard
+            case 17:   //  URMS.WinUI.Views.Cards.LauncherCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_16_NotificationsCard;
+                userType.Activator = Activate_17_LauncherCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 17:   //  URMS.WinUI.Views.Cards.RunTriageCard
+            case 18:   //  URMS.WinUI.Views.Cards.NotificationsCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_17_RunTriageCard;
+                userType.Activator = Activate_18_NotificationsCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 18:   //  URMS.WinUI.Views.Cards.SeverityTrendCard
+            case 19:   //  URMS.WinUI.Views.Cards.RunTriageCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_18_SeverityTrendCard;
+                userType.Activator = Activate_19_RunTriageCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 19:   //  URMS.WinUI.Views.Cards.ShortcutsCard
+            case 20:   //  URMS.WinUI.Views.Cards.SeverityTrendCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_19_ShortcutsCard;
+                userType.Activator = Activate_20_SeverityTrendCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 20:   //  URMS.WinUI.Views.Cards.SystemCard
+            case 21:   //  URMS.WinUI.Views.Cards.ShortcutsCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_20_SystemCard;
+                userType.Activator = Activate_21_ShortcutsCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 21:   //  URMS.WinUI.Views.Cards.TagsTrendCard
+            case 22:   //  URMS.WinUI.Views.Cards.SystemCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_21_TagsTrendCard;
+                userType.Activator = Activate_22_SystemCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 22:   //  URMS.WinUI.Views.Cards.ThemeSwitchCard
+            case 23:   //  URMS.WinUI.Views.Cards.TagsTrendCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_22_ThemeSwitchCard;
+                userType.Activator = Activate_23_TagsTrendCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 23:   //  URMS.WinUI.Views.Cards.VersionCard
+            case 24:   //  URMS.WinUI.Views.Cards.ThemeSwitchCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_23_VersionCard;
+                userType.Activator = Activate_24_ThemeSwitchCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 24:   //  URMS.WinUI.Views.Cards.WeatherCard
+            case 25:   //  URMS.WinUI.Views.Cards.VersionCard
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
-                userType.Activator = Activate_24_WeatherCard;
+                userType.Activator = Activate_25_VersionCard;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 25:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
+            case 26:   //  URMS.WinUI.Views.Cards.WeatherCard
+                userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.UserControl"));
+                userType.Activator = Activate_26_WeatherCard;
+                userType.SetIsLocalType();
+                xamlType = userType;
+                break;
+
+            case 27:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.Activator = Activate_25_TreeViewNode;
+                userType.Activator = Activate_27_TreeViewNode;
                 userType.AddMemberName("Children");
                 userType.AddMemberName("Content");
                 userType.AddMemberName("Depth");
@@ -539,18 +555,18 @@ namespace URMS.WinUI.URMS_WinUI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 26:   //  Microsoft.UI.Xaml.DependencyObject
+            case 28:   //  Microsoft.UI.Xaml.DependencyObject
                 xamlType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 27:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
+            case 29:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
                 userType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.CollectionAdd = VectorAdd_27_IList;
+                userType.CollectionAdd = VectorAdd_29_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 28:   //  Int32
+            case 30:   //  Int32
                 xamlType = new global::URMS.WinUI.URMS_WinUI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
             }

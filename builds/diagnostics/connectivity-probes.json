@@ -1,0 +1,20 @@
+[
+  {
+    "port": 1420,
+    "tcp": false,
+    "err": "Error: connect ECONNREFUSED 127.0.0.1:1420",
+    "http": false
+  },
+  {
+    "port": 8765,
+    "tcp": false,
+    "err": "Error: connect ECONNREFUSED 127.0.0.1:8765",
+    "http": false
+  },
+  {
+    "port": 8877,
+    "tcp": false,
+    "err": "Error: connect ECONNREFUSED 127.0.0.1:8877",
+    "http": false
+  }
+]

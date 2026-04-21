@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "type": "log",
+    "text": "[vite] server connection lost. Polling for restart...",
+    "location": {
+      "url": "http://[::1]:1420/",
+      "lineNumber": 129,
+      "columnNumber": 27
+    },
+    "ts": 1776771652796
+  }
+]

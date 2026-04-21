@@ -156,3 +156,10 @@ D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\pri.resfile
 D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\qualifiers.txt
 D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\qualifiers.txt.intermediate
 D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\MultipleQualifiersPerDimensionFound.txt
+D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\Pages\HomePage.g.i.cs
+D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\Pages\HomePage.g.cs
+D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\Pages\HomePage.xaml
+D:\GitHub\URMS\WinUI\URMS.WinUI\obj\Debug\net8.0-windows10.0.19041.0\Pages\HomePage.xbf
+D:\GitHub\URMS\WinUI\URMS.WinUI\bin\Debug\net8.0-windows10.0.19041.0\Pages\HomePage.xbf
+D:\GitHub\URMS\WinUI\URMS.WinUI\bin\Debug\net8.0-windows10.0.19041.0\Microsoft.Extensions.DependencyInjection.dll
+D:\GitHub\URMS\WinUI\URMS.WinUI\bin\Debug\net8.0-windows10.0.19041.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
