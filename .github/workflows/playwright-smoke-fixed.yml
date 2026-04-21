@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
 
   push:
-    branches: [ main ]
+    branches: [ main, feat/di-navigation-scaffold ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, feat/di-navigation-scaffold ]
 
 jobs:
   smoke-compare:
@@ -222,3 +222,4 @@ PY
           path: |
             builds/screenshots/**
             dist/**
+
