@@ -7,11 +7,8 @@ permissions:
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ feat/di-navigation-scaffold, main ]
   workflow_dispatch:
-
 jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
