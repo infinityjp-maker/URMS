@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [ main, 'feat/di-navigation-scaffold' ]
   push:
-    branches: [ main ]
+    branches: [ main, 'feat/di-navigation-scaffold' ]
 
 jobs:
   smoke-compare:
