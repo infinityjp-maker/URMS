@@ -6,6 +6,8 @@ permissions:
   id-token: write
 
 on:
+  workflow_dispatch:
+
   push:
     branches: [ main ]
   pull_request:
@@ -14,7 +16,9 @@ on:
 jobs:
   smoke-compare:
     name: Smoke Compare (fixed)
-    runs-on: ubuntu-latest
+    runs-on:
+  workflow_dispatch:
+ ubuntu-latest
     timeout-minutes: 35
     env:
       PLAYWRIGHT_CONFIG: Tests/playwright/playwright.config.cjs
@@ -26,7 +30,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version:
+  workflow_dispatch:
+ '20.x'
 
       - name: Cache npm
         uses: actions/cache@v4
@@ -165,6 +171,8 @@ class H(BaseHTTPRequestHandler):
                 if length:
                     self.rfile.read(length)
             except Exception:
+  workflow_dispatch:
+
                 pass
             port = self.server.server_port
             self._ok(port)
@@ -177,6 +185,8 @@ def serve_on(port):
     try:
         srv.serve_forever()
     except Exception:
+  workflow_dispatch:
+
         pass
 
 if __name__ == '__main__':
