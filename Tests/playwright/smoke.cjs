@@ -346,9 +346,12 @@ async function waitForStableHeight(page, duration = 500) {
     // Additional diagnostic marker: right after stabilizePage, before following waits
     try { tlog('after-stabilize: before post-stabilize networkidle/wait probes'); } catch(e) { /* noop */ }
 
-    try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
-    try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'after-stabilize fonts.ready: '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize fonts.ready outer: '+String(e && (e.message||e))); }
-    try { await page.waitForTimeout(200); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(200) after-stabilize failed: '+String(e && (e.message||e))); }
+    try {
+      tlog('after-stabilize: before waitForLoadState networkidle', DEFAULT_WAIT);
+      await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).then(() => { tlog('after-stabilize: waitForLoadState networkidle succeeded'); }).catch(e => { tlog('after-stabilize: waitForLoadState networkidle failed', String(e && (e.message||e))); pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))); });
+    } catch(e){ tlog('after-stabilize: waitForLoadState networkidle outer error', String(e && (e.message||e))); pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
+    try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { tlog('after-stabilize: fonts.ready resolved'); }).catch(e => { tlog('after-stabilize: fonts.ready failed', String(e && (e.message||e))); pushInternalError(internalErrors, 'after-stabilize fonts.ready: '+String(e && (e.message||e))); }); } catch(e){ tlog('after-stabilize: fonts.ready outer error', String(e && (e.message||e))); pushInternalError(internalErrors, 'after-stabilize fonts.ready outer: '+String(e && (e.message||e))); }
+    try { await page.waitForTimeout(200).then(() => { tlog('after-stabilize: waitForTimeout 200 done'); }).catch(e => { tlog('after-stabilize: waitForTimeout 200 failed', String(e && (e.message||e))); pushInternalError(internalErrors, 'waitForTimeout(200) after-stabilize failed: '+String(e && (e.message||e))); }); } catch(e) { tlog('after-stabilize: waitForTimeout outer error', String(e && (e.message||e))); pushInternalError(internalErrors, 'waitForTimeout(200) after-stabilize outer failed: '+String(e && (e.message||e))); }
 
     // Extract DOM snapshot (bounded)
     let domSnapshot = undefined;
