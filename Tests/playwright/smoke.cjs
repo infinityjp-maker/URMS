@@ -330,6 +330,9 @@ async function waitForStableHeight(page, duration = 500) {
 
     try { tlog('MARK: before stabilizePage'); await stabilizePage(page); tlog('MARK: after stabilizePage'); } catch (e) { tlog('stabilizePage error', String(e && (e.message||e))); pushInternalError(internalErrors, 'stabilizePage: '+String(e && (e.message||e))); }
 
+    // Additional diagnostic marker: right after stabilizePage, before following waits
+    try { tlog('after-stabilize: before post-stabilize networkidle/wait probes'); } catch(e) { /* noop */ }
+
     try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
     try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'after-stabilize fonts.ready: '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize fonts.ready outer: '+String(e && (e.message||e))); }
     try { await page.waitForTimeout(200); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(200) after-stabilize failed: '+String(e && (e.message||e))); }
