@@ -1,0 +1,13 @@
+{
+  "rules": [
+    { "selector": "header" },
+    { "selector": ".app-header" },
+    { "selector": ".header-clock" },
+    { "selector": ".dashboard-title" },
+    { "selector": "footer" },
+    { "selector": ".toast-container" },
+    { "selector": ".live-badge" },
+    { "selector": ".clock" },
+    { "bbox": { "x": 0, "y": 0, "w": 800, "h": 40 } }
+  ]
+}

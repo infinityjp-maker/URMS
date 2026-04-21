@@ -1,0 +1,69 @@
+{"endpoint":"http://mock","zip":"test_upload.zip","response":"{\"ok\":true,\"delete\":true}","time":"2026-04-18T02:54:38.4688637+09:00","status":"mocked_response_used","attempt":1}
+{"time":"2026-04-18T02:54:38.4824357+09:00","zip":"test_upload.zip","status":"schema_check_error","reason":"Cannot bind argument to parameter 'Path' because it is null."}
+{"time":"2026-04-18T02:54:38.5023972+09:00","zip":"test_upload.zip","status":"deleted_from_queue"}
+{"endpoint":"http://mock","zip":"test_upload.zip","response":"{\"ok\":true,\"delete\":false}","time":"2026-04-18T02:54:38.5468967+09:00","status":"mocked_response_used","attempt":1}
+{"time":"2026-04-18T02:54:38.5492741+09:00","zip":"test_upload.zip","status":"not_deleted_response_missing_ok_delete","server_response":"{\"ok\":true,\"delete\":false}"}
+{"endpoint":"http://mock","zip":"test_upload.zip","response":"INVALID_JSON","time":"2026-04-18T02:54:38.5943676+09:00","status":"mocked_response_used","attempt":1}
+{"time":"2026-04-18T02:54:38.6019644+09:00","zip":"test_upload.zip","status":"not_deleted_response_missing_ok_delete","server_response":"INVALID_JSON"}
+{"status":"mocked_response_used","time":"2026-04-18T02:59:35.5291471+09:00","endpoint":"http://mock","zip":"test_upload.zip","attempt":1,"response":"{\"ok\":true,\"delete\":true}"}
+{"zip":"test_upload.zip","reason":"Cannot bind argument to parameter 'Path' because it is null.","time":"2026-04-18T02:59:35.5441484+09:00","status":"schema_check_error"}
+{"zip":"test_upload.zip","time":"2026-04-18T02:59:35.5535633+09:00","status":"deleted_from_queue"}
+{"status":"mocked_response_used","time":"2026-04-18T02:59:35.6019123+09:00","endpoint":"http://mock","zip":"test_upload.zip","attempt":1,"response":"{\"ok\":true,\"delete\":false}"}
+{"zip":"test_upload.zip","server_response":"{\"ok\":true,\"delete\":false}","time":"2026-04-18T02:59:35.6045507+09:00","status":"not_deleted_response_missing_ok_delete"}
+{"status":"mocked_response_used","time":"2026-04-18T02:59:35.6534055+09:00","endpoint":"http://mock","zip":"test_upload.zip","attempt":1,"response":"INVALID_JSON"}
+{"zip":"test_upload.zip","server_response":"INVALID_JSON","time":"2026-04-18T02:59:35.6606902+09:00","status":"not_deleted_response_missing_ok_delete"}
+{"response":"{\"ok\":true,\"delete\":true}","endpoint":"http://mock","attempt":1,"status":"mocked_response_used","time":"2026-04-18T03:01:50.3655713+09:00","zip":"test_upload.zip"}
+{"reason":"Cannot bind argument to parameter 'Path' because it is null.","status":"schema_check_error","zip":"test_upload.zip","time":"2026-04-18T03:01:50.3772592+09:00"}
+{"time":"2026-04-18T03:01:50.3868521+09:00","status":"deleted_from_queue","zip":"test_upload.zip"}
+{"response":"{\"ok\":true,\"delete\":false}","endpoint":"http://mock","attempt":1,"status":"mocked_response_used","time":"2026-04-18T03:01:50.4339365+09:00","zip":"test_upload.zip"}
+{"time":"2026-04-18T03:01:50.4367874+09:00","status":"not_deleted_response_missing_ok_delete","zip":"test_upload.zip","server_response":"{\"ok\":true,\"delete\":false}"}
+{"response":"INVALID_JSON","endpoint":"http://mock","attempt":1,"status":"mocked_response_used","time":"2026-04-18T03:01:50.4813490+09:00","zip":"test_upload.zip"}
+{"time":"2026-04-18T03:01:50.4904053+09:00","status":"not_deleted_response_missing_ok_delete","zip":"test_upload.zip","server_response":"INVALID_JSON"}
+{"zip":"runner_logs_20260418_030912_exit1.zip","status":"fail","attempt":1,"reason":"\"2\" 個の引数を指定して \"Add\" を呼び出し中に例外が発生しました: \"\u0027User-Agent\u0027 ヘッダーは、適切なプロパティまたはメソッドを使用して変更する必要があります。\r\nパラメーター名:name\"","time":"2026-04-18T03:09:15.7075516+09:00"}
+{"zip":"runner_logs_20260418_030912_exit1.zip","status":"fail","attempt":2,"reason":"\"2\" 個の引数を指定して \"Add\" を呼び出し中に例外が発生しました: \"\u0027User-Agent\u0027 ヘッダーは、適切なプロパティまたはメソッドを使用して変更する必要があります。\r\nパラメーター名:name\"","time":"2026-04-18T03:09:17.8212836+09:00"}
+{"zip":"runner_logs_20260418_030912_exit1.zip","status":"fail","attempt":3,"reason":"\"2\" 個の引数を指定して \"Add\" を呼び出し中に例外が発生しました: \"\u0027User-Agent\u0027 ヘッダーは、適切なプロパティまたはメソッドを使用して変更する必要があります。\r\nパラメーター名:name\"","time":"2026-04-18T03:09:21.8248579+09:00"}
+{"zip":"runner_logs_20260418_030912_exit1.zip","status":"fail","attempt":4,"reason":"\"2\" 個の引数を指定して \"Add\" を呼び出し中に例外が発生しました: \"\u0027User-Agent\u0027 ヘッダーは、適切なプロパティまたはメソッドを使用して変更する必要があります。\r\nパラメーター名:name\"","time":"2026-04-18T03:09:30.8422580+09:00"}
+{"zip":"runner_logs_20260418_030912_exit1.zip","status":"fail","attempt":5,"reason":"\"2\" 個の引数を指定して \"Add\" を呼び出し中に例外が発生しました: \"\u0027User-Agent\u0027 ヘッダーは、適切なプロパティまたはメソッドを使用して変更する必要があります。\r\nパラメーター名:name\"","time":"2026-04-18T03:09:53.8455152+09:00"}
+{"zip":"runner_logs_20260418_030912_exit1.zip","status":"queued","time":"2026-04-18T03:10:36.9548924+09:00","queue_dest":"D:\\GitHub\\URMS\\actions-runner\\retry-queue\\runner_logs_20260418_030912_exit1.zip"}
+{"status":"mocked_response_used","endpoint":"http://mock","zip":"runner_logs_20260418_034419_exit1.zip","response":"INVALID_JSON","attempt":1,"time":"2026-04-18T03:44:20.5956734+09:00"}
+{"time":"2026-04-18T17:08:29.8909665+09:00","response":"{\"ok\":true,\"delete\":true}","status":"mocked_response_used","endpoint":"http://mock","attempt":1,"zip":"test_upload.zip"}
+{"reason":"Cannot bind argument to parameter 'Path' because it is null.","time":"2026-04-18T17:08:29.9058332+09:00","status":"schema_check_error","zip":"test_upload.zip"}
+{"time":"2026-04-18T17:08:29.9261537+09:00","status":"deleted_from_queue","zip":"test_upload.zip"}
+{"time":"2026-04-18T17:08:29.9747040+09:00","response":"{\"ok\":true,\"delete\":false}","status":"mocked_response_used","endpoint":"http://mock","attempt":1,"zip":"test_upload.zip"}
+{"time":"2026-04-18T17:08:29.9771987+09:00","server_response":"{\"ok\":true,\"delete\":false}","status":"not_deleted_response_missing_ok_delete","zip":"test_upload.zip"}
+{"time":"2026-04-18T17:08:30.0271122+09:00","response":"INVALID_JSON","status":"mocked_response_used","endpoint":"http://mock","attempt":1,"zip":"test_upload.zip"}
+{"time":"2026-04-18T17:08:30.0335697+09:00","server_response":"INVALID_JSON","status":"not_deleted_response_missing_ok_delete","zip":"test_upload.zip"}
+{"time":"2026-04-18T17:08:37.7711149+09:00","attempt":1,"response":"INVALID_JSON","status":"mocked_response_used","endpoint":"http://mock","zip":"runner_logs_20260418_170836_exit1.zip"}
+{"response":"{\"ok\":true,\"delete\":true}","attempt":1,"zip":"test_upload.zip","endpoint":"http://mock","time":"2026-04-18T23:03:49.9460913+09:00","status":"mocked_response_used"}
+{"time":"2026-04-18T23:03:49.9619949+09:00","reason":"Cannot bind argument to parameter 'Path' because it is null.","zip":"test_upload.zip","status":"schema_check_error"}
+{"time":"2026-04-18T23:03:49.9848325+09:00","zip":"test_upload.zip","status":"deleted_from_queue"}
+{"response":"{\"ok\":true,\"delete\":false}","attempt":1,"zip":"test_upload.zip","endpoint":"http://mock","time":"2026-04-18T23:03:50.0356550+09:00","status":"mocked_response_used"}
+{"server_response":"{\"ok\":true,\"delete\":false}","time":"2026-04-18T23:03:50.0441315+09:00","zip":"test_upload.zip","status":"not_deleted_response_missing_ok_delete"}
+{"response":"INVALID_JSON","attempt":1,"zip":"test_upload.zip","endpoint":"http://mock","time":"2026-04-18T23:03:50.0897965+09:00","status":"mocked_response_used"}
+{"server_response":"INVALID_JSON","time":"2026-04-18T23:03:50.0986156+09:00","zip":"test_upload.zip","status":"not_deleted_response_missing_ok_delete"}
+{"attempt":1,"time":"2026-04-18T23:04:00.6195368+09:00","status":"mocked_response_used","endpoint":"http://mock","response":"INVALID_JSON","zip":"runner_logs_20260418_230359_exit1.zip"}
+{"endpoint":"http://mock","status":"mocked_response_used","time":"2026-04-18T23:10:13.8287003+09:00","response":"{\"ok\":true,\"delete\":true}","attempt":1,"zip":"test_upload.zip"}
+{"reason":"Cannot bind argument to parameter 'Path' because it is null.","status":"schema_check_error","time":"2026-04-18T23:10:13.8449220+09:00","zip":"test_upload.zip"}
+{"status":"deleted_from_queue","time":"2026-04-18T23:10:13.8576237+09:00","zip":"test_upload.zip"}
+{"endpoint":"http://mock","status":"mocked_response_used","time":"2026-04-18T23:10:13.9203754+09:00","response":"{\"ok\":true,\"delete\":false}","attempt":1,"zip":"test_upload.zip"}
+{"server_response":"{\"ok\":true,\"delete\":false}","status":"not_deleted_response_missing_ok_delete","time":"2026-04-18T23:10:13.9318731+09:00","zip":"test_upload.zip"}
+{"endpoint":"http://mock","status":"mocked_response_used","time":"2026-04-18T23:10:13.9805880+09:00","response":"INVALID_JSON","attempt":1,"zip":"test_upload.zip"}
+{"server_response":"INVALID_JSON","status":"not_deleted_response_missing_ok_delete","time":"2026-04-18T23:10:13.9896282+09:00","zip":"test_upload.zip"}
+{"status":"mocked_response_used","endpoint":"http://mock","zip":"runner_logs_20260418_231023_exit1.zip","attempt":1,"response":"INVALID_JSON","time":"2026-04-18T23:10:24.8564209+09:00"}
+{"endpoint":"http://mock","response":"{\"ok\":true,\"delete\":true}","attempt":1,"time":"2026-04-18T23:23:49.0003312+09:00","status":"mocked_response_used","zip":"test_upload.zip"}
+{"reason":"Cannot bind argument to parameter 'Path' because it is null.","zip":"test_upload.zip","time":"2026-04-18T23:23:49.0158467+09:00","status":"schema_check_error"}
+{"zip":"test_upload.zip","time":"2026-04-18T23:23:49.0294086+09:00","status":"deleted_from_queue"}
+{"endpoint":"http://mock","response":"{\"ok\":true,\"delete\":false}","attempt":1,"time":"2026-04-18T23:23:49.0817001+09:00","status":"mocked_response_used","zip":"test_upload.zip"}
+{"zip":"test_upload.zip","time":"2026-04-18T23:23:49.0841552+09:00","status":"not_deleted_response_missing_ok_delete","server_response":"{\"ok\":true,\"delete\":false}"}
+{"endpoint":"http://mock","response":"INVALID_JSON","attempt":1,"time":"2026-04-18T23:23:49.1370176+09:00","status":"mocked_response_used","zip":"test_upload.zip"}
+{"zip":"test_upload.zip","time":"2026-04-18T23:23:49.1443335+09:00","status":"not_deleted_response_missing_ok_delete","server_response":"INVALID_JSON"}
+{"attempt":1,"zip":"runner_logs_20260418_232352_exit1.zip","time":"2026-04-18T23:23:54.0511817+09:00","status":"mocked_response_used","response":"INVALID_JSON","endpoint":"http://mock"}
+{"response":"{\"ok\":true,\"delete\":true}","endpoint":"http://mock","attempt":1,"status":"mocked_response_used","time":"2026-04-18T23:27:55.8131786+09:00","zip":"test_upload.zip"}
+{"reason":"Cannot bind argument to parameter 'Path' because it is null.","time":"2026-04-18T23:27:55.8274148+09:00","zip":"test_upload.zip","status":"schema_check_error"}
+{"time":"2026-04-18T23:27:55.8381457+09:00","zip":"test_upload.zip","status":"deleted_from_queue"}
+{"response":"{\"ok\":true,\"delete\":false}","endpoint":"http://mock","attempt":1,"status":"mocked_response_used","time":"2026-04-18T23:27:55.8883015+09:00","zip":"test_upload.zip"}
+{"server_response":"{\"ok\":true,\"delete\":false}","time":"2026-04-18T23:27:55.8908320+09:00","zip":"test_upload.zip","status":"not_deleted_response_missing_ok_delete"}
+{"response":"INVALID_JSON","endpoint":"http://mock","attempt":1,"status":"mocked_response_used","time":"2026-04-18T23:27:55.9410526+09:00","zip":"test_upload.zip"}
+{"server_response":"INVALID_JSON","time":"2026-04-18T23:27:55.9494921+09:00","zip":"test_upload.zip","status":"not_deleted_response_missing_ok_delete"}
+{"errors":["invalid_json"],"valid":false,"message":"schema_check","timestamp":"2026-04-18T23:27:59.5175247+09:00","level":"WARN"}
+{"attempt":1,"endpoint":"http://mock","zip":"runner_logs_20260418_232759_exit1.zip","status":"mocked_response_used","response":"INVALID_JSON","time":"2026-04-18T23:28:00.8835911+09:00"}

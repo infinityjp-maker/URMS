@@ -1,0 +1,2 @@
+check-upload-response-schema.ps1:(17): Missing try/catch around I/O or conversion: $json = $out | ConvertTo-Json -Compress
+upload-runner-logs.ps1:(15): Missing try/catch around I/O or conversion: function LogJson($obj) { try { $obj | ConvertTo-Json -Compress | Out-File -FilePath $LogFile -Append -Encoding utf8 } catch { Write-Warning "LogJson failed: $($_.Exception.Message)" } }

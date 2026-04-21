@@ -1,0 +1,81 @@
+test-dashboard-data.ps1: ConvertTo-Json likely unguarded at line 12
+test-dashboard-data.ps1: ConvertTo-Json likely unguarded at line 19
+test-dashboard-data.ps1: ConvertTo-Json likely unguarded at line 23
+test-dashboard-data.ps1: ConvertTo-Json likely unguarded at line 42
+test-dashboard-data.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 12
+test-dashboard-data.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 19
+test-dashboard-data.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 23
+test-dashboard-data.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 42
+test-dashboard-data.ps1: index.json write possibly unguarded at line 19
+test-dashboard-data.ps1: last_schema_check.json write possibly unguarded at line 23
+test-dashboard-data.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 12
+test-dashboard-data.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 19
+test-dashboard-data.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 23
+test-dashboard-data.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 42
+test-log-consistency.ps1: ConvertTo-Json likely unguarded at line 40
+test-log-consistency.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 40
+test-log-consistency.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 40
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 21
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 22
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 25
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 30
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 37
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 39
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 40
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 41
+test-queue-integrity.ps1: ConvertTo-Json likely unguarded at line 47
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 21
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 25
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 30
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 37
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 39
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 40
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 41
+test-queue-integrity.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 47
+test-queue-integrity.ps1: index.json write possibly unguarded at line 25
+test-queue-integrity.ps1: index.json write possibly unguarded at line 30
+test-queue-integrity.ps1: index.json write possibly unguarded at line 37
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 21
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 22
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 25
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 30
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 37
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 39
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 40
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 41
+test-queue-integrity.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 47
+test-retry-queue.ps1: ConvertTo-Json likely unguarded at line 82
+test-retry-queue.ps1: ConvertTo-Json likely unguarded at line 104
+test-retry-queue.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 55
+test-retry-queue.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 104
+test-retry-queue.ps1: index.json write possibly unguarded at line 82
+test-retry-queue.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 104
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 65
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 93
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 94
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 112
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 113
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 131
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 132
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 145
+test-upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 159
+test-upload-runner-logs.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 22
+test-upload-runner-logs.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 50
+test-upload-runner-logs.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 65
+test-upload-runner-logs.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 145
+test-upload-runner-logs.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 159
+test-upload-runner-logs.ps1: index.json write possibly unguarded at line 65
+test-upload-runner-logs.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 65
+test-upload-runner-logs.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 145
+test-upload-runner-logs.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 159
+upload-runner-logs.mock..ps1: ConvertTo-Json likely unguarded at line 15
+upload-runner-logs.mock..ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 15
+upload-runner-logs.mock..ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 15
+upload-runner-logs.mock.invalid.ps1: ConvertTo-Json likely unguarded at line 15
+upload-runner-logs.mock.invalid.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 15
+upload-runner-logs.mock.invalid.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 15
+upload-runner-logs.ps1: ConvertTo-Json likely unguarded at line 15
+upload-runner-logs.ps1: file write (Out-File/Add-Content/Set-Content) likely unguarded at line 15
+upload-runner-logs.ps1: structured log write (ConvertTo-Json + Out-File/Add-Content) possibly unguarded near line 15
+
+CI audit: found 79 violations.

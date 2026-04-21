@@ -1,0 +1,5 @@
+run-local-tests.ps1:(70): Missing try/catch around I/O or conversion: # add -Depth 5 to ConvertTo-Json calls (simple heuristic)
+run-local-tests.ps1:(71): Missing try/catch around I/O or conversion: $new = $modified -replace 'ConvertTo-Json(\s*\|)','ConvertTo-Json -Depth 5$1'
+run-local-tests.ps1:(75): Missing try/catch around I/O or conversion: # add -Encoding utf8 to Out-File calls
+run-local-tests.ps1:(76): Missing try/catch around I/O or conversion: $new = $modified -replace 'Out-File\s+-FilePath','Out-File -FilePath'
+run-local-tests.ps1:(78): Missing try/catch around I/O or conversion: $new = $new -replace '(Out-File\s+[^\n\r]*?)(\r?\n)','$1 -Encoding utf8`n'

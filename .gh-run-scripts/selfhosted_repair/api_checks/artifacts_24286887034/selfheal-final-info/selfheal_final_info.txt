@@ -1,0 +1,4 @@
+[PRODUCTION RUN] RunnerService final info
+Path: /home/runner/work/URMS/URMS/.gh-run-scripts/selfhosted_repair/RunnerService.exe
+SizeBytes: 16384
+SHA256: b623b691e1aa7f24ee687b705d992dcf20399e06d173953f05cee88f70a3d069

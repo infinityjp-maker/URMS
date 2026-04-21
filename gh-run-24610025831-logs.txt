@@ -1,0 +1,163 @@
+ci-audit	Set up job	﻿2026-04-18T17:29:40.3437437Z Current runner version: '2.333.1'
+ci-audit	Set up job	2026-04-18T17:29:40.3487778Z ##[group]Runner Image Provisioner
+ci-audit	Set up job	2026-04-18T17:29:40.3488592Z Hosted Compute Agent
+ci-audit	Set up job	2026-04-18T17:29:40.3489071Z Version: 20260213.493
+ci-audit	Set up job	2026-04-18T17:29:40.3489640Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+ci-audit	Set up job	2026-04-18T17:29:40.3490277Z Build Date: 2026-02-13T00:28:41Z
+ci-audit	Set up job	2026-04-18T17:29:40.3490896Z Worker ID: {a3077b6c-cae0-4cf1-9390-c4e1839e186c}
+ci-audit	Set up job	2026-04-18T17:29:40.3491495Z Azure Region: westcentralus
+ci-audit	Set up job	2026-04-18T17:29:40.3492060Z ##[endgroup]
+ci-audit	Set up job	2026-04-18T17:29:40.3493233Z ##[group]Operating System
+ci-audit	Set up job	2026-04-18T17:29:40.3493784Z Microsoft Windows Server 2025
+ci-audit	Set up job	2026-04-18T17:29:40.3494396Z 10.0.26100
+ci-audit	Set up job	2026-04-18T17:29:40.3494850Z Datacenter
+ci-audit	Set up job	2026-04-18T17:29:40.3495258Z ##[endgroup]
+ci-audit	Set up job	2026-04-18T17:29:40.3495740Z ##[group]Runner Image
+ci-audit	Set up job	2026-04-18T17:29:40.3496284Z Image: windows-2025
+ci-audit	Set up job	2026-04-18T17:29:40.3496750Z Version: 20260413.84.1
+ci-audit	Set up job	2026-04-18T17:29:40.3497714Z Included Software: https://github.com/actions/runner-images/blob/win25/20260413.84/images/windows/Windows2025-Readme.md
+ci-audit	Set up job	2026-04-18T17:29:40.3499631Z Image Release: https://github.com/actions/runner-images/releases/tag/win25%2F20260413.84
+ci-audit	Set up job	2026-04-18T17:29:40.3500501Z ##[endgroup]
+ci-audit	Set up job	2026-04-18T17:29:40.3503100Z ##[group]GITHUB_TOKEN Permissions
+ci-audit	Set up job	2026-04-18T17:29:40.3505010Z Actions: write
+ci-audit	Set up job	2026-04-18T17:29:40.3505981Z ArtifactMetadata: write
+ci-audit	Set up job	2026-04-18T17:29:40.3506624Z Attestations: write
+ci-audit	Set up job	2026-04-18T17:29:40.3507062Z Checks: write
+ci-audit	Set up job	2026-04-18T17:29:40.3507527Z Contents: write
+ci-audit	Set up job	2026-04-18T17:29:40.3508075Z Deployments: write
+ci-audit	Set up job	2026-04-18T17:29:40.3508523Z Discussions: write
+ci-audit	Set up job	2026-04-18T17:29:40.3509056Z Issues: write
+ci-audit	Set up job	2026-04-18T17:29:40.3509467Z Metadata: read
+ci-audit	Set up job	2026-04-18T17:29:40.3509906Z Models: read
+ci-audit	Set up job	2026-04-18T17:29:40.3510324Z Packages: write
+ci-audit	Set up job	2026-04-18T17:29:40.3510792Z Pages: write
+ci-audit	Set up job	2026-04-18T17:29:40.3511356Z PullRequests: write
+ci-audit	Set up job	2026-04-18T17:29:40.3511882Z RepositoryProjects: write
+ci-audit	Set up job	2026-04-18T17:29:40.3512431Z SecurityEvents: write
+ci-audit	Set up job	2026-04-18T17:29:40.3512863Z Statuses: write
+ci-audit	Set up job	2026-04-18T17:29:40.3513431Z ##[endgroup]
+ci-audit	Set up job	2026-04-18T17:29:40.3515480Z Secret source: Actions
+ci-audit	Set up job	2026-04-18T17:29:40.3516094Z Prepare workflow directory
+ci-audit	Set up job	2026-04-18T17:29:40.3912303Z Prepare all required actions
+ci-audit	Set up job	2026-04-18T17:29:40.3950017Z Getting action download info
+ci-audit	Set up job	2026-04-18T17:29:40.7560010Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+ci-audit	Set up job	2026-04-18T17:29:40.8700448Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+ci-audit	Set up job	2026-04-18T17:29:41.0591241Z Download action repository 'peter-evans/create-or-update-comment@v4' (SHA:71345be0265236311c031f5c7866368bd1eff043)
+ci-audit	Set up job	2026-04-18T17:29:41.8554737Z Complete job name: ci-audit
+ci-audit	Checkout	﻿2026-04-18T17:29:41.9775264Z ##[group]Run actions/checkout@v4
+ci-audit	Checkout	2026-04-18T17:29:41.9776502Z with:
+ci-audit	Checkout	2026-04-18T17:29:41.9776930Z   repository: infinityjp-maker/URMS
+ci-audit	Checkout	2026-04-18T17:29:41.9777773Z   token: ***
+ci-audit	Checkout	2026-04-18T17:29:41.9778182Z   ssh-strict: true
+ci-audit	Checkout	2026-04-18T17:29:41.9778634Z   ssh-user: git
+ci-audit	Checkout	2026-04-18T17:29:41.9779063Z   persist-credentials: true
+ci-audit	Checkout	2026-04-18T17:29:41.9779561Z   clean: true
+ci-audit	Checkout	2026-04-18T17:29:41.9780008Z   sparse-checkout-cone-mode: true
+ci-audit	Checkout	2026-04-18T17:29:41.9780573Z   fetch-depth: 1
+ci-audit	Checkout	2026-04-18T17:29:41.9780980Z   fetch-tags: false
+ci-audit	Checkout	2026-04-18T17:29:41.9781427Z   show-progress: true
+ci-audit	Checkout	2026-04-18T17:29:41.9781855Z   lfs: false
+ci-audit	Checkout	2026-04-18T17:29:41.9782246Z   submodules: false
+ci-audit	Checkout	2026-04-18T17:29:41.9782685Z   set-safe-directory: true
+ci-audit	Checkout	2026-04-18T17:29:41.9783382Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:42.1457205Z Syncing repository: infinityjp-maker/URMS
+ci-audit	Checkout	2026-04-18T17:29:42.1459257Z ##[group]Getting Git version info
+ci-audit	Checkout	2026-04-18T17:29:42.1459909Z Working directory is 'D:\a\URMS\URMS'
+ci-audit	Checkout	2026-04-18T17:29:42.2105643Z [command]"C:\Program Files\Git\bin\git.exe" version
+ci-audit	Checkout	2026-04-18T17:29:42.3413559Z git version 2.53.0.windows.2
+ci-audit	Checkout	2026-04-18T17:29:42.3478812Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:42.3502352Z Temporarily overriding HOME='D:\a\_temp\00b1b0a6-2095-42f7-8034-6bbc91cc2aef' before making global git config changes
+ci-audit	Checkout	2026-04-18T17:29:42.3506198Z Adding repository directory to the temporary git global config as a safe directory
+ci-audit	Checkout	2026-04-18T17:29:42.3516038Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\URMS\URMS
+ci-audit	Checkout	2026-04-18T17:29:42.3868939Z Deleting the contents of 'D:\a\URMS\URMS'
+ci-audit	Checkout	2026-04-18T17:29:42.3878044Z ##[group]Initializing the repository
+ci-audit	Checkout	2026-04-18T17:29:42.3892214Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\URMS\URMS
+ci-audit	Checkout	2026-04-18T17:29:42.4336835Z Initialized empty Git repository in D:/a/URMS/URMS/.git/
+ci-audit	Checkout	2026-04-18T17:29:42.4406978Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/infinityjp-maker/URMS
+ci-audit	Checkout	2026-04-18T17:29:42.4778497Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:42.4779492Z ##[group]Disabling automatic garbage collection
+ci-audit	Checkout	2026-04-18T17:29:42.4788065Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+ci-audit	Checkout	2026-04-18T17:29:42.5093992Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:42.5094861Z ##[group]Setting up auth
+ci-audit	Checkout	2026-04-18T17:29:42.5114236Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+ci-audit	Checkout	2026-04-18T17:29:42.5413928Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+ci-audit	Checkout	2026-04-18T17:29:43.3709876Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+ci-audit	Checkout	2026-04-18T17:29:43.4010857Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+ci-audit	Checkout	2026-04-18T17:29:43.9588747Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+ci-audit	Checkout	2026-04-18T17:29:43.9917986Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+ci-audit	Checkout	2026-04-18T17:29:44.5778688Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+ci-audit	Checkout	2026-04-18T17:29:44.6075929Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:44.6076624Z ##[group]Fetching the repository
+ci-audit	Checkout	2026-04-18T17:29:44.6088951Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +a9bdf75766a8bd066fd41c587ac522eb3393745f:refs/remotes/pull/108/merge
+ci-audit	Checkout	2026-04-18T17:29:45.9791139Z From https://github.com/infinityjp-maker/URMS
+ci-audit	Checkout	2026-04-18T17:29:45.9792022Z  * [new ref]         a9bdf75766a8bd066fd41c587ac522eb3393745f -> pull/108/merge
+ci-audit	Checkout	2026-04-18T17:29:46.0031385Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:46.0031845Z ##[group]Determining the checkout info
+ci-audit	Checkout	2026-04-18T17:29:46.0034291Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:46.0050141Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+ci-audit	Checkout	2026-04-18T17:29:46.0444548Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+ci-audit	Checkout	2026-04-18T17:29:46.0744872Z ##[group]Checking out the ref
+ci-audit	Checkout	2026-04-18T17:29:46.0755271Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/108/merge
+ci-audit	Checkout	2026-04-18T17:29:46.5714562Z Note: switching to 'refs/remotes/pull/108/merge'.
+ci-audit	Checkout	2026-04-18T17:29:46.5715459Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5716313Z You are in 'detached HEAD' state. You can look around, make experimental
+ci-audit	Checkout	2026-04-18T17:29:46.5716866Z changes and commit them, and you can discard any commits you make in this
+ci-audit	Checkout	2026-04-18T17:29:46.5717311Z state without impacting any branches by switching back to a branch.
+ci-audit	Checkout	2026-04-18T17:29:46.5717650Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5717847Z If you want to create a new branch to retain commits you create, you may
+ci-audit	Checkout	2026-04-18T17:29:46.5718323Z do so (now or later) by using -c with the switch command. Example:
+ci-audit	Checkout	2026-04-18T17:29:46.5719594Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5719698Z   git switch -c <new-branch-name>
+ci-audit	Checkout	2026-04-18T17:29:46.5719908Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5720038Z Or undo this operation with:
+ci-audit	Checkout	2026-04-18T17:29:46.5720285Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5720414Z   git switch -
+ci-audit	Checkout	2026-04-18T17:29:46.5720603Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5720806Z Turn off this advice by setting config variable advice.detachedHead to false
+ci-audit	Checkout	2026-04-18T17:29:46.5721152Z 
+ci-audit	Checkout	2026-04-18T17:29:46.5721766Z HEAD is now at a9bdf75 Merge 328917a5c86770107d695d0e8ad483bbf9e1ae2a into d83f9c3f066f50f02b7355ef9db1c0e8ee6cdafb
+ci-audit	Checkout	2026-04-18T17:29:46.6146535Z ##[endgroup]
+ci-audit	Checkout	2026-04-18T17:29:46.6155812Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+ci-audit	Checkout	2026-04-18T17:29:46.6430101Z a9bdf75766a8bd066fd41c587ac522eb3393745f
+ci-audit	Run CI PowerShell audit	﻿2026-04-18T17:29:46.6830768Z ##[group]Run pwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\ci-audit-powershell.ps1 2>&1 | Tee-Object -FilePath audit-output.txt
+ci-audit	Run CI PowerShell audit	2026-04-18T17:29:46.6832332Z [36;1mpwsh -NoProfile -ExecutionPolicy Bypass -File .\actions-runner\ci-audit-powershell.ps1 2>&1 | Tee-Object -FilePath audit-output.txt[0m
+ci-audit	Run CI PowerShell audit	2026-04-18T17:29:46.6832984Z [36;1mexit $LASTEXITCODE[0m
+ci-audit	Run CI PowerShell audit	2026-04-18T17:29:46.6927947Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+ci-audit	Run CI PowerShell audit	2026-04-18T17:29:46.6928349Z ##[endgroup]
+ci-audit	Run CI PowerShell audit	2026-04-18T17:29:51.3653316Z No audit violations found.
+ci-audit	Upload audit output artifact	﻿2026-04-18T17:29:51.6345388Z ##[group]Run actions/upload-artifact@v4
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6345745Z with:
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6345932Z   name: ci-audit-output
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6409900Z   path: audit-output.txt
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6410157Z   if-no-files-found: warn
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6410380Z   compression-level: 6
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6410602Z   overwrite: false
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6410795Z   include-hidden-files: false
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.6411003Z ##[endgroup]
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.9502186Z With the provided path, there will be 1 file uploaded
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.9507441Z Artifact name is valid!
+ci-audit	Upload audit output artifact	2026-04-18T17:29:51.9510349Z Root directory input is valid!
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.2341837Z Beginning upload of artifact content to blob storage
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.4698763Z Uploaded bytes 176
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.5289721Z Finished uploading artifact content to blob storage!
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.5292915Z SHA256 digest of uploaded artifact zip is 9bf800a2573cd481bf807913d825ca87979f9d0ec7f5be6fd1e7602d6c2bf37d
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.5295450Z Finalizing artifact upload
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.6897067Z Artifact ci-audit-output.zip successfully finalized. Artifact ID 6512456252
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.6898688Z Artifact ci-audit-output has been successfully uploaded! Final size is 176 bytes. Artifact ID is 6512456252
+ci-audit	Upload audit output artifact	2026-04-18T17:29:52.6917883Z Artifact download URL: https://github.com/infinityjp-maker/URMS/actions/runs/24610025831/artifacts/6512456252
+ci-audit	Post Checkout	﻿2026-04-18T17:29:52.7275277Z Post job cleanup.
+ci-audit	Post Checkout	2026-04-18T17:29:52.9290306Z [command]"C:\Program Files\Git\bin\git.exe" version
+ci-audit	Post Checkout	2026-04-18T17:29:52.9577501Z git version 2.53.0.windows.2
+ci-audit	Post Checkout	2026-04-18T17:29:52.9655099Z Temporarily overriding HOME='D:\a\_temp\37484e33-4575-4e8b-ac4c-adc193d87f8f' before making global git config changes
+ci-audit	Post Checkout	2026-04-18T17:29:52.9656188Z Adding repository directory to the temporary git global config as a safe directory
+ci-audit	Post Checkout	2026-04-18T17:29:52.9671359Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\URMS\URMS
+ci-audit	Post Checkout	2026-04-18T17:29:53.0009182Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+ci-audit	Post Checkout	2026-04-18T17:29:53.0329632Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+ci-audit	Post Checkout	2026-04-18T17:29:53.5955058Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+ci-audit	Post Checkout	2026-04-18T17:29:53.6223366Z http.https://github.com/.extraheader
+ci-audit	Post Checkout	2026-04-18T17:29:53.6265473Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+ci-audit	Post Checkout	2026-04-18T17:29:53.6557864Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+ci-audit	Post Checkout	2026-04-18T17:29:54.1810310Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+ci-audit	Post Checkout	2026-04-18T17:29:54.2102101Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+ci-audit	Complete job	﻿2026-04-18T17:29:54.7577416Z Cleaning up orphan processes
+ci-audit	Complete job	2026-04-18T17:29:54.7618361Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/upload-artifact@v4. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

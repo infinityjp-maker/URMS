@@ -1,0 +1,20 @@
+[2026/04/12 日 23:13:43.39] --------whoami-------- 
+desktop-huu77m6\infin
+[2026/04/12 日 23:13:43.42] --------whoami-------- 
+[2026/04/12 日 23:13:43.43] Waiting for Runner.Listener.exe (109988) to complete 
+Runner.Listener.exe         109988 Console                    1     79,512 K
+[2026/04/12 日 23:13:44.22] Process 109988 still running, check again after 1 second. 
+[2026/04/12 日 23:13:46.05] Process 109988 finished running 
+[2026/04/12 日 23:13:46.05] Sleep 1 more second to make sure process exited 
+[2026/04/12 日 23:13:47.08] Re-organize folders 
+[2026/04/12 日 23:13:47.12] move "D:\GitHub\URMS\actions-runner\bin" "D:\GitHub\URMS\actions-runner\bin.2.310.2" 
+        1 個のディレクトリを移動しました。
+[2026/04/12 日 23:13:47.15] move "D:\GitHub\URMS\actions-runner\externals" "D:\GitHub\URMS\actions-runner\externals.2.310.2" 
+        1 個のディレクトリを移動しました。
+[2026/04/12 日 23:13:47.16] Create junction bin folder 
+D:\GitHub\URMS\actions-runner\bin <<===>> D:\GitHub\URMS\actions-runner\bin.2.333.1 のジャンクションが作成されました
+[2026/04/12 日 23:13:47.17] Create junction externals folder 
+D:\GitHub\URMS\actions-runner\externals <<===>> D:\GitHub\URMS\actions-runner\externals.2.333.1 のジャンクションが作成されました
+[2026/04/12 日 23:13:47.19] Update succeed 
+[2026/04/12 日 23:13:47.20] update.finished file creation succeed 
+[2026/04/12 日 23:13:47.20] Rename "D:\GitHub\URMS\actions-runner\_diag\SelfUpdate-20260412-141343.log" to be "D:\GitHub\URMS\actions-runner\_diag\SelfUpdate-20260412-141343.log.succeed" 

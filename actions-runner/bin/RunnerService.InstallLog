@@ -1,0 +1,13 @@
+﻿アセンブリ 'D:\GitHub\URMS\actions-runner\bin\RunnerService.exe' をインストールしています。
+該当するパラメーター:
+   logtoconsole = 
+   assemblypath = D:\GitHub\URMS\actions-runner\bin\RunnerService.exe
+   logfile = D:\GitHub\URMS\actions-runner\bin\RunnerService.InstallLog
+RunInstallerAttribute.Yes を含むパブリック インストーラーが D:\GitHub\URMS\actions-runner\bin\RunnerService.exe アセンブリで見つかりませんでした。
+アセンブリ 'D:\GitHub\URMS\actions-runner\bin\RunnerService.exe' をコミットしています。
+該当するパラメーター:
+   logtoconsole = 
+   assemblypath = D:\GitHub\URMS\actions-runner\bin\RunnerService.exe
+   logfile = D:\GitHub\URMS\actions-runner\bin\RunnerService.InstallLog
+RunInstallerAttribute.Yes を含むパブリック インストーラーが D:\GitHub\URMS\actions-runner\bin\RunnerService.exe アセンブリで見つかりませんでした。
+インストーラーが存在しないため、InstallState ファイルを削除します。

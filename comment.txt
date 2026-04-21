@@ -1,0 +1,15 @@
+発生場所 行:1 文字:20
++ Test Final Summary\)) | .body
++                    ~
+式またはステートメントのトークン ')' を使用できません。
+発生場所 行:1 文字:21
++ Test Final Summary\)) | .body
++                     ~
+式またはステートメントのトークン ')' を使用できません。
+発生場所 行:1 文字:23
++ Test Final Summary\)) | .body
++                       ~
+空のパイプ要素は許可されていません。
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

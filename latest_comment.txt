@@ -1,0 +1,29 @@
+## CI Audit & PowerShell Test Final Summary
+
+![FAIL](https://img.shields.io/badge/Audit-FAIL-red)
+
+**Audit**
+- (<no audit output>)
+
+![PASS](https://img.shields.io/badge/Tests-PASS-brightgreen)
+
+**Tests**
+- Status: PASS
+
+**Artifact**
+- https://github.com/infinityjp-maker/URMS/actions/runs/24622752787/artifacts
+
+**Results**
+
+| Test | Result |
+|---|---|
+|(<no tests run>)| - |
+
+<details><summary>test-run-output.txt (first 20 lines)</summary>
+
+`
+(<no test output>)
+`
+
+</details>
+

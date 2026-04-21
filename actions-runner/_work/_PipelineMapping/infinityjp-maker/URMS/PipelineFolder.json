@@ -1,0 +1,12 @@
+﻿{
+  "repositoryName": "infinityjp-maker/URMS",
+  "pipelineDirectory": "URMS",
+  "workspaceDirectory": "URMS\\URMS",
+  "repositories": {
+    "infinityjp-maker/URMS": {
+      "repositoryPath": "URMS\\URMS",
+      "lastRunOn": "04/12/2026 23:13:59 +09:00"
+    }
+  },
+  "lastRunOn": "04/12/2026 23:25:57 +09:00"
+}

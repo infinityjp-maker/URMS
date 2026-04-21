@@ -1,0 +1,1 @@
+auto-fix-test-failures.ps1:(36): Missing try/catch around I/O or conversion: git commit -m "chore(tests): make Save-TestResult robust to ConvertTo-Json failures" || Write-Output "No commit needed"

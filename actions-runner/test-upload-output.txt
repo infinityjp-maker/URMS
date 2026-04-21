@@ -1,0 +1,28 @@
+test_upload.zip
+Running uploader (ok+delete) against queued zip...
+DEBUG: parsed.ok=True parsed.delete=True ZipPath=D:\GitHub\URMS\actions-runner\retry-queue\test_upload.zip
+[33;1mWARNING: upload-runner-logs: schema checker failed (outer); treating response as schema-invalid[0m
+Index before:
+{"files":["test_upload.zip"],"updated":"2026-04-19T01:44:28.5118039+09:00","count":1,"deleted_count":0}
+Index after:
+{"files":[],"updated":"2026-04-19T01:44:28.6067696+09:00","count":0,"deleted_count":1}
+OK: queued zip deleted and index updated (ok+delete)
+OK: queued zip deleted and index updated (ok+delete)
+Running uploader (ok+delete=false) against queued zip...
+DEBUG: parsed.ok=True parsed.delete=False ZipPath=D:\GitHub\URMS\actions-runner\retry-queue\test_upload.zip
+Index before:
+{"files":["test_upload.zip"],"updated":"2026-04-19T01:44:28.6342876+09:00","count":1,"deleted_count":0}
+Index after:
+{"files":["test_upload.zip"],"updated":"2026-04-19T01:44:28.6342876+09:00","count":1,"deleted_count":0}
+OK: queued zip retained (ok+delete=false)
+OK: queued zip retained (ok+delete=false)
+Running uploader (invalid schema) against queued zip...
+DEBUG: parsed.ok= parsed.delete= ZipPath=D:\GitHub\URMS\actions-runner\retry-queue\test_upload.zip
+Index before:
+{"files":["test_upload.zip"],"updated":"2026-04-19T01:44:28.6842096+09:00","count":1,"deleted_count":0}
+Index after:
+{"files":["test_upload.zip"],"updated":"2026-04-19T01:44:28.6842096+09:00","count":1,"deleted_count":0}
+OK: schema invalid -> file retained and index unchanged
+OK: schema invalid -> file retained and index unchanged
+False
+test-upload-runner-logs completed.

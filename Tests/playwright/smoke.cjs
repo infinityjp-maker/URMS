@@ -19,8 +19,9 @@ const SCREENSHOT_ATTEMPTS = FAST_SMOKE ? 1 : 3;
 const PRE_CAPTURE_MAX = FAST_SMOKE ? 1 : 3;
 const CDP_BACKOFF_BASE = FAST_SMOKE ? 500 : 1500;
 const GOTO_WAIT_BASE = FAST_SMOKE ? 200 : 500;
-const SCREEN_DIR = 'screenshots';
-const DIAG_DIR = 'builds/diagnostics';
+// Allow CI to override screenshot directory via env; default to CI-friendly path
+const SCREEN_DIR = process.env.SCREEN_DIR || 'builds/screenshots';
+const DIAG_DIR = process.env.DIAG_DIR || 'builds/diagnostics';
 
 // Basic helpers
 function ensureDirSync(p) { try { fs.mkdirSync(p, { recursive: true }); } catch (e) { throw e; } }
@@ -176,7 +177,7 @@ async function waitForStableHeight(page, duration = 500) {
         browser = await chromium.launch({ args });
       } catch (e) { pushInternalError(internalErrors, 'BROWSER_LAUNCH_ERROR: ' + String(e && e.message)); pushInternalError(internalErrors, 'BROWSER_LAUNCH_STACK: ' + ((e && e.stack) || '').slice(0,2000)); throw e; }
     }
-    }
+// //     }
 
     const VIEWPORT = { width: CLIP.width, height: CLIP.height };
     const DSF = process.env.DSF ? Number(process.env.DSF) : 1;

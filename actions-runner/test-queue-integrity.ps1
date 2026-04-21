@@ -1,0 +1,50 @@
+<#
+test-queue-integrity.ps1
+- Verify `retry-queue/index.json` structure: fields `count` (int), `deleted_count` (int), `files` (array)
+- If broken, attempt minimal repair: rebuild `files` from directory listing and preserve `deleted_count` when possible
+#>
+param()
+
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$qd = Join-Path $scriptDir 'retry-queue'
+$idxPath = Join-Path $qd 'index.json'
+
+function Repair-Index(){
+    Write-Output 'Attempting minimal repair of index.json'
+    $items = @()
+    if (Test-Path $qd) { $items = Get-ChildItem -Path $qd -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -eq '.zip' } | Select-Object -ExpandProperty Name }
+    $deleted = 0
+    if (Test-Path $idxPath) {
+        try { $old = Get-Content $idxPath -Raw | ConvertFrom-Json -ErrorAction SilentlyContinue; if ($old -and $old.deleted_count) { $deleted = [int]$old.deleted_count } } catch { Write-Warning "test-queue-integrity: failed reading old index: $($_.Exception.Message)" }
+    }
+    $new = @{ count = ($items | Measure-Object).Count; files = $items; deleted_count = $deleted; updated = (Get-Date).ToString('o') }
+    $new | ConvertTo-Json -Compress | Out-File -FilePath $idxPath -Encoding utf8 -Force
+    Write-Output 'Repair complete. New index:'; Write-Output ($new | ConvertTo-Json -Compress)
+}
+
+if (-not (Test-Path $idxPath)) { Write-Output 'index.json missing; creating from directory listing'; Repair-Index; if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null } ; $trDir = Join-Path $scriptDir 'test-results'; $r = @{ name='test-queue-integrity'; pass=$true; repaired=$true; time=(Get-Date).ToString('o') }; ($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force; exit 0 }
+
+try {
+    $idx = Get-Content $idxPath -Raw | ConvertFrom-Json -ErrorAction Stop
+} catch {
+    Write-Output 'index.json is invalid JSON'; Repair-Index; if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null } ; $trDir = Join-Path $scriptDir 'test-results'; $r = @{ name='test-queue-integrity'; pass=$true; repaired=$true; time=(Get-Date).ToString('o') }; ($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force; exit 0
+}
+
+$errs = @()
+if (-not $idx.PSObject.Properties.Name -contains 'count') { $errs += 'missing_count' }
+if (-not $idx.PSObject.Properties.Name -contains 'deleted_count') { $errs += 'missing_deleted_count' }
+if (-not $idx.PSObject.Properties.Name -contains 'files') { $errs += 'missing_files' }
+if ($errs.Count -gt 0) { Write-Output "index.json structure errors: $($errs -join ',')"; Repair-Index; if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null } ; $trDir = Join-Path $scriptDir 'test-results'; $r = @{ name='test-queue-integrity'; pass=$false; repaired=$true; errors=$errs; time=(Get-Date).ToString('o') }; ($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force; exit 0 }
+
+if (-not ($idx.count -is [int])) { Write-Output 'count is not integer; repairing'; Repair-Index; if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null } ; $trDir = Join-Path $scriptDir 'test-results'; $r = @{ name='test-queue-integrity'; pass=$true; repaired=$true; time=(Get-Date).ToString('o') }; ($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force; exit 0 }
+if (-not ($idx.deleted_count -is [int])) { Write-Output 'deleted_count is not integer; repairing'; Repair-Index; if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null } ; $trDir = Join-Path $scriptDir 'test-results'; $r = @{ name='test-queue-integrity'; pass=$true; repaired=$true; time=(Get-Date).ToString('o') }; ($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force; exit 0 }
+if (-not ($idx.files -is [System.Object[]])) { Write-Output 'files is not array; repairing'; Repair-Index; if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null } ; $trDir = Join-Path $scriptDir 'test-results'; $r = @{ name='test-queue-integrity'; pass=$true; repaired=$true; time=(Get-Date).ToString('o') }; ($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force; exit 0 }
+
+Write-Output 'index.json integrity OK'
+if (-not (Test-Path (Join-Path $scriptDir 'test-results'))) { New-Item -Path (Join-Path $scriptDir 'test-results') -ItemType Directory | Out-Null }
+$trDir = Join-Path $scriptDir 'test-results'
+$r = @{ name='test-queue-integrity'; pass=$true; repaired=$false; time=(Get-Date).ToString('o') }
+($r|ConvertTo-Json -Compress) | Out-File -FilePath (Join-Path $trDir 'test-queue-integrity.json') -Encoding utf8 -Force
+return 
+
+

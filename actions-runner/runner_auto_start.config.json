@@ -1,0 +1,6 @@
+{
+  "maxRestartAttempts": 5,
+  "initialBackoffSeconds": 2,
+  "maxBackoffSeconds": 600,
+  "cacheTTLSeconds": 15
+}

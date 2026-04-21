@@ -1,0 +1,23 @@
+name: Runner Health Report
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 2 * * *' # daily at 02:00 UTC
+
+jobs:
+  monitor:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run monitor script
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File actions-runner/monitor-runner-health.ps1
+      - name: Upload monitor artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-monitor-artifacts
+          path: |
+            actions-runner/monitor.log
+            actions-runner/monitor-latest.json

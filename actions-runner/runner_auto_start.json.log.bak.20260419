@@ -1,0 +1,19 @@
+{"attempt":1,"response":"{\"ok\":true,\"delete\":true}","time":"2026-04-18T23:47:42.8394769+09:00","status":"mocked_response_used","zip":"test_upload.zip","endpoint":"http://mock"}
+{"status":"schema_check_error","zip":"test_upload.zip","reason":"Cannot bind argument to parameter 'Path' because it is null.","time":"2026-04-18T23:47:42.8554073+09:00"}
+{"status":"deleted_from_queue","zip":"test_upload.zip","time":"2026-04-18T23:47:42.8675988+09:00"}
+{"attempt":1,"response":"{\"ok\":true,\"delete\":false}","time":"2026-04-18T23:47:42.9145120+09:00","status":"mocked_response_used","zip":"test_upload.zip","endpoint":"http://mock"}
+{"status":"not_deleted_response_missing_ok_delete","zip":"test_upload.zip","server_response":"{\"ok\":true,\"delete\":false}","time":"2026-04-18T23:47:42.9165593+09:00"}
+{"attempt":1,"response":"INVALID_JSON","time":"2026-04-18T23:47:42.9641027+09:00","status":"mocked_response_used","zip":"test_upload.zip","endpoint":"http://mock"}
+{"status":"not_deleted_response_missing_ok_delete","zip":"test_upload.zip","server_response":"INVALID_JSON","time":"2026-04-18T23:47:42.9711811+09:00"}
+{"errors":["invalid_json"],"valid":false,"timestamp":"2026-04-18T23:47:46.2333454+09:00","message":"schema_check","level":"WARN"}
+{"time":"2026-04-18T23:47:47.5469360+09:00","endpoint":"http://mock","zip":"runner_logs_20260418_234746_exit1.zip","status":"mocked_response_used","attempt":1,"response":"INVALID_JSON"}
+{"endpoint":"http://mock","attempt":1,"zip":"test_upload.zip","time":"2026-04-18T23:50:01.7235792+09:00","status":"mocked_response_used","response":"{\"ok\":true,\"delete\":true}"}
+{"status":"schema_check_error","reason":"Cannot bind argument to parameter 'Path' because it is null.","time":"2026-04-18T23:50:01.7383780+09:00","zip":"test_upload.zip"}
+{"status":"deleted_from_queue","time":"2026-04-18T23:50:01.7501444+09:00","zip":"test_upload.zip"}
+{"endpoint":"http://mock","attempt":1,"zip":"test_upload.zip","time":"2026-04-01T23:50:01.7993115+09:00","status":"mocked_response_used","response":"{\"ok\":true,\"delete\":false}"}
+{"time":"2026-04-01T23:50:01.8019380+09:00","status":"not_deleted_response_missing_ok_delete","server_response":"{\"ok\":true,\"delete\":false}","zip":"test_upload.zip"}
+{"endpoint":"http://mock","attempt":1,"zip":"test_upload.zip","time":"2026-04-01T23:50:01.8498402+09:00","status":"mocked_response_used","response":"INVALID_JSON"}
+{"time":"2026-04-01T23:50:01.8575129+09:00","status":"not_deleted_response_missing_ok_delete","server_response":"INVALID_JSON","zip":"test_upload.zip"}
+{"valid":false,"level":"WARN","timestamp":"2026-04-18T23:50:05.0589506+09:00","message":"schema_check","errors":["invalid_json"]}
+{"zip":"runner_logs_20260418_235005_exit1.zip","time":"2026-04-18T23:50:06.3424679+09:00","attempt":1,"status":"mocked_response_used","endpoint":"http://mock","response":"INVALID_JSON"}
+... (truncated backup content)

@@ -1,0 +1,5 @@
+run-local-tests.ps1:(70): Missing try/catch around I/O or conversion: # add -Depth 5 to ConvertTo-Json calls (simple heuristic)
+run-local-tests.ps1:(75): Missing try/catch around I/O or conversion: Write-Warning "Apply-Minimal-Patch: ConvertTo-Json replacement failed for $scriptPath: $($_.Exception.Message)"
+run-local-tests.ps1:(79): Missing try/catch around I/O or conversion: # add -Encoding utf8 to Out-File calls
+run-local-tests.ps1:(83): Missing try/catch around I/O or conversion: Write-Warning "Apply-Minimal-Patch: Out-File filename replacement failed for $scriptPath: $($_.Exception.Message)"
+run-local-tests.ps1:(90): Missing try/catch around I/O or conversion: Write-Warning "Apply-Minimal-Patch: Out-File encoding append failed for $scriptPath: $($_.Exception.Message)"
