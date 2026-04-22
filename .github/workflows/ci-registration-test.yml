@@ -1,0 +1,14 @@
+name: CI Registration Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-registration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Echo hello
+        run: echo "CI registration test ok"
+        shell: bash
