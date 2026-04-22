@@ -186,7 +186,8 @@ async function waitForStableHeight(page, duration = 500) {
 
     try {
       if (typeof browser.newContext === 'function') {
-        context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light' });
+        // Enable bypassCSP to allow frontend ux-ping to 127.0.0.1 when app CSP is restrictive
+        context = await browser.newContext({ viewport: VIEWPORT, deviceScaleFactor: DSF, colorScheme: 'light', bypassCSP: true });
         try {
           if (context && typeof context.addInitScript === 'function') {
             const ciInitCss = `html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important} *{background-image:none!important;background-color:transparent!important}`;
