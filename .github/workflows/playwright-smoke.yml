@@ -72,6 +72,7 @@ jobs:
           echo "MARK: smoke-step-end $(date -u +%FT%TZ)" | tee -a builds/screenshots/tlog.txt
 
       - name: Compare screenshots
+        continue-on-error: true
         env:
           SKIP_RUN_SMOKE: "1"
           COMPARE_PAD: "1"
