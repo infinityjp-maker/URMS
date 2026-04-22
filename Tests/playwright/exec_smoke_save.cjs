@@ -235,9 +235,10 @@ const finalize = (code, reason) => {
   if (reason && (reason === 'SIGINT' || reason === 'SIGTERM' || reason === 'SIGHUP')) {
     try { process.exit(130); } catch(e) { /* best-effort */ }
   }
-  if (reason === 'SAFETY_TIMEOUT' || reason === 'uncaughtException') {
-    try { process.exit(1); } catch(e) {}
-  }
+  const finalExitCode = (typeof code === 'number')
+    ? code
+    : ((reason === 'SAFETY_TIMEOUT' || reason === 'uncaughtException') ? 1 : 0);
+  try { process.exit(finalExitCode); } catch(e) {}
 };
 
 // wire up signal handlers to ensure logs are flushed on cancellation

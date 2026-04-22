@@ -5,20 +5,21 @@ const { PNG } = require('pngjs');
 const { stabilizePage, CLIP } = require('./stability_helpers.cjs');
 
 // Configuration
-let DEFAULT_WAIT = process.env.DEFAULT_WAIT ? Number(process.env.DEFAULT_WAIT) : 30000; // ms - prefer >= 20000 for GitHub Actions
+let DEFAULT_WAIT = process.env.DEFAULT_WAIT ? Number(process.env.DEFAULT_WAIT) : 5000;
 // FAST_SMOKE overrides to keep local runs quick (set FAST_SMOKE=1 to enable)
 const FAST_SMOKE = process.env.FAST_SMOKE === '1';
 if (FAST_SMOKE) {
-  DEFAULT_WAIT = Math.min(DEFAULT_WAIT, 8000);
+  DEFAULT_WAIT = Math.min(DEFAULT_WAIT, 3000);
 }
 // Tunable retry counts (reduced when FAST_SMOKE)
 const CDP_DISCOVERY_ATTEMPTS = FAST_SMOKE ? 3 : 12;
 const CDP_CONNECT_RETRIES = FAST_SMOKE ? 3 : 8;
-const NETWORKIDLE_TRIES = FAST_SMOKE ? 1 : 3;
-const SCREENSHOT_ATTEMPTS = FAST_SMOKE ? 1 : 3;
-const PRE_CAPTURE_MAX = FAST_SMOKE ? 1 : 3;
+const NETWORKIDLE_TRIES = 1;
+const SCREENSHOT_ATTEMPTS = FAST_SMOKE ? 1 : 2;
+const PRE_CAPTURE_MAX = 1;
 const CDP_BACKOFF_BASE = FAST_SMOKE ? 500 : 1500;
 const GOTO_WAIT_BASE = FAST_SMOKE ? 200 : 500;
+const SMOKE_HARD_TIMEOUT_MS = Number(process.env.SMOKE_HARD_TIMEOUT_MS || 420000);
 // Allow CI to override screenshot directory via env; default to CI-friendly path
 const SCREEN_DIR = process.env.SCREEN_DIR || 'builds/screenshots';
 const DIAG_DIR = process.env.DIAG_DIR || 'builds/diagnostics';
@@ -97,6 +98,15 @@ async function waitForStableHeight(page, duration = 500) {
   const internalErrors = [];
   const networkRequests = [];
   const networkResponses = [];
+  const hardTimeout = setTimeout(() => {
+    try { console.error('MARK: SMOKE_HARD_TIMEOUT triggered'); } catch (e) {}
+    try {
+      ensureDirSync(SCREEN_DIR);
+      fs.writeFileSync(path.join(SCREEN_DIR, 'smoke-hard-timeout.txt'), `timeout_ms=${SMOKE_HARD_TIMEOUT_MS}\n`, 'utf8');
+    } catch (e) {}
+    process.exit(124);
+  }, SMOKE_HARD_TIMEOUT_MS);
+  if (hardTimeout.unref) hardTimeout.unref();
 
   // helper: save HTML + selected diagnostics immediately (used on timeouts/failures)
   async function saveDiagnosticsSnapshot(pageRef, label, errs) {
@@ -315,14 +325,14 @@ async function waitForStableHeight(page, duration = 500) {
       console.log('MARK: before waitForLoadState load');
       await page.waitForLoadState('load', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'waitForLoadState(load): '+String(e && (e.message||e))));
       console.log('MARK: after waitForLoadState load');
-      for (let ni = 0; ni < NETWORKIDLE_TRIES; ni++) { try { await page.waitForLoadState('networkidle', { timeout: 8000 }); break; } catch (e) { pushInternalError(internalErrors, 'waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); try { await saveDiagnosticsSnapshot(page, 'timeout-networkidle', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } await page.waitForTimeout(500); } }
+      for (let ni = 0; ni < NETWORKIDLE_TRIES; ni++) { try { await page.waitForLoadState('networkidle', { timeout: 5000 }); break; } catch (e) { pushInternalError(internalErrors, 'waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); try { await saveDiagnosticsSnapshot(page, 'timeout-networkidle', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } await page.waitForTimeout(500); } }
       await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'fonts.ready: '+String(e && (e.message||e))));
       await page.waitForTimeout(200);
     } catch (e) { pushInternalError(internalErrors, 'PAGE_METRICS_ERROR: '+String(e && (e.message||e))); }
 
     try { console.log('MARK: before stabilizePage'); await stabilizePage(page); console.log('MARK: after stabilizePage'); } catch (e) { pushInternalError(internalErrors, 'stabilizePage: '+String(e && (e.message||e))); }
 
-    try { await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
+    try { await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
     console.log('MARK: after-stabilize networkidle done');
     try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'after-stabilize fonts.ready: '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize fonts.ready outer: '+String(e && (e.message||e))); }
     try { await page.waitForTimeout(200); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(200) after-stabilize failed: '+String(e && (e.message||e))); }
@@ -347,7 +357,7 @@ async function waitForStableHeight(page, duration = 500) {
       const maxAttempts = PRE_CAPTURE_MAX; let applied = false;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-          try { await page.waitForLoadState('networkidle', { timeout: 8000 }); } catch(e){ pushInternalError(internalErrors, 'pre-capture waitForLoadState(networkidle) failed: '+String(e && (e.message||e))); }
+          try { await page.waitForLoadState('networkidle', { timeout: 5000 }); } catch(e){ pushInternalError(internalErrors, 'pre-capture waitForLoadState(networkidle) failed: '+String(e && (e.message||e))); }
           await page.evaluate(() => {
             try {
               const id = 'ci-pre-capture-override';
@@ -379,12 +389,12 @@ async function waitForStableHeight(page, duration = 500) {
     try {
       // DOM marker (short timeout: ux-ping is optional, don't block for 30s)
       console.log('MARK: before waitForSelector ux-ping');
-      try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 8000 }); domMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForSelector [data-ux-ping]: '+String(e && (e.stack || e.message || e))); try { await saveDiagnosticsSnapshot(page, 'timeout-ux-ping', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } }
+      try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 5000 }); domMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForSelector [data-ux-ping]: '+String(e && (e.stack || e.message || e))); try { await saveDiagnosticsSnapshot(page, 'timeout-ux-ping', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } }
       console.log('MARK: after waitForSelector ux-ping domMarkerDetected='+domMarkerDetected);
 
       // console marker (short timeout: optional)
       console.log('MARK: before waitForEvent console ux-ping-ok');
-      try { await page.waitForEvent('console', { timeout: 8000, predicate: msg => { try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; } } }); consoleMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForEvent(console [ux-ping-ok]): '+String(e && (e.stack || e.message || e))); }
+      try { await page.waitForEvent('console', { timeout: 5000, predicate: msg => { try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; } } }); consoleMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForEvent(console [ux-ping-ok]): '+String(e && (e.stack || e.message || e))); }
       console.log('MARK: after waitForEvent console ux-ping-ok consoleMarkerDetected='+consoleMarkerDetected);
 
       // window marker
@@ -400,10 +410,10 @@ async function waitForStableHeight(page, duration = 500) {
     const enforceClip = (process.env.ENFORCE_CLIP === '0') ? false : true;
     try {
       try { await page.setViewportSize(VIEWPORT); } catch (e) { pushInternalError(internalErrors, 'setViewportSize before capture: '+String(e && (e.message||e))); }
-      await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(e => pushInternalError(internalErrors, 'post-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))));
+      await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(e => pushInternalError(internalErrors, 'post-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))));
       console.log('MARK: post-stabilize networkidle done');
       try { await page.waitForTimeout(1000); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(1000) failed: '+String(e && (e.message||e))); }
-      await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: 8000 }).catch(e => pushInternalError(internalErrors, 'waitForSelector .dashboard-grid: '+String(e && (e.message||e))));
+      await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: 5000 }).catch(e => pushInternalError(internalErrors, 'waitForSelector .dashboard-grid: '+String(e && (e.message||e))));
       console.log('MARK: dashboard-grid selector done');
 
       let attempts = 0;
@@ -462,7 +472,7 @@ async function waitForStableHeight(page, duration = 500) {
       for (const p of ports) {
         try {
           const u = `http://127.0.0.1:${p}/ux-ping`;
-          const pj = await fetchJson(u, 20000).catch(e => { pushInternalError(internalErrors, 'ux-ping fetch failed: '+String(e && e.message)); return null; });
+          const pj = await fetchJson(u, 5000).catch(e => { pushInternalError(internalErrors, 'ux-ping fetch failed: '+String(e && e.message)); return null; });
           if (pj && pj.ok) { console.log('UX_PING_OK', p, JSON.stringify(pj)); result.pingPostReceived = true; result.pingPort = p; break; }
         } catch (e) { pushInternalError(internalErrors, 'ux-ping probe failed port '+p+': '+String(e && (e.stack || e.message || e))); }
       }
@@ -502,6 +512,7 @@ async function waitForStableHeight(page, duration = 500) {
     try { fs.writeFileSync(path.join('builds','COMPARE_TARGET_HEIGHT'), String(CLIP.height), 'utf8'); } catch(e) { pushInternalError(internalErrors, 'write COMPARE_TARGET_HEIGHT failed: '+String(e && (e.message||e))); }
 
     console.log(JSON.stringify(result, null, 2));
+    clearTimeout(hardTimeout);
     try { await browser.close(); } catch(e) { pushInternalError(internalErrors, 'browser.close failed: '+String(e && e.message)); }
     process.exitCode = 0; return;
 
@@ -552,6 +563,7 @@ async function waitForStableHeight(page, duration = 500) {
       safeWriteJsonSync(path.join(DIAG_DIR, 'smoke-result.json'), failResult);
       console.log(JSON.stringify(failResult, null, 2));
     } catch (e) { pushInternalError(internalErrors, 'final write failed: '+String(e && (e.message||e))); }
+    clearTimeout(hardTimeout);
     try { await (typeof browser !== 'undefined' && browser ? browser.close() : Promise.resolve()); } catch(e) { pushInternalError(internalErrors, 'browser.close failed after error: '+String(e && e.message)); }
     process.exitCode = 2; return;
   }

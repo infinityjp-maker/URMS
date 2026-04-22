@@ -45,10 +45,14 @@ jobs:
         env:
           FORCE_SYSTEM_UI: "1"
           DISABLE_CDP: "1"
+          FAST_SMOKE: "1"
+          SMOKE_HARD_TIMEOUT_MS: "300000"
           URL: "http://localhost:1420/"
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
-          mkdir -p builds/screenshots
+          set -euo pipefail
+          mkdir -p builds/screenshots builds/diagnostics
+          echo "MARK: smoke-step-start $(date -u +%FT%TZ)" | tee -a builds/screenshots/tlog.txt
           # start ux-ping mock server (repo-local script, no heredoc needed)
           python3 -u Tests/playwright/ux_ping_server.py > /tmp/ux_ping.log 2>&1 &
           # wait up to 20s for both ports
@@ -59,9 +63,13 @@ jobs:
             [ "$ok8765" -eq 1 ] && [ "$ok8877" -eq 1 ] && break
             sleep 1
           done
-          echo "ux-ping health: 8765=$ok8765 8877=$ok8877"
-          cat /tmp/ux_ping.log || true
-          node Tests/playwright/exec_smoke_save.cjs
+          echo "ux-ping health: 8765=$ok8765 8877=$ok8877" | tee -a builds/screenshots/tlog.txt
+          echo "MARK: pre-smoke-stabilize-wait-start $(date -u +%FT%TZ)" | tee -a builds/screenshots/tlog.txt
+          sleep 12
+          echo "MARK: pre-smoke-stabilize-wait-end $(date -u +%FT%TZ)" | tee -a builds/screenshots/tlog.txt
+          cat /tmp/ux_ping.log | tee -a builds/screenshots/tlog.txt || true
+          node Tests/playwright/exec_smoke_save.cjs 2>&1 | tee -a builds/screenshots/tlog.txt
+          echo "MARK: smoke-step-end $(date -u +%FT%TZ)" | tee -a builds/screenshots/tlog.txt
 
       - name: Compare screenshots
         env:
@@ -80,3 +88,4 @@ jobs:
           path: |
             builds/screenshots/**
             builds/diagnostics/**
+            /tmp/ux_ping.log
