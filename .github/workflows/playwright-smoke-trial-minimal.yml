@@ -1,0 +1,26 @@
+name: Playwright Smoke Trial Minimal
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches: [ feat/di-navigation-scaffold ]
+
+jobs:
+  minimal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Echo test
+        run: |
+          echo "playwright smoke trial - minimal"
+          uname -a || true
+          node -v || true

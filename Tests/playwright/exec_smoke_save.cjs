@@ -82,6 +82,23 @@ let firstStderrAt = null;
 
 const hbInterval = setInterval(() => log('heartbeat — child running, pid=', cp.pid), 30000);
 
+// Periodically flush open stdout/stderr file descriptors to disk to reduce buffering
+let flushInterval = null;
+try {
+  flushInterval = setInterval(() => {
+    try {
+      if (stdoutFd !== null) {
+        try { fs.fsyncSync(stdoutFd); } catch (e) {}
+      }
+      if (stderrFd !== null) {
+        try { fs.fsyncSync(stderrFd); } catch (e) {}
+      }
+    } catch (e) {
+      // best-effort
+    }
+  }, 3000);
+} catch (e) {}
+
 cp.stdout.on('data', d => {
   const s = d.toString();
   if (!gotStdout) { gotStdout = true; firstStdoutAt = now(); log('child produced first stdout at', firstStdoutAt); }
@@ -109,6 +126,7 @@ let finalized = false;
 const finalize = (code, reason) => {
   if (finalized) return; finalized = true;
   clearInterval(hbInterval);
+  try { if (flushInterval) { clearInterval(flushInterval); flushInterval = null; } } catch(e){}
   log('finalizing (reason=' + reason + ')', { code: code, pid: cp && cp.pid ? cp.pid : null, gotStdout, gotStderr });
 
   try { fs.mkdirSync('builds/screenshots', { recursive: true }); } catch(e){}

@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": 1776771653797,
+    "url": "blob:http://[::1]:1420/b5a4be38-580f-43db-9209-75bc0fd89b97",
+    "method": "GET",
+    "ts": 1776771652802,
+    "resourceType": "script"
+  }
+]

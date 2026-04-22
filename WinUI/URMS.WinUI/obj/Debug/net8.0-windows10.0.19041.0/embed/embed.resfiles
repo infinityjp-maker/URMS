@@ -1,5 +1,6 @@
 App.xbf
 MainWindow.xbf
+Pages\HomePage.xbf
 Views\Cards\AISummaryCard.xbf
 Views\Cards\AssetManagerCard.xbf
 Views\Cards\CalendarCard.xbf

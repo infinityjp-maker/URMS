@@ -1,0 +1,57 @@
+name: Playwright Smoke Trial Step3
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ feat/di-navigation-scaffold ]
+
+jobs:
+  step3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install Playwright and browsers
+        run: |
+          npm explore playwright -- npm i >/dev/null || true
+          npx playwright install --with-deps
+        shell: bash
+
+      - name: Install NotoJP fonts (minimal)
+        run: |
+          sudo apt-get update -y
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fonts-noto-cjk fonts-noto-color-emoji || true
+        shell: bash
+
+      - name: Build
+        run: npm run build
+        shell: bash
+
+      - name: Serve dist and wait
+        run: |
+          npx http-server dist -p 1420 -c-1 &
+          npx wait-on http://localhost:1420
+        shell: bash
+
+      - name: Health check (wait up to 20s)
+        run: |
+          for i in 1 2 3 4; do
+            if curl -fsS http://localhost:1420/ >/dev/null 2>&1; then
+              echo "service ready"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Service did not become ready within 20s" >&2
+          exit 1
+        shell: bash
+
+      - name: Echo ready
+        run: echo "step3 complete"

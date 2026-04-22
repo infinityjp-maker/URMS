@@ -1,0 +1,9 @@
+<Page
+    x:Class="URMS.WinUI.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:URMS.WinUI.Pages">
+    <Grid Padding="20">
+        <TextBlock x:Name="WelcomeText" Text="Home" FontSize="20" />
+    </Grid>
+</Page>

@@ -32,6 +32,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
+    ,
+    "ignoreDeprecations": true
   },
   "include": ["Source/src"],
   "references": [{ "path": "./tsconfig.node.json" }]

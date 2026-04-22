@@ -1,0 +1,15 @@
+name: Playwright Smoke Registered - Sanity Check
+
+on:
+  push:
+    branches: [ feat/di-navigation-scaffold ]
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Echo
+        run: |
+          echo "sanity check: workflow runs"
+          uname -a || true
