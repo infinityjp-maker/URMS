@@ -507,6 +507,8 @@ async function waitForStableHeight(page, duration = 500) {
     try { safeWriteJsonSync(path.join(DIAG_DIR, 'domSnapshot.json'), domSnapshot || null); } catch(e){ pushInternalError(internalErrors, 'write domSnapshot: '+String(e && (e.message||e))); }
     try { safeWriteJsonSync(path.join(DIAG_DIR, 'smoke-result.json'), result); } catch(e){ pushInternalError(internalErrors, 'write smoke-result.json: '+String(e && (e.message||e))); }
     try { safeWriteJsonSync(path.join(DIAG_DIR, 'smoke-result.full.json'), result); } catch(e){ pushInternalError(internalErrors, 'write smoke-result.full.json: '+String(e && (e.message||e))); }
+    try { safeWriteJsonSync(path.join(SCREEN_DIR, 'smoke-result.json'), result); } catch(e){ pushInternalError(internalErrors, 'write screenshots smoke-result.json: '+String(e && (e.message||e))); }
+    try { safeWriteJsonSync(path.join(SCREEN_DIR, 'smoke-result.full.json'), result); } catch(e){ pushInternalError(internalErrors, 'write screenshots smoke-result.full.json: '+String(e && (e.message||e))); }
 
     // Also write compact markers for existing tooling that expects builds/
     try { fs.writeFileSync(path.join('builds','COMPARE_TARGET_HEIGHT'), String(CLIP.height), 'utf8'); } catch(e) { pushInternalError(internalErrors, 'write COMPARE_TARGET_HEIGHT failed: '+String(e && (e.message||e))); }
@@ -561,6 +563,8 @@ async function waitForStableHeight(page, duration = 500) {
 
       safeWriteJsonSync(path.join(DIAG_DIR, 'smoke-result.full.json'), failResult);
       safeWriteJsonSync(path.join(DIAG_DIR, 'smoke-result.json'), failResult);
+      safeWriteJsonSync(path.join(SCREEN_DIR, 'smoke-result.full.json'), failResult);
+      safeWriteJsonSync(path.join(SCREEN_DIR, 'smoke-result.json'), failResult);
       console.log(JSON.stringify(failResult, null, 2));
     } catch (e) { pushInternalError(internalErrors, 'final write failed: '+String(e && (e.message||e))); }
     clearTimeout(hardTimeout);

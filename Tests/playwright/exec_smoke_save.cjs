@@ -14,6 +14,16 @@ const appendFileSafe = (p, data) => {
 
 // Write JSON safely: try parse, extract last JSON object if needed, otherwise write raw
 const writeJsonSafe = (raw, targetPath = 'builds/screenshots/smoke-result.json') => {
+  try {
+    if (fs.existsSync(targetPath)) {
+      const existing = JSON.parse(fs.readFileSync(targetPath, 'utf8'));
+      if (existing && typeof existing === 'object' && (Object.prototype.hasOwnProperty.call(existing, 'cardCount') || Object.prototype.hasOwnProperty.call(existing, 'success'))) {
+        if (env && env.URL) existing.url = env.URL;
+        fs.writeFileSync(targetPath, JSON.stringify(existing, null, 2), 'utf8');
+        return;
+      }
+    }
+  } catch (e) {}
   const extractLastJson = (s) => {
     const starts = [];
     for (let i = 0; i < s.length; i++) if (s[i] === '{') starts.push(i);

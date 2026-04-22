@@ -75,7 +75,7 @@ jobs:
         env:
           SKIP_RUN_SMOKE: "1"
           COMPARE_PAD: "1"
-          COMPARE_TARGET_HEIGHT: "1236"
+          COMPARE_TARGET_HEIGHT: "1292"
           DISABLE_CDP: "1"
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: npm run smoke:diff

@@ -1,5 +1,5 @@
 // Use baseline height to match existing baseline screenshots
-const CLIP = { x: 0, y: 0, width: 800, height: 1236 };
+const CLIP = { x: 0, y: 0, width: 800, height: 1292 };
 // attempt to embed a bundled woff2 (if available) or fetch a remote fallback
 const { readFileSync, existsSync } = require('fs');
 const { resolve } = require('path');
