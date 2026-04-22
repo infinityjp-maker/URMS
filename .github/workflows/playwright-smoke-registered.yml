@@ -194,19 +194,24 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         sys.exit(0)
 PY
-          nohup python3 ux_ping_server.py > ux_ping.log 2>&1 &
+          python3 -u ux_ping_server.py > ux_ping.log 2>&1 &
           echo "started ux-ping server, pid=$(pgrep -f ux_ping_server.py || true)" || true
-          # perform 3 health checks with 1s interval against both ports
+          # wait up to 15s for both ports to respond before running Playwright
           ok8765=0; ok8877=0
-          for i in 1 2 3; do
+          for i in $(seq 1 15); do
             echo "health-check attempt $i"
-            if curl -fsS http://127.0.0.1:8765/ux-ping -m 1 >/dev/null 2>&1; then ok8765=1; fi
-            if curl -fsS http://127.0.0.1:8877/ux-ping -m 1 >/dev/null 2>&1; then ok8877=1; fi
+            if curl -fsS http://127.0.0.1:8765/ux-ping -m 2 >/dev/null 2>&1; then ok8765=1; fi
+            if curl -fsS http://127.0.0.1:8877/ux-ping -m 2 >/dev/null 2>&1; then ok8877=1; fi
+            if [ "$ok8765" -eq 1 -a "$ok8877" -eq 1 ]; then break; fi
             sleep 1
           done
           echo "ux-ping health: 8765=$ok8765 8877=$ok8877"
           echo "--- ux_ping.log ---" ; tail -n +1 ux_ping.log || true
           echo "--- process list ---" ; ps -ef | grep ux_ping_server.py || true
+          if [ "$ok8765" -ne 1 -o "$ok8877" -ne 1 ]; then
+            echo "ux-ping server did not become ready on required ports" >&2
+            exit 1
+          fi
           # run with a safety timeout to avoid long-running hangs (30m)
           timeout 1800s node Tests/playwright/exec_smoke_save.cjs
         shell: bash
