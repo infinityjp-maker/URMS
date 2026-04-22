@@ -320,7 +320,8 @@ async function waitForStableHeight(page, duration = 500) {
 
     try { console.log('MARK: before stabilizePage'); await stabilizePage(page); console.log('MARK: after stabilizePage'); } catch (e) { pushInternalError(internalErrors, 'stabilizePage: '+String(e && (e.message||e))); }
 
-    try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
+    try { await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(e => pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize waitForLoadState(networkidle) outer: '+String(e && (e.message||e))); }
+    console.log('MARK: after-stabilize networkidle done');
     try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'after-stabilize fonts.ready: '+String(e && (e.message||e)))); } catch(e){ pushInternalError(internalErrors, 'after-stabilize fonts.ready outer: '+String(e && (e.message||e))); }
     try { await page.waitForTimeout(200); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(200) after-stabilize failed: '+String(e && (e.message||e))); }
 
@@ -374,11 +375,15 @@ async function waitForStableHeight(page, duration = 500) {
 
     // Readiness probes: DOM marker, console marker, window marker
     try {
-      // DOM marker
-      try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: DEFAULT_WAIT }); domMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForSelector [data-ux-ping]: '+String(e && (e.stack || e.message || e))); try { await saveDiagnosticsSnapshot(page, 'timeout-ux-ping', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } }
+      // DOM marker (short timeout: ux-ping is optional, don't block for 30s)
+      console.log('MARK: before waitForSelector ux-ping');
+      try { await page.waitForSelector('[data-ux-ping="ok"]', { timeout: 8000 }); domMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForSelector [data-ux-ping]: '+String(e && (e.stack || e.message || e))); try { await saveDiagnosticsSnapshot(page, 'timeout-ux-ping', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } }
+      console.log('MARK: after waitForSelector ux-ping domMarkerDetected='+domMarkerDetected);
 
-      // console marker
-      try { await page.waitForEvent('console', { timeout: DEFAULT_WAIT, predicate: msg => { try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; } } }); consoleMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForEvent(console [ux-ping-ok]): '+String(e && (e.stack || e.message || e))); }
+      // console marker (short timeout: optional)
+      console.log('MARK: before waitForEvent console ux-ping-ok');
+      try { await page.waitForEvent('console', { timeout: 8000, predicate: msg => { try { return (msg && typeof msg.text === 'function' && String(msg.text()).includes('[ux-ping-ok]')); } catch(e) { return false; } } }); consoleMarkerDetected = true; } catch (e) { pushInternalError(internalErrors, 'waitForEvent(console [ux-ping-ok]): '+String(e && (e.stack || e.message || e))); }
+      console.log('MARK: after waitForEvent console ux-ping-ok consoleMarkerDetected='+consoleMarkerDetected);
 
       // window marker
       try { pingOk = await page.evaluate(() => !!(window && (window.__pingOk === true))).catch(e => { pushInternalError(internalErrors, 'probe pingOk eval failed: '+String(e && (e.message||e))); return false; }); } catch(e) { pushInternalError(internalErrors, 'probe pingOk final: '+String(e && (e.stack || e.message || e))); }
