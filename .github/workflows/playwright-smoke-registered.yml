@@ -69,7 +69,6 @@ jobs:
           echo "cache-npm: ${{ steps.cache-npm.outputs.cache-hit }}"
 
       - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: |
           npm ci
         shell: bash
@@ -79,11 +78,9 @@ jobs:
         run: |
           echo "node_modules cache hit; skipping npm ci"
 
-      - name: Install Playwright and browsers (only on cache miss)
-        if: steps.cache-playwright.outputs.cache-hit != 'true'
+      - name: Install Playwright and browsers
         run: |
           npm explore playwright -- npm i >/dev/null || true
-          # install browsers and native deps only when cache miss
           npx playwright install --with-deps
         shell: bash
 
