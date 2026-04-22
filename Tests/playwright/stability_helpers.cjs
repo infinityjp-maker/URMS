@@ -48,11 +48,11 @@ async function stabilizePage(page) {
   try {
     await page.addStyleTag({ content: `
       /* dynamic UI suppression for CI captures */
-      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status], header, footer, .header, .site-header, .app-header, .topbar, .toolbar, .breadcrumbs, .banner, .promo, .dev-banner, .debug-banner { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+      .live-badge, .badge--live, .clock, .time, .now, .status-dot, .pulse, .ticker, .animated, svg.animate, .count, .notification, .toast, .marquee, .count-badge, .kpi-value, .uptime, .live-indicator, .blink, .spinner, .loader, .progress, .progress-bar, .tooltip, .tooltip-inner, .dropdown, .menu, .modal, .popover, .ads, [data-live], [data-updating], [aria-live], [role=progressbar], [role=status], .dev-banner, .debug-banner { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
       /* ensure animations/transitions are disabled globally */
       * { transition: none !important; animation: none !important; }
       /* hide common nav and user chrome that often changes between runs */
-      nav, .nav, .navbar, .user-menu, .account-menu, .clock-widget { visibility: hidden !important; opacity: 0 !important; }
+      .clock-widget { visibility: hidden !important; opacity: 0 !important; }
       /* reduce visual noise from images (replace with neutral background) */
       img, picture, video, iframe { visibility: visible !important; opacity: 1 !important; object-fit: contain !important; filter: grayscale(1) blur(0px) !important; }
       /* prefer stable system UI fonts to avoid webfont variability (include common JP system fonts) */
@@ -161,10 +161,10 @@ async function stabilizePage(page) {
               '::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18) !important; border-radius: 6px !important; }\n' +
               '::-webkit-scrollbar-track { background: transparent !important; }';
               document.documentElement.appendChild(sys);
-              // add an extra normalization style to hide variable chrome and enforce background
+              // keep normalization minimal to avoid visual drift from baseline
               const norm = document.createElement('style');
               norm.setAttribute('data-ci-normalize','1');
-              norm.textContent = `body, html { background: #ffffff !important; color: #222 !important; } header, footer, nav, .site-header, .app-header, .toolbar, .banner, .promo, .debug-banner { display: none !important; }`;
+              norm.textContent = `body, html { background-image: none !important; }`;
               document.documentElement.appendChild(norm);
             try { document.documentElement.style.fontFamily = getComputedStyle(document.documentElement).getPropertyValue('--ci-system-fonts') || 'sans-serif'; } catch(e){}
           } catch(e){}

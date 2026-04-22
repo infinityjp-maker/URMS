@@ -365,7 +365,7 @@ async function waitForStableHeight(page, duration = 500) {
                 const s = document.createElement('style');
                 s.id = id;
                 s.setAttribute('data-ci','1');
-                s.textContent = `html,body,#root{background:#ffffff!important;background-image:none!important;background-color:#ffffff!important;color:#222!important} *, *::before, *::after { transition: none !important; animation: none !important; }`;
+                s.textContent = `*, *::before, *::after { transition: none !important; animation: none !important; }`;
                 (document.head || document.documentElement).insertBefore(s, (document.head && document.head.firstChild));
               }
               void (document.body && document.body.offsetHeight);
