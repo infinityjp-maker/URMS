@@ -49,49 +49,8 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
           mkdir -p builds/screenshots
-          # start ux-ping mock server on ports 8765 and 8877
-          cat > /tmp/ux_ping_server.py <<'PY'
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import json, threading, sys
-
-class H(BaseHTTPRequestHandler):
-    def log_message(self, *a): pass
-    def _cors(self):
-        self.send_header('Access-Control-Allow-Origin','*')
-        self.send_header('Access-Control-Allow-Methods','GET,POST,OPTIONS')
-        self.send_header('Access-Control-Allow-Headers','Content-Type')
-    def _ok(self):
-        d = json.dumps({"ok":True,"port":self.server.server_port}).encode()
-        self.send_response(200); self._cors()
-        self.send_header('Content-Type','application/json'); self.end_headers()
-        try: self.wfile.write(d)
-        except: pass
-    def do_OPTIONS(self):
-        self.send_response(204); self._cors(); self.end_headers()
-    def do_GET(self):
-        if '/ux-ping' in self.path: self._ok()
-        else: self.send_response(404); self.end_headers()
-    def do_POST(self):
-        ln = int(self.headers.get('Content-Length',0))
-        if ln: self.rfile.read(ln)
-        if '/ux-ping' in self.path: self._ok()
-        else: self.send_response(404); self.end_headers()
-
-def serve(port):
-    s = HTTPServer(('127.0.0.1',port),H)
-    print(f'ux-ping ready on {port}',flush=True)
-    s.serve_forever()
-
-if __name__=='__main__':
-    for p in [8765,8877]:
-        threading.Thread(target=serve,args=(p,),daemon=True).start()
-    print('ux-ping servers started',flush=True)
-    import time
-    try:
-        while True: time.sleep(60)
-    except: pass
-PY
-          python3 -u /tmp/ux_ping_server.py > /tmp/ux_ping.log 2>&1 &
+          # start ux-ping mock server (repo-local script, no heredoc needed)
+          python3 -u Tests/playwright/ux_ping_server.py > /tmp/ux_ping.log 2>&1 &
           # wait up to 20s for both ports
           ok8765=0; ok8877=0
           for i in $(seq 1 20); do
