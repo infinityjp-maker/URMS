@@ -48,7 +48,9 @@ async function gotoWithRetry(page, url, attempts = 2, errs) {
   for (let i = 1; i <= attempts; i++) {
     try {
       console.log('GOTO_ATTEMPT', i, url);
-      await page.goto(url, { waitUntil: (FAST_SMOKE ? 'domcontentloaded' : 'networkidle'), timeout: DEFAULT_WAIT });
+      // Always use domcontentloaded in CI to avoid networkidle hang on SPA
+      const waitUntil = FAST_SMOKE ? 'domcontentloaded' : 'domcontentloaded';
+      await page.goto(url, { waitUntil, timeout: DEFAULT_WAIT });
       console.log('GOTO_SUCCESS', i, url);
       return;
     } catch (e) {
@@ -273,7 +275,7 @@ async function waitForStableHeight(page, duration = 500) {
       try { await page.evaluate(() => { try { const html = document.documentElement; if (html && html.className) html.className = html.className.split(/\s+/).filter(c => !/^theme-/.test(c)).join(' '); } catch(e) {} }); } catch(e) { pushInternalError(internalErrors, 'INJECT_REMOVE_THEME_FAILED: '+String(e && e.message)); }
 
       try { await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()); } catch(e) { pushInternalError(internalErrors, 'fonts.ready top: '+String(e && e.message)); }
-      try { await page.waitForFunction(() => { try { const bg = getComputedStyle(document.documentElement).backgroundColor || getComputedStyle(document.body).backgroundColor || ''; return /rgb\(255,\s*255,\s*255\)/.test(bg) || /rgba\(255,\s*255,\s*255,\s*1/.test(bg); } catch(e){ return false; } }, { timeout: DEFAULT_WAIT }); } catch(e) { pushInternalError(internalErrors, 'WAIT_NORMALIZE_FAILED: '+String(e && e.message)); }
+      try { await page.waitForFunction(() => { try { const bg = getComputedStyle(document.documentElement).backgroundColor || getComputedStyle(document.body).backgroundColor || ''; return /rgb\(255,\s*255,\s*255\)/.test(bg) || /rgba\(255,\s*255,\s*255,\s*1/.test(bg); } catch(e){ return false; } }, { timeout: 5000 }); } catch(e) { pushInternalError(internalErrors, 'WAIT_NORMALIZE_FAILED: '+String(e && (e.message||e))); }
 
       try { await page.waitForTimeout(120); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(120) failed: '+String(e && e.message)); }
     } catch(e){ pushInternalError(internalErrors, 'inject noto css top-level: '+String(e && (e.message||e))); }
@@ -313,7 +315,7 @@ async function waitForStableHeight(page, duration = 500) {
       console.log('MARK: before waitForLoadState load');
       await page.waitForLoadState('load', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'waitForLoadState(load): '+String(e && (e.message||e))));
       console.log('MARK: after waitForLoadState load');
-      for (let ni = 0; ni < NETWORKIDLE_TRIES; ni++) { try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }); break; } catch (e) { pushInternalError(internalErrors, 'waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); try { await saveDiagnosticsSnapshot(page, 'timeout-networkidle', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } await page.waitForTimeout(500); } }
+      for (let ni = 0; ni < NETWORKIDLE_TRIES; ni++) { try { await page.waitForLoadState('networkidle', { timeout: 8000 }); break; } catch (e) { pushInternalError(internalErrors, 'waitForLoadState(networkidle) attempt '+ni+': '+String(e && (e.message||e))); try { await saveDiagnosticsSnapshot(page, 'timeout-networkidle', internalErrors); } catch(snapErr){ pushInternalError(internalErrors, 'saveDiagnosticsSnapshot failed: '+String(snapErr && (snapErr.message||snapErr))); } await page.waitForTimeout(500); } }
       await page.evaluate(() => document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).catch(e => pushInternalError(internalErrors, 'fonts.ready: '+String(e && (e.message||e))));
       await page.waitForTimeout(200);
     } catch (e) { pushInternalError(internalErrors, 'PAGE_METRICS_ERROR: '+String(e && (e.message||e))); }
@@ -345,7 +347,7 @@ async function waitForStableHeight(page, duration = 500) {
       const maxAttempts = PRE_CAPTURE_MAX; let applied = false;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-          try { await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }); } catch(e){ pushInternalError(internalErrors, 'pre-capture waitForLoadState(networkidle) failed: '+String(e && (e.message||e))); }
+          try { await page.waitForLoadState('networkidle', { timeout: 8000 }); } catch(e){ pushInternalError(internalErrors, 'pre-capture waitForLoadState(networkidle) failed: '+String(e && (e.message||e))); }
           await page.evaluate(() => {
             try {
               const id = 'ci-pre-capture-override';
@@ -398,9 +400,11 @@ async function waitForStableHeight(page, duration = 500) {
     const enforceClip = (process.env.ENFORCE_CLIP === '0') ? false : true;
     try {
       try { await page.setViewportSize(VIEWPORT); } catch (e) { pushInternalError(internalErrors, 'setViewportSize before capture: '+String(e && (e.message||e))); }
-      await page.waitForLoadState('networkidle', { timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'post-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))));
-      try { await page.waitForTimeout(1500); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(1500) failed: '+String(e && (e.message||e))); }
-      await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: DEFAULT_WAIT }).catch(e => pushInternalError(internalErrors, 'waitForSelector .dashboard-grid: '+String(e && (e.message||e))));
+      await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(e => pushInternalError(internalErrors, 'post-stabilize waitForLoadState(networkidle): '+String(e && (e.message||e))));
+      console.log('MARK: post-stabilize networkidle done');
+      try { await page.waitForTimeout(1000); } catch(e) { pushInternalError(internalErrors, 'waitForTimeout(1000) failed: '+String(e && (e.message||e))); }
+      await page.waitForSelector('.dashboard-grid', { state: 'visible', timeout: 8000 }).catch(e => pushInternalError(internalErrors, 'waitForSelector .dashboard-grid: '+String(e && (e.message||e))));
+      console.log('MARK: dashboard-grid selector done');
 
       let attempts = 0;
       while (attempts < SCREENSHOT_ATTEMPTS) {

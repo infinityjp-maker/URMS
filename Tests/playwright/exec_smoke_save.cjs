@@ -248,3 +248,12 @@ process.on('uncaughtException', (err) => {
 process.on('beforeExit', (code) => finalize(code, 'beforeExit'));
 
 cp.on('close', code => finalize(code, 'close'));
+
+// Safety timeout: kill child after 18 minutes to ensure artifacts are saved
+// before the CI job (40min) times out
+const SAFETY_TIMEOUT_MS = 18 * 60 * 1000;
+const safetyTimer = setTimeout(() => {
+  log('SAFETY_TIMEOUT reached after 18 min, terminating child');
+  finalize(null, 'SAFETY_TIMEOUT');
+}, SAFETY_TIMEOUT_MS);
+if (safetyTimer.unref) safetyTimer.unref();
