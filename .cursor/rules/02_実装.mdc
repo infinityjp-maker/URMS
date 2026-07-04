@@ -1,0 +1,33 @@
+---
+description: URMS実装原則・Developer向け・Git概要
+alwaysApply: false
+---
+
+# 02_実装
+
+> **resource_id:** rule:02-implement
+
+## 原則
+
+- PM + Architect 承認なしに実装しない
+- 最小 diff: 依頼範囲外を変更しない
+- 型安全: `any` 乱用禁止
+- pnpm を使用（npm 禁止）
+
+## 禁止
+
+- 秘密情報のコミット
+- セルフレビューのみで完成宣言
+- 設計書・ADR なしの大規模変更
+
+## Git（概要）
+
+- ブランチ: `main` + feature ブランチ（詳細は git-workflow Skill）
+- コミット: ユーザー明示依頼時のみ
+- smart commit 無効（Workspace 設定）
+
+## 詳細
+
+- Skill: `typescript`, `react`, `fastify`, `prisma`, `git-workflow`
+- 標準: `docs/standards/coding-standard.md`
+- ロール: `docs/ai-team/03_Developer.md`

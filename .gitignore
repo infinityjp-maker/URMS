@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.vite/
+.turbo/
+.cache/
+coverage/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Logs & temp
+*.log
+npm-debug.log*
+pnpm-debug.log*
+tmp/
+.temp/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE (User-local; keep .vscode/ in repo)
+.idea/
+*.swp
+*.swo
+
+# Test / cache
+*.tsbuildinfo
+.eslintcache
+
+# Prisma generated (if custom output path is used later)
+**/node_modules/.prisma/

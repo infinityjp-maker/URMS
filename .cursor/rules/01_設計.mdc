@@ -1,0 +1,32 @@
+---
+description: URMS設計原則・Architect向け・Prisma/PostgreSQL境界
+alwaysApply: false
+---
+
+# 01_設計
+
+> **resource_id:** rule:01-design
+
+## 原則
+
+- 設計先行: 実装前に設計成果物・ADR を用意
+- シンプル優先: 必要になるまで複雑化しない
+- 10年視点: 拡張・変更コストを設計に含める
+
+## Prisma / PostgreSQL 境界
+
+| 領域 | 担当 |
+|------|------|
+| ORM, Migration, schema.prisma | Prisma Skill |
+| SQL, Index, View, MV, Function, Trigger, Tuning, pgvector | PostgreSQL Skill |
+
+## 設計変更
+
+1. ADR 草案作成
+2. PM 承認
+3. KM が `docs/project/decisions/` へ正本化
+
+## 詳細
+
+- Skill: `prisma`, `postgresql`, `fastify`, `markdown-doc`
+- ロール: `docs/ai-team/02_Architect.md`

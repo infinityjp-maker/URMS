@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "MS-CEINTL.vscode-language-pack-ja",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "Prisma.prisma",
+    "editorconfig.editorconfig",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg"
+  ],
+  "unwantedRecommendations": [
+    "github.copilot",
+    "github.copilot-chat"
+  ]
+}

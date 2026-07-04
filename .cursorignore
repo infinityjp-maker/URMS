@@ -1,0 +1,38 @@
+# Dependencies & build output
+node_modules/
+node_modules/.prisma/
+dist/
+build/
+.vite/
+.turbo/
+.cache/
+coverage/
+
+# Lock files (large; not useful for AI context)
+pnpm-lock.yaml
+
+# Minified / source maps
+**/*.map
+**/*.min.js
+
+# Logs & temp
+*.log
+tmp/
+.temp/
+
+# Secrets (never index)
+.env
+.env.*
+!.env.example
+
+# OS & tooling
+.git/
+.DS_Store
+Thumbs.db
+
+# --- Keep indexed (do NOT add below) ---
+# .cursor/rules/
+# .cursor/skills/
+# .cursor/commands/
+# .cursor/context/
+# docs/

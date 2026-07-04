@@ -1,0 +1,32 @@
+---
+description: URMS品質基準・Tester向け・Definition of Done
+alwaysApply: false
+---
+
+# 03_品質
+
+> **resource_id:** rule:03-quality
+
+## Definition of Done
+
+1. PM 承認スコープ内である
+2. Architect 設計に整合
+3. **Tester 合格**
+4. **Reviewer 承認**
+5. 必要なドキュメント更新（Document Writer / KM）
+
+## Tester 原則
+
+- テスト計画 → 実行 → レポート → 合格/不合格判定
+- 不合格時は Developer へ差戻し（PM 経由）
+
+## 品質優先
+
+- 短期速度より長期保守性
+- 非機能要件（性能・セキュリティ）をテスト観点に含める
+
+## 詳細
+
+- Skill: `testing`
+- ロール: `docs/ai-team/05_Tester.md`
+- Command: `/test`
