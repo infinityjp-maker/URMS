@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:backlog  
-> **version:** 1.1  
+> **version:** 1.3  
 > **owner:** PM
 
 ## 凡例
@@ -27,41 +27,56 @@
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
 | B-001 | AI チーム v1.0 構築 | PM | done | Phase 0 |
-| B-001b | Phase 0.5 / 0.6 開発基盤整備 | PM | done | Git / Workspace / VISION |
 | B-002 | 初回 Git コミット | PM | done | v0.1.0-ai-team |
-| B-003 | Phase 1 要求定義 | PM + Architect + DW | done | PM 承認待ち |
-| B-004 | Phase 1 PM レビュー・承認 | PM + User | todo | 完了条件 §11 確認 |
-| B-005 | Phase 2 アーキテクチャ設計 | Architect | todo | Phase 1 承認後 |
+| B-003 | Phase 1 要求定義 | PM + Architect | done | |
+| B-004 | Phase 1 PM レビュー・承認 | PM + User | done | 2026-07-05 |
+| B-005 | Phase 2 アーキテクチャ設計 | Architect | done | Architecture Freeze |
+| B-006 | Phase 2 PM レビュー・承認 | PM + User | done | 2026-07-05 |
+| B-007 | Phase 3 MVP 実装 | Developer | blocked | **PM 最終承認待ち** |
 
 ## Should
 
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
-| B-010 | 認証方式 ADR（IdP 選定） | Architect | todo | R-008 対策、Phase 2 開始前 |
-| B-011 | モノレポ構成 ADR | Architect | todo | Phase 2 |
-| B-012 | Resource リレーション設計 | Architect | todo | MVP 外、Phase 2 |
+| B-010 | IdP 具体選定（OIDC） | Architect | todo | Phase 3 開始前 Must |
+| B-011 | OpenAPI 正本配置 | Developer | todo | Phase 3 |
+| B-012 | Resource リレーション実装 | Developer | todo | MVP 外 |
+| B-014 | AI Manager + Provider Plugin 実装 | Developer | todo | Phase 3、ADR-016 |
 
 ## Could
 
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
-| B-020 | develop Mode 設計 | Architect | todo | Phase 2 以降 |
-| B-021 | pgvector 利用方針 | Architect | todo | Phase 3 |
+| B-020 | develop Mode 実装 | Developer | todo | Phase 3+ |
+| B-021 | pgvector 利用 | Architect | todo | Phase 4 |
+| B-022 | Redis キャッシュ | Developer | todo | Phase 3+ |
 
 ---
 
-## Phase 1 成果物（完了）
+## Phase 2 成果物（完了）
 
 | # | 成果物 | パス |
 |---|--------|------|
-| 1 | 要求仕様書 | [URMS-Requirements-Specification.md](../requirements/URMS-Requirements-Specification.md) |
-| 2 | ユースケース | [use-cases.md](../requirements/use-cases.md) |
-| 3 | システム境界 | [system-boundary.md](../requirements/system-boundary.md) |
-| 4 | Resource 一覧 | [resource-catalog.md](../requirements/resource-catalog.md) |
-| 5 | MVP 定義 | [mvp-definition.md](../requirements/mvp-definition.md) |
-| 6 | 非機能要件 | [non-functional-requirements.md](../requirements/non-functional-requirements.md) |
-| 7 | リスク一覧 | [risk-register.md](../requirements/risk-register.md) |
-| 8 | ADR-002〜005 | [decisions/](./decisions/) |
+| 1 | アーキテクチャ索引 | [architecture/README.md](../architecture/README.md) |
+| 2 | システム全体図 | [01-system-overview.md](../architecture/01-system-overview.md) |
+| 3 | ディレクトリ構成 | [02-directory-structure.md](../architecture/02-directory-structure.md) |
+| 4 | Monorepo | [03-monorepo.md](../architecture/03-monorepo.md) |
+| 5 | API | [04-api-architecture.md](../architecture/04-api-architecture.md) |
+| 6 | Database | [05-database-architecture.md](../architecture/05-database-architecture.md) |
+| 7 | Context Engine | [06-context-engine.md](../architecture/06-context-engine.md) |
+| 8 | Mode System | [07-mode-system.md](../architecture/07-mode-system.md) |
+| 9 | Resource 管理 | [08-resource-management.md](../architecture/08-resource-management.md) |
+| 10 | Plugin | [09-plugin-architecture.md](../architecture/09-plugin-architecture.md) |
+| 11 | 認証・認可 | [10-auth-authorization.md](../architecture/10-auth-authorization.md) |
+| 12 | イベント | [11-event-model.md](../architecture/11-event-model.md) |
+| 13 | キャッシュ | [12-cache-strategy.md](../architecture/12-cache-strategy.md) |
+| 14 | エラー | [13-error-handling.md](../architecture/13-error-handling.md) |
+| 15 | ログ | [14-logging.md](../architecture/14-logging.md) |
+| 16 | テスト | [15-test-architecture.md](../architecture/15-test-architecture.md) |
+| 17 | デプロイ | [16-deploy-architecture.md](../architecture/16-deploy-architecture.md) |
+| 18 | AI 連携 | [17-ai-integration.md](../architecture/17-ai-integration.md) |
+| 19 | ADR-006〜016 | [decisions/](./decisions/) |
+| 20 | AI Provider Architecture | [18-ai-provider-architecture.md](../architecture/18-ai-provider-architecture.md) |
 
 ## 参照
 

@@ -2,8 +2,8 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:resource-catalog  
-> **version:** 1.0  
-> **phase:** 1
+> **version:** 1.2 — Architecture Freeze 反映  
+> **phase:** 1 / 2（AI Resource は ADR-016）
 
 ## 参照
 
@@ -52,7 +52,23 @@ Resource
 | `context` | 現在状態項目 | `context:current-task` | ✅ |
 | `decision` | ADR | `decision:ADR-002` | ✅ |
 
-### 2.3 将来 Resource Type
+### 2.3 AI Resource（ADR-016 — Architecture Freeze）
+
+| resource_type | 説明 | 例 resource_id | Phase |
+|---------------|------|----------------|-------|
+| `ai-provider` | 生成AI Provider | `openai`, `anthropic`, `ollama` | 3 |
+| `ai-model` | Chat / Vision モデル（Provider 非依存） | `gpt-5.5`, `claude-opus` | 3 |
+| `embedding-model` | Embedding 専用（Chat と分離） | `text-embedding-3-large` | 3 |
+| `generated-image` | 画像生成結果 | `img-20260705-001` | 3 |
+| `ai-usage` | AI 利用履歴（Cost） | `usage-20260705-001` | 3 |
+
+- Provider と Model は **別 Resource**。Model は Provider に依存しない独立 Resource
+- API Key は Resource に保存しない（Secret Store + `secretRef`）
+- Capability で利用可否判定（Provider 名では判定しない）
+
+ADR-016 / [18-ai-provider-architecture.md](../architecture/18-ai-provider-architecture.md) 参照。
+
+### 2.4 将来 Resource Type
 
 | resource_type | 説明 | Phase |
 |---------------|------|-------|
@@ -95,6 +111,8 @@ Resource
 | `depends_on` | digital → physical |
 | `owned_by` | physical → human |
 | `governed_by` | resource → decision（ADR） |
+| `provided_by` | ai-model → ai-provider |
+| `generated_from` | generated-image → 親 Resource |
 | `member_of` | role → team |
 
 ---
@@ -104,3 +122,5 @@ Resource
 | 日付 | 変更 |
 |------|------|
 | 2026-07-05 | v1.0 初版 |
+| 2026-07-05 | v1.1 — ai-provider, ai-model 追加（ADR-016） |
+| 2026-07-05 | v1.2 — embedding-model, generated-image, ai-usage（Architecture Freeze） |

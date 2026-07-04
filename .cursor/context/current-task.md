@@ -6,38 +6,16 @@
 
 ## タスク ID
 
-CTX-003
+CTX-005
 
 ## タイトル
 
-Phase 1 — 要件定義完了・PM レビュー
-
-## 担当
-
-PM（統括） / Reviewer / Tester
-
-## 目的
-
-Phase 1 成果物の整合レビューと User 承認取得。
-
-## Definition of Done
-
-- [x] 要求仕様書 8 文書完成
-- [x] ADR-002〜005 作成
-- [x] Knowledge 更新（roadmap, backlog, glossary, architecture-history）
-- [ ] Reviewer: VISION / ADR / SSOT 整合確認
-- [ ] Tester: ドキュメント品質テスト
-- [ ] User 承認
-
-## 参照
-
-- [URMS-Requirements-Specification.md](../../docs/requirements/URMS-Requirements-Specification.md)
-- [decisions/](../../docs/project/decisions/)
+Phase 2 完了 — Phase 3 開始待ち
 
 ## 状態
 
-**PM レビュー・承認待ち**
+**Architecture Freeze 確定 — Phase 3 PM 最終承認待ち**
 
-## 開始
+## 参照
 
-2026-07-05
+- [architecture-history.md](../../docs/project/architecture-history.md) — Freeze 記録
