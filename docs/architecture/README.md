@@ -9,6 +9,7 @@
 
 ## 参照（最上位）
 
+- [00-start-here.md](./00-start-here.md) — **読み方ガイド**
 - [VISION.md](../project/VISION.md)
 - [requirements/](../requirements/)
 - [decisions/](../project/decisions/)

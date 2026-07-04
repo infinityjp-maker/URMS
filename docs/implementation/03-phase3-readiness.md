@@ -12,7 +12,7 @@
 - [mvp-definition.md](../requirements/mvp-definition.md)
 - [01-implementation-contract.md](./01-implementation-contract.md)
 - [02-developer-playbook.md](./02-developer-playbook.md)
-- [04-phase3-master-checklist.md](./04-phase3-master-checklist.md)
+- [06-phase3-master-checklist.md](./06-phase3-master-checklist.md)
 
 ---
 

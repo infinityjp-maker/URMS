@@ -8,17 +8,19 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | Phase 3 Ready |
-| Git（2.5/2.6） | `3e61468` |
-| ソース | 未作成 |
+| 状態 | Phase 3 Sprint S1 完了 |
+| バージョン | 0.2.0 |
+| ソース | Monorepo 初期化済 |
 
 ## ゲート
 
 | 項目 | 状態 |
 |------|------|
-| Phase 2.6 | Accepted |
-| Phase 3 実装 | 未承認 |
+| Monorepo | ✅ |
+| Web 起動 | ✅ |
+| API / DB | S4 / S3 未着手 |
 
 ## リンク
 
-- [implementation/](../../docs/implementation/)
+- [README.md](../../README.md)
+- [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md)

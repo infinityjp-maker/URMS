@@ -2,9 +2,9 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:requirements-spec  
-> **version:** 1.0  
-> **phase:** 1  
-> **status:** review — PM 承認待ち  
+> **version:** 1.1  
+> **phase:** 1 / 3  
+> **status:** Phase 3 要件拡張 — User 承認待ち  
 > **owner:** PM + Document Writer
 
 ## 参照（最上位）
@@ -39,7 +39,9 @@
 | 4 | MVP 定義 | [mvp-definition.md](./mvp-definition.md) |
 | 5 | 非機能要件 | [non-functional-requirements.md](./non-functional-requirements.md) |
 | 6 | リスク一覧 | [risk-register.md](./risk-register.md) |
-| 7 | ADR | [../project/decisions/](../project/decisions/) |
+| 7 | **画面・UI 要件** | [ui-requirements.md](./ui-requirements.md) |
+| 8 | **Phase 3 実装要件** | [phase3-implementation-requirements.md](./phase3-implementation-requirements.md) |
+| 9 | ADR | [../project/decisions/](../project/decisions/) |
 
 ---
 
@@ -108,9 +110,28 @@
 | FR-041 | ADR / Glossary 参照 | Must |
 | FR-042 | architecture-history 連携 | Should |
 
+### 4.6 AI 連携（Phase 3 S7）
+
+| ID | 要求 | 優先度 |
+|----|------|--------|
+| FR-050 | AI Manager 経由の Provider 呼出 | Must（MVP S7） |
+| FR-051 | ai-usage 記録 | Must |
+| FR-052 | Feature Flag による AI 段階有効化 | Must（ADR-019） |
+
 ---
 
-## 5. 制約
+## 5. Phase 3 要件拡張（2026-07-05）
+
+Phase 1 機能要求に加え、実装フェーズ向け詳細は以下を正本とする。
+
+| 文書 | 内容 |
+|------|------|
+| [ui-requirements.md](./ui-requirements.md) | 画面一覧 SCR-01〜09、Mode 連動、遷移 |
+| [phase3-implementation-requirements.md](./phase3-implementation-requirements.md) | Sprint S1〜S10 受入要件 IR-Sx-xx |
+
+---
+
+## 6. 制約
 
 - 技術: React, Fastify, Prisma, PostgreSQL, pnpm（[VISION](../project/VISION.md)）
 - Phase 1: **ソースコード作成禁止**
@@ -119,22 +140,23 @@
 
 ---
 
-## 6. 用語
+## 7. 用語
 
 [../project/glossary.md](../project/glossary.md) を正本とする。
 
 ---
 
-## 7. 承認
+## 8. 承認
 
 | ロール | 状態 | 日付 |
 |--------|------|------|
-| Architect | レビュー済（設計整合） | 2026-07-05 |
-| Reviewer | レビュー済（SSOT/VISION） | 2026-07-05 |
-| PM | **User 承認待ち** | — |
+| Architect | Phase 1 + Phase 3 拡張レビュー済 | 2026-07-05 |
+| Reviewer | Phase 1 レビュー済 | 2026-07-05 |
+| PM | **User 承認待ち（Phase 3 要件拡張含む）** | — |
 
 ## 変更履歴
 
 | 日付 | 変更 |
 |------|------|
+| 2026-07-05 | v1.1 — UI 要件・Phase 3 実装要件・FR-050〜052 |
 | 2026-07-05 | v1.0 初版（Phase 1） |

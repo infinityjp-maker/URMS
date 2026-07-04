@@ -1,0 +1,24 @@
+{
+  "name": "urms",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Unified Resource Management System",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @urms/web dev",
+    "build": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/web build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter @urms/domain test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "eslint": "^9.18.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
+  }
+}

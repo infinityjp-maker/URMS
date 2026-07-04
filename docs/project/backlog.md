@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:backlog  
-> **version:** 1.7  
+> **version:** 2.0  
 > **owner:** PM
 
 ## 凡例
@@ -36,8 +36,17 @@
 | B-006c | Phase 2.5 PM レビュー・承認 | PM + User | done | 2026-07-05 |
 | B-006d | Phase 2.6 Developer Playbook | Architect + PM | done | Accepted |
 | B-006e | Phase 2.6 PM レビュー・Git コミット | PM + User | done | `3e61468` |
-| B-006f | Phase 3 Preparation | PM + Architect | done | Readiness + Checklist |
-| B-007 | Phase 3 MVP 実装 | Developer | blocked | **実装開始承認待ち** |
+| B-006f | Phase 3 Preparation | PM + Architect | done | Phase 3 Ready |
+| B-006g | Phase 2.7 Sprint Planning | PM + Architect | done | ADR-018, 019 |
+| B-006h | Phase 2.7 PM 承認 | PM + User | done | 2026-07-05 |
+| B-006i | Phase 2.8 Quality Gate | PM + Reviewer + Tester | done | ADR-020 |
+| B-006j | Phase 2.8 PM 承認 | PM + User | done | 2026-07-05 |
+| B-006k | Phase 2.9 AI Governance | PM + Architect | done | ADR-021 |
+| B-006l | Phase 2.9 PM 承認 | PM + User | done | 2026-07-05 |
+| B-006m | PM Operations Protocol | PM | done | 09-pm-operations-protocol |
+| B-008 | Phase 3 要件拡張（UI + 実装） | PM + Architect | done | User 承認 2026-07-05 |
+| B-009 | Figma MVP 画面（SCR-01〜09） | User | todo | S5 前 Must · [ui-design-links.md](../requirements/ui-design-links.md) |
+| B-007 | Phase 3 MVP 実装 | Developer | doing | S2 完了 · **S3 次** |
 
 ## Should
 
@@ -97,20 +106,50 @@
 |---|--------|------|
 | 1 | Developer Playbook | [02-developer-playbook.md](../implementation/02-developer-playbook.md) |
 | 2 | Phase 3 Readiness | [03-phase3-readiness.md](../implementation/03-phase3-readiness.md) |
-| 3 | Phase 3 Master Checklist | [04-phase3-master-checklist.md](../implementation/04-phase3-master-checklist.md) |
+| 3 | Phase 3 Master Checklist | [06-phase3-master-checklist.md](../implementation/06-phase3-master-checklist.md) |
 
 **Git:** `3e61468` — Phase 2.5/2.6 本体
 
 ---
 
+## Phase 2.7 成果物（完了）
+
+| # | 成果物 | パス |
+|---|--------|------|
+| 1 | Sprint Planning | [04-sprint-planning.md](../implementation/04-sprint-planning.md) |
+| 2 | Development Roadmap | [05-development-roadmap.md](../implementation/05-development-roadmap.md) |
+| 3 | ADR-018 Versioning | [ADR-018-versioning-policy.md](./decisions/ADR-018-versioning-policy.md) |
+| 4 | ADR-019 Feature Flag | [ADR-019-feature-flag-policy.md](./decisions/ADR-019-feature-flag-policy.md) |
+
+**Git コミット案:** `docs: add Phase 2.7 sprint planning with ADR-018 and ADR-019`
+
+## Phase 2.8 成果物（完了）
+
+| # | 成果物 | パス |
+|---|--------|------|
+| 1 | Quality Gate | [07-quality-gate.md](../implementation/07-quality-gate.md) |
+| 2 | ADR-020 | [ADR-020-quality-gate.md](./decisions/ADR-020-quality-gate.md) |
+
+**Git コミット案:** `docs: add Phase 2.8 Quality Gate and ADR-020`
+
+## Phase 2.9 成果物（完了）
+
+| # | 成果物 | パス |
+|---|--------|------|
+| 1 | AI Development Governance | [08-ai-development-governance.md](../implementation/08-ai-development-governance.md) |
+| 2 | ADR-021 | [ADR-021-ai-development-governance.md](./decisions/ADR-021-ai-development-governance.md) |
+
+**Git コミット案:** `docs: add Phase 2.9 AI Development Governance and ADR-021`
+
 ## Phase 3 Ready（2026-07-05）
 
 | 項目 | 状態 |
 |------|------|
-| 判定 | **Phase 3 Ready** |
-| 実装開始 | **blocked** — User 承認待ち |
-| レビュー | Critical 0 / Major 3 |
-| 未解決 | U-001〜005（[roadmap.md](./roadmap.md)） |
+| 判定 | **Phase 3 実装中** |
+| 実装開始 | **承認済** — User 2026-07-05 |
+| 現在 Sprint | **S3 Database**（S2 完了） |
+| UI SSOT | Figma（[ui-design-links.md](../requirements/ui-design-links.md)） |
+| 未解決 | U-001 IdP, U-003 TanStack Query, U-004 Secret Store |
 
 ## 参照
 

@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:glossary  
-> **version:** 1.7  
+> **version:** 2.0  
 > **owner:** Knowledge Manager
 
 ## 運用
@@ -85,6 +85,12 @@ Phase 3 実装前の実装ルール正本。`docs/implementation/01-implementati
 
 実装時の運用ガイド。`docs/implementation/02-developer-playbook.md`。Contract を複製せず、チェックリスト・早見表を提供。ADR-017 運用補助。
 
+## F
+
+### Feature Flag
+
+Runtime で機能を有効/無効化するスイッチ。命名 `ff.{domain}.{feature}`。dev / staging / production でデフォルトを分離。ADR-019 参照。
+
 ## K
 
 ### Knowledge
@@ -157,6 +163,22 @@ Phase 3 実装準備完了判定。実装開始は User 承認待ち。[03-phase
 
 AI Provider API Key 等の秘密情報を保持する暗号化ストア。Resource には `secretRef` のみ保存。ADR-016 参照。
 
+### Semantic Versioning（SemVer）
+
+`MAJOR.MINOR.PATCH` 形式のバージョン規約。Application / Plugin / Schema 等に適用。ADR-018 参照。
+
+### Sprint Planning
+
+Phase 3 MVP を Sprint 1〜10 に分割した実装計画。`docs/implementation/04-sprint-planning.md`。
+
+### Quality Gate
+
+PR・Commit・Review・Test・Release の品質基準。DoR/DoD 正本は Contract。`docs/implementation/07-quality-gate.md`。ADR-020 参照。
+
+### AI Development Governance
+
+AI と人間の共同開発運用（依頼・生成・レビュー・承認）。Phase 3 三本柱の一つ。`docs/implementation/08-ai-development-governance.md`。ADR-021 参照。
+
 ## U
 
 ### URMS
@@ -173,7 +195,7 @@ Phase 3 実装開始判定。`docs/implementation/03-phase3-readiness.md`。
 
 ### Phase 3 Master Checklist
 
-実装進捗チェック。`docs/implementation/04-phase3-master-checklist.md`。
+実装進捗チェック。`docs/implementation/06-phase3-master-checklist.md`。
 
 ---
 

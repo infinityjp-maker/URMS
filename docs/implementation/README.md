@@ -2,39 +2,63 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:implementation-index  
-> **version:** 1.2  
-> **phase:** 2.5 / 2.6 / 3 prep
+> **version:** 1.6  
+> **phase:** 2.5 / 2.6 / 2.7 / 2.8 / 2.9 / 3 ops / 3 prep
 
 ## 目的
 
-Phase 3 実装に関する **契約（SSOT）**、**運用ガイド**、**準備文書** の索引。
+Phase 3 実装に関する **契約（SSOT）**、**品質基準**、**AI ガバナンス**、**運用ガイド**、**計画文書** の索引。
+
+## Phase 3 ガバナンス三本柱
+
+| 柱 | 文書 | 役割 |
+|----|------|------|
+| **Contract** | [01-implementation-contract.md](./01-implementation-contract.md) | 何をどう作るか（SSOT） |
+| **Quality Gate** | [07-quality-gate.md](./07-quality-gate.md) | どう合格するか |
+| **Governance** | [08-ai-development-governance.md](./08-ai-development-governance.md) | AI と人間の協調運用 |
+
+## 参照順序（実装時）
+
+```
+1. VISION → Requirements → Architecture → ADR
+2. Implementation Contract（SSOT）
+3. Quality Gate
+4. AI Development Governance
+5. Sprint Planning → Developer Playbook → Master Checklist
+```
+
+Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 
 ## 文書一覧
 
-| 文書 | パス | 役割 | ADR |
-|------|------|------|-----|
-| Implementation Contract | [01-implementation-contract.md](./01-implementation-contract.md) | **実装契約正本（SSOT）** | ADR-017 |
-| Developer Playbook | [02-developer-playbook.md](./02-developer-playbook.md) | 日常参照・チェックリスト | ADR-017 補助 |
-| Phase 3 Readiness | [03-phase3-readiness.md](./03-phase3-readiness.md) | 実装開始判定 | — |
-| Phase 3 Master Checklist | [04-phase3-master-checklist.md](./04-phase3-master-checklist.md) | 実装進捗チェック | — |
+| # | 文書 | パス | 役割 | ADR |
+|---|------|------|------|-----|
+| 01 | Implementation Contract | [01-implementation-contract.md](./01-implementation-contract.md) | **実装契約 SSOT** | ADR-017 |
+| 02 | Developer Playbook | [02-developer-playbook.md](./02-developer-playbook.md) | 日常参照 | ADR-017 補助 |
+| 03 | Phase 3 Readiness | [03-phase3-readiness.md](./03-phase3-readiness.md) | 開始判定 | — |
+| 04 | Sprint Planning | [04-sprint-planning.md](./04-sprint-planning.md) | Sprint 1〜10 詳細 | ADR-018, 019 |
+| 05 | Development Roadmap | [05-development-roadmap.md](./05-development-roadmap.md) | Phase 3〜5 | ADR-018 |
+| 06 | Master Checklist | [06-phase3-master-checklist.md](./06-phase3-master-checklist.md) | 進捗チェック | — |
+| 07 | Quality Gate | [07-quality-gate.md](./07-quality-gate.md) | PR / Review / Release 基準 | ADR-020 |
+| 08 | AI Development Governance | [08-ai-development-governance.md](./08-ai-development-governance.md) | AI 共同開発運用 | ADR-021 |
+| 09 | PM Operations Protocol | [09-pm-operations-protocol.md](./09-pm-operations-protocol.md) | PM 運用・開発フロー | — |
 
-## 位置づけ
+## ADR（実装関連）
 
-| 層 | 正本 | 運用・準備 |
-|----|------|------------|
-| 哲学 | VISION.md | — |
-| アーキテクチャ | docs/architecture/*（Freeze） | — |
-| 実装契約 | **01-implementation-contract.md** | Playbook, Readiness, Checklist |
-| コーディング標準 | docs/standards/coding-standard.md | Playbook §5 |
+| ADR | 内容 |
+|-----|------|
+| ADR-017 | Implementation Contract |
+| ADR-018 | Versioning Policy |
+| ADR-019 | Feature Flag Policy |
+| ADR-020 | Quality Gate |
+| ADR-021 | AI Development Governance |
 
-**Contract が唯一の実装契約 SSOT。** Playbook は上書きしない。
-
-Architecture / Contract と矛盾 → Architecture + ADR + Contract 優先。
+**Contract が唯一の実装契約 SSOT。** 他文書は補助。
 
 ## 変更履歴
 
 | 日付 | 変更 |
 |------|------|
-| 2026-07-05 | v1.0 — Implementation Contract |
-| 2026-07-05 | v1.1 — Developer Playbook |
-| 2026-07-05 | v1.2 — Phase 3 Readiness + Master Checklist |
+| 2026-07-05 | v1.6 — PM Operations Protocol |
+| 2026-07-05 | v1.5 — AI Development Governance, ADR-021 |
+| 2026-07-05 | v1.4 — Quality Gate, ADR-020 |
