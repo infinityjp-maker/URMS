@@ -41,7 +41,7 @@
 | 2 | ADR-002〜017 整合 | ✅ |
 | 3 | Implementation Contract 確定 | ✅ |
 | 4 | Developer Playbook Accepted | ✅ |
-| 5 | Phase 2.5/2.6 Git コミット | ✅（本 Report 作成時） |
+| 5 | Phase 2.5/2.6 Git コミット | ✅ `3e61468` |
 | 6 | Phase 3 Readiness + Master Checklist | ✅ |
 | 7 | 合同レビュー完了 | ✅ |
 | 8 | **User / PM Phase 3 実装開始承認** | ⏳ **未実施** |

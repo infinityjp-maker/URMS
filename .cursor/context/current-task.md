@@ -6,16 +6,16 @@
 
 ## タスク ID
 
-CTX-007
+CTX-009
 
 ## タイトル
 
-Phase 2.6 完了 — Git コミット承認待ち
+Phase 3 Ready — 停止中
 
 ## 状態
 
-**Developer Playbook 確定 — PM レビュー・コミット承認待ち**
+User Phase3実装開始承認待ち · Developer 実装禁止
 
 ## 参照
 
-- [implementation/](../../docs/implementation/)
+- [backlog.md](../../docs/project/backlog.md) B-007 blocked

@@ -2,45 +2,69 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:roadmap  
-> **version:** 1.5  
+> **version:** 1.7  
 > **owner:** PM（更新） / KM（整合）
 
 ## ビジョン（不変）
 
-長期不変の理念・判断基準は **[VISION.md](./VISION.md)** を正本とする。  
-本 roadmap は **更新可能な計画書** である。
+長期不変の理念・判断基準は **[VISION.md](./VISION.md)** を正本とする。
 
 ## フェーズ概要
 
-| Phase | 名称 | 状態 | 概要 |
-|-------|------|------|------|
-| 0 | AI チーム基盤 | **完了** | Cursor Rules / Commands / Skills / Knowledge 構築 |
-| 0.5 | 開発基盤整備 | **完了** | Git / Editor / Workspace / cursorignore |
-| 0.6 | プロジェクト固定 | **完了** | VISION.md 策定 |
-| 1 | 要件定義 | **完了** | 要求仕様、ユースケース、Resource、MVP、ADR-002〜005 |
-| 2 | アーキテクチャ設計 | **完了 — Architecture Freeze** | 全体設計、API/DB、ADR-006〜016 |
-| 2.5 | Implementation Contract | **完了** | 実装契約、ADR-017 |
-| 2.6 | Developer Playbook | **完了（PM 承認待ち）** | 運用ガイド（Contract 非複製） |
-| 3 | コア実装 | **未着手** | React + Fastify + Prisma + PostgreSQL MVP |
-| 4 | 品質・運用 | 未着手 | テスト、CI/CD、監視 |
-| 5 | 本番・拡張 | 未着手 | デプロイ、AI チーム URMS Resource 化 |
+| Phase | 名称 | 状態 | Git |
+|-------|------|------|-----|
+| 0〜2 | 基盤〜Architecture Freeze | **完了** | `d75c53c` |
+| 2.5 | Implementation Contract | **Accepted** | `3e61468` |
+| 2.6 | Developer Playbook | **Accepted** | `3e61468` |
+| 3 prep | Phase 3 Preparation | **完了 — Phase 3 Ready** | — |
+| 3 | コア実装（MVP） | **未着手** | 実装開始承認待ち |
 
 ## 現在
 
-- **Phase 2.6 完了 — Developer Playbook 確定（PM 承認・Git コミット待ち）**
-- **Phase 3:** PM 最終承認後のみ開始
+- **Phase 2.6 Accepted / Phase 3 Ready** — 設計・契約完了
+- **Commit:** `3e61468`（2.5/2.6）、記録コミット pending
+- **Phase 3 実装:** 未開始（User「Phase3実装開始承認」待ち）
 
-## マイルストーン（予定）
+## 合同レビュー結果（2026-07-05）
 
-| ID | 内容 | 目標 | 状態 |
-|----|------|------|------|
-| M3 | Phase 2 Architecture Freeze | Phase 2 | ✅ 完了 |
-| M3.5 | Implementation Contract | Phase 2.5 | ✅ 完了 |
-| M3.6 | Developer Playbook | Phase 2.6 | ✅ 完了（PM 承認待ち） |
-| M4 | MVP 実装完了 | Phase 3 | 未着手 |
+| 区分 | 件数 | 概要 |
+|------|------|------|
+| Critical | 0 | — |
+| Major | 3 | IdP 未決、実装開始未承認、Secret Store 方式未決 |
+| Minor | 3 | Turbo Optional、AI Provider 段階実装、Rules リンク済 |
+| Suggestion | 3 | Developer.md 更新、OpenAPI 初 PR、IdP 時 ADR |
+
+## 未解決事項（Remaining Issues）
+
+| ID | 項目 | ブロッカー（実装開始） |
+|----|------|------------------------|
+| U-001 | IdP 選定 | No（mock 可） |
+| U-002 | Turbo 導入 | No |
+| U-003 | TanStack Query 確定 | No |
+| U-004 | Secret Store 方式 | No（AI 前 Must） |
+| U-005 | 本番ホスト | No |
+
+## Phase 3 開始条件
+
+| # | 条件 | 状態 |
+|---|------|------|
+| 1 | Architecture Freeze 維持 | ✅ |
+| 2 | ADR-002〜017 整合 | ✅ |
+| 3 | Implementation Contract（唯一 SSOT） | ✅ |
+| 4 | Playbook Accepted（補助） | ✅ |
+| 5 | Phase 3 Ready 判定 | ✅ |
+| 6 | **User Phase 3 実装開始承認** | ⏳ |
+
+## マイルストーン
+
+| ID | 内容 | 状態 |
+|----|------|------|
+| M3.5 | Implementation Contract | ✅ `3e61468` |
+| M3.6 | Developer Playbook Accepted | ✅ `3e61468` |
+| M3.7 | Phase 3 Ready | ✅ |
+| M4 | MVP 実装 | blocked |
 
 ## 参照
 
 - [implementation/](../implementation/)
-- [architecture/](../architecture/)
 - [backlog.md](./backlog.md)

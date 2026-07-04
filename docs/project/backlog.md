@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:backlog  
-> **version:** 1.5  
+> **version:** 1.7  
 > **owner:** PM
 
 ## 凡例
@@ -34,9 +34,10 @@
 | B-006 | Phase 2 PM レビュー・承認 | PM + User | done | 2026-07-05 |
 | B-006b | Phase 2.5 Implementation Contract | Architect | done | ADR-017 |
 | B-006c | Phase 2.5 PM レビュー・承認 | PM + User | done | 2026-07-05 |
-| B-006d | Phase 2.6 Developer Playbook | Architect + PM | done | ADR-017 補助 |
-| B-006e | Phase 2.6 PM レビュー・Git コミット | PM + User | todo | 2.5+2.6 一括可 |
-| B-007 | Phase 3 MVP 実装 | Developer | blocked | Phase 2.6 承認後 |
+| B-006d | Phase 2.6 Developer Playbook | Architect + PM | done | Accepted |
+| B-006e | Phase 2.6 PM レビュー・Git コミット | PM + User | done | `3e61468` |
+| B-006f | Phase 3 Preparation | PM + Architect | done | Readiness + Checklist |
+| B-007 | Phase 3 MVP 実装 | Developer | blocked | **実装開始承認待ち** |
 
 ## Should
 
@@ -95,6 +96,21 @@
 | # | 成果物 | パス |
 |---|--------|------|
 | 1 | Developer Playbook | [02-developer-playbook.md](../implementation/02-developer-playbook.md) |
+| 2 | Phase 3 Readiness | [03-phase3-readiness.md](../implementation/03-phase3-readiness.md) |
+| 3 | Phase 3 Master Checklist | [04-phase3-master-checklist.md](../implementation/04-phase3-master-checklist.md) |
+
+**Git:** `3e61468` — Phase 2.5/2.6 本体
+
+---
+
+## Phase 3 Ready（2026-07-05）
+
+| 項目 | 状態 |
+|------|------|
+| 判定 | **Phase 3 Ready** |
+| 実装開始 | **blocked** — User 承認待ち |
+| レビュー | Critical 0 / Major 3 |
+| 未解決 | U-001〜005（[roadmap.md](./roadmap.md)） |
 
 ## 参照
 
