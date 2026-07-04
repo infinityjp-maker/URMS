@@ -6,37 +6,37 @@
 
 ## タスク ID
 
-CTX-002
+CTX-003
 
 ## タイトル
 
-Phase 0.5 / 0.6 — 開発基盤整備・プロジェクト固定
+Phase 1 — 要件定義完了・PM レビュー
 
 ## 担当
 
-PM（統括）
+PM（統括） / Reviewer / Tester
 
 ## 目的
 
-Git / Editor / Workspace / cursorignore / VISION.md を整備し、初回コミット準備を完了する。
+Phase 1 成果物の整合レビューと User 承認取得。
 
 ## Definition of Done
 
-- [x] .gitignore / .gitattributes
-- [x] .editorconfig / .prettierrc
-- [x] Workspace 更新
-- [x] .cursorignore 最適化
-- [x] VISION.md 作成
-- [ ] 初回 Git コミット（User 承認待ち）
+- [x] 要求仕様書 8 文書完成
+- [x] ADR-002〜005 作成
+- [x] Knowledge 更新（roadmap, backlog, glossary, architecture-history）
+- [ ] Reviewer: VISION / ADR / SSOT 整合確認
+- [ ] Tester: ドキュメント品質テスト
+- [ ] User 承認
 
 ## 参照
 
-- [00_Overview.md](../../docs/ai-team/00_Overview.md)
-- [ADR-001](../../docs/project/decisions/ADR-001-ai-team-v1.md)
+- [URMS-Requirements-Specification.md](../../docs/requirements/URMS-Requirements-Specification.md)
+- [decisions/](../../docs/project/decisions/)
 
 ## 状態
 
-**完了 — 初回コミット承認待ち**
+**PM レビュー・承認待ち**
 
 ## 開始
 

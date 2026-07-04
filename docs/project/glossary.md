@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:glossary  
-> **version:** 1.0  
+> **version:** 1.1  
 > **owner:** Knowledge Manager
 
 ## 運用
@@ -29,6 +29,10 @@ Cursor 上で URMS を協調開発する7ロール（PM, Architect, Developer, R
 
 `.cursor/context/` に置く **現在状態のみ** のスナップショット。PM のみ更新。
 
+### Context Engine
+
+URMS サブシステム。現在フェーズ・タスク・Mode 等の **要約 + SSOT リンク** のみ保持。本文複製禁止。ADR-004 参照。
+
 ### Command
 
 `.cursor/commands/` のスラッシュコマンド。ロール起動の入口。
@@ -38,6 +42,16 @@ Cursor 上で URMS を協調開発する7ロール（PM, Architect, Developer, R
 ### Knowledge
 
 `docs/project/` および `docs/standards/` の長期正本。KM が管理。
+
+## M
+
+### Mode System
+
+URMS の操作文脈切替。MVP: `plan` / `operate` / `audit`。ADR-003 参照。
+
+### MVP
+
+Minimum Viable Product。Phase 2 初回リリース範囲。[mvp-definition.md](../requirements/mvp-definition.md) が正本。
 
 ## P
 
@@ -55,9 +69,17 @@ ORM, Migration, `schema.prisma` を管轄する Skill。
 
 ## R
 
-### Resource（将来）
+### Resource
 
-URMS が管理する資産単位。Team, Role, Rule, Command, Skill, Context, Knowledge, Decision 等。
+URMS が管理する統一資産単位。`resource_type` + `resource_id` で識別。物理・デジタル・人的・知識・AI チーム構成要素を含む。ADR-002 参照。
+
+### resource_id
+
+Resource の一意識別子。形式: `{resource_type}:{name}`（例: `physical:server-001`）。
+
+### resource_type
+
+Resource の種別（例: `physical`, `digital`, `role`, `decision`）。[resource-catalog.md](../requirements/resource-catalog.md) が Type 定義の正本。
 
 ### SSOT（Single Source of Truth）
 
