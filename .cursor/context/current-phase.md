@@ -6,13 +6,13 @@
 
 ## Phase
 
-**Phase 2 — 完了（Architecture Freeze 2026-07-05）**
+**Phase 2.6 — Developer Playbook（完了、PM 承認・Git コミット待ち）**
 
 ## 次フェーズ
 
-**Phase 3 — MVP 実装（PM 最終承認待ち — ソースコード禁止中）**
+Phase 3 — MVP 実装（PM 最終承認後）
 
 ## 参照
 
-- [architecture/](../../docs/architecture/) — frozen
-- [ADR-016](../../docs/project/decisions/ADR-016-ai-provider-abstraction.md)
+- [02-developer-playbook.md](../../docs/implementation/02-developer-playbook.md)
+- [01-implementation-contract.md](../../docs/implementation/01-implementation-contract.md)

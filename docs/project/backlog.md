@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:backlog  
-> **version:** 1.3  
+> **version:** 1.5  
 > **owner:** PM
 
 ## 凡例
@@ -32,7 +32,11 @@
 | B-004 | Phase 1 PM レビュー・承認 | PM + User | done | 2026-07-05 |
 | B-005 | Phase 2 アーキテクチャ設計 | Architect | done | Architecture Freeze |
 | B-006 | Phase 2 PM レビュー・承認 | PM + User | done | 2026-07-05 |
-| B-007 | Phase 3 MVP 実装 | Developer | blocked | **PM 最終承認待ち** |
+| B-006b | Phase 2.5 Implementation Contract | Architect | done | ADR-017 |
+| B-006c | Phase 2.5 PM レビュー・承認 | PM + User | done | 2026-07-05 |
+| B-006d | Phase 2.6 Developer Playbook | Architect + PM | done | ADR-017 補助 |
+| B-006e | Phase 2.6 PM レビュー・Git コミット | PM + User | todo | 2.5+2.6 一括可 |
+| B-007 | Phase 3 MVP 実装 | Developer | blocked | Phase 2.6 承認後 |
 
 ## Should
 
@@ -77,6 +81,20 @@
 | 18 | AI 連携 | [17-ai-integration.md](../architecture/17-ai-integration.md) |
 | 19 | ADR-006〜016 | [decisions/](./decisions/) |
 | 20 | AI Provider Architecture | [18-ai-provider-architecture.md](../architecture/18-ai-provider-architecture.md) |
+
+## Phase 2.5 成果物（完了）
+
+| # | 成果物 | パス |
+|---|--------|------|
+| 1 | Implementation Contract | [01-implementation-contract.md](../implementation/01-implementation-contract.md) |
+| 2 | 索引 | [implementation/README.md](../implementation/README.md) |
+| 3 | ADR-017 | [ADR-017-implementation-contract.md](./decisions/ADR-017-implementation-contract.md) |
+
+## Phase 2.6 成果物（完了）
+
+| # | 成果物 | パス |
+|---|--------|------|
+| 1 | Developer Playbook | [02-developer-playbook.md](../implementation/02-developer-playbook.md) |
 
 ## 参照
 

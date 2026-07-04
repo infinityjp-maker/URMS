@@ -53,6 +53,7 @@ URMS ソースコード（将来）の一貫性を保つ。詳細手順は Skill
 ## 参照
 
 - `.cursor/rules/02_実装.mdc`
+- [01-implementation-contract.md](../implementation/01-implementation-contract.md) — **実装契約（Phase 2.5）**
 - `.cursor/skills/typescript/SKILL.md`
 - `.cursor/skills/git-workflow/SKILL.md`
 - `.vscode/settings.json`

@@ -6,16 +6,16 @@
 
 ## タスク ID
 
-CTX-005
+CTX-007
 
 ## タイトル
 
-Phase 2 完了 — Phase 3 開始待ち
+Phase 2.6 完了 — Git コミット承認待ち
 
 ## 状態
 
-**Architecture Freeze 確定 — Phase 3 PM 最終承認待ち**
+**Developer Playbook 確定 — PM レビュー・コミット承認待ち**
 
 ## 参照
 
-- [architecture-history.md](../../docs/project/architecture-history.md) — Freeze 記録
+- [implementation/](../../docs/implementation/)

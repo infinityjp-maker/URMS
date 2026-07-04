@@ -8,22 +8,22 @@
 
 | 項目 | 状態 |
 |------|------|
-| フェーズ | Phase 2 完了 — Architecture Freeze |
-| ソースコード | **未作成**（Phase 3 承認まで禁止） |
-| Git | Phase 2 コミット予定 |
+| フェーズ | Phase 2.6 完了 — 承認・コミット待ち |
+| 実装文書 | Contract（SSOT）+ Playbook（運用） |
+| ソースコード | **未作成** |
 
 ## 承認状態
 
 | ゲート | 状態 |
 |--------|------|
-| Phase 2 + ADR-016 | ✅ User 承認済み |
-| Phase 3 開始 | ⏳ PM 最終承認待ち |
+| Phase 2.5 Contract | ✅ 承認済み |
+| Phase 2.6 Playbook | ⏳ PM 承認待ち |
+| Phase 3 開始 | ❌ 未承認 |
 
 ## リンク
 
-- [architecture/](../../docs/architecture/)
-- [architecture-history.md](../../docs/project/architecture-history.md)
+- [implementation/](../../docs/implementation/)
 
 ## 更新
 
-- 2026-07-05: Architecture Freeze 確定
+- 2026-07-05: Developer Playbook 完成

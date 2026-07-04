@@ -29,5 +29,7 @@ alwaysApply: false
 ## 詳細
 
 - Skill: `typescript`, `react`, `fastify`, `prisma`, `git-workflow`
+- **契約:** [01-implementation-contract.md](../../docs/implementation/01-implementation-contract.md)
+- **Playbook:** [02-developer-playbook.md](../../docs/implementation/02-developer-playbook.md)
 - 標準: `docs/standards/coding-standard.md`
 - ロール: `docs/ai-team/03_Developer.md`
