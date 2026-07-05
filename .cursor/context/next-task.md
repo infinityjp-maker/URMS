@@ -4,23 +4,20 @@
 > **resource_id:** context:next-task  
 > **owner:** PM のみ更新
 
-## 候補一覧
+## 実装順（User 了承済 — 2026-07-05）
 
-| 優先 | タスク | 担当 | 備考 |
-|------|--------|------|------|
-| 1 | **本番UI v2** — 実データ連携 | Developer | 天気 · 予定 · User Go 待ち |
-| 2 | **S14 Resource リレーション** | Developer | Phase 5 · B-012 |
-| 3 | k6 負荷テスト CI | Developer | S13 残課題 |
+| 順 | タスク | スコープ | 状態 |
+|----|--------|----------|------|
+| 1 | **v2b 簡易予定** | Resource / 簡易イベント → `nextEvents` | 次 |
+| 2 | **S14** | Resource リレーション | v2b 後 |
 
-## Phase 4 Sprint（完了）
+## 将来（別途 Go）
 
-| Sprint | 内容 | Version | 状態 |
-|--------|------|---------|------|
-| S11 | ローカル単一ユーザー | v0.3.0-alpha | ✅ `fa12b69` |
-| S12 | 監視 · ログ集約 | v0.3.0-beta | ✅ `f19143d` |
-| S13 | 性能 · セキュリティ監査 | v0.3.0 | ✅ `42dbb66` |
+- v2c 外部カレンダー
+- k6 負荷テスト CI
+- Secret Store 本番注入
 
 ## 参照
 
-- [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md)
 - [11-phase5-desktop-ui.md](../../docs/implementation/11-phase5-desktop-ui.md)
+- Canvas: `urms-user-vision.canvas.tsx`

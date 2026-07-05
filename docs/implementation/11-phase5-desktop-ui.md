@@ -3,7 +3,7 @@
 > **resource_type:** knowledge  
 > **owner:** PM / Developer  
 > **adr:** ADR-023  
-> **status:** v1 — API `/v1/perception` 連携 · 時間帯モード
+> **status:** v1 完了 · **v2 User 了承（2026-07-05）** — v2a 天気 · v2b 簡易予定
 
 ## 位置づけ
 
@@ -29,6 +29,18 @@
 - [x] 知覚層 UI — 時刻 · 状態 · 天気 · 予定 · まとめ · AI メモ
 - [x] API 連携 v1 — `GET /v1/perception`（Context → 窓）
 - [x] 時間帯モード — 朝/昼/夕/夜で表示項目を切替
+
+## v2 スコープ（User 了承 — 2026-07-05）
+
+| 段階 | 内容 | 状態 |
+|------|------|------|
+| **v2a** | 天気 — Open-Meteo · 1 地点（`URMS_WEATHER_LAT/LON`） | ✅ |
+| **v2b** | 予定 — 既存 Resource / 簡易イベントから表示 | ⏳ 次 |
+| v2c | 外部カレンダー連携 | 将来 · 別途 Go |
+
+**実装:** `@urms/domain` · `OpenMeteoWeatherService` → `GET /v1/perception` · 取得失敗時はフィクスチャへフォールバック。
+
+**S14（Resource リレーション）:** v2b 完了後に着手（設計メモのみ先行可）。
 
 ## 開発コマンド
 

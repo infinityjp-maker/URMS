@@ -6,17 +6,22 @@
 
 ## Task
 
-**Phase 5 — 本番UI v2 · S14 準備**
+**Phase 5 — 本番UI v2b（簡易予定）**
+
+## User 決定
+
+| 日付 | 判断 |
+|------|------|
+| 2026-07-05 | **v2a + v2b で了承** — 天気 → 簡易予定の順 |
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| Phase 4（S11〜S13） | ✅ 完了 · tag `v0.3.0` |
-| 本番UI v0 | ✅ Tauri 窓ダッシュボード |
-| 本番UI v1 | ✅ `/v1/perception` 連携 |
-| 本番UI v2 | ⏳ 天気 · 予定の実データ |
-| S14 Resource リレーション | ⏳ 未着手 |
+| 本番UI v1 | ✅ `/v1/perception` · 時間帯モード |
+| **v2a 天気** | ✅ Open-Meteo · `URMS_WEATHER_*` |
+| **v2b 簡易予定** | ⏳ 次 |
+| S14 Resource リレーション | ⏳ v2b 後 |
 
 ## User
 

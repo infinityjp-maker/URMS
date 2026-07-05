@@ -9,7 +9,11 @@ function findSummary(dashboard: ContextDashboard, key: string): string | undefin
 }
 
 /** Context Dashboard + 時間帯 → 知覚層ペイロード（本番 UI / API 共通） */
-export function buildPerceptionState(dashboard: ContextDashboard, now = new Date()): PerceptionState {
+export function buildPerceptionState(
+  dashboard: ContextDashboard,
+  now = new Date(),
+  weatherOverride?: PerceptionState['weather'],
+): PerceptionState {
   const phase = resolveDayPhase(now);
   const projectStatus = findSummary(dashboard, 'project_status');
   const currentTask = findSummary(dashboard, 'current_task');
@@ -21,7 +25,7 @@ export function buildPerceptionState(dashboard: ContextDashboard, now = new Date
   return {
     phase,
     statusLine: projectStatus ?? statusLineForPhase(phase),
-    weather: PERCEPTION_FIXTURES.weather,
+    weather: weatherOverride ?? PERCEPTION_FIXTURES.weather,
     nextEvents: PERCEPTION_FIXTURES.nextEvents,
     summary: {
       ...PERCEPTION_FIXTURES.summary,

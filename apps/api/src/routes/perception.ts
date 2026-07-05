@@ -9,7 +9,8 @@ export async function registerPerceptionRoutes(
 ): Promise<void> {
   app.get('/v1/perception', async (request) => {
     const dashboard = await services.contextService.getDashboard(request.urmsMode);
-    const state = buildPerceptionState(dashboard);
+    const weather = await services.weatherService.getCurrentWeather();
+    const state = buildPerceptionState(dashboard, new Date(), weather);
     return { data: state };
   });
 }

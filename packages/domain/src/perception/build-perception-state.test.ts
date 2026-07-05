@@ -22,4 +22,21 @@ describe('buildPerceptionState', () => {
     expect(state.aiMemo).toBe('S13 監査');
     expect(state.tasks).toEqual(['S12 監視', 'S13 監査']);
   });
+
+  it('uses weather override when provided', () => {
+    const state = buildPerceptionState(
+      { activeMode: 'operate', items: [] },
+      new Date('2026-07-05T14:00:00'),
+      {
+        tempC: 10,
+        precipitationPct: 5,
+        humidityPct: 40,
+        windKmh: 3,
+        hint: 'テスト',
+      },
+    );
+
+    expect(state.weather.tempC).toBe(10);
+    expect(state.weather.hint).toBe('テスト');
+  });
 });

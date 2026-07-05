@@ -101,6 +101,15 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         },
       })),
     },
+    weatherService: {
+      getCurrentWeather: vi.fn(async () => ({
+        tempC: 18,
+        precipitationPct: 20,
+        humidityPct: 55,
+        windKmh: 6,
+        hint: '穏やかな天気です',
+      })),
+    },
     checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
     ...overrides,
   } as AppServices;
@@ -357,8 +366,9 @@ describe('Perception routes', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    const body = response.json() as { data: { statusLine: string; aiMemo: string } };
+    const body = response.json() as { data: { statusLine: string; aiMemo: string; weather: { tempC: number } } };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
+    expect(body.data.weather.tempC).toBe(18);
 
     await app.close();
   });
