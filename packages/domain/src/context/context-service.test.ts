@@ -82,7 +82,7 @@ describe('ContextService', () => {
 
     expect(dashboard.activeMode).toBe('plan');
     expect(dashboard.items).toHaveLength(6);
-    expect(dashboard.items.find((item) => item.key === 'current_phase')?.summary).toContain('Phase 4');
+    expect(dashboard.items.find((item) => item.key === 'current_phase')?.summary).toContain('Vision Track');
   });
 
   it('denies update outside plan mode', async () => {

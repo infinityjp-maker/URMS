@@ -9,7 +9,8 @@ export default defineConfig({
   server: {
     port: 1420,
     strictPort: true,
-    host: host ?? false,
+    // Windows: host false は IPv6 のみになり localhost(127.0.0.1) から開けない
+    host: host ?? '127.0.0.1',
     hmr: host
       ? {
           protocol: 'ws',

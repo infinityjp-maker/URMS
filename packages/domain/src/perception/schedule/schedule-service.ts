@@ -1,7 +1,6 @@
 import type { PerceptionState, UrmsMode } from '@urms/shared';
 
 import type { ResourceService } from '../../resource/resource-service.js';
-import { PERCEPTION_FIXTURES } from '../fixtures.js';
 import { mapScheduleResourcesToEvents } from './map-schedule-resources.js';
 import { resolveScheduleConfig, SCHEDULE_RESOURCE_TYPE, type ScheduleConfig } from './schedule-config.js';
 
@@ -25,7 +24,7 @@ export class ResourceScheduleService implements ScheduleService {
 
   async getTodayEvents(mode: UrmsMode, now = new Date()): Promise<PerceptionState['nextEvents']> {
     if (!this.config.enabled) {
-      return PERCEPTION_FIXTURES.nextEvents;
+      return [];
     }
 
     try {
@@ -40,7 +39,7 @@ export class ResourceScheduleService implements ScheduleService {
 
       return mapScheduleResourcesToEvents(items, now, this.config.timezone, this.config.limit);
     } catch {
-      return PERCEPTION_FIXTURES.nextEvents;
+      return [];
     }
   }
 }

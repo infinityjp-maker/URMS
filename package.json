@@ -16,6 +16,7 @@
     "perf:spot": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/perf-spot-check.ps1",
     "dev:desktop": "pnpm --filter @urms/desktop dev",
     "dev:desktop:web": "pnpm --filter @urms/desktop dev:web",
+    "dev:ui": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/start-ui.ps1",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @urms/db db:migrate",

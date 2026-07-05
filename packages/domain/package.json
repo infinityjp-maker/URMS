@@ -7,6 +7,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./perception": {
+      "types": "./dist/perception/index.d.ts",
+      "import": "./dist/perception/index.js"
     }
   },
   "scripts": {

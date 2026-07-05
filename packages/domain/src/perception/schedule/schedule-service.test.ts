@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { ResourceEntity } from '@urms/shared';
 
-import { PERCEPTION_FIXTURES } from '../fixtures.js';
 import { createScheduleService } from './schedule-service.js';
 
 const sampleEvent: ResourceEntity = {
@@ -16,13 +15,13 @@ const sampleEvent: ResourceEntity = {
 };
 
 describe('ResourceScheduleService', () => {
-  it('returns fixture events when disabled', async () => {
+  it('returns no events when disabled', async () => {
     const service = createScheduleService({
       resourceService: { list: vi.fn() } as never,
       config: { enabled: false, timezone: 'Asia/Tokyo', limit: 8 },
     });
 
-    await expect(service.getTodayEvents('operate')).resolves.toEqual(PERCEPTION_FIXTURES.nextEvents);
+    await expect(service.getTodayEvents('operate')).resolves.toEqual([]);
   });
 
   it('loads today events from schedule resources', async () => {
@@ -41,7 +40,7 @@ describe('ResourceScheduleService', () => {
     expect(events[0]?.time).toBe('10:00');
   });
 
-  it('falls back to fixtures when list fails', async () => {
+  it('returns no events when list fails', async () => {
     const service = createScheduleService({
       resourceService: {
         list: vi.fn(async () => {
@@ -51,6 +50,6 @@ describe('ResourceScheduleService', () => {
       config: { enabled: true, timezone: 'Asia/Tokyo', limit: 8 },
     });
 
-    await expect(service.getTodayEvents('operate')).resolves.toEqual(PERCEPTION_FIXTURES.nextEvents);
+    await expect(service.getTodayEvents('operate')).resolves.toEqual([]);
   });
 });

@@ -1,9 +1,16 @@
-import { resolveDayPhase } from '@urms/domain';
+import { hasWeatherData, resolveDayPhase, statusLineForPhase } from '@urms/domain/perception';
 import type { PerceptionState } from '@urms/shared';
 
 import { useClock } from '../hooks/useClock.js';
 import { useLifeState } from '../hooks/useLifeState.js';
 import { layoutForPhase } from './phaseLayout.js';
+import {
+  DAY_PHASES,
+  DAY_PHASE_LABELS,
+  parsePreviewPhase,
+  previewPhaseHref,
+  resolveDisplayPhase,
+} from './previewPhase.js';
 
 type Props = {
   state?: PerceptionState;
@@ -17,17 +24,20 @@ function toneClass(tone: 'calm' | 'warm' | 'focus'): string {
 
 function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, loading: boolean): string {
   if (loading) return '接続確認中…';
-  if (!apiOnline) return 'オフライン — モック表示';
-  if (source === 'api') return dbReady ? 'API 接続 · DB 準備完了' : 'API 接続 · DB 未起動';
-  return 'API 応答なし — モック表示';
+  if (source === 'api') return dbReady ? 'API 接続 · SSOT から合成' : 'API 接続 · DB 未起動';
+  if (apiOnline) return 'API 応答なし — Context ローカル';
+  return 'オフライン — Context ローカル';
 }
 
 export function PerceptionDashboard({ state: stateOverride }: Props) {
   const clock = useClock();
   const life = useLifeState();
   const state = stateOverride ?? life.state;
-  const phase = resolveDayPhase();
+  const actualPhase = resolveDayPhase();
+  const previewPhase = parsePreviewPhase();
+  const phase = resolveDisplayPhase(actualPhase);
   const layout = layoutForPhase(phase);
+  const statusLine = previewPhase ? statusLineForPhase(phase) : state.statusLine;
   const events = state.nextEvents.slice(0, layout.maxEvents);
   const syncTime = new Date().toLocaleTimeString('ja-JP', {
     hour: 'numeric',
@@ -42,7 +52,11 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
       <header className="dashboard__header">
         <span className="dashboard__brand">URMS</span>
         <span className="dashboard__header-meta">
-          {stateOverride ? '固定表示' : connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)}
+          {previewPhase ? `プレビュー · ${DAY_PHASE_LABELS[phase]}` : null}
+          {!previewPhase && stateOverride ? '固定表示' : null}
+          {!previewPhase && !stateOverride
+            ? connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)
+            : null}
         </span>
       </header>
 
@@ -52,17 +66,23 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
           <p className="date-line">
             {clock.dateLabel} {clock.weekday}
           </p>
-          <p className="status-line">{state.statusLine}</p>
+          <p className="status-line">{statusLine}</p>
 
           {layout.showWeather ? (
             <div className="glass-card">
               <p className="card-kicker">天気</p>
-              <p className="metric-large">{state.weather.tempC}°C</p>
-              <p className="metric-detail">
-                降水 {state.weather.precipitationPct}% · 湿度 {state.weather.humidityPct}% · 風{' '}
-                {state.weather.windKmh}km/h
-              </p>
-              <p className="hint-line">{state.weather.hint}</p>
+              {hasWeatherData(state.weather) ? (
+                <>
+                  <p className="metric-large">{state.weather.tempC}°C</p>
+                  <p className="metric-detail">
+                    降水 {state.weather.precipitationPct}% · 湿度 {state.weather.humidityPct}% · 風{' '}
+                    {state.weather.windKmh}km/h
+                  </p>
+                  <p className="hint-line">{state.weather.hint}</p>
+                </>
+              ) : (
+                <p className="hint-line">{state.weather.hint}</p>
+              )}
             </div>
           ) : null}
 
@@ -120,11 +140,15 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
             {layout.showTasks ? (
               <div className="glass-card">
                 <p className="card-kicker">タスク</p>
-                <ul className="task-list">
-                  {state.tasks.map((task) => (
-                    <li key={task}>{task}</li>
-                  ))}
-                </ul>
+                {state.tasks.length > 0 ? (
+                  <ul className="task-list">
+                    {state.tasks.map((task) => (
+                      <li key={task}>{task}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="hint-line">Context の current_task / next_task 未設定</p>
+                )}
               </div>
             ) : null}
           </section>
@@ -158,6 +182,24 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
           {life.apiOnline ? 'オンライン' : 'オフライン'}
         </span>
       </footer>
+
+      {import.meta.env.DEV ? (
+        <nav className="phase-preview" aria-label="時間帯プレビュー（開発用）">
+          <span className="phase-preview__label">時間帯</span>
+          {DAY_PHASES.map((item) => (
+            <a
+              key={item}
+              href={previewPhaseHref(item)}
+              className={`phase-preview__link${phase === item ? ' phase-preview__link--active' : ''}`}
+            >
+              {DAY_PHASE_LABELS[item]}
+            </a>
+          ))}
+          <a href="?" className="phase-preview__link">
+            現在
+          </a>
+        </nav>
+      ) : null}
     </div>
   );
 }

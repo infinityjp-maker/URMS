@@ -1,6 +1,6 @@
 import type { PerceptionState } from '@urms/shared';
 
-import { PERCEPTION_FIXTURES } from '../fixtures.js';
+import { EMPTY_WEATHER } from '../fixtures.js';
 import { buildOpenMeteoUrl, mapOpenMeteoResponse, type OpenMeteoResponse, type WeatherFetch } from './open-meteo.js';
 import { resolveWeatherConfig, type WeatherConfig } from './weather-config.js';
 
@@ -29,7 +29,7 @@ export class OpenMeteoWeatherService implements WeatherService {
 
   async getCurrentWeather(): Promise<PerceptionState['weather']> {
     if (!this.config.enabled) {
-      return PERCEPTION_FIXTURES.weather;
+      return EMPTY_WEATHER;
     }
 
     try {
@@ -43,13 +43,13 @@ export class OpenMeteoWeatherService implements WeatherService {
       clearTimeout(timeout);
 
       if (!response.ok) {
-        return PERCEPTION_FIXTURES.weather;
+        return EMPTY_WEATHER;
       }
 
       const payload = (await response.json()) as OpenMeteoResponse;
       return mapOpenMeteoResponse(payload);
     } catch {
-      return PERCEPTION_FIXTURES.weather;
+      return EMPTY_WEATHER;
     }
   }
 }

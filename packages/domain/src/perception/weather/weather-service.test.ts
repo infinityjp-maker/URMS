@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { PERCEPTION_FIXTURES } from '../fixtures.js';
+import { EMPTY_WEATHER } from '../fixtures.js';
 import { createWeatherService } from './weather-service.js';
 
 describe('OpenMeteoWeatherService', () => {
-  it('returns fixture weather when disabled', async () => {
+  it('returns empty weather when disabled', async () => {
     const service = createWeatherService({
       config: {
         enabled: false,
@@ -14,7 +14,7 @@ describe('OpenMeteoWeatherService', () => {
       },
     });
 
-    await expect(service.getCurrentWeather()).resolves.toEqual(PERCEPTION_FIXTURES.weather);
+    await expect(service.getCurrentWeather()).resolves.toEqual(EMPTY_WEATHER);
   });
 
   it('fetches live weather when enabled', async () => {
@@ -50,7 +50,7 @@ describe('OpenMeteoWeatherService', () => {
     expect(weather.hint).toBe('穏やかな天気です');
   });
 
-  it('falls back to fixture weather on fetch failure', async () => {
+  it('falls back to empty weather on fetch failure', async () => {
     const fetchImpl = vi.fn(async () => {
       throw new Error('network');
     }) as unknown as typeof fetch;
@@ -65,6 +65,6 @@ describe('OpenMeteoWeatherService', () => {
       fetchImpl,
     });
 
-    await expect(service.getCurrentWeather()).resolves.toEqual(PERCEPTION_FIXTURES.weather);
+    await expect(service.getCurrentWeather()).resolves.toEqual(EMPTY_WEATHER);
   });
 });

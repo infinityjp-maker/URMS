@@ -1,10 +1,10 @@
-import { buildPerceptionState } from '@urms/domain';
-import type { ContextDashboard, PerceptionState } from '@urms/shared';
+import { buildDefaultContextDashboard, buildPerceptionState } from '@urms/domain/perception';
+import type { PerceptionState } from '@urms/shared';
 import { useEffect, useState } from 'react';
 
 import { fetchHealth, fetchPerception, fetchReady } from '../api/client.js';
 
-export type LifeStateSource = 'api' | 'mock';
+export type LifeStateSource = 'api' | 'local';
 
 export type LifeStateView = {
   state: PerceptionState;
@@ -16,19 +16,13 @@ export type LifeStateView = {
 
 const POLL_MS = 60_000;
 
-const FALLBACK_DASHBOARD: ContextDashboard = {
-  activeMode: 'operate',
-  items: [],
-};
-
 function fallbackState(): PerceptionState {
-  return buildPerceptionState(FALLBACK_DASHBOARD);
+  return buildPerceptionState(buildDefaultContextDashboard('operate'));
 }
-
 export function useLifeState(): LifeStateView {
   const [view, setView] = useState<LifeStateView>({
     state: fallbackState(),
-    source: 'mock',
+    source: 'local',
     apiOnline: false,
     dbReady: false,
     loading: true,
@@ -59,7 +53,7 @@ export function useLifeState(): LifeStateView {
 
       setView({
         state: fallbackState(),
-        source: 'mock',
+        source: 'local',
         apiOnline: healthOk,
         dbReady: readyOk,
         loading: false,

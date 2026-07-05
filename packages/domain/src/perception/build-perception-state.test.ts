@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { EMPTY_WEATHER } from './fixtures.js';
 import { buildPerceptionState } from './build-perception-state.js';
 
 describe('buildPerceptionState', () => {
@@ -43,5 +44,19 @@ describe('buildPerceptionState', () => {
     expect(state.weather.hint).toBe('テスト');
     expect(state.nextEvents).toHaveLength(1);
     expect(state.summary.events).toBe(1);
+  });
+
+  it('uses honest empty defaults without overrides', () => {
+    const state = buildPerceptionState(
+      { activeMode: 'operate', items: [] },
+      new Date('2026-07-05T14:00:00'),
+    );
+
+    expect(state.weather).toEqual(EMPTY_WEATHER);
+    expect(state.nextEvents).toEqual([]);
+    expect(state.tasks).toEqual([]);
+    expect(state.summary.events).toBe(0);
+    expect(state.summary.tasks).toBe(0);
+    expect(state.aiMemo).toContain('current_task');
   });
 });

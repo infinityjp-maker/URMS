@@ -2,7 +2,7 @@ import type { ContextDashboard } from '@urms/shared';
 import type { PerceptionState } from '@urms/shared';
 
 import { resolveDayPhase, statusLineForPhase } from './day-phase.js';
-import { DEFAULT_TASKS, PERCEPTION_FIXTURES } from './fixtures.js';
+import { EMPTY_WEATHER } from './fixtures.js';
 
 export type PerceptionOverrides = {
   weather?: PerceptionState['weather'];
@@ -26,21 +26,28 @@ export function buildPerceptionState(
   const currentPhase = findSummary(dashboard, 'current_phase');
 
   const tasks = [currentTask, nextTask].filter((task): task is string => Boolean(task));
-  const nextEvents = overrides?.nextEvents ?? PERCEPTION_FIXTURES.nextEvents;
+  const nextEvents = overrides?.nextEvents ?? [];
+  const weather = overrides?.weather ?? EMPTY_WEATHER;
 
   return {
     phase,
     statusLine: projectStatus ?? statusLineForPhase(phase),
-    weather: overrides?.weather ?? PERCEPTION_FIXTURES.weather,
+    weather,
     nextEvents,
     summary: {
-      ...PERCEPTION_FIXTURES.summary,
+      conditionScore: nextEvents.length > 0 || tasks.length > 0 ? 50 : 0,
       events: nextEvents.length,
+      tasks: tasks.length,
+      focusHours: 0,
+      travelMinutes: 0,
       weight: dashboard.activeMode === 'operate' ? '中' : '低〜中',
       focus: dashboard.activeMode === 'audit' ? '監査' : '安定',
-      note: currentPhase ?? '重い負荷は予想されません。穏やかな一日になりそうです。',
+      note: currentPhase ?? 'Context に current_phase を設定するとここに反映されます。',
     },
-    tasks: tasks.length > 0 ? tasks : DEFAULT_TASKS,
-    aiMemo: nextTask ?? currentTask ?? '急ぎなし、ゆるい開始。午前中は集中しやすい時間帯です。',
+    tasks,
+    aiMemo:
+      nextTask ??
+      currentTask ??
+      'Context の current_task / next_task が窓の正本です。未設定の場合はここに表示されません。',
   };
 }

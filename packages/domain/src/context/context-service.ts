@@ -11,57 +11,10 @@ import { EVENT_TYPES } from '../event/event-types.js';
 import type { EventBus } from '../event/event-bus.js';
 import { assertModeAllowed, modePolicy } from '../mode/mode-policy.js';
 import type { ContextRepository } from '../repository/context-repository.js';
+import { DEFAULT_CONTEXT_ITEMS } from './context-defaults.js';
 import { validateContextUpdateItems } from './context-validator.js';
 
-const DEFAULT_ITEMS: Record<ContextKey, Pick<ContextSnapshotItem, 'summary' | 'ssotLinks'>> = {
-  current_phase: {
-    summary: 'Phase 4 品質 · Phase 5 本番UI',
-    ssotLinks: [
-      {
-        label: 'Phase 5 Desktop UI',
-        path: '/docs/implementation/11-phase5-desktop-ui.md',
-      },
-    ],
-  },
-  current_task: {
-    summary: 'S12 監視 · ログ — 完了 / S13 準備',
-    ssotLinks: [
-      {
-        label: 'Phase 4 Readiness',
-        path: '/docs/implementation/10-phase4-readiness.md',
-      },
-    ],
-  },
-  next_task: {
-    summary: 'S13 性能 · セキュリティ監査',
-    ssotLinks: [
-      {
-        label: 'Development Roadmap',
-        path: '/docs/implementation/05-development-roadmap.md',
-      },
-    ],
-  },
-  project_status: {
-    summary: 'Phase 4 進行中 — 本番UI（窓）v1 稼働',
-    ssotLinks: [
-      {
-        label: 'VISION',
-        path: '/docs/project/VISION.md',
-      },
-    ],
-  },
-  active_mode: {
-    summary: 'plan',
-    ssotLinks: [],
-  },
-  ssot_links: {
-    summary: '要件 · Architecture · Contract',
-    ssotLinks: [
-      { label: 'UI Requirements', path: '/docs/requirements/ui-requirements.md' },
-      { label: 'Implementation Contract', path: '/docs/implementation/01-implementation-contract.md' },
-    ],
-  },
-};
+const DEFAULT_ITEMS = DEFAULT_CONTEXT_ITEMS;
 
 export class ContextService {
   constructor(
