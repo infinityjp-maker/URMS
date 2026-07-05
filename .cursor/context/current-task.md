@@ -6,17 +6,17 @@
 
 ## Task
 
-**S13 — 性能 · セキュリティ監査（Phase 4）**
+**Phase 5 — 本番UI v2 · S14 準備**
 
-## S13 進捗
+## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| Helmet | ✅ |
-| Rate limit | ✅ |
-| audit:security スクリプト | ✅ |
-| perf:spot スクリプト | ✅ |
-| v0.3.0 タグ | ⏳ S13 完了後 |
+| Phase 4（S11〜S13） | ✅ 完了 · tag `v0.3.0` |
+| 本番UI v0 | ✅ Tauri 窓ダッシュボード |
+| 本番UI v1 | ✅ `/v1/perception` 連携 |
+| 本番UI v2 | ⏳ 天気 · 予定の実データ |
+| S14 Resource リレーション | ⏳ 未着手 |
 
 ## User
 
