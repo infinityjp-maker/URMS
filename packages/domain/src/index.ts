@@ -40,3 +40,9 @@ export {
   type AiUsageRepository,
   InMemoryAiUsageRepository,
 } from './ai/ai-usage-repository.js';
+
+export type { ResourceTypePlugin } from './plugin/resource-type-plugin.js';
+export {
+  PluginRegistry,
+  assertPluginValidation,
+} from './plugin/plugin-registry.js';

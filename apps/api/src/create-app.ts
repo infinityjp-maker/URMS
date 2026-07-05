@@ -9,6 +9,7 @@ import { registerModePlugin } from './plugins/mode.js';
 import { registerAiRoutes } from './routes/ai.js';
 import { registerAuditRoutes, registerModeRoutes } from './routes/audit.js';
 import { registerContextRoutes } from './routes/context.js';
+import { registerPluginRoutes } from './routes/plugins.js';
 import { registerHealthRoutes } from './routes/health.js';
 import { registerResourceRoutes } from './routes/resources.js';
 import type { AppServices } from './types/services.js';
@@ -33,6 +34,7 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerResourceRoutes(app, services);
   await registerContextRoutes(app, services);
   await registerAiRoutes(app, services);
+  await registerPluginRoutes(app, services);
   await registerAuditRoutes(app, services);
   await registerModeRoutes(app);
 

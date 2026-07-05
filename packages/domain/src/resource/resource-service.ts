@@ -10,6 +10,7 @@ import { createDomainEvent } from '../event/domain-event.js';
 import { EVENT_TYPES } from '../event/event-types.js';
 import type { EventBus } from '../event/event-bus.js';
 import { assertModeAllowed, modePolicy } from '../mode/mode-policy.js';
+import { assertPluginValidation, type PluginRegistry } from '../plugin/plugin-registry.js';
 import type { ResourceListFilter, ResourceRepository } from '../repository/resource-repository.js';
 import { assertValidTransition } from './lifecycle.js';
 
@@ -29,6 +30,7 @@ export class ResourceService {
   constructor(
     private readonly repository: ResourceRepository,
     private readonly eventBus: EventBus,
+    private readonly pluginRegistry?: PluginRegistry,
   ) {}
 
   async getByRef(resourceType: string, resourceId: string, mode: UrmsMode): Promise<ResourceEntity> {
@@ -54,6 +56,11 @@ export class ResourceService {
   ): Promise<ResourceEntity> {
     assertModeAllowed(modePolicy.canWriteResource(mode), 'Resource creation not allowed in current mode');
     validateCreateInput(input);
+    this.validateWithPlugin(input.resourceType, {
+      resourceId: input.resourceId,
+      name: input.name,
+      metadata: input.metadata,
+    });
 
     if (await this.repository.exists(input.resourceType, input.resourceId)) {
       throw new AppError(
@@ -112,6 +119,11 @@ export class ResourceService {
       throw new AppError(ERROR_CODES.VALIDATION_REQUIRED_FIELD, 'name is required');
     }
 
+    this.validateWithPluginUpdate(resourceType, {
+      name: updated.name,
+      metadata: updated.metadata,
+    });
+
     const saved = await this.repository.save(updated);
     await this.eventBus.publish(
       createDomainEvent({
@@ -162,6 +174,34 @@ export class ResourceService {
     );
 
     return saved;
+  }
+
+  private validateWithPlugin(
+    resourceType: string,
+    input: { resourceId: string; name: string; metadata?: Record<string, unknown> },
+  ): void {
+    if (!this.pluginRegistry) {
+      return;
+    }
+
+    const plugin = this.pluginRegistry.require(resourceType);
+    assertPluginValidation(resourceType, plugin.validateCreate(input));
+  }
+
+  private validateWithPluginUpdate(
+    resourceType: string,
+    input: { name?: string; metadata?: Record<string, unknown> },
+  ): void {
+    if (!this.pluginRegistry) {
+      return;
+    }
+
+    const plugin = this.pluginRegistry.require(resourceType);
+    if (!plugin.validateUpdate) {
+      return;
+    }
+
+    assertPluginValidation(resourceType, plugin.validateUpdate(input));
   }
 }
 

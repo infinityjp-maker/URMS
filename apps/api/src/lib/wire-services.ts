@@ -4,6 +4,7 @@ import {
   AuditHandler,
   ContextService,
   InProcessEventBus,
+  PluginRegistry,
   registerAuditHandlers,
   ResourceService,
 } from '@urms/domain';
@@ -15,8 +16,11 @@ import {
   PrismaResourceRepository,
 } from '@urms/db';
 import { OllamaAdapter } from '@urms/plugin-ollama';
+import { createBuiltinResourceTypePlugins } from '@urms/plugin-resource-types';
 
 import type { AppServices } from '../types/services.js';
+
+const APP_CORE_VERSION = '0.2.0';
 
 export function createAppServices(databaseUrl?: string): AppServices {
   const prisma = createPrismaClient(databaseUrl);
@@ -29,7 +33,12 @@ export function createAppServices(databaseUrl?: string): AppServices {
 
   registerAuditHandlers(eventBus, auditHandler);
 
-  const resourceService = new ResourceService(resourceRepository, eventBus);
+  const pluginRegistry = new PluginRegistry(APP_CORE_VERSION);
+  for (const plugin of createBuiltinResourceTypePlugins()) {
+    pluginRegistry.register(plugin);
+  }
+
+  const resourceService = new ResourceService(resourceRepository, eventBus, pluginRegistry);
   const contextService = new ContextService(contextRepository, eventBus);
 
   const aiRegistry = new AiProviderRegistry();
@@ -47,6 +56,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
     resourceService,
     contextService,
     aiManager,
+    pluginRegistry,
     auditLogRepository,
   };
 }

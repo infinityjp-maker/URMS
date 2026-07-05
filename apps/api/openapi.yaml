@@ -211,6 +211,12 @@ paths:
           description: Feature disabled
         '503':
           description: Provider unavailable
+  /v1/plugins/resource-types:
+    get:
+      summary: List registered ResourceType plugins
+      responses:
+        '200':
+          description: Plugin list
   /v1/audit/logs:
     get:
       summary: List audit logs (audit mode only)

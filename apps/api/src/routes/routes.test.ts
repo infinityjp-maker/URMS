@@ -8,6 +8,7 @@ function createMockServices(): AppServices {
     resourceService: {} as AppServices['resourceService'],
     contextService: {} as AppServices['contextService'],
     aiManager: {} as AppServices['aiManager'],
+    pluginRegistry: {} as AppServices['pluginRegistry'],
     auditLogRepository: {} as AppServices['auditLogRepository'],
   };
 }

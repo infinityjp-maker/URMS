@@ -6,9 +6,8 @@
 
 ## Task
 
-**S8 Plugin — Resource 種別拡張 + Plugin Registry**
+**S9 Testing — Playwright E2E + Coverage CI**
 
 ## 参照
 
-- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) — IR-S8-01〜03
-- [09-plugin-architecture.md](../../docs/architecture/09-plugin-architecture.md)
+- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) — IR-S9-01〜03

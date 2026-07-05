@@ -39,7 +39,7 @@ async function startTestDatabase(): Promise<{
 
 const dockerAvailable = isDockerAvailable();
 
-describe.runIf(dockerAvailable)('Resource API (integration)', () => {
+describe.runIf(dockerAvailable)('Plugin API (integration)', () => {
   let container: StartedPostgreSqlContainer;
   let app: Awaited<ReturnType<typeof createApp>>;
 
@@ -57,67 +57,31 @@ describe.runIf(dockerAvailable)('Resource API (integration)', () => {
     await container.stop();
   }, 30_000);
 
-  it('creates and retrieves a resource', async () => {
-    const createResponse = await app.inject({
-      method: 'POST',
-      url: '/v1/resources',
-      headers: { 'x-urms-mode': 'operate' },
-      payload: {
-        resourceType: 'physical',
-        resourceId: 'api-server-01',
-        name: 'API Server 01',
-        metadata: { location: 'rack-a01' },
-      },
-    });
-
-    expect(createResponse.statusCode).toBe(201);
-
-    const getResponse = await app.inject({
+  it('lists resource type plugins', async () => {
+    const response = await app.inject({
       method: 'GET',
-      url: '/v1/resources/physical/api-server-01',
+      url: '/v1/plugins/resource-types',
       headers: { 'x-urms-mode': 'operate' },
     });
 
-    expect(getResponse.statusCode).toBe(200);
-    expect(getResponse.json().data.name).toBe('API Server 01');
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data.length).toBeGreaterThanOrEqual(4);
   });
 
-  it('writes audit log on resource create', async () => {
-    await app.inject({
-      method: 'POST',
-      url: '/v1/resources',
-      headers: { 'x-urms-mode': 'operate' },
-      payload: {
-        resourceType: 'digital',
-        resourceId: 'audit-target',
-        name: 'Audit Target',
-        metadata: { vendor: 'Example Corp' },
-      },
-    });
-
-    const auditResponse = await app.inject({
-      method: 'GET',
-      url: '/v1/audit/logs',
-      headers: { 'x-urms-mode': 'audit' },
-    });
-
-    expect(auditResponse.statusCode).toBe(200);
-    expect(auditResponse.json().meta.total).toBeGreaterThanOrEqual(1);
-  });
-
-  it('rejects resource create in plan mode', async () => {
+  it('rejects physical resource without required metadata', async () => {
     const response = await app.inject({
       method: 'POST',
       url: '/v1/resources',
-      headers: { 'x-urms-mode': 'plan' },
+      headers: { 'x-urms-mode': 'operate' },
       payload: {
         resourceType: 'physical',
-        resourceId: 'denied-create',
-        name: 'Denied',
+        resourceId: 'missing-location',
+        name: 'Missing Location',
+        metadata: {},
       },
     });
 
-    expect(response.statusCode).toBe(403);
-    expect(response.json().error.code).toBe('MODE_NOT_ALLOWED');
+    expect(response.statusCode).toBe(422);
+    expect(response.json().error.code).toBe('PLUGIN_VALIDATION_FAILED');
   });
 });

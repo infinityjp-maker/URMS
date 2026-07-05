@@ -105,11 +105,11 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S8 — Plugin
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S8-01 | Plugin Registry | ADR-009 |
-| IR-S8-02 | ResourceTypePlugin 1 種以上 | FR-002 |
-| IR-S8-03 | SemVer 互換 | ADR-018 |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S8-01 | Plugin Registry | ADR-009 | ✅ |
+| IR-S8-02 | ResourceTypePlugin 1 種以上 | FR-002 | ✅ |
+| IR-S8-03 | SemVer 互換 | ADR-018 | ✅ |
 
 ### S9 — Testing
 
