@@ -20,6 +20,10 @@ export default defineConfig({
     watch: {
       ignored: ['**/src-tauri/**'],
     },
+    proxy: {
+      '/v1': 'http://localhost:3000',
+      '/health': 'http://localhost:3000',
+    },
   },
   envPrefix: ['VITE_', 'TAURI_ENV_*'],
   build: {

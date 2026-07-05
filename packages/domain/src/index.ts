@@ -14,6 +14,8 @@ export { canTransition, assertValidTransition, getAllowedTransitions } from './r
 export { ResourceService, type CreateResourceInput, type UpdateResourceInput } from './resource/resource-service.js';
 
 export { ContextService } from './context/context-service.js';
+export { buildPerceptionState } from './perception/build-perception-state.js';
+export { resolveDayPhase, statusLineForPhase } from './perception/day-phase.js';
 export {
   validateContextUpdateItems,
   validateSummary,

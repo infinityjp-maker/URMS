@@ -1,3 +1,4 @@
+import cors from '@fastify/cors';
 import { createFastifyLoggerOptions } from '@urms/logger';
 import Fastify from 'fastify';
 import { registerAuthPlugin } from './plugins/auth.js';
@@ -7,6 +8,7 @@ import { createRequestMetrics, registerMetricsPlugin } from './plugins/request-m
 import { registerAiRoutes } from './routes/ai.js';
 import { registerAuditRoutes, registerModeRoutes } from './routes/audit.js';
 import { registerContextRoutes } from './routes/context.js';
+import { registerPerceptionRoutes } from './routes/perception.js';
 import { registerPluginRoutes } from './routes/plugins.js';
 import { registerAuthRoutes } from './routes/auth.js';
 import { registerHealthRoutes } from './routes/health.js';
@@ -29,6 +31,20 @@ export async function createApp(options: CreateAppOptions = {}) {
     logger: options.logger === false ? false : createFastifyLoggerOptions('urms-api'),
   });
 
+  await app.register(cors, {
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin) ||
+        origin.startsWith('tauri://')
+      ) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
+  });
+
   registerErrorHandler(app);
   await registerMetricsPlugin(app, metrics);
   await registerAuthPlugin(app);
@@ -39,6 +55,7 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerAuthRoutes(app, services.localAuthService);
   await registerResourceRoutes(app, services);
   await registerContextRoutes(app, services);
+  await registerPerceptionRoutes(app, services);
   await registerAiRoutes(app, services);
   await registerPluginRoutes(app, services);
   await registerAuditRoutes(app, services);

@@ -20,6 +20,7 @@
     "@urms/plugin-ollama": "workspace:*",
     "@urms/plugin-resource-types": "workspace:*",
     "@urms/shared": "workspace:*",
+    "@fastify/cors": "^10.0.2",
     "fastify": "^5.2.1"
   },
   "devDependencies": {

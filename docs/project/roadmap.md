@@ -21,8 +21,8 @@
 | 2.9 | AI Development Governance | **完了（PM 承認待ち）** |
 | 3 prep | Phase 3 Ready | **完了** |
 | 3 | MVP 実装（S1〜S10） | **完了** — tag `v0.2.0-mvp` |
-| 4 | 品質・運用（S11〜S13） | **進行中** — S12 監視 · ログ |
-| 5 | 本番 · 拡張（S14〜S16 + 知覚層 UI） | **着手** — apps/desktop v0 |
+| 4 | 品質・運用（S11〜S13） | **S12 完了 · S13 次** |
+| 5 | 本番 · 拡張（S14〜S16 + 知覚層 UI） | **v1 稼働** — `/v1/perception` |
 
 ## 現在
 

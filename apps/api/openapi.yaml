@@ -228,6 +228,12 @@ paths:
           description: Updated dashboard
         '403':
           description: Mode not allowed
+  /v1/perception:
+    get:
+      summary: Perception layer payload for desktop UI (ADR-023)
+      responses:
+        '200':
+          description: Life-state perception snapshot
   /v1/ai/providers:
     get:
       summary: List AI providers (ff.ai.enabled)

@@ -1,6 +1,7 @@
 export * from './types/mode.js';
 export * from './types/resource.js';
 export * from './types/context.js';
+export * from './types/perception.js';
 export * from './types/ai.js';
 export * from './types/plugin.js';
 export * from './types/auth.js';

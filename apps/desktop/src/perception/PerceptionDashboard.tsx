@@ -1,9 +1,12 @@
+import { resolveDayPhase } from '@urms/domain';
+import type { PerceptionState } from '@urms/shared';
+
 import { useClock } from '../hooks/useClock.js';
-import { mockLifeState } from './mockLifeState.js';
-import type { LifeState } from './types.js';
+import { useLifeState } from '../hooks/useLifeState.js';
+import { layoutForPhase } from './phaseLayout.js';
 
 type Props = {
-  state?: LifeState;
+  state?: PerceptionState;
 };
 
 function toneClass(tone: 'calm' | 'warm' | 'focus'): string {
@@ -12,8 +15,20 @@ function toneClass(tone: 'calm' | 'warm' | 'focus'): string {
   return 'event-dot event-dot--calm';
 }
 
-export function PerceptionDashboard({ state = mockLifeState }: Props) {
+function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, loading: boolean): string {
+  if (loading) return '接続確認中…';
+  if (!apiOnline) return 'オフライン — モック表示';
+  if (source === 'api') return dbReady ? 'API 接続 · DB 準備完了' : 'API 接続 · DB 未起動';
+  return 'API 応答なし — モック表示';
+}
+
+export function PerceptionDashboard({ state: stateOverride }: Props) {
   const clock = useClock();
+  const life = useLifeState();
+  const state = stateOverride ?? life.state;
+  const phase = resolveDayPhase();
+  const layout = layoutForPhase(phase);
+  const events = state.nextEvents.slice(0, layout.maxEvents);
   const syncTime = new Date().toLocaleTimeString('ja-JP', {
     hour: 'numeric',
     minute: '2-digit',
@@ -21,15 +36,17 @@ export function PerceptionDashboard({ state = mockLifeState }: Props) {
   });
 
   return (
-    <div className={`dashboard dashboard--${state.phase}`}>
+    <div className={`dashboard dashboard--${phase}`}>
       <div className="dashboard__backdrop" aria-hidden="true" />
 
       <header className="dashboard__header">
         <span className="dashboard__brand">URMS</span>
-        <span className="dashboard__header-meta">v0 · 知覚層</span>
+        <span className="dashboard__header-meta">
+          {stateOverride ? '固定表示' : connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)}
+        </span>
       </header>
 
-      <main className="dashboard__grid">
+      <main className={`dashboard__grid dashboard__grid--${layout.gridMode}`}>
         <section className="panel panel--primary" aria-label="今">
           <p className="clock">{clock.time}</p>
           <p className="date-line">
@@ -37,81 +54,99 @@ export function PerceptionDashboard({ state = mockLifeState }: Props) {
           </p>
           <p className="status-line">{state.statusLine}</p>
 
-          <div className="glass-card">
-            <p className="card-kicker">天気</p>
-            <p className="metric-large">{state.weather.tempC}°C</p>
-            <p className="metric-detail">
-              降水 {state.weather.precipitationPct}% · 湿度 {state.weather.humidityPct}% · 風{' '}
-              {state.weather.windKmh}km/h
-            </p>
-            <p className="hint-line">{state.weather.hint}</p>
-          </div>
-
-          <div className="glass-card">
-            <p className="card-kicker">次の予定</p>
-            <ul className="event-list">
-              {state.nextEvents.map((event) => (
-                <li key={`${event.time}-${event.title}`} className="event-item">
-                  <span className={toneClass(event.tone)} aria-hidden="true" />
-                  <div>
-                    <p className="event-time">{event.time}</p>
-                    <p className="event-title">{event.title}</p>
-                    {event.note ? <p className="event-note">{event.note}</p> : null}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="panel panel--center" aria-label="今日">
-          <div className="glass-card glass-card--hero">
-            <p className="card-kicker">今日のまとめ</p>
-            <div className="summary-row">
-              <div className="condition-ring" aria-label={`コンディション ${state.summary.conditionScore}`}>
-                <span className="condition-score">{state.summary.conditionScore}</span>
-                <span className="condition-label">Condition</span>
-              </div>
-              <div className="summary-stats">
-                <p>予定 {state.summary.events}</p>
-                <p>タスク {state.summary.tasks}</p>
-                <p>集中 {state.summary.focusHours}h 想定</p>
-                <p>移動 {state.summary.travelMinutes}m</p>
-              </div>
+          {layout.showWeather ? (
+            <div className="glass-card">
+              <p className="card-kicker">天気</p>
+              <p className="metric-large">{state.weather.tempC}°C</p>
+              <p className="metric-detail">
+                降水 {state.weather.precipitationPct}% · 湿度 {state.weather.humidityPct}% · 風{' '}
+                {state.weather.windKmh}km/h
+              </p>
+              <p className="hint-line">{state.weather.hint}</p>
             </div>
-            <p className="summary-note">{state.summary.note}</p>
-          </div>
+          ) : null}
 
-          <div className="glass-card">
-            <p className="card-kicker">今日の重み · フォーカス</p>
-            <p className="weight-line">
-              {state.summary.weight} · {state.summary.focus}
-            </p>
-          </div>
-
-          <div className="glass-card">
-            <p className="card-kicker">タスク</p>
-            <ul className="task-list">
-              {state.tasks.map((task) => (
-                <li key={task}>{task}</li>
-              ))}
-            </ul>
-          </div>
+          {events.length > 0 ? (
+            <div className="glass-card">
+              <p className="card-kicker">次の予定</p>
+              <ul className="event-list">
+                {events.map((event) => (
+                  <li key={`${event.time}-${event.title}`} className="event-item">
+                    <span className={toneClass(event.tone)} aria-hidden="true" />
+                    <div>
+                      <p className="event-time">{event.time}</p>
+                      <p className="event-title">{event.title}</p>
+                      {event.note ? <p className="event-note">{event.note}</p> : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </section>
+
+        {layout.gridMode !== 'minimal' ? (
+          <section className="panel panel--center" aria-label="今日">
+            {layout.showSummaryHero ? (
+              <div className="glass-card glass-card--hero">
+                <p className="card-kicker">今日のまとめ</p>
+                <div className="summary-row">
+                  <div className="condition-ring" aria-label={`コンディション ${state.summary.conditionScore}`}>
+                    <span className="condition-score">{state.summary.conditionScore}</span>
+                    <span className="condition-label">Condition</span>
+                  </div>
+                  {layout.showSummaryStats ? (
+                    <div className="summary-stats">
+                      <p>予定 {state.summary.events}</p>
+                      <p>タスク {state.summary.tasks}</p>
+                      <p>集中 {state.summary.focusHours}h 想定</p>
+                      <p>移動 {state.summary.travelMinutes}m</p>
+                    </div>
+                  ) : null}
+                </div>
+                <p className="summary-note">{state.summary.note}</p>
+              </div>
+            ) : null}
+
+            {layout.showWeight ? (
+              <div className="glass-card">
+                <p className="card-kicker">今日の重み · フォーカス</p>
+                <p className="weight-line">
+                  {state.summary.weight} · {state.summary.focus}
+                </p>
+              </div>
+            ) : null}
+
+            {layout.showTasks ? (
+              <div className="glass-card">
+                <p className="card-kicker">タスク</p>
+                <ul className="task-list">
+                  {state.tasks.map((task) => (
+                    <li key={task}>{task}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
 
         <section className="panel panel--side" aria-label="展望">
-          <div className="glass-card">
-            <p className="card-kicker">AI からのひとこと</p>
-            <p className="ai-memo">{state.aiMemo}</p>
-          </div>
+          {layout.showAiMemo ? (
+            <div className="glass-card">
+              <p className="card-kicker">AI からのひとこと</p>
+              <p className="ai-memo">{state.aiMemo}</p>
+            </div>
+          ) : null}
 
-          <div className="glass-card glass-card--compact">
-            <p className="card-kicker">接続</p>
-            <p className="online-line">
-              <span className="online-dot" aria-hidden="true" />
-              ローカル · API 未接続（v0）
-            </p>
-          </div>
+          {layout.showConnection ? (
+            <div className="glass-card glass-card--compact">
+              <p className="card-kicker">接続</p>
+              <p className="online-line">
+                <span className={`online-dot${life.apiOnline ? '' : ' online-dot--off'}`} aria-hidden="true" />
+                {connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)}
+              </p>
+            </div>
+          ) : null}
         </section>
       </main>
 
@@ -119,8 +154,8 @@ export function PerceptionDashboard({ state = mockLifeState }: Props) {
         <span>同期: {syncTime}</span>
         <span className="tagline">整える。つなげる。よりよく生きるために。</span>
         <span className="online-line">
-          <span className="online-dot" aria-hidden="true" />
-          オンライン
+          <span className={`online-dot${life.apiOnline ? '' : ' online-dot--off'}`} aria-hidden="true" />
+          {life.apiOnline ? 'オンライン' : 'オフライン'}
         </span>
       </footer>
     </div>

@@ -8,7 +8,7 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 4 + Phase 5 UI v0** — S12 · apps/desktop |
+| 状態 | **Phase 4 S13 次 · 本番UI v1** |
 | バージョン | Git タグ v0.2.0-mvp（S11 は未タグ） |
 | User Go | ✅ 2026-07-05 |
 | User Vision | ✅ UI 確定 · Tauri 2 + React（User Go 2026-07-05） |

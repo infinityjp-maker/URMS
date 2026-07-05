@@ -333,6 +333,37 @@ describe('Resource routes', () => {
   });
 });
 
+describe('Perception routes', () => {
+  it('returns perception payload from context', async () => {
+    const services = createMockServices();
+    services.contextService.getDashboard = vi.fn(async () => ({
+      activeMode: 'operate',
+      items: [
+        {
+          key: 'project_status',
+          summary: 'Phase 4 進行中',
+          ssotLinks: [],
+          updatedAt: '2026-07-05T00:00:00.000Z',
+          updatedBy: 'system',
+        },
+      ],
+    }));
+
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/perception',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { statusLine: string; aiMemo: string } };
+    expect(body.data.statusLine).toBe('Phase 4 進行中');
+
+    await app.close();
+  });
+});
+
 describe('Context routes', () => {
   it('gets and updates dashboard in plan mode', async () => {
     const services = createMockServices();

@@ -3,7 +3,7 @@
 > **resource_type:** knowledge  
 > **owner:** PM / Developer  
 > **adr:** ADR-023  
-> **status:** v0 着手（User Go 2026-07-05）
+> **status:** v1 — API `/v1/perception` 連携 · 時間帯モード
 
 ## 位置づけ
 
@@ -26,9 +26,9 @@
 ## v0 スコープ（Sprint 着手）
 
 - [x] `apps/desktop` — Tauri 2 + React シェル
-- [x] 知覚層 UI — 時刻 · 状態 · 天気 · 予定 · まとめ · AI メモ（モック）
-- [ ] API 連携（Context Engine）
-- [ ] 時間帯モード
+- [x] 知覚層 UI — 時刻 · 状態 · 天気 · 予定 · まとめ · AI メモ
+- [x] API 連携 v1 — `GET /v1/perception`（Context → 窓）
+- [x] 時間帯モード — 朝/昼/夕/夜で表示項目を切替
 
 ## 開発コマンド
 

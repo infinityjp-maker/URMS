@@ -264,6 +264,22 @@
   background: #5fd38d;
 }
 
+.online-dot--off {
+  background: #8a9199;
+}
+
+.dashboard--evening .dashboard__backdrop {
+  filter: brightness(0.96);
+}
+
+.dashboard--night .dashboard__backdrop {
+  filter: brightness(0.88);
+}
+
+.dashboard--day .dashboard__backdrop {
+  filter: brightness(1);
+}
+
 .dashboard__footer {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -283,8 +299,34 @@
   justify-self: end;
 }
 
+.dashboard__grid--compact {
+  grid-template-columns: minmax(260px, 1fr) minmax(280px, 1.2fr);
+}
+
+.dashboard__grid--minimal {
+  grid-template-columns: minmax(280px, 520px);
+  justify-content: center;
+  padding-top: 24px;
+}
+
+.dashboard__grid--minimal .panel--primary {
+  gap: 24px;
+}
+
+.dashboard__grid--minimal .clock {
+  font-size: clamp(3.5rem, 10vw, 5rem);
+}
+
+.dashboard__grid--minimal .panel--side {
+  max-width: 520px;
+}
+
 .dashboard--morning .dashboard__backdrop {
   filter: brightness(1.04);
+}
+
+.dashboard--morning .glass-card {
+  opacity: 0.92;
 }
 
 @media (max-width: 960px) {

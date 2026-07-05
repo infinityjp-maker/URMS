@@ -26,7 +26,7 @@
     "build": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/logger build && pnpm --filter @urms/plugin-ollama build && pnpm --filter @urms/plugin-resource-types build && pnpm --filter @urms/db build && pnpm --filter @urms/api build && pnpm --filter @urms/web build && pnpm --filter @urms/desktop build:web",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/plugin-ollama test && pnpm --filter @urms/plugin-resource-types test && pnpm --filter @urms/db test && pnpm --filter @urms/api test && pnpm --filter @urms/web test",
+    "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/plugin-ollama test && pnpm --filter @urms/plugin-resource-types test && pnpm --filter @urms/db test && pnpm --filter @urms/api test && pnpm --filter @urms/web test && pnpm --filter @urms/desktop test",
     "test:coverage": "pnpm --filter @urms/domain test:coverage && pnpm --filter @urms/api test:coverage",
     "test:integration": "pnpm --filter @urms/db test:integration && pnpm --filter @urms/api test:integration",
     "test:e2e": "playwright test"

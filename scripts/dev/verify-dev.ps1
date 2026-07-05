@@ -76,6 +76,20 @@ try {
   $fail++
 }
 
+# 5. Desktop UI web shell (1420) — optional; Tauri uses this in dev
+try {
+  $desk = Test-UrlBody "http://localhost:1420/"
+  if ($desk.Status -ge 200 -and $desk.Status -lt 400 -and $desk.Body -match 'id="root"') {
+    Write-Host "[OK] Desktop UI shell http://localhost:1420/ (本番UI dev)"
+  } else {
+    Write-Host "[WARN] Desktop UI shell http://localhost:1420/ — unexpected response"
+    $warn++
+  }
+} catch {
+  Write-Host "[WARN] Desktop UI shell http://localhost:1420/ — not running (optional; use scripts/launch/start-desktop.bat)"
+  $warn++
+}
+
 Write-Host ""
 if ($fail -gt 0) {
   Write-Host "FAILED: $fail critical check(s). Start servers: scripts/launch/start-dev-servers.bat"
