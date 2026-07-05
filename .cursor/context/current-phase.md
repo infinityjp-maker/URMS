@@ -6,10 +6,9 @@
 
 ## Phase
 
-**Phase 3 — Sprint S3 完了 / S4 API 次**
+**Phase 3 — Sprint S4 完了 / S5 Web 次**
 
 ## 参照
 
-- [00-start-here.md](../../docs/architecture/00-start-here.md)
 - [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md)
 - [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md)

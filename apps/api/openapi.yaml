@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: URMS API
+  version: 0.2.0
+  description: Unified Resource Management System — MVP API
+servers:
+  - url: http://localhost:3000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /v1/resources:
+    get:
+      summary: List resources
+      parameters:
+        - in: query
+          name: type
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string, enum: [draft, active, deprecated, archived] }
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20, maximum: 100 }
+      responses:
+        '200':
+          description: Resource list
+    post:
+      summary: Create resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resourceType, resourceId, name]
+              properties:
+                resourceType: { type: string }
+                resourceId: { type: string }
+                name: { type: string }
+                metadata: { type: object }
+      responses:
+        '201':
+          description: Created
+  /v1/resources/{type}/{id}:
+    get:
+      summary: Get resource
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string }
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Resource detail
+    patch:
+      summary: Update resource
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string }
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Updated
+    delete:
+      summary: Archive resource (logical delete)
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string }
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Archived
+  /v1/resources/{type}/{id}/lifecycle:
+    patch:
+      summary: Change resource lifecycle
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string }
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [draft, active, deprecated, archived]
+      responses:
+        '200':
+          description: Lifecycle updated
+  /v1/audit/logs:
+    get:
+      summary: List audit logs (audit mode only)
+      responses:
+        '200':
+          description: Audit log list
+        '403':
+          description: Mode not allowed
+  /v1/modes:
+    get:
+      summary: List available modes
+      responses:
+        '200':
+          description: Mode list
+  /v1/modes/current:
+    get:
+      summary: Get current request mode
+      responses:
+        '200':
+          description: Current mode

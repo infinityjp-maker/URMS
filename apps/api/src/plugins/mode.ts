@@ -1,0 +1,25 @@
+import { AppError, ERROR_CODES, isUrmsMode } from '@urms/shared';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
+
+export async function registerModePlugin(app: FastifyInstance): Promise<void> {
+  app.addHook('onRequest', async (request: FastifyRequest) => {
+    if (request.url.startsWith('/health')) {
+      request.urmsMode = 'operate';
+      return;
+    }
+
+    const header = request.headers['x-urms-mode'];
+    const rawMode = Array.isArray(header) ? header[0] : header;
+
+    if (!rawMode) {
+      request.urmsMode = 'operate';
+      return;
+    }
+
+    if (!isUrmsMode(rawMode)) {
+      throw new AppError(ERROR_CODES.MODE_NOT_ALLOWED, `Invalid mode: ${rawMode}`);
+    }
+
+    request.urmsMode = rawMode;
+  });
+}

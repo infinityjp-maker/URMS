@@ -1,0 +1,29 @@
+{
+  "name": "@urms/api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "lint": "eslint src",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
+  },
+  "dependencies": {
+    "@urms/db": "workspace:*",
+    "@urms/domain": "workspace:*",
+    "@urms/logger": "workspace:*",
+    "@urms/shared": "workspace:*",
+    "fastify": "^5.2.1"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "^10.17.2",
+    "@types/node": "^22.10.7",
+    "testcontainers": "^10.17.2",
+    "tsx": "^4.19.2",
+    "vitest": "^3.0.5"
+  }
+}

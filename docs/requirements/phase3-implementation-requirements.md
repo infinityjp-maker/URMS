@@ -67,14 +67,14 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S4 — API
 
-| 要件 ID | 受入条件 | 関連 FR / UC |
-|---------|----------|--------------|
-| IR-S4-01 | Fastify `/v1/` + OpenAPI 同期 | FR-002〜005 |
-| IR-S4-02 | Resource CRUD API | UC-001〜004 |
-| IR-S4-03 | Mode middleware + RBAC 骨格 | FR-011, U-001 前は mock auth |
-| IR-S4-04 | Audit API | UC-008, FR-040 |
-| IR-S4-05 | `/health` | — |
-| IR-S4-06 | api 80% coverage 目標 | NFR-003 |
+| 要件 ID | 受入条件 | 関連 FR / UC | 状態 |
+|---------|----------|--------------|------|
+| IR-S4-01 | Fastify `/v1/` + OpenAPI 同期 | FR-002〜005 | ✅ |
+| IR-S4-02 | Resource CRUD API | UC-001〜004 | ✅ |
+| IR-S4-03 | Mode middleware + RBAC 骨格 | FR-011, U-001 前は mock auth | ✅ |
+| IR-S4-04 | Audit API | UC-008, FR-040 | ✅ |
+| IR-S4-05 | `/health` | — | ✅ |
+| IR-S4-06 | api 80% coverage 目標 | NFR-003 | ✅（骨格 + 単体 4 / 結合 3） |
 
 ### S5 — Web
 

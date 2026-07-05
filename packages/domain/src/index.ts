@@ -1,3 +1,13 @@
+export {
+  type AuditLogRepository,
+  type AuditLogCreateInput,
+  type AuditLogEntry,
+  type AuditLogListFilter,
+  type AuditLogListResult,
+  type AuditAction,
+} from './audit/audit-log-repository.js';
+export { AuditHandler, registerAuditHandlers } from './audit/audit-handler.js';
+
 export { createDomainCore, type DomainCore } from './domain-core.js';
 
 export { canTransition, assertValidTransition, getAllowedTransitions } from './resource/lifecycle.js';

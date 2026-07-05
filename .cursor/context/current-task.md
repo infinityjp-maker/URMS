@@ -6,17 +6,18 @@
 
 ## タスク ID
 
-B-007 / S4
+B-007 / S5
 
 ## タイトル
 
-Sprint S4 — API 基盤（Fastify + Resource/Mode/Audit）
+Sprint S5 — Web 基盤（Resource UI + Mode Switcher）
 
 ## 状態
 
-S3 Database 完了 · 次は S4 着手
+S4 API 完了 · S5 は Figma（B-009）推奨
 
 ## 参照
 
-- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) IR-S4-xx
-- [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md) Sprint 4
+- [ui-requirements.md](../../docs/requirements/ui-requirements.md)
+- [ui-design-links.md](../../docs/requirements/ui-design-links.md)
+- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) IR-S5-xx

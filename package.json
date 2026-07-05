@@ -9,11 +9,12 @@
   },
   "scripts": {
     "dev": "pnpm --filter @urms/web dev",
-    "build": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/db build && pnpm --filter @urms/web build",
+    "dev:api": "pnpm --filter @urms/api dev",
+    "build": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/logger build && pnpm --filter @urms/db build && pnpm --filter @urms/api build && pnpm --filter @urms/web build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/db test",
-    "test:integration": "pnpm --filter @urms/db test:integration"
+    "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/db test && pnpm --filter @urms/api test",
+    "test:integration": "pnpm --filter @urms/db test:integration && pnpm --filter @urms/api test:integration"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
