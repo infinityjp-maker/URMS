@@ -3,7 +3,7 @@ import type { FastifyInstance, FastifyRequest } from 'fastify';
 
 export async function registerModePlugin(app: FastifyInstance): Promise<void> {
   app.addHook('onRequest', async (request: FastifyRequest) => {
-    if (request.url.startsWith('/health')) {
+    if (request.url.startsWith('/health') || request.url.startsWith('/metrics')) {
       request.urmsMode = 'operate';
       return;
     }

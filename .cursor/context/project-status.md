@@ -8,9 +8,9 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 3 MVP 完了** |
-| バージョン | v0.2.0-mvp |
-| 次 | Phase 4（S11〜S13）— User Go/No-Go 待ち |
+| 状態 | **Phase 4 進行中** — S12 監視 · ログ |
+| バージョン | Git タグ v0.2.0-mvp（S11 は未タグ） |
+| User Go | ✅ 2026-07-05 |
 
 ## ゲート
 
@@ -20,8 +20,8 @@
 | 暫定 Web UI · Context · AI · Plugins | ✅ |
 | E2E · Coverage CI | ✅ |
 | Docker Compose · CI build | ✅ |
+| S11 ローカル認証方針 | ✅ bypass + 内部 API |
 | PostgreSQL（User 環境） | ⏳ Docker 導入後 |
-| IdP 本番認証 | ⏳ Phase 4 |
 
 ## リンク
 

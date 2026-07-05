@@ -2,16 +2,81 @@ openapi: 3.1.0
 info:
   title: URMS API
   version: 0.2.0
-  description: Unified Resource Management System — MVP API
+  description: |
+    Unified Resource Management System API.
+    Local app — no login UI (ADR-022). Dev uses URMS_AUTH_MODE=bypass by default.
 servers:
   - url: http://localhost:3000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LocalLoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string, description: externalId or email }
+        password: { type: string, format: password }
+    LocalLoginResponse:
+      type: object
+      properties:
+        accessToken: { type: string }
+        expiresIn: { type: integer }
+        tokenType: { type: string, enum: [Bearer] }
+        user:
+          type: object
+          properties:
+            id: { type: string }
+            externalId: { type: string }
+            email: { type: string }
+            roles: { type: array, items: { type: string } }
 paths:
   /health:
     get:
-      summary: Health check
+      summary: Liveness check (process up)
+      security: []
       responses:
         '200':
           description: OK
+  /health/ready:
+    get:
+      summary: Readiness check (includes database)
+      security: []
+      responses:
+        '200':
+          description: Ready
+        '503':
+          description: Not ready (e.g. database unavailable)
+  /metrics:
+    get:
+      summary: Prometheus metrics (S12)
+      security: []
+      responses:
+        '200':
+          description: text/plain metrics
+  /v1/auth/login:
+    post:
+      summary: Local login (internal · no UI — ADR-022)
+      description: Optional API for automation/tests. Local app has no login screen.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocalLoginRequest'
+      responses:
+        '200':
+          description: JWT issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalLoginResponse'
+        '401':
+          description: Invalid credentials
   /v1/resources:
     get:
       summary: List resources

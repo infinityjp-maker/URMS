@@ -6,28 +6,24 @@
 
 ## Task
 
-**S11 — ローカル単一ユーザー方針（Phase 4）**
+**S12 — 監視 · ログ集約（Phase 4 · 進行中）**
 
-## User 決定済
-
-| 日付 | 判断 |
-|------|------|
-| 2026-07-05 | Phase 4 Go |
-| 2026-07-05 | IdP 不要 |
-| 2026-07-05 | **ログイン画面不要** |
-
-## S11 状態
+## S12 進捗
 
 | 項目 | 状態 |
 |------|------|
-| bypass 開発確認 | ✅ 継続（暫定 Web UI） |
-| ログイン UI | ❌ 作らない |
-| 内部 auth API | ✅ 実装済（UI からは使わない） |
+| `/health` liveness | ✅ |
+| `/health/ready` readiness | ✅ DB チェック |
+| `/metrics` Prometheus | ✅ |
+| 構造化アクセスログ | ✅ `@urms/logger` |
+| Loki Docker profile | ✅ 任意 |
+| OpenAPI 同期 | ✅ |
+| 単体テスト | ✅ 18 passed |
 
 ## 次（開発側）
 
-S11 残り · OpenAPI · S12 準備
+S12 残り · dev:verify 更新 · S13 準備 · v0.3.0-beta タグ（未）
 
 ## User
 
-普段は作業なし。暫定 Web UI を開くだけ（ログイン不要）。
+普段は作業なし。設計図（5180）が最も確実。5173 は DB 未起動時 Resource エラー（想定内）。

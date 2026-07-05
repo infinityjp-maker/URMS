@@ -11,6 +11,7 @@ import {
 } from '@urms/domain';
 import {
   createPrismaClient,
+  checkDatabaseHealth,
   PrismaAiUsageRepository,
   PrismaAuditLogRepository,
   PrismaContextRepository,
@@ -65,5 +66,8 @@ export function createAppServices(databaseUrl?: string): AppServices {
     pluginRegistry,
     auditLogRepository,
     localAuthService,
+    checkReadiness: async () => ({
+      database: await checkDatabaseHealth(prisma),
+    }),
   };
 }

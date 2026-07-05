@@ -101,6 +101,7 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         },
       })),
     },
+    checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
     ...overrides,
   } as AppServices;
 }
@@ -121,6 +122,67 @@ describe('Health route', () => {
         version: '0.2.0',
       },
     });
+
+    await app.close();
+  });
+
+  it('returns ready when database check passes', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/health/ready',
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({
+      data: {
+        status: 'ready',
+        version: '0.2.0',
+        checks: { database: 'ok' },
+      },
+    });
+
+    await app.close();
+  });
+
+  it('returns not_ready when database check fails', async () => {
+    const app = await createApp({
+      services: createMockServices({
+        checkReadiness: vi.fn(async () => ({ database: 'unavailable' as const })),
+      }),
+      logger: false,
+    });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/health/ready',
+    });
+
+    expect(response.statusCode).toBe(503);
+    expect(response.json()).toEqual({
+      data: {
+        status: 'not_ready',
+        version: '0.2.0',
+        checks: { database: 'unavailable' },
+      },
+    });
+
+    await app.close();
+  });
+});
+
+describe('Metrics route', () => {
+  it('returns prometheus counters without authentication', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    await app.inject({ method: 'GET', url: '/health' });
+    const response = await app.inject({ method: 'GET', url: '/metrics' });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toContain('text/plain');
+    expect(response.body).toContain('urms_http_requests_total');
+    expect(response.body).toContain('urms_http_errors_total');
 
     await app.close();
   });

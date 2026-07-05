@@ -2,9 +2,9 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:phase4-readiness  
-> **version:** 1.3  
-> **phase:** 4 — **S11 進行中**  
-> **status:** **User Go 承認済 — 2026-07-05**  
+> **version:** 1.5  
+> **phase:** 4 — **S12 進行中**  
+> **status:** **User Go 承認済 — 2026-07-05 · S11 実装済（v0.3.0-alpha 未タグ）**  
 > **owner:** PM
 
 ## 参照
@@ -25,11 +25,11 @@
 
 ---
 
-## S11 進捗（ローカル単一ユーザー）
+## S11 実装済（ローカル単一ユーザー · 未リリース）
 
 | 項目 | 状態 |
 |------|------|
-| ローカル認証 API（内部用 · 任意） | ✅ `POST /v1/auth/login` |
+| ローカル認証 API（内部用 · 任意） | ✅ `POST /v1/auth/login` · OpenAPI |
 | 開発確認用 bypass | ✅ デフォルト（暫定 Web UI はそのまま） |
 | **ログイン画面（UI）** | ❌ **不要 — User 決定** |
 | 本番 UI | OS ユーザーで即操作（Phase 5 で本格化） |
@@ -38,11 +38,23 @@
 
 ## Phase 4 Sprint 概要
 
-| Sprint | 名称 | Version |
-|--------|------|---------|
-| **S11** | **ローカル単一ユーザー方針**（進行中） | v0.3.0-alpha |
-| S12 | 監視 · ログ集約 | v0.3.0-beta |
-| S13 | 性能 · セキュリティ監査 | v0.3.0 |
+| Sprint | 名称 | Version | 状態 |
+|--------|------|---------|------|
+| **S11** | **ローカル単一ユーザー方針** | v0.3.0-alpha | 実装済 · 未タグ |
+| **S12** | **監視 · ログ集約** | v0.3.0-beta | 進行中 |
+| S13 | 性能 · セキュリティ監査 | v0.3.0 | 未着手 |
+
+---
+
+## S12 進捗（監視 · ログ集約）
+
+| 項目 | 状態 |
+|------|------|
+| `/health` liveness | ✅ プロセス生存確認 |
+| `/health/ready` readiness | ✅ DB 接続含む（503 when DB down） |
+| `/metrics` Prometheus | ✅ リクエスト · 5xx カウンタ |
+| 構造化アクセスログ | ✅ `@urms/logger` + request hook |
+| Loki（Docker 任意） | ✅ `docker compose --profile observability up loki` |
 
 ---
 
@@ -61,3 +73,4 @@
 |------|------|
 | 2026-07-05 | v1.2 — User Go · S11 着手 |
 | 2026-07-05 | v1.3 — ログイン画面不要 |
+| 2026-07-05 | v1.5 — S12 着手 · health/ready · metrics · Loki profile |

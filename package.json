@@ -10,6 +10,8 @@
   "scripts": {
     "dev": "pnpm --filter @urms/web dev",
     "dev:api": "pnpm --filter @urms/api dev",
+    "dev:prepare": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/db build",
+    "dev:verify": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/verify-dev.ps1",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @urms/db db:migrate",

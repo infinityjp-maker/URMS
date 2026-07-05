@@ -21,14 +21,14 @@
 | 2.9 | AI Development Governance | **完了（PM 承認待ち）** |
 | 3 prep | Phase 3 Ready | **完了** |
 | 3 | MVP 実装（S1〜S10） | **完了** — tag `v0.2.0-mvp` |
-| 4 | 品質・運用（S11〜S13） | **進行中** — S11 ローカル認証 |
+| 4 | 品質・運用（S11〜S13） | **進行中** — S12 監視 · ログ |
 | 5 | 本番・拡張（S14〜S16） | 未着手 |
 
 ## 現在
 
 - **Phase 3 MVP 完了** — Sprint S1〜S10 · tag `v0.2.0-mvp`（`0d3e18d`）
-- **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx` · 「これから」セクション参照
-- **次:** Phase 4（S11 ローカル認証 · S12 監視 · S13 監査）— User Go/No-Go 待ち
+- **Phase 4 Go 承認済** — S11 実装済 · S12 監視 · ログ進行中
+- **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx`
 
 ## Phase 3 開始条件（記録）
 

@@ -32,7 +32,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/health || exit 1']
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/health/ready || exit 1']
       interval: 10s
       timeout: 5s
       retries: 10
@@ -62,5 +62,19 @@ services:
         condition: service_started
     restart: unless-stopped
 
+  # Optional: docker compose --profile observability up -d loki
+  loki:
+    profiles: [observability]
+    image: grafana/loki:3.0.0
+    container_name: urms-loki
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - '3100:3100'
+    volumes:
+      - ./docker/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - urms_loki_data:/loki
+    restart: unless-stopped
+
 volumes:
   urms_pg_data:
+  urms_loki_data:

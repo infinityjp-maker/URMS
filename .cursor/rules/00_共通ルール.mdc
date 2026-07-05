@@ -40,6 +40,18 @@ User が `/design` `/implement` 等を PM 経由なく実行した場合:
 
 作業開始時は `.cursor/context/` 4ファイルを読む。Knowledge の複製は Context に置かない。
 
+## 作業完了時の必須確認（User 向け Canvas · サーバー）
+
+Canvas 更新 · Sprint 完了 · User 向けリンク変更の **作業完了前** に必ず実施:
+
+1. **依存ビルド** — workspace パッケージ変更後は `pnpm dev:prepare`
+2. **サーバー疎通** — `pnpm dev:verify` の出力をそのまま報告（WARN = DB 未起動 · Resource 不可）
+3. **暫定 Web UI** — 5173 で HTML 表示。データ機能は PostgreSQL 要
+4. **設計図** — 5180 が開くこと（DB 不要 · 最も確実）
+5. **Canvas** — 誇張禁止（「すべて OK」「S11 完了」等）。実態に合わせる
+
+未起動時は `scripts/launch/start-dev-servers.bat` で起動してから再確認する。
+
 ## 参照
 
 - `docs/ai-team/00_Overview.md`

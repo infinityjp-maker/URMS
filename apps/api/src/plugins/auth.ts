@@ -3,7 +3,7 @@ import type { FastifyInstance, FastifyRequest } from 'fastify';
 
 import { resolveAuthConfig } from '../lib/auth-config.js';
 
-const PUBLIC_PREFIXES = ['/health', '/v1/auth/login'];
+const PUBLIC_PREFIXES = ['/health', '/metrics', '/v1/auth/login'];
 
 function isPublicRoute(url: string): boolean {
   return PUBLIC_PREFIXES.some((prefix) => url.startsWith(prefix));
