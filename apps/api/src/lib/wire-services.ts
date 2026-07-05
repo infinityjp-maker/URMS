@@ -8,6 +8,7 @@ import {
   PluginRegistry,
   registerAuditHandlers,
   ResourceService,
+  RelationService,
   createWeatherService,
   createScheduleService,
 } from '@urms/domain';
@@ -17,6 +18,7 @@ import {
   PrismaAiUsageRepository,
   PrismaAuditLogRepository,
   PrismaContextRepository,
+  PrismaRelationRepository,
   PrismaResourceRepository,
   PrismaUserRepository,
 } from '@urms/db';
@@ -31,6 +33,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
   const prisma = createPrismaClient(databaseUrl);
   const eventBus = new InProcessEventBus();
   const resourceRepository = new PrismaResourceRepository(prisma);
+  const relationRepository = new PrismaRelationRepository(prisma);
   const contextRepository = new PrismaContextRepository(prisma);
   const auditLogRepository = new PrismaAuditLogRepository(prisma);
   const aiUsageRepository = new PrismaAiUsageRepository(prisma);
@@ -44,6 +47,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
   }
 
   const resourceService = new ResourceService(resourceRepository, eventBus, pluginRegistry);
+  const relationService = new RelationService(relationRepository, resourceRepository, eventBus);
   const contextService = new ContextService(contextRepository, eventBus);
 
   const aiRegistry = new AiProviderRegistry();
@@ -65,6 +69,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
 
   return {
     resourceService,
+    relationService,
     contextService,
     aiManager,
     pluginRegistry,

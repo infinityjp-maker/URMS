@@ -49,6 +49,7 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 | 10 | Phase 4 Readiness | [10-phase4-readiness.md](./10-phase4-readiness.md) | **Phase 4 開始 PM 提案** | — |
 | 11 | Phase 5 Desktop UI | [11-phase5-desktop-ui.md](./11-phase5-desktop-ui.md) | **本番 UI · 知覚層 v0** | ADR-023 |
 | 12 | Phase 4 S13 Security | [12-phase4-s13-security-audit.md](./12-phase4-s13-security-audit.md) | 性能 · セキュリティ監査 | — |
+| 13 | Phase 5 S14 Relations | [13-phase5-s14-resource-relations.md](./13-phase5-s14-resource-relations.md) | Resource リレーション API | — |
 
 ## ADR（実装関連）
 

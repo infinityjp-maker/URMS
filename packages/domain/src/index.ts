@@ -12,6 +12,13 @@ export { createDomainCore, type DomainCore } from './domain-core.js';
 
 export { canTransition, assertValidTransition, getAllowedTransitions } from './resource/lifecycle.js';
 export { ResourceService, type CreateResourceInput, type UpdateResourceInput } from './resource/resource-service.js';
+export {
+  RelationService,
+  type CreateRelationInput,
+  type RelationListFilter,
+  type RelationRepository,
+} from './resource/relation-service.js';
+export { assertValidRelationType, validateRelationEndpoints } from './resource/relation-validator.js';
 
 export { ContextService } from './context/context-service.js';
 export { buildPerceptionState, type PerceptionOverrides } from './perception/build-perception-state.js';

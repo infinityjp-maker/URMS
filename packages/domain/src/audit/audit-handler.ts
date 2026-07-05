@@ -40,6 +40,10 @@ function mapEventTypeToAction(eventType: string): AuditAction | undefined {
       return 'LIFECYCLE';
     case EVENT_TYPES.ContextUpdated:
       return 'UPDATE';
+    case EVENT_TYPES.RelationCreated:
+      return 'CREATE';
+    case EVENT_TYPES.RelationDeleted:
+      return 'DELETE';
     default:
       return undefined;
   }
@@ -78,6 +82,8 @@ export function registerAuditHandlers(
     EVENT_TYPES.ResourceLifecycleChanged,
     EVENT_TYPES.ResourceArchived,
     EVENT_TYPES.ContextUpdated,
+    EVENT_TYPES.RelationCreated,
+    EVENT_TYPES.RelationDeleted,
   ];
 
   for (const eventType of eventTypes) {

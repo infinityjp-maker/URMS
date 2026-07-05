@@ -6,15 +6,16 @@
 
 ## Task
 
-**Phase 5 — S14 Resource リレーション（準備）**
+**Phase 5 — S15 AI Team Resource 化**
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| 本番UI v2a 天気 | ✅ Open-Meteo |
-| 本番UI v2b 予定 | ✅ `schedule` Resource |
-| **S14** | ⏳ 次 |
+| 窓UI v2 | ✅ 天気 · 予定 |
+| **S14 リレーション** | ✅ API · migration |
+| **S15** | ⏳ 次 |
+| **S16 → v1.0** | ⏳ S15 後 |
 
 ## User
 

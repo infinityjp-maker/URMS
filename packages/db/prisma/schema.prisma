@@ -85,3 +85,19 @@ model AiUsageLog {
   @@index([createdAt])
   @@map("ai_usage_logs")
 }
+
+model ResourceRelation {
+  id           String   @id @default(cuid())
+  fromType     String   @map("from_type")
+  fromId       String   @map("from_id")
+  toType       String   @map("to_type")
+  toId         String   @map("to_id")
+  relationType String   @map("relation_type")
+  createdAt    DateTime @default(now()) @map("created_at")
+  createdBy    String?  @map("created_by")
+
+  @@unique([fromType, fromId, toType, toId, relationType])
+  @@index([fromType, fromId])
+  @@index([toType, toId])
+  @@map("resource_relations")
+}

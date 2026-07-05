@@ -1,5 +1,6 @@
 export * from './types/mode.js';
 export * from './types/resource.js';
+export * from './types/relation.js';
 export * from './types/context.js';
 export * from './types/perception.js';
 export * from './types/ai.js';

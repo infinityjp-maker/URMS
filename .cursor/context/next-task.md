@@ -8,10 +8,11 @@
 
 | 順 | タスク | 状態 |
 |----|--------|------|
-| 1 | **S14 Resource リレーション** | 次 |
-| 2 | v2c 外部カレンダー | 別途 Go |
-| 3 | k6 負荷テスト CI | 将来 |
+| 1 | **S15 AI Team Resource 化** | 次 |
+| 2 | **S16 外部連携 · v1.0 GA** | S15 後 |
+| 3 | v2c 外部カレンダー | 別途 Go |
 
 ## 参照
 
-- [11-phase5-desktop-ui.md](../../docs/implementation/11-phase5-desktop-ui.md)
+- [13-phase5-s14-resource-relations.md](../../docs/implementation/13-phase5-s14-resource-relations.md)
+- [05-development-roadmap.md](../../docs/implementation/05-development-roadmap.md)

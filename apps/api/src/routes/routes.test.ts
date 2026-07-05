@@ -37,6 +37,26 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         status,
       })),
     },
+    relationService: {
+      list: vi.fn(async () => []),
+      listForResource: vi.fn(async () => [
+        {
+          id: 'rel-1',
+          fromType: 'digital',
+          fromId: 'license-01',
+          toType: 'physical',
+          toId: 'server-01',
+          relationType: 'depends_on',
+          createdAt: '2026-07-05T00:00:00.000Z',
+        },
+      ]),
+      create: vi.fn(async (input) => ({
+        id: 'rel-new',
+        ...input,
+        createdAt: '2026-07-05T00:00:00.000Z',
+      })),
+      delete: vi.fn(async () => undefined),
+    },
     contextService: {
       getDashboard: vi.fn(async () => ({
         items: [{ key: 'current_task', summary: 'task', ssotLinks: [] }],
@@ -544,6 +564,41 @@ describe('Error handler', () => {
     expect(response.statusCode).toBe(404);
     expect(response.json().error.code).toBe(ERROR_CODES.RESOURCE_NOT_FOUND);
 
+    await app.close();
+  });
+});
+
+describe('Relation routes (S14)', () => {
+  it('lists relations for a resource', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/resources/physical/server-01/relations',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data[0].relationType).toBe('depends_on');
+    await app.close();
+  });
+
+  it('creates a relation', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/relations',
+      headers: { 'x-urms-mode': 'operate' },
+      payload: {
+        fromType: 'digital',
+        fromId: 'license-01',
+        toType: 'physical',
+        toId: 'server-01',
+        relationType: 'depends_on',
+      },
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.json().data.id).toBe('rel-new');
     await app.close();
   });
 });

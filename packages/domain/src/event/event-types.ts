@@ -5,6 +5,8 @@ export const EVENT_TYPES = {
   ResourceArchived: 'ResourceArchived',
   ContextUpdated: 'ContextUpdated',
   ModeChanged: 'ModeChanged',
+  RelationCreated: 'RelationCreated',
+  RelationDeleted: 'RelationDeleted',
 } as const;
 
 export type EventType = (typeof EVENT_TYPES)[keyof typeof EVENT_TYPES];
