@@ -11,7 +11,7 @@ describe('resource type plugins', () => {
       registry.register(plugin);
     }
 
-    expect(registry.list()).toHaveLength(4);
+    expect(registry.list()).toHaveLength(5);
   });
 
   it('validates physical metadata.location', () => {

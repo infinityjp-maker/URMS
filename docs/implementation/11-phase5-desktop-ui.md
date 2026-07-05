@@ -3,7 +3,7 @@
 > **resource_type:** knowledge  
 > **owner:** PM / Developer  
 > **adr:** ADR-023  
-> **status:** v1 完了 · **v2 User 了承（2026-07-05）** — v2a 天気 · v2b 簡易予定
+> **status:** v2 完了（v2a 天気 · v2b 予定）· **S14 次**
 
 ## 位置づけ
 
@@ -35,10 +35,27 @@
 | 段階 | 内容 | 状態 |
 |------|------|------|
 | **v2a** | 天気 — Open-Meteo · 1 地点（`URMS_WEATHER_LAT/LON`） | ✅ |
-| **v2b** | 予定 — 既存 Resource / 簡易イベントから表示 | ⏳ 次 |
+| **v2b** | 予定 — `schedule` Resource · `metadata.startAt` | ✅ |
 | v2c | 外部カレンダー連携 | 将来 · 別途 Go |
 
-**実装:** `@urms/domain` · `OpenMeteoWeatherService` → `GET /v1/perception` · 取得失敗時はフィクスチャへフォールバック。
+**schedule Resource 例（`POST /v1/resources` · status `active`）:**
+
+```json
+{
+  "resourceType": "schedule",
+  "resourceId": "standup-20260705",
+  "name": "プロジェクト定例",
+  "metadata": {
+    "startAt": "2026-07-05T09:30:00+09:00",
+    "tone": "calm",
+    "note": "集中時間推奨"
+  }
+}
+```
+
+作成後 `PATCH /v1/resources/schedule/{id}/lifecycle` で `active` にすると窓に表示されます。
+
+**実装:** `@urms/domain` · `ResourceScheduleService` → `GET /v1/perception` · DB 不可時はフィクスチャへフォールバック。
 
 **S14（Resource リレーション）:** v2b 完了後に着手（設計メモのみ先行可）。
 

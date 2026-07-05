@@ -14,12 +14,23 @@ export { canTransition, assertValidTransition, getAllowedTransitions } from './r
 export { ResourceService, type CreateResourceInput, type UpdateResourceInput } from './resource/resource-service.js';
 
 export { ContextService } from './context/context-service.js';
-export { buildPerceptionState } from './perception/build-perception-state.js';
+export { buildPerceptionState, type PerceptionOverrides } from './perception/build-perception-state.js';
 export { resolveDayPhase, statusLineForPhase } from './perception/day-phase.js';
 export { createWeatherService, OpenMeteoWeatherService, type WeatherService } from './perception/weather/weather-service.js';
 export { resolveWeatherConfig, type WeatherConfig } from './perception/weather/weather-config.js';
 export { buildWeatherHint } from './perception/weather/weather-hint.js';
 export { buildOpenMeteoUrl, mapOpenMeteoResponse } from './perception/weather/open-meteo.js';
+export { createScheduleService, ResourceScheduleService, type ScheduleService } from './perception/schedule/schedule-service.js';
+export {
+  resolveScheduleConfig,
+  SCHEDULE_RESOURCE_TYPE,
+  type ScheduleConfig,
+} from './perception/schedule/schedule-config.js';
+export {
+  mapScheduleResourceToEvent,
+  mapScheduleResourcesToEvents,
+  formatRelativeEventNote,
+} from './perception/schedule/map-schedule-resources.js';
 export {
   validateContextUpdateItems,
   validateSummary,

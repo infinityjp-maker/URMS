@@ -1,6 +1,10 @@
 import type { PluginValidationDetail } from '@urms/shared';
 import type { ResourceTypePlugin } from '@urms/domain';
 
+import { createSchedulePlugin } from './schedule-plugin.js';
+
+export { createSchedulePlugin };
+
 const CORE_VERSION = '0.2.0';
 const PLUGIN_VERSION = '1.0.0';
 
@@ -83,5 +87,6 @@ export function createBuiltinResourceTypePlugins(): ResourceTypePlugin[] {
     createDigitalPlugin(),
     createHumanPlugin(),
     createKnowledgePlugin(),
+    createSchedulePlugin(),
   ];
 }

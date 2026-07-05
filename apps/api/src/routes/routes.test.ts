@@ -110,6 +110,11 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         hint: '穏やかな天気です',
       })),
     },
+    scheduleService: {
+      getTodayEvents: vi.fn(async () => [
+        { time: '10:00', title: 'デイリー', tone: 'calm' as const },
+      ]),
+    },
     checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
     ...overrides,
   } as AppServices;
@@ -366,9 +371,12 @@ describe('Perception routes', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    const body = response.json() as { data: { statusLine: string; aiMemo: string; weather: { tempC: number } } };
+    const body = response.json() as {
+      data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
+    };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
+    expect(body.data.nextEvents[0]?.title).toBe('デイリー');
 
     await app.close();
   });

@@ -4,4 +4,5 @@ export {
   createHumanPlugin,
   createKnowledgePlugin,
   createPhysicalPlugin,
+  createSchedulePlugin,
 } from './resource-type-plugins.js';

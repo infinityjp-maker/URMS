@@ -6,22 +6,15 @@
 
 ## Task
 
-**Phase 5 — 本番UI v2b（簡易予定）**
-
-## User 決定
-
-| 日付 | 判断 |
-|------|------|
-| 2026-07-05 | **v2a + v2b で了承** — 天気 → 簡易予定の順 |
+**Phase 5 — S14 Resource リレーション（準備）**
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| 本番UI v1 | ✅ `/v1/perception` · 時間帯モード |
-| **v2a 天気** | ✅ Open-Meteo · `URMS_WEATHER_*` |
-| **v2b 簡易予定** | ⏳ 次 |
-| S14 Resource リレーション | ⏳ v2b 後 |
+| 本番UI v2a 天気 | ✅ Open-Meteo |
+| 本番UI v2b 予定 | ✅ `schedule` Resource |
+| **S14** | ⏳ 次 |
 
 ## User
 

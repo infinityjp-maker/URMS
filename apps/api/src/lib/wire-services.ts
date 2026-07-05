@@ -9,6 +9,7 @@ import {
   registerAuditHandlers,
   ResourceService,
   createWeatherService,
+  createScheduleService,
 } from '@urms/domain';
 import {
   createPrismaClient,
@@ -60,6 +61,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
   const jwtSecret = process.env.JWT_SECRET?.trim() || 'dev-local-jwt-secret-change-me';
   const localAuthService = new LocalAuthService(userRepository, { jwtSecret });
   const weatherService = createWeatherService();
+  const scheduleService = createScheduleService({ resourceService });
 
   return {
     resourceService,
@@ -69,6 +71,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
     auditLogRepository,
     localAuthService,
     weatherService,
+    scheduleService,
     checkReadiness: async () => ({
       database: await checkDatabaseHealth(prisma),
     }),

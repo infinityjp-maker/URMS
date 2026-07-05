@@ -23,20 +23,25 @@ describe('buildPerceptionState', () => {
     expect(state.tasks).toEqual(['S12 監視', 'S13 監査']);
   });
 
-  it('uses weather override when provided', () => {
+  it('uses perception overrides when provided', () => {
     const state = buildPerceptionState(
       { activeMode: 'operate', items: [] },
       new Date('2026-07-05T14:00:00'),
       {
-        tempC: 10,
-        precipitationPct: 5,
-        humidityPct: 40,
-        windKmh: 3,
-        hint: 'テスト',
+        weather: {
+          tempC: 10,
+          precipitationPct: 5,
+          humidityPct: 40,
+          windKmh: 3,
+          hint: 'テスト',
+        },
+        nextEvents: [{ time: '15:00', title: '打合せ', tone: 'focus' }],
       },
     );
 
     expect(state.weather.tempC).toBe(10);
     expect(state.weather.hint).toBe('テスト');
+    expect(state.nextEvents).toHaveLength(1);
+    expect(state.summary.events).toBe(1);
   });
 });

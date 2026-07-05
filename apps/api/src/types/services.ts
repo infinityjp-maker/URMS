@@ -1,4 +1,4 @@
-import type { ResourceService, AuditLogRepository, ContextService, AiManager, PluginRegistry, LocalAuthService, WeatherService } from '@urms/domain';
+import type { ResourceService, AuditLogRepository, ContextService, AiManager, PluginRegistry, LocalAuthService, WeatherService, ScheduleService } from '@urms/domain';
 
 export type ReadinessCheckResult = {
   database: 'ok' | 'unavailable';
@@ -12,5 +12,6 @@ export interface AppServices {
   auditLogRepository: AuditLogRepository;
   localAuthService: LocalAuthService;
   weatherService: WeatherService;
+  scheduleService: ScheduleService;
   checkReadiness: () => Promise<ReadinessCheckResult>;
 }

@@ -8,9 +8,13 @@ export async function registerPerceptionRoutes(
   services: AppServices,
 ): Promise<void> {
   app.get('/v1/perception', async (request) => {
+    const now = new Date();
     const dashboard = await services.contextService.getDashboard(request.urmsMode);
-    const weather = await services.weatherService.getCurrentWeather();
-    const state = buildPerceptionState(dashboard, new Date(), weather);
+    const [weather, nextEvents] = await Promise.all([
+      services.weatherService.getCurrentWeather(),
+      services.scheduleService.getTodayEvents(request.urmsMode, now),
+    ]);
+    const state = buildPerceptionState(dashboard, now, { weather, nextEvents });
     return { data: state };
   });
 }
