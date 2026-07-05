@@ -19,6 +19,7 @@
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @urms/db db:migrate",
+    "ai-team:sync": "pnpm --filter @urms/db ai-team:sync",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",

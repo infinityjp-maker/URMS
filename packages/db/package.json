@@ -17,6 +17,7 @@
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:seed-local": "tsx scripts/seed-local-user.ts",
+    "ai-team:sync": "tsx scripts/sync-ai-team.ts",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts"
   },

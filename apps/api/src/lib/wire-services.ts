@@ -11,6 +11,8 @@ import {
   RelationService,
   createWeatherService,
   createScheduleService,
+  createAiTeamSyncService,
+  resolveAiTeamRepoRoot,
 } from '@urms/domain';
 import {
   createPrismaClient,
@@ -66,6 +68,11 @@ export function createAppServices(databaseUrl?: string): AppServices {
   const localAuthService = new LocalAuthService(userRepository, { jwtSecret });
   const weatherService = createWeatherService();
   const scheduleService = createScheduleService({ resourceService });
+  const aiTeamSyncService = createAiTeamSyncService({
+    repoRoot: resolveAiTeamRepoRoot(),
+    resourceRepository,
+    relationService,
+  });
 
   return {
     resourceService,
@@ -77,6 +84,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
     localAuthService,
     weatherService,
     scheduleService,
+    aiTeamSyncService,
     checkReadiness: async () => ({
       database: await checkDatabaseHealth(prisma),
     }),

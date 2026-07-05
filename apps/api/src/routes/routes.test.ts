@@ -135,6 +135,15 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         { time: '10:00', title: 'デイリー', tone: 'calm' as const },
       ]),
     },
+    aiTeamSyncService: {
+      sync: vi.fn(async () => ({
+        created: 3,
+        updated: 40,
+        skipped: 1,
+        relationsCreated: 7,
+        items: [],
+      })),
+    },
     checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
     ...overrides,
   } as AppServices;
@@ -599,6 +608,23 @@ describe('Relation routes (S14)', () => {
 
     expect(response.statusCode).toBe(201);
     expect(response.json().data.id).toBe('rel-new');
+    await app.close();
+  });
+});
+
+describe('AI Team routes (S15)', () => {
+  it('syncs AI team resources from repo files', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/ai-team/sync',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data.created).toBe(3);
+    expect(services.aiTeamSyncService.sync).toHaveBeenCalledOnce();
     await app.close();
   });
 });

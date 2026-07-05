@@ -7,6 +7,7 @@ import { registerModePlugin } from './plugins/mode.js';
 import { registerSecurityPlugin } from './plugins/security.js';
 import { createRequestMetrics, registerMetricsPlugin } from './plugins/request-metrics.js';
 import { registerAiRoutes } from './routes/ai.js';
+import { registerAiTeamRoutes } from './routes/ai-team.js';
 import { registerAuditRoutes, registerModeRoutes } from './routes/audit.js';
 import { registerContextRoutes } from './routes/context.js';
 import { registerPerceptionRoutes } from './routes/perception.js';
@@ -65,6 +66,7 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerContextRoutes(app, services);
   await registerPerceptionRoutes(app, services);
   await registerAiRoutes(app, services);
+  await registerAiTeamRoutes(app, services);
   await registerPluginRoutes(app, services);
   await registerAuditRoutes(app, services);
   await registerModeRoutes(app);

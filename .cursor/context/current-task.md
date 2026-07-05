@@ -6,16 +6,16 @@
 
 ## Task
 
-**Phase 5 — S15 AI Team Resource 化**
+**Phase 5 — S16 外部連携 · v1.0 GA**
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| 窓UI v2 | ✅ 天気 · 予定 |
-| **S14 リレーション** | ✅ API · migration |
-| **S15** | ⏳ 次 |
-| **S16 → v1.0** | ⏳ S15 後 |
+| 窓UI v2 | ✅ |
+| S14 リレーション | ✅ |
+| **S15 AI Team Resource 化** | ✅ |
+| **S16 → v1.0** | ⏳ 次 |
 
 ## User
 

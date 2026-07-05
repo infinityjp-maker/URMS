@@ -38,6 +38,9 @@ export {
   mapScheduleResourcesToEvents,
   formatRelativeEventNote,
 } from './perception/schedule/map-schedule-resources.js';
+export { createAiTeamSyncService, AiTeamSyncService, resolveAiTeamRepoRoot, AI_TEAM_ID } from './ai-team/ai-team-sync-service.js';
+export type { AiTeamSyncReport, AiTeamSyncItem } from './ai-team/ai-team-sync-service.js';
+export { parseResourceMarkdown } from './ai-team/parse-resource-markdown.js';
 export {
   validateContextUpdateItems,
   validateSummary,
