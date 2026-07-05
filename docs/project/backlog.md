@@ -46,17 +46,17 @@
 | B-006m | PM Operations Protocol | PM | done | 09-pm-operations-protocol |
 | B-008 | Phase 3 要件拡張（UI + 実装） | PM + Architect | done | User 承認 2026-07-05 |
 | B-009 | 画面ワイヤーフレーム（SCR-01〜09） | PM | done | HTML SSOT · [wireframes/](../design/wireframes/index.html) |
-| B-007 | Phase 3 MVP 実装 | Developer | doing | S8 完了 · **S9 次** |
+| B-007 | Phase 3 MVP 実装 | Developer | done | S1〜S10 完了 · `v0.2.0-mvp` |
 | B-011 | OpenAPI 正本配置 | Developer | done | `apps/api/openapi.yaml` |
 
 ## Should
 
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
-| B-010 | IdP 具体選定（OIDC） | Architect | todo | Phase 3 開始前 Must |
-| B-011 | OpenAPI 正本配置 | Developer | done | `apps/api/openapi.yaml` |
-| B-012 | Resource リレーション実装 | Developer | todo | MVP 外 |
-| B-014 | AI Manager + Provider Plugin 実装 | Developer | todo | Phase 3、ADR-016 |
+| B-010 | IdP 具体選定（OIDC） | Architect + User | todo | Phase 4 S11 前 Must |
+| B-012 | Resource リレーション実装 | Developer | todo | Phase 5（S14） |
+| B-013 | Phase 4 品質・運用（S11〜S13） | Developer | blocked | User Go/No-Go 待ち · [10-phase4-readiness.md](../implementation/10-phase4-readiness.md) |
+| B-014 | AI Manager + Provider Plugin 実装 | Developer | done | S7 完了 · ADR-016 |
 
 ## Could
 
@@ -142,16 +142,17 @@
 
 **Git コミット案:** `docs: add Phase 2.9 AI Development Governance and ADR-021`
 
-## Phase 3 Ready（2026-07-05）
+## Phase 3 MVP 完了（2026-07-05）
 
 | 項目 | 状態 |
 |------|------|
-| 判定 | **Phase 3 実装中** |
-| 実装開始 | **承認済** — User 2026-07-05 |
-| 現在 Sprint | **S9 Testing**（S8 完了） |
-| 進捗計画（User 向け） | [phase3-progress-plan.md](./phase3-progress-plan.md) · **Canvas:** `canvases/urms-progress-plan.canvas.tsx` |
-| UI SSOT | HTML ワイヤーフレーム（[ui-design-links.md](../requirements/ui-design-links.md)） |
-| 未解決 | U-001 IdP, U-003 TanStack Query, U-004 Secret Store |
+| 判定 | **Phase 3 MVP 完了** |
+| タグ | `v0.2.0-mvp` |
+| 進捗（User 向け） | Canvas `urms-progress-plan.canvas.tsx` · 「これから」 |
+| ドキュメント（User 向け） | Canvas `urms-docs.canvas.tsx` |
+| 未解決（Phase 4 へ） | U-001 IdP, U-003 TanStack Query, U-004 Secret Store |
+
+## Phase 3 Ready（記録 · 2026-07-05）
 
 ## 参照
 

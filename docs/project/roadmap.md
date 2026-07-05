@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:roadmap  
-> **version:** 2.0  
+> **version:** 2.1  
 > **owner:** PM / KM
 
 ## ビジョン（不変）
@@ -20,17 +20,17 @@
 | 2.8 | Quality Gate | **Accepted** |
 | 2.9 | AI Development Governance | **完了（PM 承認待ち）** |
 | 3 prep | Phase 3 Ready | **完了** |
-| 3 | MVP 実装（S1〜S10） | **未着手** — User 承認待ち |
-| 4 | 品質・運用（S11〜S13） | 未着手 |
+| 3 | MVP 実装（S1〜S10） | **完了** — tag `v0.2.0-mvp` |
+| 4 | 品質・運用（S11〜S13） | **次** — User 承認待ち |
 | 5 | 本番・拡張（S14〜S16） | 未着手 |
 
 ## 現在
 
-- **Phase 2.9 完了** — AI Development Governance + ADR-021
-- **Phase 3 ガバナンス三本柱:** Contract · Quality Gate · Governance — 確定
-- **Git 最新:** `e3e4019`（2.6 記録；2.7〜2.9 未コミット）
+- **Phase 3 MVP 完了** — Sprint S1〜S10 · tag `v0.2.0-mvp`（`0d3e18d`）
+- **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx` · 「これから」セクション参照
+- **次:** Phase 4（S11 IdP · S12 監視 · S13 監査）— 開始は User Go/No-Go 後
 
-## Phase 3 開始条件
+## Phase 3 開始条件（記録）
 
 | # | 条件 | 状態 |
 |---|------|------|
@@ -40,7 +40,15 @@
 | 4 | Sprint Planning（ADR-018/019） | ✅ |
 | 5 | Quality Gate（ADR-020） | ✅ |
 | 6 | AI Governance（ADR-021） | ✅ |
-| 7 | **User Phase 3 実装開始承認** | ⏳ |
+| 7 | **User Phase 3 実装開始承認** | ✅ 2026-07-05 |
+
+## Phase 4 開始条件（未確定）
+
+| # | 条件 | 状態 |
+|---|------|------|
+| 1 | Phase 3 MVP 完了レビュー | ✅ tag `v0.2.0-mvp` |
+| 2 | IdP 具体選定（B-010） | ⏳ User 判断 |
+| 3 | **User Phase 4 実装開始承認** | ⏳ PM 提案: [10-phase4-readiness.md](../implementation/10-phase4-readiness.md) |
 
 ## 参照
 

@@ -2,8 +2,12 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:implementation-index  
-> **version:** 1.6  
+> **version:** 1.7  
 > **phase:** 2.5 / 2.6 / 2.7 / 2.8 / 2.9 / 3 ops / 3 prep
+
+## User（オーナー）向け
+
+本ディレクトリは **開発者 · AI チーム専用** の Markdown 正本です。User 向けの読み物は **`canvases/urms-docs.canvas.tsx`**（概要のみ）および **`urms-progress-plan.canvas.tsx`**（進捗）を使用してください。
 
 ## 目的
 
@@ -42,6 +46,7 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 | 07 | Quality Gate | [07-quality-gate.md](./07-quality-gate.md) | PR / Review / Release 基準 | ADR-020 |
 | 08 | AI Development Governance | [08-ai-development-governance.md](./08-ai-development-governance.md) | AI 共同開発運用 | ADR-021 |
 | 09 | PM Operations Protocol | [09-pm-operations-protocol.md](./09-pm-operations-protocol.md) | PM 運用・開発フロー | — |
+| 10 | Phase 4 Readiness | [10-phase4-readiness.md](./10-phase4-readiness.md) | **Phase 4 開始 PM 提案** | — |
 
 ## ADR（実装関連）
 
@@ -60,5 +65,6 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 | 日付 | 変更 |
 |------|------|
 | 2026-07-05 | v1.6 — PM Operations Protocol |
+| 2026-07-05 | v1.7 — Phase 4 Readiness PM 提案 |
 | 2026-07-05 | v1.5 — AI Development Governance, ADR-021 |
 | 2026-07-05 | v1.4 — Quality Gate, ADR-020 |

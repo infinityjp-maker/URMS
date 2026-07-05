@@ -1,23 +1,17 @@
 # URMS 開発の進み方
 
-> **Canvas（ビジュアル版）を開いてください**
+## User 向け（Canvas のみ）
 
-**[URMS 開発の進み方（Canvas）](C:/Users/infin/.cursor/projects/d-GitHub-URMS/canvases/urms-progress-plan.canvas.tsx)**
+| 目的 | Canvas |
+|------|--------|
+| 進捗 · サーバー · **これから** | `urms-progress-plan.canvas.tsx` |
+| 要件 · VISION · 用語 · 画面の見方 | `urms-docs.canvas.tsx` |
 
----
+Cursor サイドバー → **canvases** フォルダから開いてください。
 
-## 30秒で把握
+## 現在
 
-- **終わった:** ①〜⑨（全 9 段階 · MVP 完成）
-- **いま:** なし（Phase 3 MVP 完了）
-- **起動:** `pnpm docker:up` → http://localhost:8080/
+- **Phase 3 MVP 完了** — tag `v0.2.0-mvp`
+- **次:** Phase 4（S11〜S13）— User Go/No-Go 待ち
 
-**あなた:** 普段は何も不要。
-
----
-
-## 変更履歴
-
-- 2026-07-05 — v4.0: ⑨ Docker/CI 完了 · MVP tag `v0.2.0-mvp`
-- 2026-07-05 — v3.3: ⑧ Testing 完了
-- 2026-07-05 — v3.2: ⑦ Plugin 完了
+詳細は進捗 Canvas の **「これから」** セクションを参照。

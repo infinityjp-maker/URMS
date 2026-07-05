@@ -4,7 +4,7 @@
 > **resource_id:** knowledge:requirements-spec  
 > **version:** 1.1  
 > **phase:** 1 / 3  
-> **status:** Phase 3 要件拡張 — User 承認待ち  
+> **status:** Phase 3 MVP 完了 · Phase 4 準備中  
 > **owner:** PM + Document Writer
 
 ## 参照（最上位）
@@ -152,11 +152,13 @@ Phase 1 機能要求に加え、実装フェーズ向け詳細は以下を正本
 |--------|------|------|
 | Architect | Phase 1 + Phase 3 拡張レビュー済 | 2026-07-05 |
 | Reviewer | Phase 1 レビュー済 | 2026-07-05 |
-| PM | **User 承認待ち（Phase 3 要件拡張含む）** | — |
+| PM | Phase 3 要件拡張 · MVP 実装完了 | 2026-07-05 |
+| User | Phase 3 MVP 受入 · Phase 4 Go/No-Go | ⏳ |
 
 ## 変更履歴
 
 | 日付 | 変更 |
 |------|------|
 | 2026-07-05 | v1.1 — UI 要件・Phase 3 実装要件・FR-050〜052 |
+| 2026-07-05 | v1.2 — Phase 3 MVP 完了 · Phase 4 準備 |
 | 2026-07-05 | v1.0 初版（Phase 1） |

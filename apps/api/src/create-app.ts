@@ -1,7 +1,5 @@
 import Fastify from 'fastify';
 
-import { createLogger } from '@urms/logger';
-
 import { createAppServices } from './lib/wire-services.js';
 import { registerAuthPlugin } from './plugins/auth.js';
 import { registerErrorHandler } from './plugins/error-handler.js';
@@ -23,7 +21,12 @@ export interface CreateAppOptions {
 export async function createApp(options: CreateAppOptions = {}) {
   const services = options.services ?? createAppServices(options.databaseUrl);
   const app = Fastify({
-    logger: options.logger === false ? false : createLogger('api'),
+    logger:
+      options.logger === false
+        ? false
+        : {
+            level: process.env.LOG_LEVEL ?? 'info',
+          },
   });
 
   registerErrorHandler(app);

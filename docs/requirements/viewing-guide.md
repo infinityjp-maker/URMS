@@ -2,7 +2,17 @@
 
 > User がブラウザで画面を開くための手順。**サーバー起動が必要**です。
 
-## 1. ワイヤーフレームだけ見る（DB 不要 · 最も簡単）
+## User 向け（推奨）
+
+**PowerShell 操作は不要です。** Cursor → `canvases` → **`urms-docs.canvas.tsx`** の「画面の見方」セクションから http リンクをクリックしてください。
+
+進捗 · サーバー状態: **`urms-progress-plan.canvas.tsx`**
+
+---
+
+## 開発者向け（手動起動 · 以下は Markdown 正本）
+
+### 1. ワイヤーフレームだけ見る（DB 不要 · 最も簡単）
 
 PowerShell:
 

@@ -2,10 +2,14 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:architecture-index  
-> **version:** 1.0  
+> **version:** 1.2  
 > **phase:** 2  
 > **status:** frozen — Architecture Freeze 2026-07-05  
 > **owner:** Architect
+
+## User（オーナー）向け閲覧
+
+アーキテクチャ概要 · ADR 索引は **`canvases/urms-docs.canvas.tsx`** を開いてください。全文の正本は本ディレクトリの Markdown です。
 
 ## 参照（最上位）
 
@@ -52,3 +56,4 @@
 |------|------|
 | 2026-07-05 | v1.0 初版（Phase 2） |
 | 2026-07-05 | v1.1 — ADR-016 AI Provider Architecture 追加（Architecture Freeze） |
+| 2026-07-05 | v1.2 — User 向け Canvas 閲覧を docs/README.md に定義 |

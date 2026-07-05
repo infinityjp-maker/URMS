@@ -8,19 +8,23 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | Phase 3 Sprint S1 完了 |
-| バージョン | 0.2.0 |
-| ソース | Monorepo 初期化済 |
+| 状態 | **Phase 3 MVP 完了** |
+| バージョン | v0.2.0-mvp |
+| 次 | Phase 4（S11〜S13）— User Go/No-Go 待ち |
 
 ## ゲート
 
 | 項目 | 状態 |
-|------|------|
-| Monorepo | ✅ |
-| Web 起動 | ✅ |
-| API / DB | S4 / S3 未着手 |
+|------|-----|
+| Monorepo · Domain · DB · API | ✅ |
+| 暫定 Web UI · Context · AI · Plugins | ✅ |
+| E2E · Coverage CI | ✅ |
+| Docker Compose · CI build | ✅ |
+| PostgreSQL（User 環境） | ⏳ Docker 導入後 |
+| IdP 本番認証 | ⏳ Phase 4 |
 
 ## リンク
 
-- [README.md](../../README.md)
-- [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md)
+- Canvas 進捗: `canvases/urms-progress-plan.canvas.tsx`
+- [roadmap.md](../../docs/project/roadmap.md)
+- [backlog.md](../../docs/project/backlog.md)
