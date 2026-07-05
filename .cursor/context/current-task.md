@@ -6,18 +6,17 @@
 
 ## タスク ID
 
-B-007 / S3
+B-007 / S4
 
 ## タイトル
 
-Sprint S3 — Database（Prisma + Repository）
+Sprint S4 — API 基盤（Fastify + Resource/Mode/Audit）
 
 ## 状態
 
-S2 Domain 完了 · 次は S3 着手
+S3 Database 完了 · 次は S4 着手
 
 ## 参照
 
-- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) IR-S3-xx
-- [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md) Sprint 3
-- [ui-design-links.md](../../docs/requirements/ui-design-links.md) — Figma（User 並行 B-009）
+- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) IR-S4-xx
+- [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md) Sprint 4

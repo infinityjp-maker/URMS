@@ -58,12 +58,12 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S3 — Database
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S3-01 | Prisma schema（Resource, Context, Audit, User） | Contract §6 |
-| IR-S3-02 | migration 実行可能 | — |
-| IR-S3-03 | Repository 実装 + Testcontainers | — |
-| IR-S3-04 | 論理 DELETE のみ | Contract §5.7 |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S3-01 | Prisma schema（Resource, Context, Audit, User） | Contract §6 | ✅ |
+| IR-S3-02 | migration 実行可能 | — | ✅ |
+| IR-S3-03 | Repository 実装 + Testcontainers | — | ✅ |
+| IR-S3-04 | 論理 DELETE のみ | Contract §5.7 | ✅ |
 
 ### S4 — API
 

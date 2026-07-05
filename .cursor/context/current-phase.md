@@ -6,7 +6,7 @@
 
 ## Phase
 
-**Phase 3 — Sprint S2 完了 / S3 Database 次**
+**Phase 3 — Sprint S3 完了 / S4 API 次**
 
 ## 参照
 

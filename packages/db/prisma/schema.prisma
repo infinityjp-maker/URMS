@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ResourceStatus {
+  draft
+  active
+  deprecated
+  archived
+}
+
+model Resource {
+  id           String         @id @default(cuid())
+  resourceType String         @map("resource_type")
+  resourceId   String         @map("resource_id")
+  name         String
+  status       ResourceStatus @default(draft)
+  metadata     Json           @default("{}")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  createdBy    String?        @map("created_by")
+  updatedBy    String?        @map("updated_by")
+
+  @@unique([resourceType, resourceId])
+  @@index([resourceType, status])
+  @@index([name])
+  @@map("resources")
+}
+
+model ContextSnapshot {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  summary   String
+  ssotLinks Json     @map("ssot_links")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by")
+
+  @@map("context_snapshots")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String
+  resourceType String?  @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  actorId      String   @map("actor_id")
+  mode         String
+  payload      Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([resourceType, resourceId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  externalId String   @unique @map("external_id")
+  email      String   @unique
+  roles      String[] @default([])
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
