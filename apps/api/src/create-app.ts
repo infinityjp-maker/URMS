@@ -4,6 +4,7 @@ import Fastify from 'fastify';
 import { registerAuthPlugin } from './plugins/auth.js';
 import { registerErrorHandler } from './plugins/error-handler.js';
 import { registerModePlugin } from './plugins/mode.js';
+import { registerSecurityPlugin } from './plugins/security.js';
 import { createRequestMetrics, registerMetricsPlugin } from './plugins/request-metrics.js';
 import { registerAiRoutes } from './routes/ai.js';
 import { registerAuditRoutes, registerModeRoutes } from './routes/audit.js';
@@ -22,11 +23,14 @@ export interface CreateAppOptions {
   databaseUrl?: string;
   services?: AppServices;
   logger?: boolean;
+  /** Default: enabled except when NODE_ENV=test */
+  security?: boolean;
 }
 
 export async function createApp(options: CreateAppOptions = {}) {
   const services = options.services ?? createAppServices(options.databaseUrl);
   const metrics = createRequestMetrics();
+  const securityEnabled = options.security ?? process.env.NODE_ENV !== 'test';
   const app = Fastify({
     logger: options.logger === false ? false : createFastifyLoggerOptions('urms-api'),
   });
@@ -44,6 +48,8 @@ export async function createApp(options: CreateAppOptions = {}) {
       callback(null, false);
     },
   });
+
+  await registerSecurityPlugin(app, { enabled: securityEnabled });
 
   registerErrorHandler(app);
   await registerMetricsPlugin(app, metrics);

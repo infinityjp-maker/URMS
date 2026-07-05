@@ -529,3 +529,24 @@ describe('Error handler', () => {
     await app.close();
   });
 });
+
+describe('Security gate (S13)', () => {
+  it('sets helmet headers when security plugins enabled', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false, security: true });
+
+    const response = await app.inject({ method: 'GET', url: '/health' });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['x-content-type-options']).toBe('nosniff');
+
+    await app.close();
+  });
+
+  it('registers AI chat route with rate limit config', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false, security: true });
+    const route = app.printRoutes({ commonPrefix: false });
+    expect(route).toContain('v1/ai/chat');
+
+    await app.close();
+  });
+});

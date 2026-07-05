@@ -48,6 +48,7 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 | 09 | PM Operations Protocol | [09-pm-operations-protocol.md](./09-pm-operations-protocol.md) | PM 運用・開発フロー | — |
 | 10 | Phase 4 Readiness | [10-phase4-readiness.md](./10-phase4-readiness.md) | **Phase 4 開始 PM 提案** | — |
 | 11 | Phase 5 Desktop UI | [11-phase5-desktop-ui.md](./11-phase5-desktop-ui.md) | **本番 UI · 知覚層 v0** | ADR-023 |
+| 12 | Phase 4 S13 Security | [12-phase4-s13-security-audit.md](./12-phase4-s13-security-audit.md) | 性能 · セキュリティ監査 | — |
 
 ## ADR（実装関連）
 
@@ -69,6 +70,6 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 |------|------|
 | 2026-07-05 | v1.6 — PM Operations Protocol |
 | 2026-07-05 | v1.7 — Phase 4 Readiness PM 提案 |
-| 2026-07-05 | v1.9 — Phase 5 Desktop UI · ADR-023 |
+| 2026-07-05 | v2.0 — Phase 4 S13 security audit |
 | 2026-07-05 | v1.5 — AI Development Governance, ADR-021 |
 | 2026-07-05 | v1.4 — Quality Gate, ADR-020 |

@@ -2,6 +2,7 @@ import { AppError, ERROR_CODES, FEATURE_FLAGS, isFeatureEnabled, type AiChatRequ
 import type { FastifyInstance } from 'fastify';
 
 import type { AppServices } from '../types/services.js';
+import { aiChatRateLimitConfig } from '../plugins/security.js';
 
 export async function registerAiRoutes(app: FastifyInstance, services: AppServices): Promise<void> {
   const { aiManager } = services;
@@ -18,7 +19,7 @@ export async function registerAiRoutes(app: FastifyInstance, services: AppServic
     return { data: health };
   });
 
-  app.post('/v1/ai/chat', async (request, reply) => {
+  app.post('/v1/ai/chat', { config: aiChatRateLimitConfig() }, async (request, reply) => {
     assertAiEnabled();
 
     const body = request.body as {

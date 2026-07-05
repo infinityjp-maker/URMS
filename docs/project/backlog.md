@@ -55,7 +55,7 @@
 |----|--------|------|------|------|
 | B-010 | ~~IdP 具体選定（OIDC）~~ | — | **cancelled** | User 2026-07-05: ローカルアプリのため不要 · ADR-022 |
 | B-012 | Resource リレーション実装 | Developer | todo | Phase 5（S14） |
-| B-013 | Phase 4 品質・運用（S11〜S13） | Developer | doing | S12 監視 · ログ進行中 |
+| B-013 | Phase 4 品質・運用（S11〜S13） | Developer | doing | S13 性能 · セキュリティ進行中 |
 | B-014 | AI Manager + Provider Plugin 実装 | Developer | done | S7 完了 · ADR-016 |
 
 ## Could
