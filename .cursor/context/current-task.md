@@ -6,17 +6,17 @@
 
 ## タスク ID
 
-B-007 / S6 · B-009（User 並行）
+B-007 / S6
 
 ## タイトル
 
-Sprint S6 — Context Engine / User — Figma チェックリスト
+Sprint S6 — Context Engine
 
 ## 状態
 
-S5 Web 完了 · User は [figma-checklist.md](../../docs/requirements/figma-checklist.md) Step 1〜3
+B-009 完了（HTML ワイヤーフレーム SSOT）· S5 完了 · S6 次
 
 ## 参照
 
-- [06-context-engine.md](../../docs/architecture/06-context-engine.md)
-- [ui-design-links.md](../../docs/requirements/ui-design-links.md)
+- [wireframes/index.html](../../docs/design/wireframes/index.html)
+- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) IR-S6-xx

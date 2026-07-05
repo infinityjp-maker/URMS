@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SCR-07 Audit Log / audit</title>
+    <link rel="stylesheet" href="./wireframes.css" />
+  </head>
+  <body class="wire-frame-page">
+    <header class="wire-topbar">
+      <h1>URMS</h1>
+      <div class="wire-modes"><span class="wire-mode">計画</span><span class="wire-mode">運用</span><span class="wire-mode active">監査</span></div>
+    </header>
+    <div class="wire-body">
+      <nav class="wire-nav">
+        <a href="./scr-02-resource-list-operate.html">Resource</a>
+        <a class="active" href="./scr-07-audit-log-audit.html">監査ログ</a>
+        <a href="./scr-08-knowledge-operate.html">Knowledge</a>
+      </nav>
+      <main class="wire-main">
+        <div class="wire-card">
+          <span class="wire-tag">SCR-07 · audit</span>
+          <h2>監査ログ</h2>
+          <div class="wire-filters">
+            <label class="wire-field">日付<input type="date" /></label>
+            <label class="wire-field">種別<input /></label>
+            <label class="wire-field">操作者<input /></label>
+            <a class="wire-btn" href="#">検索</a>
+          </div>
+          <table class="wire-table">
+            <thead><tr><th>日時</th><th>操作者</th><th>アクション</th><th>Resource</th><th>Mode</th></tr></thead>
+            <tbody>
+              <tr><td>2026-07-05 13:00</td><td>dev-user</td><td>CREATE</td><td>physical:server-01</td><td>operate</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

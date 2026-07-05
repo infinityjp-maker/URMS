@@ -45,7 +45,7 @@
 | B-006l | Phase 2.9 PM 承認 | PM + User | done | 2026-07-05 |
 | B-006m | PM Operations Protocol | PM | done | 09-pm-operations-protocol |
 | B-008 | Phase 3 要件拡張（UI + 実装） | PM + Architect | done | User 承認 2026-07-05 |
-| B-009 | Figma MVP 画面（SCR-01〜09） | User | doing | アカウント作成済 · [figma-checklist.md](../requirements/figma-checklist.md) |
+| B-009 | 画面ワイヤーフレーム（SCR-01〜09） | PM | done | HTML SSOT · [wireframes/](../design/wireframes/index.html) |
 | B-007 | Phase 3 MVP 実装 | Developer | doing | S5 完了 · **S6 次** |
 | B-011 | OpenAPI 正本配置 | Developer | done | `apps/api/openapi.yaml` |
 

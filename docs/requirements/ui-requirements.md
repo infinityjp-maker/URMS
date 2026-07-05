@@ -37,7 +37,7 @@ MVP（Phase 3）における Web UI の画面構成・振る舞い・Mode 連動
 | UI-004 | **デスクトップ優先** — MVP は 1280px 以上を主対象 |
 | UI-005 | **Container / Presentational 分離**（Contract §11） |
 | UI-006 | **アクセシビリティ** — セマンティック HTML、キーボード操作（主要フロー） |
-| UI-007 | **Figma SSOT** — 画面レイアウトは Figma、本書 + [ui-design-links.md](./ui-design-links.md) で索引 |
+| UI-007 | **ビジュアル SSOT** — [HTML ワイヤーフレーム](../design/wireframes/index.html) + 本書 |
 
 ---
 
