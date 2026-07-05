@@ -44,6 +44,8 @@ describe('buildPerceptionState', () => {
     expect(state.weather.hint).toBe('テスト');
     expect(state.nextEvents).toHaveLength(1);
     expect(state.summary.events).toBe(1);
+    expect(state.summary.note).toContain('予定 1');
+    expect(state.summary.conditionScore).toBeGreaterThan(0);
   });
 
   it('uses honest empty defaults without overrides', () => {

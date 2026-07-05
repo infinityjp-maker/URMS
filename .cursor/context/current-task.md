@@ -6,25 +6,25 @@
 
 ## Task
 
-**Vision Track VT-4 — 日次ループ（窓 → 行動 → Context 更新）**
+**Vision Track VT-2 + VT-4 — Context 合成 · 日次ループ**
 
-VT-1 SSOT（schedule · location）接続済み。窓から `完了 → 次へ` で Context を更新し、日次ループの 1 サイクルを閉じる段階。
+SSOT（schedule · location）と advance-task 接続済み。Context 脳が時間 · 予定 · 天気 · タスクから「今」を合成し、ループ完了が project_status に残る段階。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| エンジニアリング（Sprint 20/20） | ✅ 参考値 |
-| VT-1 SSOT 重力 | 🔄 ~完了 |
-| VT-4 日次ループ | 🔄 着手（advance-task） |
-| VT-2 Context 脳 | ⏳ |
+| VT-1 SSOT 重力 | ✅ ~完了 |
+| VT-2 Context 脳（合成 narrative） | 🔄 着手 |
+| VT-4 日次ループ | 🔄 部分（advance + ループ記録） |
 | VT-3 知覚膜 | ⏳ |
 
 ## 直近の変更
 
-- `POST /v1/context/advance-task` — operate Mode から current_task 完了 · 繰り上げ
-- 窓 UI — タスクカードに「完了 → 次へ」ボタン（API+DB 時）
+- `synthesizeSummaryNote` — 予定 · タスク · 天気から summary.note を合成
+- advance-task — `project_status` に直近ループ記録
+- 窓 — 完了後フィードバック表示
 
 ## User
 
-API+DB 起動 · `pnpm ssot:sync` 後、窓で「完了 → 次へ」を試せます。
+`pnpm ssot:sync` · API+DB 起動後、窓で「完了 → 次へ」→ ステータス行 · まとめが変わることを確認。

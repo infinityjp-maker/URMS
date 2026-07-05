@@ -22,6 +22,11 @@ describe('buildAdvanceTaskUpdates', () => {
         summary: expect.stringContaining('VT-1'),
         ssotLinks: [],
       },
+      {
+        key: 'project_status',
+        summary: expect.stringContaining('直近ループ'),
+        ssotLinks: expect.any(Array),
+      },
     ]);
   });
 

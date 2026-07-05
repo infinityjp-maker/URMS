@@ -31,6 +31,10 @@ export function buildAdvanceTaskUpdates(dashboard: ContextDashboard, now = new D
     minute: '2-digit',
     hour12: false,
   });
+  const statusItem = findItem(dashboard, 'project_status');
+  const loopStatus = isActionableTask(next)
+    ? `直近ループ ${stamp} · 次: ${next}`
+    : `直近ループ ${stamp} · 完了: ${current}`;
 
   if (isActionableTask(next)) {
     return [
@@ -43,6 +47,11 @@ export function buildAdvanceTaskUpdates(dashboard: ContextDashboard, now = new D
         key: 'next_task',
         summary: `次を plan Mode で設定（${stamp} に「${current}」完了）`,
         ssotLinks: [],
+      },
+      {
+        key: 'project_status',
+        summary: loopStatus,
+        ssotLinks: statusItem?.ssotLinks ?? [],
       },
     ];
   }
@@ -57,6 +66,11 @@ export function buildAdvanceTaskUpdates(dashboard: ContextDashboard, now = new D
       key: 'next_task',
       summary: '次を plan Mode で設定',
       ssotLinks: [],
+    },
+    {
+      key: 'project_status',
+      summary: loopStatus,
+      ssotLinks: statusItem?.ssotLinks ?? [],
     },
   ];
 }

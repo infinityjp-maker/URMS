@@ -15,6 +15,7 @@ export type LifeStateView = {
   canAdvanceTask: boolean;
   advancing: boolean;
   advanceError: string | null;
+  advanceSuccess: string | null;
   refresh: () => Promise<void>;
   advanceTask: () => Promise<boolean>;
 };
@@ -35,6 +36,7 @@ export function useLifeState(): LifeStateView {
     canAdvanceTask: canAdvancePerceptionState(buildPerceptionState(buildDefaultContextDashboard('operate'))),
     advancing: false,
     advanceError: null,
+    advanceSuccess: null,
   });
 
   const refresh = useCallback(async () => {
@@ -54,6 +56,7 @@ export function useLifeState(): LifeStateView {
         loading: false,
         canAdvanceTask: readyOk && canAdvancePerceptionState(perception),
         advanceError: null,
+        advanceSuccess: current.advanceSuccess,
       }));
       return;
     }
@@ -68,6 +71,7 @@ export function useLifeState(): LifeStateView {
       loading: false,
       canAdvanceTask: canAdvancePerceptionState(localState),
       advanceError: null,
+      advanceSuccess: current.advanceSuccess,
     }));
   }, []);
 
@@ -78,7 +82,7 @@ export function useLifeState(): LifeStateView {
   }, [refresh]);
 
   const advanceTask = useCallback(async () => {
-    setView((current) => ({ ...current, advancing: true, advanceError: null }));
+    setView((current) => ({ ...current, advancing: true, advanceError: null, advanceSuccess: null }));
 
     const ok = await advanceContextTask();
     if (!ok) {
@@ -91,7 +95,16 @@ export function useLifeState(): LifeStateView {
     }
 
     await refresh();
-    setView((current) => ({ ...current, advancing: false }));
+    setView((current) => ({
+      ...current,
+      advancing: false,
+      advanceSuccess: 'Context 更新 · 次のフォーカスに切り替えました',
+    }));
+
+    window.setTimeout(() => {
+      setView((current) => ({ ...current, advanceSuccess: null }));
+    }, 4000);
+
     return true;
   }, [refresh]);
 

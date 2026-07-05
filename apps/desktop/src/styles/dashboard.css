@@ -277,6 +277,10 @@
   color: #f0b4b4;
 }
 
+.task-action__success {
+  color: #b8e0c8;
+}
+
 .ai-memo {
   margin: 0;
   font-size: 0.95rem;

@@ -160,6 +160,9 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                       {life.advancing ? '更新中…' : '完了 → 次へ'}
                     </button>
                     {life.advanceError ? <p className="hint-line task-action__error">{life.advanceError}</p> : null}
+                    {life.advanceSuccess ? (
+                      <p className="hint-line task-action__success">{life.advanceSuccess}</p>
+                    ) : null}
                   </div>
                 ) : null}
               </div>

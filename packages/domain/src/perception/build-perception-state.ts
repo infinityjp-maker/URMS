@@ -2,7 +2,12 @@ import type { ContextDashboard } from '@urms/shared';
 import type { PerceptionState } from '@urms/shared';
 
 import { resolveDayPhase, statusLineForPhase } from './day-phase.js';
-import { EMPTY_WEATHER } from './fixtures.js';
+import { EMPTY_WEATHER, hasWeatherData } from './fixtures.js';
+import {
+  synthesizeAiMemo,
+  synthesizeConditionScore,
+  synthesizeSummaryNote,
+} from './synthesize-context-note.js';
 
 export type PerceptionOverrides = {
   weather?: PerceptionState['weather'];
@@ -23,11 +28,11 @@ export function buildPerceptionState(
   const projectStatus = findSummary(dashboard, 'project_status');
   const currentTask = findSummary(dashboard, 'current_task');
   const nextTask = findSummary(dashboard, 'next_task');
-  const currentPhase = findSummary(dashboard, 'current_phase');
 
   const tasks = [currentTask, nextTask].filter((task): task is string => Boolean(task));
   const nextEvents = overrides?.nextEvents ?? [];
   const weather = overrides?.weather ?? EMPTY_WEATHER;
+  const hasWeather = hasWeatherData(weather);
 
   return {
     phase,
@@ -35,19 +40,16 @@ export function buildPerceptionState(
     weather,
     nextEvents,
     summary: {
-      conditionScore: nextEvents.length > 0 || tasks.length > 0 ? 50 : 0,
+      conditionScore: synthesizeConditionScore(nextEvents.length, tasks.length, hasWeather),
       events: nextEvents.length,
       tasks: tasks.length,
       focusHours: 0,
       travelMinutes: 0,
       weight: dashboard.activeMode === 'operate' ? '中' : '低〜中',
       focus: dashboard.activeMode === 'audit' ? '監査' : '安定',
-      note: currentPhase ?? 'Context に current_phase を設定するとここに反映されます。',
+      note: synthesizeSummaryNote(dashboard, phase, overrides),
     },
     tasks,
-    aiMemo:
-      nextTask ??
-      currentTask ??
-      'Context の current_task / next_task が窓の正本です。未設定の場合はここに表示されません。',
+    aiMemo: synthesizeAiMemo(currentTask, nextTask, nextEvents),
   };
 }
