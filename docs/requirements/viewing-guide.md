@@ -63,3 +63,36 @@ npx pnpm@9.15.4 dev
 | アプリの骨格 | http://localhost:5173/（`dev` のみ · Resource は API エラー） |
 
 Resource 一覧など API 連携画面は **PostgreSQL + API 起動後** に動作します。
+
+---
+
+## 4. Docker Compose 一式（MVP · DB + API + Web + nginx）
+
+開発用の「ターミナル 2 本立て」ではなく、**1 コマンドで公開に近い形** を起動する手順です。
+
+### 前提
+
+- **Docker Desktop** をインストール・起動
+
+### 手順
+
+```powershell
+cd D:\GitHub\URMS
+copy .env.example .env
+npx pnpm@9.15.4 docker:up
+```
+
+初回はイメージ build のため数分かかることがあります。
+
+| URL | 内容 |
+|-----|------|
+| http://localhost:8080/ | 動くアプリ（nginx 経由） |
+| http://localhost:8080/health | API ヘルスチェック |
+
+停止:
+
+```powershell
+npx pnpm@9.15.4 docker:down
+```
+
+> セクション 2 の `db:up` は **PostgreSQL だけ** 起動します。API/Web も Docker で動かす場合は本セクションを使ってください。

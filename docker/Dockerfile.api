@@ -1,0 +1,39 @@
+# syntax=docker/dockerfile:1
+
+FROM node:20-alpine AS base
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+WORKDIR /app
+
+FROM base AS builder
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/api/package.json apps/api/
+COPY apps/web/package.json apps/web/
+COPY packages/db/package.json packages/db/
+COPY packages/domain/package.json packages/domain/
+COPY packages/shared/package.json packages/shared/
+COPY packages/logger/package.json packages/logger/
+COPY packages/plugin-ollama/package.json packages/plugin-ollama/
+COPY packages/plugin-resource-types/package.json packages/plugin-resource-types/
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm build
+
+FROM base AS runner
+RUN apk add --no-cache wget
+ENV NODE_ENV=production
+WORKDIR /app
+
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /app/packages ./packages
+COPY docker/entrypoint-api.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 3000
+HEALTHCHECK --interval=10s --timeout=5s --retries=5 --start-period=40s \
+  CMD wget -qO- http://127.0.0.1:3000/health || exit 1
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["node", "apps/api/dist/server.js"]

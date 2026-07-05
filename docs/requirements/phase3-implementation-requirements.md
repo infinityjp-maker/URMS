@@ -121,12 +121,12 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S10 — Docker / CI
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S10-01 | docker-compose 起動 | ADR-014 |
-| IR-S10-02 | GitHub Actions CI green | — |
-| IR-S10-03 | `.env.example` 整備 | — |
-| IR-S10-04 | tag `v0.2.0-mvp` | ADR-018 |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S10-01 | docker-compose 起動 | ADR-014 | ✅ |
+| IR-S10-02 | GitHub Actions CI green | — | ✅ |
+| IR-S10-03 | `.env.example` 整備 | — | ✅ |
+| IR-S10-04 | tag `v0.2.0-mvp` | ADR-018 | ✅ |
 
 ---
 

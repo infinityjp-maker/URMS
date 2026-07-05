@@ -16,5 +16,51 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: urms-api
+    environment:
+      DATABASE_URL: postgresql://urms:urms@postgres:5432/urms?schema=public
+      PORT: 3000
+      HOST: 0.0.0.0
+      URMS_AUTH_BYPASS: 'true'
+      URMS_FF_AI_ENABLED: 'false'
+      LOG_LEVEL: info
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web
+      args:
+        VITE_API_BASE_URL: ''
+    container_name: urms-web
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: urms-nginx
+    ports:
+      - '8080:80'
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_started
+    restart: unless-stopped
+
 volumes:
   urms_pg_data:

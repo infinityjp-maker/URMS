@@ -10,9 +10,12 @@
   "scripts": {
     "dev": "pnpm --filter @urms/web dev",
     "dev:api": "pnpm --filter @urms/api dev",
-    "db:up": "docker compose up -d",
+    "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @urms/db db:migrate",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
     "wireframes": "pnpm wireframes:serve",
     "wireframes:serve": "pnpm exec serve docs/design/wireframes -l 5180",
     "preview:web": "pnpm --filter @urms/web build && pnpm --filter @urms/web preview",

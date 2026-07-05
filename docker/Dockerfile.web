@@ -1,0 +1,25 @@
+# syntax=docker/dockerfile:1
+
+FROM node:20-alpine AS base
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+WORKDIR /app
+
+FROM base AS builder
+ARG VITE_API_BASE_URL=
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json apps/web/
+COPY packages/domain/package.json packages/domain/
+COPY packages/shared/package.json packages/shared/
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm --filter @urms/shared build \
+  && pnpm --filter @urms/domain build \
+  && pnpm --filter @urms/web build
+
+FROM nginx:1.27-alpine
+COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
+COPY docker/nginx-web.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80

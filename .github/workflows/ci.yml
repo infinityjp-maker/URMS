@@ -53,6 +53,9 @@ jobs:
       - name: Migrate database
         run: pnpm db:migrate
 
+      - name: Build
+        run: pnpm build
+
       - name: Unit tests with coverage gates
         run: pnpm test:coverage
 
@@ -64,3 +67,6 @@ jobs:
 
       - name: E2E tests
         run: pnpm test:e2e
+
+      - name: Verify Docker Compose build
+        run: docker compose build
