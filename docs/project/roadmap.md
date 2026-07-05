@@ -28,7 +28,7 @@
 
 - **Phase 3 MVP 完了** — Sprint S1〜S10 · tag `v0.2.0-mvp`（`0d3e18d`）
 - **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx` · 「これから」セクション参照
-- **次:** Phase 4（S11 IdP · S12 監視 · S13 監査）— 開始は User Go/No-Go 後
+- **次:** Phase 4（S11 ローカル認証 · S12 監視 · S13 監査）— User Go/No-Go 待ち
 
 ## Phase 3 開始条件（記録）
 
@@ -47,8 +47,8 @@
 | # | 条件 | 状態 |
 |---|------|------|
 | 1 | Phase 3 MVP 完了レビュー | ✅ tag `v0.2.0-mvp` |
-| 2 | IdP 具体選定（B-010） | ⏳ User 判断 |
-| 3 | **User Phase 4 実装開始承認** | ⏳ PM 提案: [10-phase4-readiness.md](../implementation/10-phase4-readiness.md) |
+| 2 | 認証方針（ローカル · IdP 不要） | ✅ User 2026-07-05 · ADR-022 |
+| 3 | **User Phase 4 実装開始承認** | ⏳ |
 
 ## 参照
 

@@ -40,6 +40,7 @@
 | 16 | デプロイ構成 | [16-deploy-architecture.md](./16-deploy-architecture.md) | ADR-014 |
 | 17 | AI 連携 | [17-ai-integration.md](./17-ai-integration.md) | ADR-015 |
 | 18 | AI Provider | [18-ai-provider-architecture.md](./18-ai-provider-architecture.md) | ADR-016 |
+| — | ローカル認証（IdP 不使用） | [../project/decisions/ADR-022-local-authentication.md](../project/decisions/ADR-022-local-authentication.md) | ADR-022 |
 
 ## 設計原則
 

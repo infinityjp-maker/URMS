@@ -6,24 +6,24 @@
 
 ## Task
 
-**Phase 4 準備 — PM 提案 · 文書同期 · User 環境（Docker）**
+**User Phase 4 Go/No-Go 待ち**
 
-## 開発側
+## User 決定済
+
+| 日付 | 判断 |
+|------|------|
+| 2026-07-05 | IdP 不要（ローカルアプリ · ADR-022） |
+
+## 残り判断
 
 | # | 内容 | 状態 |
 |---|------|------|
-| 3 | Phase 4 Readiness PM 提案 | ✅ [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md) |
-| 4 | 未コミット整理 · コミット | ✅ `eb753fc` |
+| 1 | Phase 4 開始 Go/No-Go | ⏳ User 未回答 |
 
-## User
-
-| # | 内容 |
-|---|------|
-| 1 | 普段は作業なし |
-| 2 | Phase 4 開始 Go/No-Go（PM 提案後） |
-| 3 | IdP 選定（OIDC プロバイダ） |
+Go 後: S11 ローカル認証設計から着手。
 
 ## 参照
 
+- [ADR-022-local-authentication.md](../../docs/project/decisions/ADR-022-local-authentication.md)
+- [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md)
 - Canvas「これから」: `urms-progress-plan.canvas.tsx`
-- [roadmap.md](../../docs/project/roadmap.md)

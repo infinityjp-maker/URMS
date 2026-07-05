@@ -27,8 +27,16 @@
 ## 影響
 
 - [10-auth-authorization.md](../../architecture/10-auth-authorization.md)
-- Phase 3 開始前: IdP 具体選定（backlog B-010）
+- ~~Phase 3 開始前: IdP 具体選定（backlog B-010）~~ → **ADR-022** でローカルアプリ範囲は IdP 不要
 
 ## 関連
 
 - [ADR-003](./ADR-003-mode-system.md)
+- [ADR-022](./ADR-022-local-authentication.md) — ローカルアプリでは本番 OIDC を適用しない（User 2026-07-05）
+
+## 変更履歴
+
+| 日付 | 変更 |
+|------|------|
+| 2026-07-05 | 初版 |
+| 2026-07-05 | ADR-022 によりローカルアプリ範囲の IdP 要件を supersede |

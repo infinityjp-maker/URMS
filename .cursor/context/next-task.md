@@ -4,25 +4,29 @@
 > **resource_id:** context:next-task  
 > **owner:** PM のみ更新
 
-## 候補一覧（Phase 4 前）
+## User 決定（記録）
 
-| 優先 | ID | タスク | 担当 | 備考 |
-|------|-----|--------|------|------|
-| 1 | — | 文書 · Context · Canvas 同期（MVP 完了） | PM | 進行中 |
-| 2 | — | API logger 修正コミット | Developer | 未コミット |
-| 3 | B-010 | IdP 具体選定（OIDC） | Architect + User | Phase 4 S11 前 Must |
-| 4 | — | Phase 4 Sprint 計画 PM 提案 | PM | User Go/No-Go 後 |
+| 日付 | 判断 |
+|------|------|
+| 2026-07-05 | **IdP 不要** — ローカルアプリ · ADR-022 |
 
-## Phase 4 Sprint 概要（予定）
+## 候補一覧
+
+| 優先 | タスク | 担当 | 備考 |
+|------|--------|------|------|
+| 1 | **User Phase 4 Go/No-Go** | User | 唯一の未決判断 |
+| 2 | S11 ローカル認証設計 | Architect | Go 後 |
+| 3 | Docker 環境支援（任意） | Developer | User 任意 |
+
+## Phase 4 Sprint（更新）
 
 | Sprint | 内容 | Version |
 |--------|------|---------|
-| S11 | IdP 本番認証 | v0.3.0-alpha |
+| S11 | **ローカル認証**（IdP 不使用） | v0.3.0-alpha |
 | S12 | 監視 · ログ集約 | v0.3.0-beta |
 | S13 | 性能 · セキュリティ監査 | v0.3.0 |
 
 ## 参照
 
-- [05-development-roadmap.md](../../docs/implementation/05-development-roadmap.md)
-- [backlog.md](../../docs/project/backlog.md)
-- Canvas: `urms-progress-plan.canvas.tsx` → 「これから」
+- [ADR-022-local-authentication.md](../../docs/project/decisions/ADR-022-local-authentication.md)
+- [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md)

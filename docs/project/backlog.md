@@ -53,7 +53,7 @@
 
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
-| B-010 | IdP 具体選定（OIDC） | Architect + User | todo | Phase 4 S11 前 Must |
+| B-010 | ~~IdP 具体選定（OIDC）~~ | — | **cancelled** | User 2026-07-05: ローカルアプリのため不要 · ADR-022 |
 | B-012 | Resource リレーション実装 | Developer | todo | Phase 5（S14） |
 | B-013 | Phase 4 品質・運用（S11〜S13） | Developer | blocked | User Go/No-Go 待ち · [10-phase4-readiness.md](../implementation/10-phase4-readiness.md) |
 | B-014 | AI Manager + Provider Plugin 実装 | Developer | done | S7 完了 · ADR-016 |
@@ -150,7 +150,7 @@
 | タグ | `v0.2.0-mvp` |
 | 進捗（User 向け） | Canvas `urms-progress-plan.canvas.tsx` · 「これから」 |
 | ドキュメント（User 向け） | Canvas `urms-docs.canvas.tsx` |
-| 未解決（Phase 4 へ） | U-001 IdP, U-003 TanStack Query, U-004 Secret Store |
+| 未解決（Phase 4 へ） | U-003 TanStack Query, U-004 Secret Store（U-001 IdP は ADR-022 でクローズ） |
 
 ## Phase 3 Ready（記録 · 2026-07-05）
 

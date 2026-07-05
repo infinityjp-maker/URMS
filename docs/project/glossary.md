@@ -155,7 +155,7 @@ Resource の種別（例: `physical`, `digital`, `role`, `decision`）。[resour
 
 ### Phase 3 Ready
 
-Phase 3 実装準備完了判定。実装開始は User 承認待ち。[03-phase3-readiness.md](../implementation/03-phase3-readiness.md)。
+Phase 3 実装準備完了判定。[03-phase3-readiness.md](../implementation/03-phase3-readiness.md)。**Phase 3 MVP 完了済（v0.2.0-mvp）。**
 
 ## S
 

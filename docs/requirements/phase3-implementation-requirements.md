@@ -134,7 +134,7 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 | ID | 項目 | 影響 Sprint | 回避 |
 |----|------|-------------|------|
-| U-001 | IdP 選定 | S4 本番 / S10 | dev mock auth |
+| U-001 | ~~IdP 選定~~ | — | **クローズ** — User: ローカルアプリ · ADR-022 |
 | U-003 | TanStack Query | S5 | fetch + useState MVP |
 | U-004 | Secret Store | S7 | env + 将来 secretRef |
 

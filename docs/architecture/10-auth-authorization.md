@@ -18,9 +18,8 @@
 | 環境 | 方式 |
 |------|------|
 | 開発 | ローカル JWT（mock user） |
-| 本番 | **OIDC**（IdP 未選定 — Phase 3 前に確定必須） |
-
-候補 IdP: Keycloak, Auth0, Azure AD, Google Workspace（ADR-010 で Phase 3 前に1つ選定）。
+| 本番（ローカルアプリ） | **ローカル認証**（OS / ローカルユーザー — ADR-022） |
+| クラウド IdP（OIDC） | **スコープ外** — User 2026-07-05 決定 |
 
 ---
 
