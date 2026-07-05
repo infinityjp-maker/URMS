@@ -16,6 +16,7 @@
     "typecheck": "prisma generate && tsc -p tsconfig.json --noEmit",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
+    "db:seed-local": "tsx scripts/seed-local-user.ts",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts"
   },
@@ -28,6 +29,7 @@
     "@testcontainers/postgresql": "^10.17.2",
     "@types/node": "^22.10.7",
     "prisma": "^6.3.1",
+    "tsx": "^4.19.2",
     "testcontainers": "^10.17.2",
     "vitest": "^3.0.5"
   }

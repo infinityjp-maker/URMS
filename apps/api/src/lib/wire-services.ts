@@ -4,6 +4,7 @@ import {
   AuditHandler,
   ContextService,
   InProcessEventBus,
+  LocalAuthService,
   PluginRegistry,
   registerAuditHandlers,
   ResourceService,
@@ -14,6 +15,7 @@ import {
   PrismaAuditLogRepository,
   PrismaContextRepository,
   PrismaResourceRepository,
+  PrismaUserRepository,
 } from '@urms/db';
 import { OllamaAdapter } from '@urms/plugin-ollama';
 import { createBuiltinResourceTypePlugins } from '@urms/plugin-resource-types';
@@ -52,11 +54,16 @@ export function createAppServices(databaseUrl?: string): AppServices {
     fallbackProviderIds: ['ollama'],
   });
 
+  const userRepository = new PrismaUserRepository(prisma);
+  const jwtSecret = process.env.JWT_SECRET?.trim() || 'dev-local-jwt-secret-change-me';
+  const localAuthService = new LocalAuthService(userRepository, { jwtSecret });
+
   return {
     resourceService,
     contextService,
     aiManager,
     pluginRegistry,
     auditLogRepository,
+    localAuthService,
   };
 }

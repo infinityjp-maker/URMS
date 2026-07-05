@@ -32,6 +32,9 @@ export {
   type ResourceListResult,
 } from './repository/resource-repository.js';
 export { type ContextRepository } from './repository/context-repository.js';
+export { type UserRepository, type StoredUser } from './repository/user-repository.js';
+
+export { LocalAuthService, type LocalAuthServiceOptions } from './auth/local-auth-service.js';
 
 export type { AiProviderAdapter, AiFetch } from './ai/adapter.js';
 export { AiProviderRegistry } from './ai/provider-registry.js';

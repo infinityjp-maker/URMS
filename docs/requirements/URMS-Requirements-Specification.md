@@ -153,7 +153,7 @@ Phase 1 機能要求に加え、実装フェーズ向け詳細は以下を正本
 | Architect | Phase 1 + Phase 3 拡張レビュー済 | 2026-07-05 |
 | Reviewer | Phase 1 レビュー済 | 2026-07-05 |
 | PM | Phase 3 要件拡張 · MVP 実装完了 | 2026-07-05 |
-| User | Phase 3 MVP 受入 · Phase 4 Go/No-Go | ⏳ |
+| User | Phase 4 Go | ✅ 2026-07-05 |
 | User | IdP 不要（ローカルアプリ） | ✅ 2026-07-05 · ADR-022 |
 
 ## 変更履歴

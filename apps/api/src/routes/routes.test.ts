@@ -88,6 +88,19 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         limit: 20,
       })),
     },
+    localAuthService: {
+      login: vi.fn(async () => ({
+        accessToken: 'test-token',
+        expiresIn: 3600,
+        tokenType: 'Bearer' as const,
+        user: {
+          id: 'user-1',
+          externalId: 'operator',
+          email: 'operator@local',
+          roles: ['operator'],
+        },
+      })),
+    },
     ...overrides,
   } as AppServices;
 }

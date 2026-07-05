@@ -1,4 +1,4 @@
-import type { ResourceService, AuditLogRepository, ContextService, AiManager, PluginRegistry } from '@urms/domain';
+import type { ResourceService, AuditLogRepository, ContextService, AiManager, PluginRegistry, LocalAuthService } from '@urms/domain';
 
 export interface AppServices {
   resourceService: ResourceService;
@@ -6,4 +6,5 @@ export interface AppServices {
   aiManager: AiManager;
   pluginRegistry: PluginRegistry;
   auditLogRepository: AuditLogRepository;
+  localAuthService: LocalAuthService;
 }

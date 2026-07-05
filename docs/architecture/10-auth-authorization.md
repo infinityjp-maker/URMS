@@ -23,14 +23,20 @@
 
 ---
 
-## 2. フロー（OIDC）
+## 2. フロー（ローカル認証 · ADR-022）
 
 ```
-User → Web → IdP Login → Authorization Code
-  → API /auth/callback → Token Exchange
-  → JWT (access + refresh) → Web stores (httpOnly cookie)
-  → API requests: Authorization: Bearer {access_token}
+User → 暫定 Web UI / 本番 UI → POST /v1/auth/login（username + password）
+  → API が JWT を発行
+  → Authorization: Bearer {access_token}
+  → Mode middleware（X-URMS-Mode）
 ```
+
+開発時は `URMS_AUTH_MODE=bypass` で mock ユーザーを継続利用可能。
+
+## 2b. フロー（OIDC · スコープ外）
+
+クラウド IdP 連携は User 2026-07-05 決定により **スコープ外**。将来クラウド展開時のみ再検討。
 
 ---
 

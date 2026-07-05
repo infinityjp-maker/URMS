@@ -6,24 +6,25 @@
 
 ## Task
 
-**User Phase 4 Go/No-Go 待ち**
+**S11 — ローカル認証（Phase 4）**
 
-## User 決定済
+## 完了（S11 一部）
 
-| 日付 | 判断 |
+| 項目 | 状態 |
 |------|------|
-| 2026-07-05 | IdP 不要（ローカルアプリ · ADR-022） |
+| User Phase 4 Go | ✅ 2026-07-05 |
+| IdP 不要（ADR-022） | ✅ |
+| POST /v1/auth/login | ✅ |
+| JWT local mode | ✅ |
+| DB migration + seed | ✅ |
 
-## 残り判断
+## 次
 
-| # | 内容 | 状態 |
-|---|------|------|
-| 1 | Phase 4 開始 Go/No-Go | ⏳ User 未回答 |
+| 項目 | 状態 |
+|------|------|
+| 暫定 Web UI ログイン画面 | ⏳ |
+| OpenAPI 更新 | ⏳ |
 
-Go 後: S11 ローカル認証設計から着手。
+## User
 
-## 参照
-
-- [ADR-022-local-authentication.md](../../docs/project/decisions/ADR-022-local-authentication.md)
-- [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md)
-- Canvas「これから」: `urms-progress-plan.canvas.tsx`
+普段は作業なし。暫定 Web UI での確認のみ。

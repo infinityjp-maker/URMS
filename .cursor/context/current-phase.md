@@ -6,18 +6,15 @@
 
 ## Phase
 
-**Phase 3 MVP 完了 — Phase 4 準備（User 承認待ち）**
+**Phase 4 — Sprint S11 ローカル認証（進行中）**
 
 | 項目 | 値 |
 |------|-----|
-| タグ | `v0.2.0-mvp` |
-| 次 Sprint | S11 IdP 本番認証（Phase 4） |
-
-## User 向け
-
-Canvas `urms-progress-plan.canvas.tsx` → **「これから」** セクション
+| User Go | ✅ 2026-07-05 |
+| 現 Sprint | S11 |
+| 目標 Version | v0.3.0-alpha |
 
 ## 参照
 
-- [roadmap.md](../../docs/project/roadmap.md)
-- [backlog.md](../../docs/project/backlog.md)
+- [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md)
+- Canvas: `urms-progress-plan.canvas.tsx`
