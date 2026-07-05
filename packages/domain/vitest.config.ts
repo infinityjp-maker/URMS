@@ -7,7 +7,20 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],
-      exclude: ['src/**/*.test.ts', 'src/index.ts'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/index.ts',
+        'src/repository/**',
+        'src/ai/adapter.ts',
+        'src/plugin/resource-type-plugin.ts',
+        'src/audit/audit-log-repository.ts',
+      ],
+      thresholds: {
+        lines: 90,
+        functions: 90,
+        branches: 75,
+        statements: 90,
+      },
     },
   },
 });

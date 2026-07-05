@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+env:
+  DATABASE_URL: postgresql://urms:urms@localhost:5432/urms?schema=public
+  URMS_AUTH_BYPASS: 'true'
+  URMS_FF_AI_ENABLED: 'false'
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: urms
+          POSTGRES_PASSWORD: urms
+          POSTGRES_DB: urms
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U urms -d urms"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Migrate database
+        run: pnpm db:migrate
+
+      - name: Unit tests with coverage gates
+        run: pnpm test:coverage
+
+      - name: Integration tests
+        run: pnpm test:integration
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E tests
+        run: pnpm test:e2e

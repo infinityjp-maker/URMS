@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { AiChatRequest, AiChatResponse, AiProviderHealth } from '@urms/shared';
+import { ERROR_CODES, type AiChatRequest, type AiChatResponse, type AiProviderHealth } from '@urms/shared';
 
 import type { AiProviderAdapter } from './adapter.js';
 import { AiManager } from './ai-manager.js';
@@ -84,5 +84,22 @@ describe('AiManager', () => {
     );
 
     expect(response.providerId).toBe('ollama');
+  });
+
+  it('checks provider health', async () => {
+    const registry = new AiProviderRegistry();
+    registry.register(createMockAdapter('ollama'));
+    const manager = new AiManager(registry, new InMemoryAiUsageRepository());
+
+    const health = await manager.healthCheck('ollama');
+    expect(health.healthy).toBe(true);
+  });
+
+  it('throws when provider is missing', async () => {
+    const manager = new AiManager(new AiProviderRegistry(), new InMemoryAiUsageRepository());
+
+    await expect(manager.healthCheck('missing')).rejects.toMatchObject({
+      code: ERROR_CODES.AI_PROVIDER_UNAVAILABLE,
+    });
   });
 });

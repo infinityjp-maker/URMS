@@ -113,11 +113,11 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S9 — Testing
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S9-01 | Playwright E2E 4 シナリオ | Contract §13.3 |
-| IR-S9-02 | Coverage CI gate | Quality Gate §6 |
-| IR-S9-03 | UC-001, 002, 005, 006 相当 E2E | use-cases |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S9-01 | Playwright E2E 4 シナリオ | Contract §13.3 | ✅ |
+| IR-S9-02 | Coverage CI gate | Quality Gate §6 | ✅ |
+| IR-S9-03 | UC-001, 002, 005, 006 相当 E2E | use-cases | ✅ |
 
 ### S10 — Docker / CI
 
