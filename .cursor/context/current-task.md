@@ -13,7 +13,7 @@
 | # | 内容 | 状態 |
 |---|------|------|
 | 3 | Phase 4 Readiness PM 提案 | ✅ [10-phase4-readiness.md](../../docs/implementation/10-phase4-readiness.md) |
-| 4 | 未コミット整理 · コミット | 進行中 |
+| 4 | 未コミット整理 · コミット | ✅ `eb753fc` |
 
 ## User
 
