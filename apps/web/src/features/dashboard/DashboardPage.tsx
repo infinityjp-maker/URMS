@@ -1,28 +1,24 @@
-import { createDomainCore } from '@urms/domain';
-import { URMS_MODES } from '@urms/shared';
-
-const domainCore = createDomainCore();
-
 export function DashboardPage() {
   return (
-    <section className="dashboard-card" aria-label="ダッシュボード">
+    <section className="page-card" aria-label="ダッシュボード">
       <h2>ダッシュボード</h2>
-      <p>Sprint S1 — Monorepo 基盤が起動しています。</p>
-      <p>Resource / Mode / Context の実装は S2 以降で追加します。</p>
-      <ul className="dashboard-meta">
-        <li>
-          <strong>Contract SSOT:</strong> {domainCore.contract.documentPath}
-        </li>
-        <li>
-          <strong>Contract ADR:</strong> {domainCore.contract.adr}
-        </li>
-        <li>
-          <strong>対応 Mode（設計）:</strong> {URMS_MODES.join(' / ')}
-        </li>
-        <li>
-          <strong>Domain Core:</strong> {domainCore.version}
-        </li>
-      </ul>
+      <div className="info-grid">
+        <article className="info-card">
+          <h3>現在フェーズ</h3>
+          <p>Phase 3 — Sprint S5 Web 基盤</p>
+        </article>
+        <article className="info-card">
+          <h3>現在タスク</h3>
+          <p>Resource UI + Mode Switcher 実装</p>
+        </article>
+        <article className="info-card">
+          <h3>プロジェクト状態</h3>
+          <p>実装中</p>
+        </article>
+      </div>
+      <p className="hint">
+        運用 Mode で Resource 管理、監査 Mode で監査ログを参照できます。Context ダッシュボードは Sprint S6 で追加します。
+      </p>
     </section>
   );
 }

@@ -31,9 +31,10 @@
 | 項目 | 値 |
 |------|-----|
 | プロジェクト名 | URMS MVP |
-| Figma URL | **（User 作成後に記載）** |
+| Figma URL | **（ファイル作成後に User が記載）** |
+| Figma アカウント | ✅ User 作成済（2026-07-05） |
 | 作成主体 | User |
-| 対象 Sprint | S5 本格 UI 前に Must 画面（SCR-01〜09）完成 |
+| 対象 Sprint | S5 本格 UI — Developer は ui-requirements 準拠で先行実装中 |
 
 ---
 

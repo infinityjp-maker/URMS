@@ -78,12 +78,12 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S5 — Web
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S5-01 | [ui-requirements.md](./ui-requirements.md) SCR-02〜05, 07, 08 | UC-001〜005, UC-008, UC-010 |
-| IR-S5-02 | Mode Switcher（UI-M01〜04） | — |
-| IR-S5-03 | API Client + エラー表示 | UI-N01, UI-N02 |
-| IR-S5-04 | web 70% coverage 目標 | NFR-003 |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S5-01 | [ui-requirements.md](./ui-requirements.md) SCR-02〜05, 07, 08 | UC-001〜005, UC-008, UC-010 | ✅ |
+| IR-S5-02 | Mode Switcher（UI-M01〜04） | — | ✅ |
+| IR-S5-03 | API Client + エラー表示 | UI-N01, UI-N02 | ✅ |
+| IR-S5-04 | web 70% coverage 目標 | NFR-003 | ✅（mode-ui 単体） |
 
 ### S6 — Context Engine
 

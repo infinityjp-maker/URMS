@@ -6,9 +6,9 @@
 
 ## Phase
 
-**Phase 3 — Sprint S4 完了 / S5 Web 次**
+**Phase 3 — Sprint S5 完了 / S6 Context 次**
 
 ## 参照
 
-- [04-sprint-planning.md](../../docs/implementation/04-sprint-planning.md)
+- [figma-checklist.md](../../docs/requirements/figma-checklist.md) — User Figma 作業中
 - [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md)

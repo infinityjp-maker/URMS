@@ -1,14 +1,14 @@
-import { DashboardPage } from '../features/dashboard/DashboardPage.js';
+import { BrowserRouter } from 'react-router-dom';
+
+import { ModeProvider } from '../features/mode/mode-context.js';
+import { AppRoutes } from './routes.js';
 
 export function App() {
   return (
-    <div className="app-shell">
-      <header className="app-header">
-        <h1>URMS — Unified Resource Management System</h1>
-      </header>
-      <main className="app-main">
-        <DashboardPage />
-      </main>
-    </div>
+    <ModeProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </ModeProvider>
   );
 }

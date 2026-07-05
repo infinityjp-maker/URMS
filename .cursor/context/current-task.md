@@ -6,18 +6,17 @@
 
 ## タスク ID
 
-B-007 / S5
+B-007 / S6 · B-009（User 並行）
 
 ## タイトル
 
-Sprint S5 — Web 基盤（Resource UI + Mode Switcher）
+Sprint S6 — Context Engine / User — Figma チェックリスト
 
 ## 状態
 
-S4 API 完了 · S5 は Figma（B-009）推奨
+S5 Web 完了 · User は [figma-checklist.md](../../docs/requirements/figma-checklist.md) Step 1〜3
 
 ## 参照
 
-- [ui-requirements.md](../../docs/requirements/ui-requirements.md)
+- [06-context-engine.md](../../docs/architecture/06-context-engine.md)
 - [ui-design-links.md](../../docs/requirements/ui-design-links.md)
-- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) IR-S5-xx

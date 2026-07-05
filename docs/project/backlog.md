@@ -45,8 +45,8 @@
 | B-006l | Phase 2.9 PM 承認 | PM + User | done | 2026-07-05 |
 | B-006m | PM Operations Protocol | PM | done | 09-pm-operations-protocol |
 | B-008 | Phase 3 要件拡張（UI + 実装） | PM + Architect | done | User 承認 2026-07-05 |
-| B-009 | Figma MVP 画面（SCR-01〜09） | User | todo | S5 前 Must · [ui-design-links.md](../requirements/ui-design-links.md) |
-| B-007 | Phase 3 MVP 実装 | Developer | doing | S4 完了 · **S5 次** |
+| B-009 | Figma MVP 画面（SCR-01〜09） | User | doing | アカウント作成済 · [figma-checklist.md](../requirements/figma-checklist.md) |
+| B-007 | Phase 3 MVP 実装 | Developer | doing | S5 完了 · **S6 次** |
 | B-011 | OpenAPI 正本配置 | Developer | done | `apps/api/openapi.yaml` |
 
 ## Should
@@ -148,7 +148,7 @@
 |------|------|
 | 判定 | **Phase 3 実装中** |
 | 実装開始 | **承認済** — User 2026-07-05 |
-| 現在 Sprint | **S5 Web**（S4 完了） |
+| 現在 Sprint | **S6 Context**（S5 完了） |
 | UI SSOT | Figma（[ui-design-links.md](../requirements/ui-design-links.md)） |
 | 未解決 | U-001 IdP, U-003 TanStack Query, U-004 Secret Store |
 
