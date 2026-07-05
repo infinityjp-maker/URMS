@@ -87,12 +87,12 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S6 — Context Engine
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S6-01 | Context API GET/PUT | FR-020, FR-021, UC-006, UC-007 |
-| IR-S6-02 | SCR-06 実装 | ui-requirements |
-| IR-S6-03 | summary 500 字検証 | ADR-004 |
-| IR-S6-04 | SCR-09 AI Team 参照 | UC-009, FR-030 |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S6-01 | Context API GET/PUT | FR-020, FR-021, UC-006, UC-007 | ✅ |
+| IR-S6-02 | SCR-06 実装 | ui-requirements | ✅ |
+| IR-S6-03 | summary 500 字検証 | ADR-004 | ✅ |
+| IR-S6-04 | SCR-09 AI Team 参照 | UC-009, FR-030 | ✅ |
 
 ### S7 — AI Manager
 

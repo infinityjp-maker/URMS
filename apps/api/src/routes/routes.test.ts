@@ -6,6 +6,7 @@ import type { AppServices } from '../types/services.js';
 function createMockServices(): AppServices {
   return {
     resourceService: {} as AppServices['resourceService'],
+    contextService: {} as AppServices['contextService'],
     auditLogRepository: {} as AppServices['auditLogRepository'],
   };
 }

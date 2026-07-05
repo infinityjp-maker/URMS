@@ -3,6 +3,7 @@ import { AppError, ERROR_CODES, type UrmsMode } from '@urms/shared';
 export interface ModePolicy {
   canReadResource(mode: UrmsMode): boolean;
   canWriteResource(mode: UrmsMode): boolean;
+  canReadContext(mode: UrmsMode): boolean;
   canUpdateContext(mode: UrmsMode): boolean;
   canViewAudit(mode: UrmsMode): boolean;
   canSwitchMode(mode: UrmsMode): boolean;
@@ -11,6 +12,7 @@ export interface ModePolicy {
 export const modePolicy: ModePolicy = {
   canReadResource: () => true,
   canWriteResource: (mode) => mode === 'operate',
+  canReadContext: (mode) => mode === 'plan' || mode === 'operate',
   canUpdateContext: (mode) => mode === 'plan',
   canViewAudit: (mode) => mode === 'audit',
   canSwitchMode: () => true,

@@ -304,6 +304,39 @@ button.primary {
   border: 1px solid #a7f3d0;
 }
 
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #1e3a8a;
+  font-size: 0.85rem;
+}
+
+.context-form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 720px;
+}
+
+.field-block {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field-block input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.link-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
 @media (max-width: 900px) {
   .app-body {
     grid-template-columns: 1fr;

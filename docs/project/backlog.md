@@ -46,7 +46,7 @@
 | B-006m | PM Operations Protocol | PM | done | 09-pm-operations-protocol |
 | B-008 | Phase 3 要件拡張（UI + 実装） | PM + Architect | done | User 承認 2026-07-05 |
 | B-009 | 画面ワイヤーフレーム（SCR-01〜09） | PM | done | HTML SSOT · [wireframes/](../design/wireframes/index.html) |
-| B-007 | Phase 3 MVP 実装 | Developer | doing | S5 完了 · **S6 次** |
+| B-007 | Phase 3 MVP 実装 | Developer | doing | S6 完了 · **S7 次** |
 | B-011 | OpenAPI 正本配置 | Developer | done | `apps/api/openapi.yaml` |
 
 ## Should
@@ -148,8 +148,9 @@
 |------|------|
 | 判定 | **Phase 3 実装中** |
 | 実装開始 | **承認済** — User 2026-07-05 |
-| 現在 Sprint | **S6 Context**（S5 完了） |
-| UI SSOT | Figma（[ui-design-links.md](../requirements/ui-design-links.md)） |
+| 現在 Sprint | **S7 AI Manager**（S6 完了） |
+| 進捗計画（User 向け） | [phase3-progress-plan.md](./phase3-progress-plan.md) · **Canvas:** `canvases/urms-progress-plan.canvas.tsx` |
+| UI SSOT | HTML ワイヤーフレーム（[ui-design-links.md](../requirements/ui-design-links.md)） |
 | 未解決 | U-001 IdP, U-003 TanStack Query, U-004 Secret Store |
 
 ## 参照

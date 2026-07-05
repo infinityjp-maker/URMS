@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const KNOWLEDGE_LINKS = [
   { category: 'ADR', title: 'ADR-017 Implementation Contract', path: 'docs/implementation/01-implementation-contract.md' },
   { category: 'ADR', title: 'ADR-003 Mode System', path: 'docs/project/decisions/ADR-003-mode-system.md' },
@@ -9,7 +11,12 @@ const KNOWLEDGE_LINKS = [
 export function KnowledgePage() {
   return (
     <section className="page-card">
-      <h2>Knowledge 索引</h2>
+      <div className="page-header">
+        <h2>Knowledge 索引</h2>
+        <Link className="button" to="/knowledge/ai-team">
+          AI Team 参照
+        </Link>
+      </div>
       <p className="subtle">read-only — MVP ではリポジトリ内ドキュメントへの参照一覧です。</p>
       <table className="data-table">
         <thead>

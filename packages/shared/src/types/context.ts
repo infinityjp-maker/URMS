@@ -1,10 +1,51 @@
 import type { UrmsMode } from './mode.js';
 
-/** Context スナップショット骨格（ADR-004 — S6 で拡張） */
-export interface ContextSnapshot {
-  phase: string;
-  mode: UrmsMode;
+export const CONTEXT_SUMMARY_MAX_LENGTH = 500;
+
+export const CONTEXT_KEYS = [
+  'current_phase',
+  'current_task',
+  'next_task',
+  'project_status',
+  'active_mode',
+  'ssot_links',
+] as const;
+
+export type ContextKey = (typeof CONTEXT_KEYS)[number];
+
+/** PM が plan Mode で更新可能な key（active_mode はシステム管理） */
+export const EDITABLE_CONTEXT_KEYS = [
+  'current_phase',
+  'current_task',
+  'next_task',
+  'project_status',
+  'ssot_links',
+] as const satisfies readonly ContextKey[];
+
+export type EditableContextKey = (typeof EDITABLE_CONTEXT_KEYS)[number];
+
+export interface SsotLink {
+  label: string;
+  path: string;
+  resourceType?: string;
+  resourceId?: string;
+}
+
+export interface ContextSnapshotItem {
+  key: ContextKey;
   summary: string;
-  ssotLinks: string[];
+  ssotLinks: SsotLink[];
   updatedAt: string;
+  updatedBy: string;
+}
+
+export interface ContextDashboard {
+  items: ContextSnapshotItem[];
+  activeMode: UrmsMode;
+}
+
+export interface ContextUpdateItem {
+  key: EditableContextKey;
+  summary: string;
+  ssotLinks?: SsotLink[];
 }

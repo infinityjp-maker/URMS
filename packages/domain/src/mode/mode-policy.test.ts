@@ -17,6 +17,12 @@ describe('ModePolicy', () => {
     expect(modePolicy.canWriteResource('audit')).toBe(false);
   });
 
+  it('allows context read in plan and operate', () => {
+    expect(modePolicy.canReadContext('plan')).toBe(true);
+    expect(modePolicy.canReadContext('operate')).toBe(true);
+    expect(modePolicy.canReadContext('audit')).toBe(false);
+  });
+
   it('allows context update only in plan', () => {
     expect(modePolicy.canUpdateContext('plan')).toBe(true);
     expect(modePolicy.canUpdateContext('operate')).toBe(false);

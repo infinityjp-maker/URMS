@@ -13,11 +13,12 @@ export class AuditHandler {
       return;
     }
 
+    const contextKey = extractContextKey(event);
     const resource = extractResource(event.payload);
     const input: AuditLogCreateInput = {
       action,
-      resourceType: resource?.resourceType,
-      resourceId: resource?.resourceId,
+      resourceType: contextKey ? 'context' : resource?.resourceType,
+      resourceId: contextKey ?? resource?.resourceId,
       actorId: event.actorId,
       mode: event.mode,
       payload: event.payload,
@@ -42,6 +43,15 @@ function mapEventTypeToAction(eventType: string): AuditAction | undefined {
     default:
       return undefined;
   }
+}
+
+function extractContextKey(event: DomainEvent): string | undefined {
+  if (event.eventType !== EVENT_TYPES.ContextUpdated) {
+    return undefined;
+  }
+
+  const key = event.payload.key;
+  return typeof key === 'string' ? key : undefined;
 }
 
 function extractResource(payload: Record<string, unknown>): ResourceEntity | undefined {

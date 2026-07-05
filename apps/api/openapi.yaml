@@ -120,6 +120,49 @@ paths:
       responses:
         '200':
           description: Lifecycle updated
+  /v1/context:
+    get:
+      summary: Get context dashboard
+      responses:
+        '200':
+          description: Context dashboard
+        '403':
+          description: Mode not allowed
+    put:
+      summary: Update context snapshots (plan mode only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [key, summary]
+                    properties:
+                      key:
+                        type: string
+                        enum: [current_phase, current_task, next_task, project_status, ssot_links]
+                      summary:
+                        type: string
+                        maxLength: 500
+                      ssotLinks:
+                        type: array
+                        items:
+                          type: object
+                          required: [label, path]
+                          properties:
+                            label: { type: string }
+                            path: { type: string }
+      responses:
+        '200':
+          description: Updated dashboard
+        '403':
+          description: Mode not allowed
   /v1/audit/logs:
     get:
       summary: List audit logs (audit mode only)

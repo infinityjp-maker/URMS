@@ -1,6 +1,7 @@
-import type { ResourceService, AuditLogRepository } from '@urms/domain';
+import type { ResourceService, AuditLogRepository, ContextService } from '@urms/domain';
 
 export interface AppServices {
   resourceService: ResourceService;
+  contextService: ContextService;
   auditLogRepository: AuditLogRepository;
 }

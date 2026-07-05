@@ -13,6 +13,13 @@ export { createDomainCore, type DomainCore } from './domain-core.js';
 export { canTransition, assertValidTransition, getAllowedTransitions } from './resource/lifecycle.js';
 export { ResourceService, type CreateResourceInput, type UpdateResourceInput } from './resource/resource-service.js';
 
+export { ContextService } from './context/context-service.js';
+export {
+  validateContextUpdateItems,
+  validateSummary,
+  validateSsotLinks,
+} from './context/context-validator.js';
+
 export { modePolicy, assertModeAllowed, type ModePolicy } from './mode/mode-policy.js';
 
 export { DOMAIN_EVENT_VERSION, createDomainEvent, type DomainEvent } from './event/domain-event.js';
@@ -24,3 +31,4 @@ export {
   type ResourceListFilter,
   type ResourceListResult,
 } from './repository/resource-repository.js';
+export { type ContextRepository } from './repository/context-repository.js';

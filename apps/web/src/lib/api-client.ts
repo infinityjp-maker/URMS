@@ -159,3 +159,19 @@ export function getAuditLogs(
   const suffix = params.size > 0 ? `?${params.toString()}` : '';
   return request(`/v1/audit/logs${suffix}`, mode);
 }
+
+export function getContextDashboard(
+  mode: UrmsMode,
+): Promise<ApiItemResponse<import('@urms/shared').ContextDashboard>> {
+  return request('/v1/context', mode);
+}
+
+export function updateContextDashboard(
+  mode: UrmsMode,
+  items: import('@urms/shared').ContextUpdateItem[],
+): Promise<ApiItemResponse<import('@urms/shared').ContextDashboard>> {
+  return request('/v1/context', mode, {
+    method: 'PUT',
+    body: JSON.stringify({ items }),
+  });
+}

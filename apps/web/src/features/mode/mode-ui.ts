@@ -9,6 +9,14 @@ export function canShowAuditNav(mode: UrmsMode): boolean {
   return modePolicy.canViewAudit(mode);
 }
 
+export function canShowContextNav(mode: UrmsMode): boolean {
+  return modePolicy.canReadContext(mode);
+}
+
+export function canEditContext(mode: UrmsMode): boolean {
+  return modePolicy.canUpdateContext(mode);
+}
+
 export function getModeLabel(mode: UrmsMode): string {
   const labels: Record<UrmsMode, string> = {
     plan: '計画',
