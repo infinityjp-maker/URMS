@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 
 import type { AppServices } from '../types/services.js';
 
-const APP_VERSION = '0.2.0';
+const APP_VERSION = '1.0.0';
 
 export async function registerHealthRoutes(
   app: FastifyInstance,

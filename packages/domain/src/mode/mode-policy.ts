@@ -7,15 +7,17 @@ export interface ModePolicy {
   canUpdateContext(mode: UrmsMode): boolean;
   canViewAudit(mode: UrmsMode): boolean;
   canSwitchMode(mode: UrmsMode): boolean;
+  canSyncIntegrations(mode: UrmsMode): boolean;
 }
 
 export const modePolicy: ModePolicy = {
   canReadResource: () => true,
-  canWriteResource: (mode) => mode === 'operate',
-  canReadContext: (mode) => mode === 'plan' || mode === 'operate',
-  canUpdateContext: (mode) => mode === 'plan',
-  canViewAudit: (mode) => mode === 'audit',
+  canWriteResource: (mode) => mode === 'operate' || mode === 'develop',
+  canReadContext: (mode) => mode === 'plan' || mode === 'operate' || mode === 'develop',
+  canUpdateContext: (mode) => mode === 'plan' || mode === 'develop',
+  canViewAudit: (mode) => mode === 'audit' || mode === 'develop',
   canSwitchMode: () => true,
+  canSyncIntegrations: (mode) => mode === 'develop',
 };
 
 export function assertModeAllowed(allowed: boolean, message: string): void {

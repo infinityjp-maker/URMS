@@ -11,25 +11,33 @@ describe('ModePolicy', () => {
     expect(modePolicy.canReadResource('audit')).toBe(true);
   });
 
-  it('allows write only in operate', () => {
+  it('allows write in operate and develop', () => {
     expect(modePolicy.canWriteResource('operate')).toBe(true);
+    expect(modePolicy.canWriteResource('develop')).toBe(true);
     expect(modePolicy.canWriteResource('plan')).toBe(false);
-    expect(modePolicy.canWriteResource('audit')).toBe(false);
   });
 
-  it('allows context read in plan and operate', () => {
+  it('allows context read in plan, operate, and develop', () => {
     expect(modePolicy.canReadContext('plan')).toBe(true);
     expect(modePolicy.canReadContext('operate')).toBe(true);
+    expect(modePolicy.canReadContext('develop')).toBe(true);
     expect(modePolicy.canReadContext('audit')).toBe(false);
   });
 
-  it('allows context update only in plan', () => {
+  it('allows context update in plan and develop', () => {
     expect(modePolicy.canUpdateContext('plan')).toBe(true);
+    expect(modePolicy.canUpdateContext('develop')).toBe(true);
     expect(modePolicy.canUpdateContext('operate')).toBe(false);
   });
 
-  it('allows audit view only in audit mode', () => {
+  it('allows integration sync only in develop', () => {
+    expect(modePolicy.canSyncIntegrations('develop')).toBe(true);
+    expect(modePolicy.canSyncIntegrations('operate')).toBe(false);
+  });
+
+  it('allows audit view in audit and develop modes', () => {
     expect(modePolicy.canViewAudit('audit')).toBe(true);
+    expect(modePolicy.canViewAudit('develop')).toBe(true);
     expect(modePolicy.canViewAudit('operate')).toBe(false);
   });
 

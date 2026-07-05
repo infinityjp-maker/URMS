@@ -17,6 +17,7 @@ import { registerHealthRoutes } from './routes/health.js';
 import { registerMetricsRoutes } from './routes/metrics.js';
 import { registerResourceRoutes } from './routes/resources.js';
 import { registerRelationRoutes } from './routes/relations.js';
+import { registerIntegrationRoutes } from './routes/integrations.js';
 import type { AppServices } from './types/services.js';
 
 import { createAppServices } from './lib/wire-services.js';
@@ -67,6 +68,7 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerPerceptionRoutes(app, services);
   await registerAiRoutes(app, services);
   await registerAiTeamRoutes(app, services);
+  await registerIntegrationRoutes(app, services);
   await registerPluginRoutes(app, services);
   await registerAuditRoutes(app, services);
   await registerModeRoutes(app);

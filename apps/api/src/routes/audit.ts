@@ -1,4 +1,4 @@
-import { URMS_MODES } from '@urms/shared';
+import { URMS_CORE_MODES, isFeatureEnabled } from '@urms/shared';
 import { assertModeAllowed, modePolicy } from '@urms/domain';
 import type { FastifyInstance } from 'fastify';
 
@@ -33,9 +33,15 @@ export async function registerAuditRoutes(app: FastifyInstance, services: AppSer
 }
 
 export async function registerModeRoutes(app: FastifyInstance): Promise<void> {
-  app.get('/v1/modes', async () => ({
-    data: URMS_MODES.map((mode) => ({ id: mode })),
-  }));
+  app.get('/v1/modes', async () => {
+    const modes = [...URMS_CORE_MODES];
+    if (isFeatureEnabled('ff.develop.enabled')) {
+      modes.push('develop');
+    }
+    return {
+      data: modes.map((mode) => ({ id: mode })),
+    };
+  });
 
   app.get('/v1/modes/current', async (request) => ({
     data: { mode: request.urmsMode },

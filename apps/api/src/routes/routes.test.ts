@@ -144,6 +144,24 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         items: [],
       })),
     },
+    integrationRegistry: {
+      list: vi.fn(() => [
+        { integrationId: 'cursor-local', name: 'Cursor Local Workspace', syncSupported: true },
+      ]),
+      require: vi.fn(),
+      healthCheck: vi.fn(async () => ({
+        integrationId: 'cursor-local',
+        healthy: true,
+        detail: 'Workspace OK',
+      })),
+      sync: vi.fn(async () => ({
+        created: 3,
+        updated: 40,
+        skipped: 1,
+        relationsCreated: 7,
+        items: [],
+      })),
+    },
     checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
     ...overrides,
   } as AppServices;
@@ -162,7 +180,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'ok',
-        version: '0.2.0',
+        version: '1.0.0',
       },
     });
 
@@ -181,7 +199,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'ready',
-        version: '0.2.0',
+        version: '1.0.0',
         checks: { database: 'ok' },
       },
     });
@@ -206,7 +224,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'not_ready',
-        version: '0.2.0',
+        version: '1.0.0',
         checks: { database: 'unavailable' },
       },
     });
@@ -232,7 +250,10 @@ describe('Metrics route', () => {
 });
 
 describe('Mode routes', () => {
-  it('lists available modes', async () => {
+  it('lists core modes by default', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    delete process.env.URMS_FF_DEVELOP_ENABLED;
+
     const app = await createApp({ services: createMockServices(), logger: false });
 
     const response = await app.inject({
@@ -243,6 +264,47 @@ describe('Mode routes', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json().data).toHaveLength(3);
 
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
+    await app.close();
+  });
+
+  it('includes develop mode when feature flag is on', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    process.env.URMS_FF_DEVELOP_ENABLED = 'true';
+
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/modes',
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data).toHaveLength(4);
+    expect(response.json().data.map((item: { id: string }) => item.id)).toContain('develop');
+
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
+    await app.close();
+  });
+
+  it('rejects develop mode header when feature flag is off', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    delete process.env.URMS_FF_DEVELOP_ENABLED;
+
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/modes/current',
+      headers: {
+        'x-urms-mode': 'develop',
+      },
+    });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.json().error.code).toBe('FEATURE_DISABLED');
+
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
     await app.close();
   });
 
@@ -625,6 +687,71 @@ describe('AI Team routes (S15)', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json().data.created).toBe(3);
     expect(services.aiTeamSyncService.sync).toHaveBeenCalledOnce();
+    await app.close();
+  });
+});
+
+describe('Integration routes (S16)', () => {
+  it('lists integrations', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/integrations',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data[0].integrationId).toBe('cursor-local');
+    await app.close();
+  });
+
+  it('checks integration health', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/integrations/cursor-local/health',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data.healthy).toBe(true);
+    expect(services.integrationRegistry.healthCheck).toHaveBeenCalledWith('cursor-local');
+    await app.close();
+  });
+
+  it('syncs integration in develop mode', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    process.env.URMS_FF_DEVELOP_ENABLED = 'true';
+
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/integrations/cursor-local/sync',
+      headers: { 'x-urms-mode': 'develop' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(services.integrationRegistry.sync).toHaveBeenCalledWith('cursor-local', expect.any(String));
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
+    await app.close();
+  });
+
+  it('denies integration sync outside develop mode', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    process.env.URMS_FF_DEVELOP_ENABLED = 'true';
+
+    const app = await createApp({ services: createMockServices(), logger: false });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/integrations/cursor-local/sync',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.json().error.code).toBe('MODE_NOT_ALLOWED');
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
     await app.close();
   });
 });

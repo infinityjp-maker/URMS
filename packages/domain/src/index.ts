@@ -49,6 +49,10 @@ export {
 
 export { modePolicy, assertModeAllowed, type ModePolicy } from './mode/mode-policy.js';
 
+export type { IntegrationAdapter, IntegrationHealth, IntegrationSummary } from './integration/integration-adapter.js';
+export { IntegrationRegistry } from './integration/integration-registry.js';
+export { CursorLocalIntegration, type CursorIntegrationOptions } from './integration/cursor-local-integration.js';
+
 export { DOMAIN_EVENT_VERSION, createDomainEvent, type DomainEvent } from './event/domain-event.js';
 export { EVENT_TYPES, type EventType } from './event/event-types.js';
 export { InProcessEventBus, type EventBus, type EventHandler } from './event/event-bus.js';

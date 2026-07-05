@@ -2,11 +2,13 @@
 export const FEATURE_FLAGS = {
   AI_ENABLED: 'ff.ai.enabled',
   AI_FALLBACK: 'ff.ai.fallback',
+  DEVELOP_ENABLED: 'ff.develop.enabled',
 } as const;
 
 const DEFAULT_FLAGS: Record<string, boolean> = {
   'ff.ai.enabled': false,
   'ff.ai.fallback': true,
+  'ff.develop.enabled': false,
 };
 
 function envKeyForFlag(flag: string): string {

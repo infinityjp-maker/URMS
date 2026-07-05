@@ -1,4 +1,4 @@
-import { AppError, ERROR_CODES, isUrmsMode } from '@urms/shared';
+import { AppError, ERROR_CODES, isFeatureEnabled, isUrmsMode } from '@urms/shared';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 
 export async function registerModePlugin(app: FastifyInstance): Promise<void> {
@@ -14,6 +14,10 @@ export async function registerModePlugin(app: FastifyInstance): Promise<void> {
     if (!rawMode) {
       request.urmsMode = 'operate';
       return;
+    }
+
+    if (rawMode === 'develop' && !isFeatureEnabled('ff.develop.enabled')) {
+      throw new AppError(ERROR_CODES.FEATURE_DISABLED, 'develop mode is disabled');
     }
 
     if (!isUrmsMode(rawMode)) {
