@@ -23,16 +23,20 @@
 
 ---
 
-## 2. フロー（ローカル認証 · ADR-022）
+## 2. フロー（ローカルアプリ · ADR-022）
 
 ```
-User → 暫定 Web UI / 本番 UI → POST /v1/auth/login（username + password）
-  → API が JWT を発行
-  → Authorization: Bearer {access_token}
-  → Mode middleware（X-URMS-Mode）
+User → ローカルアプリ / 暫定 Web UI を起動
+  → ログイン画面なし（User 2026-07-05）
+  → OS ユーザーとして即操作（開発時は URMS_AUTH_MODE=bypass）
+  → API: Authorization 省略可（bypass）または内部 JWT（local · UI なし）
 ```
 
-開発時は `URMS_AUTH_MODE=bypass` で mock ユーザーを継続利用可能。
+**ログイン UI（username/password フォーム）は作らない。**
+
+## 2b. 内部 API（任意 · UI なし）
+
+`POST /v1/auth/login` は将来の自動化 · テスト用に残す。User 向け画面からは呼ばない。
 
 ## 2b. フロー（OIDC · スコープ外）
 
