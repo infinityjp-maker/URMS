@@ -5,6 +5,7 @@ export interface ModePolicy {
   canWriteResource(mode: UrmsMode): boolean;
   canReadContext(mode: UrmsMode): boolean;
   canUpdateContext(mode: UrmsMode): boolean;
+  canAdvanceContextTask(mode: UrmsMode): boolean;
   canViewAudit(mode: UrmsMode): boolean;
   canSwitchMode(mode: UrmsMode): boolean;
   canSyncIntegrations(mode: UrmsMode): boolean;
@@ -15,6 +16,7 @@ export const modePolicy: ModePolicy = {
   canWriteResource: (mode) => mode === 'operate' || mode === 'develop',
   canReadContext: (mode) => mode === 'plan' || mode === 'operate' || mode === 'develop',
   canUpdateContext: (mode) => mode === 'plan' || mode === 'develop',
+  canAdvanceContextTask: (mode) => mode === 'operate' || mode === 'plan' || mode === 'develop',
   canViewAudit: (mode) => mode === 'audit' || mode === 'develop',
   canSwitchMode: () => true,
   canSyncIntegrations: (mode) => mode === 'develop',

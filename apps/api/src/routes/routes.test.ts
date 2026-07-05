@@ -67,6 +67,10 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         updatedAt: '2026-07-05T00:00:00.000Z',
         mode,
       })),
+      advanceTask: vi.fn(async () => ({
+        items: [{ key: 'current_task', summary: 'advanced', ssotLinks: [] }],
+        activeMode: 'operate',
+      })),
     },
     aiManager: {
       listProviders: vi.fn(() => [{ providerId: 'ollama', capabilities: ['chat'] }]),
@@ -141,6 +145,22 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         updated: 40,
         skipped: 1,
         relationsCreated: 7,
+        items: [],
+      })),
+    },
+    scheduleSyncService: {
+      sync: vi.fn(async () => ({
+        created: 2,
+        updated: 0,
+        skipped: 0,
+        items: [],
+      })),
+    },
+    locationSyncService: {
+      sync: vi.fn(async () => ({
+        created: 1,
+        updated: 0,
+        skipped: 0,
         items: [],
       })),
     },

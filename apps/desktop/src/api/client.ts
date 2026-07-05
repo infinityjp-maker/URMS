@@ -6,10 +6,22 @@ type ApiEnvelope<T> = {
   data?: T;
 };
 
-async function fetchJson<T>(path: string): Promise<T | null> {
+function apiHeaders(): HeadersInit {
+  return {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'X-URMS-Mode': 'operate',
+  };
+}
+
+async function fetchJson<T>(path: string, init?: RequestInit): Promise<T | null> {
   try {
     const response = await fetch(`${API_BASE}${path}`, {
-      headers: { Accept: 'application/json' },
+      ...init,
+      headers: {
+        ...apiHeaders(),
+        ...(init?.headers ?? {}),
+      },
     });
     if (!response.ok) return null;
     return (await response.json()) as T;
@@ -31,4 +43,11 @@ export async function fetchReady(): Promise<boolean> {
 export async function fetchPerception(): Promise<PerceptionState | null> {
   const body = await fetchJson<ApiEnvelope<PerceptionState>>('/v1/perception');
   return body?.data ?? null;
+}
+
+export async function advanceContextTask(): Promise<boolean> {
+  const body = await fetchJson<ApiEnvelope<unknown>>('/v1/context/advance-task', {
+    method: 'POST',
+  });
+  return body !== null;
 }

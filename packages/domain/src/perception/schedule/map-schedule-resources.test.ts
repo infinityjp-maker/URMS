@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ResourceEntity } from '@urms/shared';
 
-import { formatRelativeEventNote, mapScheduleResourcesToEvents } from './map-schedule-resources.js';
+import { formatRelativeEventNote, mapScheduleResourcesToEvents, buildDailyOccurrence } from './map-schedule-resources.js';
 
 const sampleResource = (overrides: Partial<ResourceEntity> = {}): ResourceEntity => ({
   resourceType: 'schedule',
@@ -58,9 +58,46 @@ describe('mapScheduleResourcesToEvents', () => {
 
     expect(events).toEqual([]);
   });
+
+  it('maps daily recurrence schedules for today', () => {
+    const now = new Date('2026-07-06T08:00:00+09:00');
+    const events = mapScheduleResourcesToEvents(
+      [
+        sampleResource({
+          resourceId: 'daily-standup',
+          name: 'URMS 朝チェックイン',
+          metadata: {
+            recurrence: 'daily',
+            time: '09:30',
+            timezone: 'Asia/Tokyo',
+            tone: 'focus',
+            note: 'Vision Track 確認',
+          },
+        }),
+      ],
+      now,
+      'Asia/Tokyo',
+      8,
+    );
+
+    expect(events).toEqual([
+      {
+        time: '09:30',
+        title: 'URMS 朝チェックイン',
+        note: 'Vision Track 確認',
+        tone: 'focus',
+      },
+    ]);
+  });
 });
 
 describe('formatRelativeEventNote', () => {
+  it('builds daily occurrence in Asia/Tokyo', () => {
+    const now = new Date('2026-07-06T08:00:00+09:00');
+    const start = buildDailyOccurrence(now, '09:30', 'Asia/Tokyo');
+    expect(start?.toISOString()).toBe('2026-07-06T00:30:00.000Z');
+  });
+
   it('returns undefined for past events', () => {
     const now = new Date('2026-07-05T10:00:00+09:00');
     const start = new Date('2026-07-05T09:00:00+09:00');

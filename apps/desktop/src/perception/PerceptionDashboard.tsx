@@ -149,6 +149,19 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                 ) : (
                   <p className="hint-line">Context の current_task / next_task 未設定</p>
                 )}
+                {!previewPhase && !stateOverride && life.source === 'api' && life.dbReady && life.canAdvanceTask ? (
+                  <div className="task-action">
+                    <button
+                      type="button"
+                      className="task-action__button"
+                      disabled={life.advancing}
+                      onClick={() => void life.advanceTask()}
+                    >
+                      {life.advancing ? '更新中…' : '完了 → 次へ'}
+                    </button>
+                    {life.advanceError ? <p className="hint-line task-action__error">{life.advanceError}</p> : null}
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </section>

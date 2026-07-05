@@ -12,7 +12,11 @@ import {
   createWeatherService,
   createScheduleService,
   createAiTeamSyncService,
+  createScheduleSyncService,
+  createLocationSyncService,
   resolveAiTeamRepoRoot,
+  resolveScheduleRepoRoot,
+  resolveLocationRepoRoot,
   IntegrationRegistry,
   CursorLocalIntegration,
 } from '@urms/domain';
@@ -68,13 +72,21 @@ export function createAppServices(databaseUrl?: string): AppServices {
   const userRepository = new PrismaUserRepository(prisma);
   const jwtSecret = process.env.JWT_SECRET?.trim() || 'dev-local-jwt-secret-change-me';
   const localAuthService = new LocalAuthService(userRepository, { jwtSecret });
-  const weatherService = createWeatherService();
+  const weatherService = createWeatherService({ resourceRepository });
   const scheduleService = createScheduleService({ resourceService });
   const aiTeamRepoRoot = resolveAiTeamRepoRoot();
   const aiTeamSyncService = createAiTeamSyncService({
     repoRoot: aiTeamRepoRoot,
     resourceRepository,
     relationService,
+  });
+  const scheduleSyncService = createScheduleSyncService({
+    repoRoot: resolveScheduleRepoRoot(),
+    resourceRepository,
+  });
+  const locationSyncService = createLocationSyncService({
+    repoRoot: resolveLocationRepoRoot(),
+    resourceRepository,
   });
 
   const integrationRegistry = new IntegrationRegistry();
@@ -96,6 +108,8 @@ export function createAppServices(databaseUrl?: string): AppServices {
     weatherService,
     scheduleService,
     aiTeamSyncService,
+    scheduleSyncService,
+    locationSyncService,
     integrationRegistry,
     checkReadiness: async () => ({
       database: await checkDatabaseHealth(prisma),

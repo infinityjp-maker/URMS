@@ -244,6 +244,39 @@
   opacity: 0.78;
 }
 
+.task-action {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.task-action__button {
+  appearance: none;
+  border: 1px solid rgba(160, 190, 230, 0.28);
+  background: rgba(120, 160, 220, 0.12);
+  color: #e8ecf2;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, opacity 160ms ease;
+}
+
+.task-action__button:hover:not(:disabled) {
+  background: rgba(120, 160, 220, 0.2);
+  border-color: rgba(160, 190, 230, 0.42);
+}
+
+.task-action__button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.task-action__error {
+  color: #f0b4b4;
+}
+
 .ai-memo {
   margin: 0;
   font-size: 0.95rem;

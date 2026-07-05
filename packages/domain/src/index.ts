@@ -21,6 +21,7 @@ export {
 export { assertValidRelationType, validateRelationEndpoints } from './resource/relation-validator.js';
 
 export { ContextService } from './context/context-service.js';
+export { buildAdvanceTaskUpdates, canAdvanceTask } from './context/advance-context-task.js';
 export { buildPerceptionState, type PerceptionOverrides } from './perception/build-perception-state.js';
 export { resolveDayPhase, statusLineForPhase } from './perception/day-phase.js';
 export { createWeatherService, OpenMeteoWeatherService, type WeatherService } from './perception/weather/weather-service.js';
@@ -37,9 +38,31 @@ export {
   mapScheduleResourceToEvent,
   mapScheduleResourcesToEvents,
   formatRelativeEventNote,
+  buildDailyOccurrence,
 } from './perception/schedule/map-schedule-resources.js';
 export { createAiTeamSyncService, AiTeamSyncService, resolveAiTeamRepoRoot, AI_TEAM_ID } from './ai-team/ai-team-sync-service.js';
 export type { AiTeamSyncReport, AiTeamSyncItem } from './ai-team/ai-team-sync-service.js';
+export {
+  createScheduleSyncService,
+  ScheduleSyncService,
+  resolveScheduleRepoRoot,
+} from './schedule-sync/schedule-sync-service.js';
+export type { ScheduleSyncReport, ScheduleSyncItem } from './schedule-sync/schedule-sync-service.js';
+export { parseScheduleMarkdown } from './schedule-sync/parse-schedule-markdown.js';
+export { SCHEDULE_SOURCE_DIR } from './schedule-sync/schedule-sources.js';
+export {
+  createLocationSyncService,
+  LocationSyncService,
+  resolveLocationRepoRoot,
+} from './location-sync/location-sync-service.js';
+export type { LocationSyncReport, LocationSyncItem } from './location-sync/location-sync-service.js';
+export { parseLocationMarkdown } from './location-sync/parse-location-markdown.js';
+export { LOCATION_SOURCE_DIR } from './location-sync/location-sources.js';
+export {
+  LOCATION_RESOURCE_TYPE,
+  resolveWeatherConfigWithLocation,
+  weatherConfigFromLocationResource,
+} from './perception/weather/resolve-weather-config.js';
 export { parseResourceMarkdown } from './ai-team/parse-resource-markdown.js';
 export {
   validateContextUpdateItems,

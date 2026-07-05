@@ -113,4 +113,22 @@ describe('ContextService', () => {
     expect(handler).toHaveBeenCalledTimes(1);
     expect(repository.items.get('current_task')?.updatedBy).toBe('pm-user');
   });
+
+  it('advances current_task in operate mode for the daily loop', async () => {
+    const repository = createMemoryRepository();
+    const eventBus = new InProcessEventBus();
+    const handler = vi.fn();
+    eventBus.subscribe(EVENT_TYPES.ContextUpdated, handler);
+
+    const service = new ContextService(repository, eventBus);
+    const before = await service.getDashboard('operate');
+    const current = before.items.find((item) => item.key === 'current_task')?.summary;
+    const next = before.items.find((item) => item.key === 'next_task')?.summary;
+
+    const after = await service.advanceTask('window-user', 'operate');
+
+    expect(after.items.find((item) => item.key === 'current_task')?.summary).toBe(next);
+    expect(handler.mock.calls.length).toBeGreaterThan(0);
+    expect(current).toContain('VT-1');
+  });
 });

@@ -17,6 +17,8 @@ import { registerHealthRoutes } from './routes/health.js';
 import { registerMetricsRoutes } from './routes/metrics.js';
 import { registerResourceRoutes } from './routes/resources.js';
 import { registerRelationRoutes } from './routes/relations.js';
+import { registerLocationRoutes } from './routes/location.js';
+import { registerScheduleRoutes } from './routes/schedule.js';
 import { registerIntegrationRoutes } from './routes/integrations.js';
 import type { AppServices } from './types/services.js';
 
@@ -68,6 +70,8 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerPerceptionRoutes(app, services);
   await registerAiRoutes(app, services);
   await registerAiTeamRoutes(app, services);
+  await registerScheduleRoutes(app, services);
+  await registerLocationRoutes(app, services);
   await registerIntegrationRoutes(app, services);
   await registerPluginRoutes(app, services);
   await registerAuditRoutes(app, services);

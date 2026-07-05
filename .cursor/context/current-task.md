@@ -6,26 +6,25 @@
 
 ## Task
 
-**Vision Track VT-1 — 偽フィクスチャ卒業 · SSOT → 窓**
+**Vision Track VT-4 — 日次ループ（窓 → 行動 → Context 更新）**
 
-仕様 Sprint（S1–S16）は完了。製品体験の正本物差しは Vision Track ~10%。いまは「あなたの Resource / Context が窓に出る」ループの土台を作る段階。
+VT-1 SSOT（schedule · location）接続済み。窓から `完了 → 次へ` で Context を更新し、日次ループの 1 サイクルを閉じる段階。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| エンジニアリング（Sprint 20/20） | ✅ 参考値 · 製品完成度ではない |
-| VT-1 SSOT 重力（偽データ排除） | 🔄 着手 |
+| エンジニアリング（Sprint 20/20） | ✅ 参考値 |
+| VT-1 SSOT 重力 | 🔄 ~完了 |
+| VT-4 日次ループ | 🔄 着手（advance-task） |
 | VT-2 Context 脳 | ⏳ |
-| VT-3 知覚膜（真理の窓） | ⏳ |
-| VT-4 日次ループ（開く→行動→更新） | ⏳ |
+| VT-3 知覚膜 | ⏳ |
 
 ## 直近の変更
 
-- Context 正本デフォルト — Vision Track 内容（VT-1/2 · ~10%）
-- 窓オフライン — 空ではなく Context 正本から合成（偽天気・偽予定なし）
-- 進捗 Canvas — 大日程スケジュールを常時表示に復帰
+- `POST /v1/context/advance-task` — operate Mode から current_task 完了 · 繰り上げ
+- 窓 UI — タスクカードに「完了 → 次へ」ボタン（API+DB 時）
 
 ## User
 
-作業不要。進捗 Canvas と本番窓 URL で状態確認。
+API+DB 起動 · `pnpm ssot:sync` 後、窓で「完了 → 次へ」を試せます。

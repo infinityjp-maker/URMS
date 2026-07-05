@@ -18,4 +18,9 @@ export async function registerContextRoutes(app: FastifyInstance, services: AppS
     const dashboard = await contextService.update(items, request.actorId, request.urmsMode);
     return { data: dashboard };
   });
+
+  app.post('/v1/context/advance-task', async (request) => {
+    const dashboard = await contextService.advanceTask(request.actorId, request.urmsMode);
+    return { data: dashboard };
+  });
 }

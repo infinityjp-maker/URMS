@@ -34,7 +34,7 @@
 
 | 段階 | 内容 | 状態 |
 |------|------|------|
-| **v2a** | 天気 — Open-Meteo · 1 地点（`URMS_WEATHER_LAT/LON`） | ✅ |
+| **v2a** | 天気 — Open-Meteo · location Resource SSOT 優先 | ✅ |
 | **v2b** | 予定 — `schedule` Resource · `metadata.startAt` | ✅ |
 | v2c | 外部カレンダー連携 | 将来 · 別途 Go |
 
@@ -55,7 +55,20 @@
 
 作成後 `PATCH /v1/resources/schedule/{id}/lifecycle` で `active` にすると窓に表示されます。
 
-**実装:** `@urms/domain` · `ResourceScheduleService` → `GET /v1/perception` · DB 不可時はフィクスチャへフォールバック。
+**SSOT 同期（VT-1）**
+
+| 正本 | コマンド | API |
+|------|----------|-----|
+| `.cursor/resources/schedule/*.md` | `pnpm schedule:sync` | `POST /v1/schedule/sync` |
+| `.cursor/resources/location/*.md` | `pnpm location:sync` | `POST /v1/location/sync` |
+| 両方一括 | **`pnpm ssot:sync`** | — |
+
+- schedule: `recurrence: daily` + `time` で毎日窓に表示
+- location: `primary: true` の地点が天気 API の緯度経度 SSOT（env より優先）
+
+**日次ループ（VT-4）:** API+DB 接続時、窓タスクカードの **「完了 → 次へ」** → `POST /v1/context/advance-task`（operate Mode）→ perception 再合成。
+
+**実装:** `@urms/domain` · `ResourceScheduleService` + `OpenMeteoWeatherService` → `GET /v1/perception` · 未取得時は空（偽フィクスチャなし）。
 
 **S14（Resource リレーション）:** v2b 完了後に着手（設計メモのみ先行可）。
 

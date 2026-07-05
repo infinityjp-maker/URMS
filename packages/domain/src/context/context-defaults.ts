@@ -15,7 +15,7 @@ export const DEFAULT_CONTEXT_ITEMS: Record<
     ssotLinks: [{ label: 'VISION', path: '/docs/project/VISION.md' }],
   },
   current_task: {
-    summary: 'VT-1 — Context → 窓 · 偽データ排除',
+    summary: 'VT-1 — location/schedule SSOT · pnpm ssot:sync',
     ssotLinks: [{ label: 'Desktop UI', path: '/docs/implementation/11-phase5-desktop-ui.md' }],
   },
   next_task: {
@@ -23,7 +23,7 @@ export const DEFAULT_CONTEXT_ITEMS: Record<
     ssotLinks: [{ label: 'Context Engine', path: '/docs/architecture/06-context-engine.md' }],
   },
   project_status: {
-    summary: 'Sprint 完了 · Vision 体験 ~10% — 日次ループ未成立',
+    summary: 'Sprint 完了 · Vision 体験 ~12% — 天気 · 予定 SSOT 接続中',
     ssotLinks: [{ label: 'VISION', path: '/docs/project/VISION.md' }],
   },
   active_mode: {

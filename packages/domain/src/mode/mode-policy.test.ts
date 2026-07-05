@@ -30,6 +30,13 @@ describe('ModePolicy', () => {
     expect(modePolicy.canUpdateContext('operate')).toBe(false);
   });
 
+  it('allows task advance from window in operate, plan, and develop', () => {
+    expect(modePolicy.canAdvanceContextTask('operate')).toBe(true);
+    expect(modePolicy.canAdvanceContextTask('plan')).toBe(true);
+    expect(modePolicy.canAdvanceContextTask('develop')).toBe(true);
+    expect(modePolicy.canAdvanceContextTask('audit')).toBe(false);
+  });
+
   it('allows integration sync only in develop', () => {
     expect(modePolicy.canSyncIntegrations('develop')).toBe(true);
     expect(modePolicy.canSyncIntegrations('operate')).toBe(false);

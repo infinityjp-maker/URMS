@@ -5,12 +5,14 @@ import {
   type ContextUpdateItem,
   type UrmsMode,
 } from '@urms/shared';
+import { AppError, ERROR_CODES } from '@urms/shared';
 
 import { createDomainEvent } from '../event/domain-event.js';
 import { EVENT_TYPES } from '../event/event-types.js';
 import type { EventBus } from '../event/event-bus.js';
 import { assertModeAllowed, modePolicy } from '../mode/mode-policy.js';
 import type { ContextRepository } from '../repository/context-repository.js';
+import { buildAdvanceTaskUpdates } from './advance-context-task.js';
 import { DEFAULT_CONTEXT_ITEMS } from './context-defaults.js';
 import { validateContextUpdateItems } from './context-validator.js';
 
@@ -57,7 +59,31 @@ export class ContextService {
   ): Promise<ContextDashboard> {
     assertModeAllowed(modePolicy.canUpdateContext(mode), 'Context update not allowed in current mode');
     validateContextUpdateItems(items);
+    return this.persistUpdates(items, actorId, mode);
+  }
 
+  async advanceTask(actorId: string, mode: UrmsMode): Promise<ContextDashboard> {
+    assertModeAllowed(
+      modePolicy.canAdvanceContextTask(mode),
+      'Context task advance not allowed in current mode',
+    );
+
+    const dashboard = await this.getDashboard(mode);
+    const items = buildAdvanceTaskUpdates(dashboard);
+
+    if (items.length === 0) {
+      throw new AppError(ERROR_CODES.VALIDATION_REQUIRED_FIELD, 'No actionable current_task to advance');
+    }
+
+    validateContextUpdateItems(items);
+    return this.persistUpdates(items, actorId, mode);
+  }
+
+  private async persistUpdates(
+    items: ContextUpdateItem[],
+    actorId: string,
+    mode: UrmsMode,
+  ): Promise<ContextDashboard> {
     const now = new Date().toISOString();
 
     for (const item of items) {

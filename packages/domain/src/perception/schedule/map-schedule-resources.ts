@@ -4,6 +4,9 @@ import { isValidEventTone } from './schedule-config.js';
 
 export type ScheduleResourceMetadata = {
   startAt?: unknown;
+  recurrence?: unknown;
+  time?: unknown;
+  timezone?: unknown;
   note?: unknown;
   tone?: unknown;
 };
@@ -45,13 +48,49 @@ export function formatRelativeEventNote(start: Date, now: Date): string | undefi
   return `あと ${minutes}m`;
 }
 
-function parseStartAt(metadata: ScheduleResourceMetadata): Date | null {
-  if (typeof metadata.startAt !== 'string' || !metadata.startAt.trim()) {
+function parseDailyTime(value: string): { hour: number; minute: number } | null {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
+  if (!match) return null;
+
+  const hour = Number.parseInt(match[1] ?? '', 10);
+  const minute = Number.parseInt(match[2] ?? '', 10);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute) || hour > 23 || minute > 59) {
     return null;
   }
 
-  const parsed = new Date(metadata.startAt);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
+  return { hour, minute };
+}
+
+export function buildDailyOccurrence(now: Date, time: string, timeZone: string): Date | null {
+  const parsed = parseDailyTime(time);
+  if (!parsed) return null;
+
+  const dateKey = dateKeyInTimezone(now, timeZone);
+  const hh = String(parsed.hour).padStart(2, '0');
+  const mm = String(parsed.minute).padStart(2, '0');
+
+  if (timeZone === 'Asia/Tokyo') {
+    return new Date(`${dateKey}T${hh}:${mm}:00+09:00`);
+  }
+
+  return new Date(`${dateKey}T${hh}:${mm}:00Z`);
+}
+
+function parseStartAt(metadata: ScheduleResourceMetadata, now: Date, timeZone: string): Date | null {
+  if (typeof metadata.startAt === 'string' && metadata.startAt.trim()) {
+    const parsed = new Date(metadata.startAt);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  if (metadata.recurrence === 'daily' && typeof metadata.time === 'string') {
+    const eventTimeZone =
+      typeof metadata.timezone === 'string' && metadata.timezone.trim()
+        ? metadata.timezone.trim()
+        : timeZone;
+    return buildDailyOccurrence(now, metadata.time, eventTimeZone);
+  }
+
+  return null;
 }
 
 export function mapScheduleResourceToEvent(
@@ -60,7 +99,7 @@ export function mapScheduleResourceToEvent(
   timeZone: string,
 ): PerceptionState['nextEvents'][number] | null {
   const metadata = resource.metadata as ScheduleResourceMetadata;
-  const startAt = parseStartAt(metadata);
+  const startAt = parseStartAt(metadata, now, timeZone);
   if (!startAt) return null;
   if (dateKeyInTimezone(startAt, timeZone) !== dateKeyInTimezone(now, timeZone)) {
     return null;
