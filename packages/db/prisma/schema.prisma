@@ -67,3 +67,19 @@ model User {
 
   @@map("users")
 }
+
+model AiUsageLog {
+  id               String   @id @default(cuid())
+  providerId       String   @map("provider_id")
+  modelId          String   @map("model_id")
+  promptTokens     Int      @default(0) @map("prompt_tokens")
+  completionTokens Int      @default(0) @map("completion_tokens")
+  latencyMs        Int      @map("latency_ms")
+  costUsd          Decimal? @map("cost_usd") @db.Decimal(10, 6)
+  actorId          String   @map("actor_id")
+  mode             String
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("ai_usage_logs")
+}

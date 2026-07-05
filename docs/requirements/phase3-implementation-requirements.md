@@ -96,12 +96,12 @@ Phase 3 MVP 実装（Sprint S1〜S10）の **受入要件** を Sprint 単位で
 
 ### S7 — AI Manager
 
-| 要件 ID | 受入条件 | 関連 |
-|---------|----------|------|
-| IR-S7-01 | AI Manager + Ollama Adapter | ADR-016, FR（AI 連携） |
-| IR-S7-02 | `/v1/ai/*` + Feature Flag | ADR-019 |
-| IR-S7-03 | ai-usage 記録 | ADR-016 |
-| IR-S7-04 | Core → Provider 直 import なし | Contract §9 |
+| 要件 ID | 受入条件 | 関連 | 状態 |
+|---------|----------|------|------|
+| IR-S7-01 | AI Manager + Ollama Adapter | ADR-016, FR（AI 連携） | ✅ |
+| IR-S7-02 | `/v1/ai/*` + Feature Flag | ADR-019 | ✅ |
+| IR-S7-03 | ai-usage 記録 | ADR-016 | ✅ |
+| IR-S7-04 | Core → Provider 直 import なし | Contract §9 | ✅ |
 
 ### S8 — Plugin
 

@@ -6,6 +6,7 @@ import { createAppServices } from './lib/wire-services.js';
 import { registerAuthPlugin } from './plugins/auth.js';
 import { registerErrorHandler } from './plugins/error-handler.js';
 import { registerModePlugin } from './plugins/mode.js';
+import { registerAiRoutes } from './routes/ai.js';
 import { registerAuditRoutes, registerModeRoutes } from './routes/audit.js';
 import { registerContextRoutes } from './routes/context.js';
 import { registerHealthRoutes } from './routes/health.js';
@@ -31,6 +32,7 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerHealthRoutes(app);
   await registerResourceRoutes(app, services);
   await registerContextRoutes(app, services);
+  await registerAiRoutes(app, services);
   await registerAuditRoutes(app, services);
   await registerModeRoutes(app);
 

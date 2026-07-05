@@ -6,9 +6,9 @@
 
 ## Task
 
-**S7 AI Manager + Ollama Adapter 実装**
+**S8 Plugin — Resource 種別拡張 + Plugin Registry**
 
 ## 参照
 
-- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) — IR-S7-01〜04
-- [17-ai-integration.md](../../docs/architecture/17-ai-integration.md)
+- [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md) — IR-S8-01〜03
+- [09-plugin-architecture.md](../../docs/architecture/09-plugin-architecture.md)

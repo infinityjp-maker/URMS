@@ -32,3 +32,11 @@ export {
   type ResourceListResult,
 } from './repository/resource-repository.js';
 export { type ContextRepository } from './repository/context-repository.js';
+
+export type { AiProviderAdapter, AiFetch } from './ai/adapter.js';
+export { AiProviderRegistry } from './ai/provider-registry.js';
+export { AiManager, type AiManagerOptions } from './ai/ai-manager.js';
+export {
+  type AiUsageRepository,
+  InMemoryAiUsageRepository,
+} from './ai/ai-usage-repository.js';

@@ -163,6 +163,54 @@ paths:
           description: Updated dashboard
         '403':
           description: Mode not allowed
+  /v1/ai/providers:
+    get:
+      summary: List AI providers (ff.ai.enabled)
+      responses:
+        '200':
+          description: Provider list
+        '403':
+          description: Feature disabled
+  /v1/ai/providers/{providerId}/health:
+    get:
+      summary: Provider health check
+      parameters:
+        - in: path
+          name: providerId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Health status
+        '403':
+          description: Feature disabled
+  /v1/ai/chat:
+    post:
+      summary: Chat via AI Manager (ff.ai.enabled)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                modelId: { type: string }
+                providerId: { type: string }
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    required: [role, content]
+                    properties:
+                      role: { type: string, enum: [system, user, assistant] }
+                      content: { type: string }
+      responses:
+        '200':
+          description: Chat response
+        '403':
+          description: Feature disabled
+        '503':
+          description: Provider unavailable
   /v1/audit/logs:
     get:
       summary: List audit logs (audit mode only)

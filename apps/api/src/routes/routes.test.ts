@@ -7,6 +7,7 @@ function createMockServices(): AppServices {
   return {
     resourceService: {} as AppServices['resourceService'],
     contextService: {} as AppServices['contextService'],
+    aiManager: {} as AppServices['aiManager'],
     auditLogRepository: {} as AppServices['auditLogRepository'],
   };
 }
@@ -83,6 +84,27 @@ describe('Audit route authorization', () => {
     expect(response.statusCode).toBe(403);
     expect(response.json().error.code).toBe('MODE_NOT_ALLOWED');
 
+    await app.close();
+  });
+});
+
+describe('AI route feature flag', () => {
+  it('denies AI routes when ff.ai.enabled is off', async () => {
+    const previous = process.env.URMS_FF_AI_ENABLED;
+    process.env.URMS_FF_AI_ENABLED = 'false';
+
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/ai/providers',
+      headers: { 'x-urms-mode': 'plan' },
+    });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.json().error.code).toBe('FEATURE_DISABLED');
+
+    process.env.URMS_FF_AI_ENABLED = previous;
     await app.close();
   });
 });

@@ -6,9 +6,9 @@
 
 ## Phase
 
-**Phase 3 — Sprint S6 完了 / S7 AI Manager 次**
+**Phase 3 — Sprint S7 完了 / S8 Plugin 次**
 
 ## 参照
 
+- [phase3-progress-plan.md](../../docs/project/phase3-progress-plan.md)
 - [phase3-implementation-requirements.md](../../docs/requirements/phase3-implementation-requirements.md)
-- [viewing-guide.md](../../docs/requirements/viewing-guide.md)

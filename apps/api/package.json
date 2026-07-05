@@ -16,6 +16,7 @@
     "@urms/db": "workspace:*",
     "@urms/domain": "workspace:*",
     "@urms/logger": "workspace:*",
+    "@urms/plugin-ollama": "workspace:*",
     "@urms/shared": "workspace:*",
     "fastify": "^5.2.1"
   },
