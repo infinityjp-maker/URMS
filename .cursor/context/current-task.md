@@ -6,24 +6,28 @@
 
 ## Task
 
-**S12 — 監視 · ログ集約（Phase 4 · 進行中）**
+**Phase 5 UI v0 — 知覚層ダッシュボード（Tauri）+ S12 継続**
 
-## S12 進捗
+## Phase 5 v0 進捗
 
 | 項目 | 状態 |
 |------|------|
-| `/health` liveness | ✅ |
-| `/health/ready` readiness | ✅ DB チェック |
-| `/metrics` Prometheus | ✅ |
-| 構造化アクセスログ | ✅ `@urms/logger` |
-| Loki Docker profile | ✅ 任意 |
-| OpenAPI 同期 | ✅ |
-| 単体テスト | ✅ 18 passed |
+| ADR-023 Tauri + React | ✅ User Go |
+| apps/desktop シェル | ✅ |
+| 知覚層 UI（モック状態） | ✅ |
+| API / Context 連携 | ⏳ 次 |
+| 時間帯モード | ⏳ 次 |
 
-## 次（開発側）
+## 開発コマンド
 
-S12 残り · dev:verify 更新 · S13 準備 · v0.3.0-beta タグ（未）
+```bash
+pnpm dev:desktop
+```
+
+## S12（並行）
+
+S12 監視 · ログ — Phase 4 継続
 
 ## User
 
-普段は作業なし。設計図（5180）が最も確実。5173 は DB 未起動時 Resource エラー（想定内）。
+本番 UI = 知覚層ダッシュボード（窓）。5180 · 旧 URMS は正本外。

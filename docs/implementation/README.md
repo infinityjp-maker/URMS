@@ -47,6 +47,7 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 | 08 | AI Development Governance | [08-ai-development-governance.md](./08-ai-development-governance.md) | AI 共同開発運用 | ADR-021 |
 | 09 | PM Operations Protocol | [09-pm-operations-protocol.md](./09-pm-operations-protocol.md) | PM 運用・開発フロー | — |
 | 10 | Phase 4 Readiness | [10-phase4-readiness.md](./10-phase4-readiness.md) | **Phase 4 開始 PM 提案** | — |
+| 11 | Phase 5 Desktop UI | [11-phase5-desktop-ui.md](./11-phase5-desktop-ui.md) | **本番 UI · 知覚層 v0** | ADR-023 |
 
 ## ADR（実装関連）
 
@@ -58,6 +59,7 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 | ADR-020 | Quality Gate |
 | ADR-021 | AI Development Governance |
 | ADR-022 | Local Authentication（IdP 不使用 · User 2026-07-05） |
+| ADR-023 | Tauri 2 + React 本番 UI（知覚層 · User Go 2026-07-05） |
 
 **Contract が唯一の実装契約 SSOT。** 他文書は補助。
 
@@ -67,6 +69,6 @@ Context（`.cursor/context/`）は補助のみ — SSOT ではない。
 |------|------|
 | 2026-07-05 | v1.6 — PM Operations Protocol |
 | 2026-07-05 | v1.7 — Phase 4 Readiness PM 提案 |
-| 2026-07-05 | v1.8 — ADR-022 ローカル認証 · IdP クローズ |
+| 2026-07-05 | v1.9 — Phase 5 Desktop UI · ADR-023 |
 | 2026-07-05 | v1.5 — AI Development Governance, ADR-021 |
 | 2026-07-05 | v1.4 — Quality Gate, ADR-020 |

@@ -4,6 +4,7 @@
 
 | 目的 | Canvas |
 |------|--------|
+| **方針 · 提案 · 方向性確認** | `urms-proposal.canvas.tsx` |
 | 進捗 · サーバー · **これから** | `urms-progress-plan.canvas.tsx` |
 | 要件 · VISION · 用語 · 画面の見方 | `urms-docs.canvas.tsx` |
 

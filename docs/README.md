@@ -28,6 +28,7 @@ canvases/urms-progress-plan.canvas.tsx（進捗 · リンク）
 
 | 目的 | 開くファイル |
 |------|-------------|
+| **方針 · 提案 · 方向性確認** | `canvases/urms-proposal.canvas.tsx` |
 | 進捗 · サーバー · クイックリンク | `canvases/urms-progress-plan.canvas.tsx` |
 | 要件 · VISION · 用語 · 画面の見方 等 | `canvases/urms-docs.canvas.tsx` |
 
