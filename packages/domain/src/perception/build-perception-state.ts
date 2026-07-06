@@ -2,9 +2,10 @@ import type { ContextDashboard } from '@urms/shared';
 import type { PerceptionState } from '@urms/shared';
 
 import type { LoopJournalEntry } from '../loop-journal/loop-journal-service.js';
-import { resolveDayPhase, statusLineForPhase } from './day-phase.js';
+import { resolveDayPhase } from './day-phase.js';
 import { EMPTY_WEATHER, hasWeatherData } from './fixtures.js';
 import type { RelationGraphSignal } from './graph/relation-graph-signal.js';
+import { resolvePerceptionStatusLine } from './resolve-perception-status-line.js';
 import {
   synthesizeAiMemo,
   synthesizeConditionScore,
@@ -30,7 +31,6 @@ export function buildPerceptionState(
   overrides?: PerceptionOverrides,
 ): PerceptionState {
   const phase = resolveDayPhase(now);
-  const projectStatus = findSummary(dashboard, 'project_status');
   const currentTask = findSummary(dashboard, 'current_task');
   const nextTask = findSummary(dashboard, 'next_task');
 
@@ -41,7 +41,7 @@ export function buildPerceptionState(
 
   return {
     phase,
-    statusLine: projectStatus ?? statusLineForPhase(phase),
+    statusLine: resolvePerceptionStatusLine(dashboard, phase, overrides?.loopJournal, now),
     weather,
     nextEvents,
     summary: {

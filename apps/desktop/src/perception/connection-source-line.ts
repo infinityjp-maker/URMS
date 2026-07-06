@@ -41,6 +41,11 @@ function relationsLabel(
   return null;
 }
 
+function journalEntriesLabel(entries: number, source: LifeStateSource): string | null {
+  if (source !== 'api') return null;
+  return entries > 0 ? `journal ${entries} 件` : 'journal —';
+}
+
 /** VT-3 — 接続カード用ソース行（未取得は「—」で正直表示） */
 export function formatConnectionSourceLine(
   source: LifeStateSource,
@@ -60,6 +65,7 @@ export function formatConnectionSourceLine(
     locationLabel(sources.location, source),
     source === 'api' ? weatherCoordsLabel(sources.weatherCoords) : null,
     relationsLabel(sources.relations, sources.relationTypes, source),
+    journalEntriesLabel(sources.loopJournalEntries, source),
     source === 'api' ? loopContinuityLabel(sources.loopContinuity) : null,
     sources.loopNarrative,
   ].filter(Boolean);

@@ -579,6 +579,12 @@ describe('Context routes', () => {
 
     services.contextService.getDashboard = vi.fn(async () => before);
     services.contextService.advanceTask = vi.fn(async () => after);
+    services.loopJournalService.recordAdvance = vi.fn(async () => ({
+      completed: 'VT-1 task',
+      next: 'VT-2 task',
+      actorId: 'local-dev',
+      at: new Date('2026-07-06T10:00:00+09:00'),
+    }));
 
     const app = await createApp({ services, logger: false });
     const response = await app.inject({
@@ -589,6 +595,11 @@ describe('Context routes', () => {
 
     expect(response.statusCode).toBe(200);
     expect(services.loopJournalService.recordAdvance).toHaveBeenCalledWith(before, after, expect.any(String));
+    expect(response.json().meta.journalEntry).toEqual({
+      completed: 'VT-1 task',
+      next: 'VT-2 task',
+      at: '2026-07-06T01:00:00.000Z',
+    });
 
     await app.close();
   });

@@ -24,6 +24,7 @@ describe('formatConnectionSourceLine', () => {
     expect(line).toContain('地点 —');
     expect(line).toContain('座標 —');
     expect(line).toContain('関係 —');
+    expect(line).toContain('journal —');
     expect(line).toContain('ループ 未記録');
   });
 
@@ -38,11 +39,13 @@ describe('formatConnectionSourceLine', () => {
       relationTypes: { depends_on: 2, relates_to: 1 },
       loopContinuity: 'looped-today',
       loopNarrative: '今日 10:00 にループ · 完了: VT-2 → 次: VT-3',
+      loopJournalEntries: 2,
     });
 
     expect(line).toContain('座標 GPS');
     expect(line).toContain('地点 現在地');
     expect(line).toContain('depends_on 2');
+    expect(line).toContain('journal 2 件');
     expect(line).toContain('今日ループ済');
     expect(line).toContain('→ 次: VT-3');
   });

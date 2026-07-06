@@ -1,4 +1,4 @@
-import type { PerceptionResponse } from '@urms/shared';
+import type { AdvanceTaskResponse, PerceptionResponse } from '@urms/shared';
 
 import type { DeviceCoords } from '../lib/device-location.js';
 
@@ -52,9 +52,34 @@ export async function fetchPerception(deviceCoords?: DeviceCoords | null): Promi
   return body;
 }
 
-export async function advanceContextTask(): Promise<boolean> {
-  const body = await fetchJson<ApiEnvelope<unknown>>('/v1/context/advance-task', {
+export type AdvanceTaskResult = {
+  ok: boolean;
+  successMessage?: string;
+};
+
+function formatJournalSuccess(
+  entry: AdvanceTaskResponse['meta']['journalEntry'],
+): string | undefined {
+  if (!entry) {
+    return undefined;
+  }
+
+  const nextPart = entry.next ? ` → 次: ${entry.next}` : '';
+  return `完了: ${entry.completed}${nextPart} · journal.md に追記`;
+}
+
+export async function advanceContextTask(): Promise<AdvanceTaskResult> {
+  const body = await fetchJson<AdvanceTaskResponse>('/v1/context/advance-task', {
     method: 'POST',
   });
-  return body !== null;
+  if (!body?.data) {
+    return { ok: false };
+  }
+
+  return {
+    ok: true,
+    successMessage:
+      formatJournalSuccess(body.meta?.journalEntry ?? null) ??
+      'Context 更新 · 次のフォーカスに切り替えました',
+  };
 }

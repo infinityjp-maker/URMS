@@ -26,6 +26,7 @@ scripts\launch\setup-env.bat
 - Node · pnpm install · `.env` · `dev:prepare` を実行
 - **Docker Desktop** があれば PostgreSQL 起動 · migrate · `ssot:sync`
 - 開発サーバー（1420 · 5180 · 5173 · 3000）を別ウィンドウで起動
+- ブラウザは **本番窓 UI（1420）** を自動で開く
 - 最後に `dev:verify` で疎通確認
 
 Docker 初回起動時は Desktop のセットアップ完了後、もう一度 `setup-env.bat` を実行してください。
@@ -126,3 +127,25 @@ npx pnpm@9.15.4 docker:down
 ```
 
 > セクション 2 の `db:up` は **PostgreSQL だけ** 起動します。API/Web も Docker で動かす場合は本セクションを使ってください。
+
+---
+
+## 5. 本番窓 UI（知覚層 · 日次ループ）
+
+**VT-4 の確認用。** Resource CRUD ではなく「今」を合成表示する窓です。
+
+### 前提
+
+- セクション 0 または 2 と同様に **API + DB** が起動していること
+- 開発サーバー `pnpm dev:desktop:web`（または `setup-env.bat` 一括起動）
+
+### 手順
+
+1. ブラウザで **http://127.0.0.1:1420/** を開く（位置情報を許可すると GPS 天気）
+2. 接続カードに `Context API` · `journal N 件` · ループ narrative · 天気カードに **座標 GPS/SSOT** が出ることを確認
+3. タスクカードの **「完了 → 次へ」** を押す
+4. 成功メッセージに `journal.md に追記` と表示されること
+5. リポジトリの `.cursor/resources/loop/journal.md` に 1 行追記されていること
+6. 接続カードの `今日ループ済` · narrative が更新されること
+
+> DB 未起動時は Context ローカル fallback になり、「完了 → 次へ」は表示されません。

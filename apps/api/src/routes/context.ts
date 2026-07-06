@@ -1,7 +1,21 @@
-import type { ContextUpdateItem } from '@urms/shared';
+import type { AdvanceTaskResponse } from '@urms/shared';
 import type { FastifyInstance } from 'fastify';
 
 import type { AppServices } from '../types/services.js';
+
+function toRecordedEntry(
+  entry: Awaited<ReturnType<AppServices['loopJournalService']['recordAdvance']>>,
+): AdvanceTaskResponse['meta']['journalEntry'] {
+  if (!entry) {
+    return null;
+  }
+
+  return {
+    completed: entry.completed,
+    next: entry.next,
+    at: entry.at.toISOString(),
+  };
+}
 
 export async function registerContextRoutes(app: FastifyInstance, services: AppServices): Promise<void> {
   const { contextService, loopJournalService } = services;
@@ -22,7 +36,12 @@ export async function registerContextRoutes(app: FastifyInstance, services: AppS
   app.post('/v1/context/advance-task', async (request) => {
     const before = await contextService.getDashboard(request.urmsMode);
     const dashboard = await contextService.advanceTask(request.actorId, request.urmsMode);
-    await services.loopJournalService.recordAdvance(before, dashboard, request.actorId);
-    return { data: dashboard };
+    const journalEntry = toRecordedEntry(
+      await loopJournalService.recordAdvance(before, dashboard, request.actorId),
+    );
+    return {
+      data: dashboard,
+      meta: { journalEntry },
+    } satisfies AdvanceTaskResponse;
   });
 }

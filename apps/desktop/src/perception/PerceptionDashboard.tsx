@@ -5,6 +5,7 @@ import { useClock } from '../hooks/useClock.js';
 import { useLifeState } from '../hooks/useLifeState.js';
 import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
+import { formatWeatherCoordHint } from './weather-coord-hint.js';
 import {
   DAY_PHASES,
   DAY_PHASE_LABELS,
@@ -46,6 +47,11 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
     hour12: false,
   });
   const connectionSourceLine = formatConnectionSourceLine(life.source, life.sources);
+  const weatherCoordHint = formatWeatherCoordHint(
+    life.source,
+    life.sources?.weatherCoords,
+    hasWeatherData(state.weather),
+  );
 
   return (
     <div className={`dashboard dashboard--${phase}`}>
@@ -85,6 +91,7 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
               ) : (
                 <p className="hint-line">{state.weather.hint}</p>
               )}
+              {weatherCoordHint ? <p className="hint-line">{weatherCoordHint}</p> : null}
             </div>
           ) : null}
 
@@ -103,6 +110,11 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                   </li>
                 ))}
               </ul>
+            </div>
+          ) : layout.maxEvents > 0 && !previewPhase && life.source === 'api' ? (
+            <div className="glass-card">
+              <p className="card-kicker">次の予定</p>
+              <p className="hint-line">予定 — （schedule SSOT 未設定 · 本日分なし）</p>
             </div>
           ) : null}
         </section>

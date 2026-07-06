@@ -49,3 +49,17 @@ export interface ContextUpdateItem {
   summary: string;
   ssotLinks?: SsotLink[];
 }
+
+/** VT-4 — advance-task で journal.md に追記した 1 行の要約 */
+export type LoopJournalRecordedEntry = {
+  completed: string;
+  next?: string;
+  at: string;
+};
+
+export type AdvanceTaskResponse = {
+  data: ContextDashboard;
+  meta: {
+    journalEntry: LoopJournalRecordedEntry | null;
+  };
+};

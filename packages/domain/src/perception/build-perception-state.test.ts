@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { buildDefaultContextDashboard } from '../context/context-defaults.js';
 import { EMPTY_WEATHER } from './fixtures.js';
 import { buildPerceptionState } from './build-perception-state.js';
 
@@ -60,5 +61,25 @@ describe('buildPerceptionState', () => {
     expect(state.summary.events).toBe(0);
     expect(state.summary.tasks).toBe(0);
     expect(state.aiMemo).toContain('current_task');
+  });
+
+  it('uses loop journal for new-day status line', () => {
+    const state = buildPerceptionState(
+      buildDefaultContextDashboard('operate'),
+      new Date('2026-07-06T09:00:00+09:00'),
+      {
+        loopJournal: [
+          {
+            completed: 'VT-1 task',
+            next: 'VT-2 task',
+            actorId: 'window-user',
+            at: new Date('2026-07-05T17:30:00+09:00'),
+          },
+        ],
+      },
+    );
+
+    expect(state.statusLine).toContain('新しい一日');
+    expect(state.statusLine).toContain('→ 次: VT-2 task');
   });
 });

@@ -68,7 +68,7 @@
 
 **Context 合成（VT-2）:** `buildPerceptionState` が時間帯 · 予定数 · タスク · 天気 · **地点 SSOT 名称** · **Resource 関係（件数 + relationType 内訳）** · **次予定の相対時間**から summary.note / aiMemo を合成（フィクスチャなし）。
 
-**日次ループ（VT-4）:** API+DB 接続時、窓タスクカードの **「完了 → 次へ」** → `POST /v1/context/advance-task` → `project_status` + `journal.md` 追記 → `GET /v1/perception` が journal を読み、**昨日 / 今日** の連続 narrative（完了 · **次タスク** · summary · aiMemo · `meta.sources.loopContinuity`）を合成。
+**日次ループ（VT-4）:** API+DB 接続時、窓タスクカードの **「完了 → 次へ」** → `POST /v1/context/advance-task` → `project_status` + `journal.md` 追記 → レスポンス `meta.journalEntry` で窓に追記内容を表示 → `GET /v1/perception` が journal を読み、**昨日 / 今日** の連続 narrative（完了 · **次タスク** · summary · aiMemo · `meta.sources.loopContinuity` · `loopJournalEntries`）を合成。**statusLine** は journal 連続性（新しい一日 / 今日ループ）を優先（`直近ループ` 更新直後は `project_status` を表示）。
 
 **実装:** `@urms/domain` · `ResourceScheduleService` + `OpenMeteoWeatherService` → `GET /v1/perception` · 未取得時は空（偽フィクスチャなし）。
 

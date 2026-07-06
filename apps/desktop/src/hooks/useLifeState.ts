@@ -96,8 +96,8 @@ export function useLifeState(): LifeStateView {
   const advanceTask = useCallback(async () => {
     setView((current) => ({ ...current, advancing: true, advanceError: null, advanceSuccess: null }));
 
-    const ok = await advanceContextTask();
-    if (!ok) {
+    const result = await advanceContextTask();
+    if (!result.ok) {
       setView((current) => ({
         ...current,
         advancing: false,
@@ -110,7 +110,7 @@ export function useLifeState(): LifeStateView {
     setView((current) => ({
       ...current,
       advancing: false,
-      advanceSuccess: 'Context 更新 · 次のフォーカスに切り替えました',
+      advanceSuccess: result.successMessage ?? 'Context 更新 · 次のフォーカスに切り替えました',
     }));
 
     window.setTimeout(() => {

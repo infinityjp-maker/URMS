@@ -16,12 +16,16 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 |------|------|
 | VT-1 SSOT 重力 | ✅ ~完了 |
 | VT-2 Context 脳（合成 narrative） | 🔄 進行（地点 · 関係 · 予定 · **GPS 天気**） |
-| VT-4 日次ループ | 🔄 進行（journal · narrative · 接続カード反映） |
+| VT-4 日次ループ | 🔄 進行（journal 追記確認 · **advance 成功メッセージ** · 接続カード） |
 | VT-3 知覚膜 | 🔄 進行（weatherCoords · loopNarrative · **未取得は — 表示**） |
 
 ## 直近の変更
 
-- VT-3 — 接続カードで地点 · 座標 · 関係 · ループの未取得を「—」で正直表示
+- VT-4 — statusLine が journal 連続性（新しい一日 · 今日ループ済）を優先表示
+- VT-4 — advance-task が `meta.journalEntry` を返却 · 窓に journal 追記メッセージ
+- 接続カード — `journal N 件` / `journal —` を表示
+- VT-3 — 天気カードに座標 GPS/SSOT/— を表示（接続カードと同じ正直表示）
+- 起動 — `start-dev-servers.bat` が 1420 本番窓を起動 · `open-desktop-web.bat` 追加
 - perception meta — `weatherCoords`（device / ssot）· `loopNarrative`（接続カード）
 - 接続カード — 座標 GPS/SSOT · ループ narrative 表示
 - 環境構築 — `setup-env.ps1` · Docker/PostgreSQL · `load-root-env`（Prisma）
