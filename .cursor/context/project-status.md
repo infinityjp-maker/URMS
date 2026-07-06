@@ -22,7 +22,7 @@
 | E2E · Coverage CI | ✅ |
 | Docker Compose · CI build | ✅ |
 | S11 ローカル認証方針 | ✅ bypass + 内部 API |
-| PostgreSQL（User 環境） | ⏳ Docker 導入後 |
+| PostgreSQL（User 環境） | ✅ Docker Desktop + db:up（2026-07-07） |
 
 ## リンク
 

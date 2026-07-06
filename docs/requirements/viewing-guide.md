@@ -12,6 +12,26 @@
 
 ## 開発者向け（手動起動 · 以下は Markdown 正本）
 
+### 0. 一括環境構築（推奨）
+
+初回または環境を整え直すとき:
+
+```powershell
+cd D:\GitHub\URMS
+scripts\launch\setup-env.bat
+```
+
+または `npx pnpm@9.15.4 setup:env`
+
+- Node · pnpm install · `.env` · `dev:prepare` を実行
+- **Docker Desktop** があれば PostgreSQL 起動 · migrate · `ssot:sync`
+- 開発サーバー（1420 · 5180 · 5173 · 3000）を別ウィンドウで起動
+- 最後に `dev:verify` で疎通確認
+
+Docker 初回起動時は Desktop のセットアップ完了後、もう一度 `setup-env.bat` を実行してください。
+
+---
+
 ### 1. ワイヤーフレームだけ見る（DB 不要 · 最も簡単）
 
 PowerShell:

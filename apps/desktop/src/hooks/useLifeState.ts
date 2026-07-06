@@ -3,6 +3,7 @@ import type { PerceptionMeta, PerceptionState } from '@urms/shared';
 import { useCallback, useEffect, useState } from 'react';
 
 import { advanceContextTask, fetchHealth, fetchPerception, fetchReady } from '../api/client.js';
+import { resolveDeviceLocation } from '../lib/device-location.js';
 
 export type LifeStateSource = 'api' | 'local';
 
@@ -46,10 +47,11 @@ export function useLifeState(): LifeStateView {
   const [view, setView] = useState<Omit<LifeStateView, 'refresh' | 'advanceTask'>>(fallbackView);
 
   const refresh = useCallback(async () => {
+    const deviceCoords = await resolveDeviceLocation();
     const [healthOk, readyOk, perception] = await Promise.all([
       fetchHealth(),
       fetchReady(),
-      fetchPerception(),
+      fetchPerception(deviceCoords),
     ]);
 
     if (perception) {

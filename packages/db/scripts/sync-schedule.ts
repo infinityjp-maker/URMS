@@ -4,6 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { ScheduleSyncService, resolveScheduleRepoRoot } from '@urms/domain';
 import { PrismaResourceRepository, createPrismaClient } from '@urms/db';
 
+import { loadRootEnv } from './load-root-env.js';
+
+loadRootEnv();
+
 const repoRoot = resolveScheduleRepoRoot({
   URMS_REPO_ROOT: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..'),
 });

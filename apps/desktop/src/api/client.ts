@@ -1,5 +1,7 @@
 import type { PerceptionResponse } from '@urms/shared';
 
+import type { DeviceCoords } from '../lib/device-location.js';
+
 const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 
 type ApiEnvelope<T> = {
@@ -40,8 +42,12 @@ export async function fetchReady(): Promise<boolean> {
   return body?.data?.status === 'ready';
 }
 
-export async function fetchPerception(): Promise<PerceptionResponse | null> {
-  const body = await fetchJson<PerceptionResponse>('/v1/perception');
+export async function fetchPerception(deviceCoords?: DeviceCoords | null): Promise<PerceptionResponse | null> {
+  const query =
+    deviceCoords != null
+      ? `?latitude=${encodeURIComponent(String(deviceCoords.latitude))}&longitude=${encodeURIComponent(String(deviceCoords.longitude))}`
+      : '';
+  const body = await fetchJson<PerceptionResponse>(`/v1/perception${query}`);
   if (!body?.data) return null;
   return body;
 }

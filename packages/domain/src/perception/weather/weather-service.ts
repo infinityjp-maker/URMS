@@ -6,8 +6,13 @@ import { buildOpenMeteoUrl, mapOpenMeteoResponse, type OpenMeteoResponse, type W
 import { resolveWeatherConfig, type WeatherConfig } from './weather-config.js';
 import { resolveWeatherConfigWithLocation } from './resolve-weather-config.js';
 
+export type WeatherCoordOverride = {
+  latitude: number;
+  longitude: number;
+};
+
 export interface WeatherService {
-  getCurrentWeather(): Promise<PerceptionState['weather']>;
+  getCurrentWeather(coords?: WeatherCoordOverride): Promise<PerceptionState['weather']>;
 }
 
 export type WeatherServiceOptions = {
@@ -32,8 +37,16 @@ export class OpenMeteoWeatherService implements WeatherService {
     this.resourceRepository = options.resourceRepository;
   }
 
-  async getCurrentWeather(): Promise<PerceptionState['weather']> {
-    const config = await resolveWeatherConfigWithLocation(this.resourceRepository, this.baseConfig);
+  async getCurrentWeather(coords?: WeatherCoordOverride): Promise<PerceptionState['weather']> {
+    let config = await resolveWeatherConfigWithLocation(this.resourceRepository, this.baseConfig);
+
+    if (coords) {
+      config = {
+        ...config,
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      };
+    }
 
     if (!config.enabled) {
       return EMPTY_WEATHER;

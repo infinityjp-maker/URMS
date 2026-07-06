@@ -1,6 +1,10 @@
 import { createPrismaClient } from '../client.js';
 import { hashPassword } from '@urms/shared';
 
+import { loadRootEnv } from './load-root-env.js';
+
+loadRootEnv();
+
 const DEFAULT_LOGIN = 'operator';
 const DEFAULT_EMAIL = 'operator@local';
 const DEFAULT_PASSWORD = process.env.URMS_LOCAL_DEFAULT_PASSWORD ?? 'change-me';

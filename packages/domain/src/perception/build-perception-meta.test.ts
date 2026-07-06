@@ -24,13 +24,43 @@ describe('buildPerceptionMeta', () => {
         context: 'api',
         scheduleEvents: 1,
         weather: 'live',
+        weatherCoords: null,
         loopJournalEntries: 0,
         loopContinuity: 'none',
+        loopNarrative: null,
         relations: 0,
         relationTypes: {},
         location: null,
       },
     });
+  });
+
+  it('records weather coord source and loop narrative', () => {
+    const dashboard = buildDefaultContextDashboard('operate');
+    const state = buildPerceptionState(dashboard, new Date('2026-07-06T10:00:00+09:00'));
+    const loopJournal = [
+      {
+        completed: 'VT-2 task',
+        next: 'VT-3 task',
+        actorId: 'window-user',
+        at: new Date('2026-07-06T10:00:00+09:00'),
+      },
+    ];
+
+    const meta = buildPerceptionMeta(
+      dashboard,
+      state,
+      loopJournal,
+      new Date('2026-07-06T10:30:00+09:00'),
+      { activeRelations: 0, byType: {} },
+      '現在地',
+      'device',
+    );
+
+    expect(meta.sources.weatherCoords).toBe('device');
+    expect(meta.sources.location).toBe('現在地');
+    expect(meta.sources.loopNarrative).toContain('→ 次: VT-3 task');
+    expect(meta.sources.loopContinuity).toBe('looped-today');
   });
 
   it('marks empty weather when no live data', () => {

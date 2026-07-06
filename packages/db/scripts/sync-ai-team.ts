@@ -13,6 +13,10 @@ import {
   createPrismaClient,
 } from '@urms/db';
 
+import { loadRootEnv } from './load-root-env.js';
+
+loadRootEnv();
+
 const repoRoot = resolveAiTeamRepoRoot({
   URMS_REPO_ROOT: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..'),
 });

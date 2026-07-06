@@ -43,6 +43,12 @@ function sourceLine(
 ): string | null {
   if (!sources) return null;
   const weather = sources.weather === 'live' ? '天気 live' : '天気 —';
+  const weatherCoords =
+    sources.weatherCoords === 'device'
+      ? '座標 GPS'
+      : sources.weatherCoords === 'ssot'
+        ? '座標 SSOT'
+        : null;
   const schedule = `予定 ${sources.scheduleEvents} 件`;
   const location = sources.location ? `地点 ${sources.location}` : null;
   const relations =
@@ -50,11 +56,12 @@ function sourceLine(
       ? relationTypesLine(sources.relationTypes) ?? `関係 ${sources.relations}`
       : null;
   const loop = continuityLabel(sources.loopContinuity);
+  const loopNarrative = sources.loopNarrative;
   const base =
     source === 'api'
       ? `${schedule} · ${weather} · Context API`
       : `${schedule} · ${weather} · Context ローカル`;
-  const parts = [base, location, relations, loop].filter(Boolean);
+  const parts = [base, location, weatherCoords, relations, loop, loopNarrative].filter(Boolean);
   return parts.join(' · ');
 }
 

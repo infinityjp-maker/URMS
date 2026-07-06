@@ -494,18 +494,40 @@ describe('Perception routes', () => {
     expect(response.statusCode).toBe(200);
     const body = response.json() as {
       data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
-      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; loopJournalEntries: number; loopContinuity: string; relations: number; relationTypes: Record<string, number>; location: string | null } };
+      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; weatherCoords: string | null; loopJournalEntries: number; loopContinuity: string; loopNarrative: string | null; relations: number; relationTypes: Record<string, number>; location: string | null } };
     };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
     expect(body.data.nextEvents[0]?.title).toBe('デイリー');
     expect(body.meta.sources.scheduleEvents).toBe(1);
     expect(body.meta.sources.weather).toBe('live');
+    expect(body.meta.sources.weatherCoords).toBeNull();
     expect(body.meta.sources.loopJournalEntries).toBe(0);
     expect(body.meta.sources.loopContinuity).toBe('none');
+    expect(body.meta.sources.loopNarrative).toBeNull();
     expect(body.meta.sources.relations).toBe(0);
     expect(body.meta.sources.relationTypes).toEqual({});
     expect(body.meta.sources.location).toBeNull();
+
+    await app.close();
+  });
+
+  it('passes device coordinates to weather service', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/perception?latitude=34.69&longitude=135.5',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(services.weatherService.getCurrentWeather).toHaveBeenCalledWith({
+      latitude: 34.69,
+      longitude: 135.5,
+    });
+    const body = response.json() as { meta: { sources: { weatherCoords: string | null } } };
+    expect(body.meta.sources.weatherCoords).toBe('device');
 
     await app.close();
   });

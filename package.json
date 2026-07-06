@@ -12,6 +12,7 @@
     "dev:api": "pnpm --filter @urms/api dev",
     "dev:prepare": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/db build",
     "dev:verify": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/verify-dev.ps1",
+    "setup:env": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/setup-env.ps1 -StartServers",
     "audit:security": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/security-audit.ps1",
     "perf:spot": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/perf-spot-check.ps1",
     "dev:desktop": "pnpm --filter @urms/desktop dev",

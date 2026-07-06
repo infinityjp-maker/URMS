@@ -9,6 +9,10 @@ import {
 } from '@urms/domain';
 import { PrismaResourceRepository, createPrismaClient } from '@urms/db';
 
+import { loadRootEnv } from './load-root-env.js';
+
+loadRootEnv();
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 async function main(): Promise<void> {

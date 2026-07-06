@@ -4,6 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { LocationSyncService, resolveLocationRepoRoot } from '@urms/domain';
 import { PrismaResourceRepository, createPrismaClient } from '@urms/db';
 
+import { loadRootEnv } from './load-root-env.js';
+
+loadRootEnv();
+
 const repoRoot = resolveLocationRepoRoot({
   URMS_REPO_ROOT: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..'),
 });

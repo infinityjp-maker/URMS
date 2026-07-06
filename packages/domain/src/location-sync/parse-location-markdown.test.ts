@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { parseLocationMarkdown } from './parse-location-markdown.js';
 
-const homeSample = `# 東京（自宅）
+const homeSample = `# 現在地
 
 > **resource_type:** location
 > **resource_id:** location:home
@@ -21,7 +21,7 @@ describe('parseLocationMarkdown', () => {
     expect(parsed).toEqual({
       resourceType: 'location',
       resourceId: 'home',
-      name: '東京（自宅）',
+      name: '現在地',
       sourcePath: '.cursor/resources/location/home.md',
       contentHash: expect.any(String),
       metadata: {

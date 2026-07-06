@@ -7,7 +7,7 @@ import {
   resolveWeatherConfigWithLocation,
   weatherConfigFromLocationResource,
 } from './resolve-weather-config.js';
-import { createWeatherService } from './weather-service.js';
+import { createWeatherService, OpenMeteoWeatherService } from './weather-service.js';
 
 describe('OpenMeteoWeatherService', () => {
   it('returns empty weather when disabled', async () => {
@@ -125,6 +125,36 @@ describe('OpenMeteoWeatherService', () => {
     });
 
     await expect(service.getCurrentWeather()).resolves.toEqual(EMPTY_WEATHER);
+  });
+
+  it('uses device coordinate override when provided', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        current: {
+          temperature_2m: 22,
+          precipitation_probability: 10,
+          relative_humidity_2m: 55,
+          wind_speed_10m: 8,
+        },
+      }),
+    }));
+
+    const service = new OpenMeteoWeatherService({
+      config: {
+        enabled: true,
+        latitude: 35.6762,
+        longitude: 139.6503,
+        timezone: 'Asia/Tokyo',
+      },
+      fetchImpl: fetchImpl as never,
+    });
+
+    await service.getCurrentWeather({ latitude: 34.69, longitude: 135.5 });
+
+    const calledUrl = String(fetchImpl.mock.calls[0]?.[0]);
+    expect(calledUrl).toContain('latitude=34.69');
+    expect(calledUrl).toContain('longitude=135.5');
   });
 });
 

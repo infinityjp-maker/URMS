@@ -34,6 +34,8 @@ export interface PerceptionState {
 
 export type PerceptionWeatherSource = 'live' | 'empty';
 
+export type WeatherCoordSource = 'device' | 'ssot';
+
 export type LoopContinuity = 'none' | 'looped-today' | 'new-day';
 
 export type PerceptionMeta = {
@@ -42,8 +44,12 @@ export type PerceptionMeta = {
     context: 'api';
     scheduleEvents: number;
     weather: PerceptionWeatherSource;
+    /** 天気 API に渡した座標の出所（VT-3 正直表示） */
+    weatherCoords: WeatherCoordSource | null;
     loopJournalEntries: number;
     loopContinuity: LoopContinuity;
+    /** VT-4 — journal から合成した narrative（接続カード用） */
+    loopNarrative: string | null;
     relations: number;
     relationTypes: Record<string, number>;
     location: string | null;
