@@ -63,6 +63,15 @@ export {
   resolveWeatherConfigWithLocation,
   weatherConfigFromLocationResource,
 } from './perception/weather/resolve-weather-config.js';
+export { buildPerceptionMeta } from './perception/build-perception-meta.js';
+export {
+  createLoopJournalService,
+  LoopJournalService,
+  resolveLoopJournalRepoRoot,
+  extractLoopJournalEntry,
+  LOOP_JOURNAL_PATH,
+} from './loop-journal/loop-journal-service.js';
+export type { LoopJournalEntry } from './loop-journal/loop-journal-service.js';
 export { parseResourceMarkdown } from './ai-team/parse-resource-markdown.js';
 export {
   validateContextUpdateItems,

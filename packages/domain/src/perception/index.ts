@@ -1,4 +1,5 @@
 export { buildPerceptionState, type PerceptionOverrides } from './build-perception-state.js';
+export { buildPerceptionMeta } from './build-perception-meta.js';
 export { resolveDayPhase, statusLineForPhase } from './day-phase.js';
 export { buildDefaultContextDashboard } from '../context/context-defaults.js';
 export { buildAdvanceTaskUpdates, canAdvanceTask, canAdvancePerceptionState } from '../context/advance-context-task.js';

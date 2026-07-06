@@ -1,5 +1,5 @@
+import { buildPerceptionMeta, buildPerceptionState } from '@urms/domain';
 import type { FastifyInstance } from 'fastify';
-import { buildPerceptionState } from '@urms/domain';
 
 import type { AppServices } from '../types/services.js';
 
@@ -15,6 +15,9 @@ export async function registerPerceptionRoutes(
       services.scheduleService.getTodayEvents(request.urmsMode, now),
     ]);
     const state = buildPerceptionState(dashboard, now, { weather, nextEvents });
-    return { data: state };
+    return {
+      data: state,
+      meta: buildPerceptionMeta(dashboard, state),
+    };
   });
 }

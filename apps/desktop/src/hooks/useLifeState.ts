@@ -1,5 +1,5 @@
-import { buildDefaultContextDashboard, buildPerceptionState, canAdvancePerceptionState } from '@urms/domain/perception';
-import type { PerceptionState } from '@urms/shared';
+import { buildDefaultContextDashboard, buildPerceptionMeta, buildPerceptionState } from '@urms/domain/perception';
+import type { PerceptionMeta, PerceptionState } from '@urms/shared';
 import { useCallback, useEffect, useState } from 'react';
 
 import { advanceContextTask, fetchHealth, fetchPerception, fetchReady } from '../api/client.js';
@@ -13,6 +13,7 @@ export type LifeStateView = {
   dbReady: boolean;
   loading: boolean;
   canAdvanceTask: boolean;
+  sources: PerceptionMeta['sources'] | null;
   advancing: boolean;
   advanceError: string | null;
   advanceSuccess: string | null;
@@ -22,22 +23,27 @@ export type LifeStateView = {
 
 const POLL_MS = 60_000;
 
-function fallbackState(): PerceptionState {
-  return buildPerceptionState(buildDefaultContextDashboard('operate'));
-}
+function fallbackView(): Omit<LifeStateView, 'refresh' | 'advanceTask'> {
+  const dashboard = buildDefaultContextDashboard('operate');
+  const state = buildPerceptionState(dashboard);
+  const meta = buildPerceptionMeta(dashboard, state);
 
-export function useLifeState(): LifeStateView {
-  const [view, setView] = useState<Omit<LifeStateView, 'refresh' | 'advanceTask'>>({
-    state: fallbackState(),
+  return {
+    state,
     source: 'local',
     apiOnline: false,
     dbReady: false,
     loading: true,
-    canAdvanceTask: canAdvancePerceptionState(buildPerceptionState(buildDefaultContextDashboard('operate'))),
+    canAdvanceTask: meta.canAdvanceTask,
+    sources: meta.sources,
     advancing: false,
     advanceError: null,
     advanceSuccess: null,
-  });
+  };
+}
+
+export function useLifeState(): LifeStateView {
+  const [view, setView] = useState<Omit<LifeStateView, 'refresh' | 'advanceTask'>>(fallbackView);
 
   const refresh = useCallback(async () => {
     const [healthOk, readyOk, perception] = await Promise.all([
@@ -49,19 +55,22 @@ export function useLifeState(): LifeStateView {
     if (perception) {
       setView((current) => ({
         ...current,
-        state: perception,
+        state: perception.data,
         source: 'api',
         apiOnline: healthOk,
         dbReady: readyOk,
         loading: false,
-        canAdvanceTask: readyOk && canAdvancePerceptionState(perception),
+        canAdvanceTask: readyOk && perception.meta.canAdvanceTask,
+        sources: perception.meta.sources,
         advanceError: null,
         advanceSuccess: current.advanceSuccess,
       }));
       return;
     }
 
-    const localState = fallbackState();
+    const localDashboard = buildDefaultContextDashboard('operate');
+    const localState = buildPerceptionState(localDashboard);
+    const localMeta = buildPerceptionMeta(localDashboard, localState);
     setView((current) => ({
       ...current,
       state: localState,
@@ -69,7 +78,8 @@ export function useLifeState(): LifeStateView {
       apiOnline: healthOk,
       dbReady: readyOk,
       loading: false,
-      canAdvanceTask: canAdvancePerceptionState(localState),
+      canAdvanceTask: localMeta.canAdvanceTask,
+      sources: localMeta.sources,
       advanceError: null,
       advanceSuccess: current.advanceSuccess,
     }));

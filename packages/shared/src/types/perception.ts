@@ -31,3 +31,19 @@ export interface PerceptionState {
   tasks: string[];
   aiMemo: string;
 }
+
+export type PerceptionWeatherSource = 'live' | 'empty';
+
+export type PerceptionMeta = {
+  canAdvanceTask: boolean;
+  sources: {
+    context: 'api';
+    scheduleEvents: number;
+    weather: PerceptionWeatherSource;
+  };
+};
+
+export type PerceptionResponse = {
+  data: PerceptionState;
+  meta: PerceptionMeta;
+};

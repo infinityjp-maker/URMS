@@ -164,6 +164,10 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         items: [],
       })),
     },
+    loopJournalService: {
+      append: vi.fn(async () => undefined),
+      recordAdvance: vi.fn(async () => null),
+    },
     integrationRegistry: {
       list: vi.fn(() => [
         { integrationId: 'cursor-local', name: 'Cursor Local Workspace', syncSupported: true },
@@ -484,10 +488,13 @@ describe('Perception routes', () => {
     expect(response.statusCode).toBe(200);
     const body = response.json() as {
       data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
+      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string } };
     };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
     expect(body.data.nextEvents[0]?.title).toBe('デイリー');
+    expect(body.meta.sources.scheduleEvents).toBe(1);
+    expect(body.meta.sources.weather).toBe('live');
 
     await app.close();
   });
@@ -515,6 +522,40 @@ describe('Context routes', () => {
     });
     expect(putResponse.statusCode).toBe(200);
     expect(services.contextService.update).toHaveBeenCalledOnce();
+
+    await app.close();
+  });
+
+  it('records loop journal when advancing task', async () => {
+    const services = createMockServices();
+    const before = {
+      activeMode: 'operate' as const,
+      items: [
+        { key: 'current_task', summary: 'VT-1 task', ssotLinks: [] },
+        { key: 'next_task', summary: 'VT-2 task', ssotLinks: [] },
+      ],
+      updatedAt: '2026-07-05T00:00:00.000Z',
+    };
+    const after = {
+      ...before,
+      items: [
+        { key: 'current_task', summary: 'VT-2 task', ssotLinks: [] },
+        { key: 'next_task', summary: '次を plan Mode で設定', ssotLinks: [] },
+      ],
+    };
+
+    services.contextService.getDashboard = vi.fn(async () => before);
+    services.contextService.advanceTask = vi.fn(async () => after);
+
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/context/advance-task',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(services.loopJournalService.recordAdvance).toHaveBeenCalledWith(before, after, expect.any(String));
 
     await app.close();
   });

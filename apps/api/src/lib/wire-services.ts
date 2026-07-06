@@ -14,9 +14,11 @@ import {
   createAiTeamSyncService,
   createScheduleSyncService,
   createLocationSyncService,
+  createLoopJournalService,
   resolveAiTeamRepoRoot,
   resolveScheduleRepoRoot,
   resolveLocationRepoRoot,
+  resolveLoopJournalRepoRoot,
   IntegrationRegistry,
   CursorLocalIntegration,
 } from '@urms/domain';
@@ -88,6 +90,9 @@ export function createAppServices(databaseUrl?: string): AppServices {
     repoRoot: resolveLocationRepoRoot(),
     resourceRepository,
   });
+  const loopJournalService = createLoopJournalService({
+    repoRoot: resolveLoopJournalRepoRoot(),
+  });
 
   const integrationRegistry = new IntegrationRegistry();
   integrationRegistry.register(
@@ -110,6 +115,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
     aiTeamSyncService,
     scheduleSyncService,
     locationSyncService,
+    loopJournalService,
     integrationRegistry,
     checkReadiness: async () => ({
       database: await checkDatabaseHealth(prisma),

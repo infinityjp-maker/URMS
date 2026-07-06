@@ -1,4 +1,4 @@
-import type { PerceptionState } from '@urms/shared';
+import type { PerceptionResponse } from '@urms/shared';
 
 const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 
@@ -40,9 +40,10 @@ export async function fetchReady(): Promise<boolean> {
   return body?.data?.status === 'ready';
 }
 
-export async function fetchPerception(): Promise<PerceptionState | null> {
-  const body = await fetchJson<ApiEnvelope<PerceptionState>>('/v1/perception');
-  return body?.data ?? null;
+export async function fetchPerception(): Promise<PerceptionResponse | null> {
+  const body = await fetchJson<PerceptionResponse>('/v1/perception');
+  if (!body?.data) return null;
+  return body;
 }
 
 export async function advanceContextTask(): Promise<boolean> {

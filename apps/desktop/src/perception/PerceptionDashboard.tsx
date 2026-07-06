@@ -2,7 +2,7 @@ import { hasWeatherData, resolveDayPhase, statusLineForPhase } from '@urms/domai
 import type { PerceptionState } from '@urms/shared';
 
 import { useClock } from '../hooks/useClock.js';
-import { useLifeState } from '../hooks/useLifeState.js';
+import { useLifeState, type LifeStateView } from '../hooks/useLifeState.js';
 import { layoutForPhase } from './phaseLayout.js';
 import {
   DAY_PHASES,
@@ -20,6 +20,19 @@ function toneClass(tone: 'calm' | 'warm' | 'focus'): string {
   if (tone === 'warm') return 'event-dot event-dot--warm';
   if (tone === 'focus') return 'event-dot event-dot--focus';
   return 'event-dot event-dot--calm';
+}
+
+function sourceLine(
+  source: LifeStateView['source'],
+  sources: LifeStateView['sources'],
+): string | null {
+  if (!sources) return null;
+  const weather = sources.weather === 'live' ? '天気 live' : '天気 —';
+  const schedule = `予定 ${sources.scheduleEvents} 件`;
+  if (source === 'api') {
+    return `${schedule} · ${weather} · Context API`;
+  }
+  return `${schedule} · ${weather} · Context ローカル`;
 }
 
 function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, loading: boolean): string {
@@ -185,6 +198,9 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                 <span className={`online-dot${life.apiOnline ? '' : ' online-dot--off'}`} aria-hidden="true" />
                 {connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)}
               </p>
+              {sourceLine(life.source, life.sources) ? (
+                <p className="hint-line">{sourceLine(life.source, life.sources)}</p>
+              ) : null}
             </div>
           ) : null}
         </section>
