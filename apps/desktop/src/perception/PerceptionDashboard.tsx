@@ -2,7 +2,8 @@ import { hasWeatherData, resolveDayPhase, statusLineForPhase } from '@urms/domai
 import type { PerceptionState } from '@urms/shared';
 
 import { useClock } from '../hooks/useClock.js';
-import { useLifeState, type LifeStateView } from '../hooks/useLifeState.js';
+import { useLifeState } from '../hooks/useLifeState.js';
+import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
 import {
   DAY_PHASES,
@@ -20,49 +21,6 @@ function toneClass(tone: 'calm' | 'warm' | 'focus'): string {
   if (tone === 'warm') return 'event-dot event-dot--warm';
   if (tone === 'focus') return 'event-dot event-dot--focus';
   return 'event-dot event-dot--calm';
-}
-
-function continuityLabel(continuity: NonNullable<LifeStateView['sources']>['loopContinuity']): string | null {
-  if (continuity === 'looped-today') return '今日ループ済';
-  if (continuity === 'new-day') return '新しい一日';
-  return null;
-}
-
-function relationTypesLine(types: Record<string, number> | undefined): string | null {
-  if (!types) return null;
-  const segments = Object.entries(types)
-    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'en'))
-    .slice(0, 2)
-    .map(([type, count]) => `${type} ${count}`);
-  return segments.length > 0 ? segments.join(' · ') : null;
-}
-
-function sourceLine(
-  source: LifeStateView['source'],
-  sources: LifeStateView['sources'],
-): string | null {
-  if (!sources) return null;
-  const weather = sources.weather === 'live' ? '天気 live' : '天気 —';
-  const weatherCoords =
-    sources.weatherCoords === 'device'
-      ? '座標 GPS'
-      : sources.weatherCoords === 'ssot'
-        ? '座標 SSOT'
-        : null;
-  const schedule = `予定 ${sources.scheduleEvents} 件`;
-  const location = sources.location ? `地点 ${sources.location}` : null;
-  const relations =
-    sources.relations > 0
-      ? relationTypesLine(sources.relationTypes) ?? `関係 ${sources.relations}`
-      : null;
-  const loop = continuityLabel(sources.loopContinuity);
-  const loopNarrative = sources.loopNarrative;
-  const base =
-    source === 'api'
-      ? `${schedule} · ${weather} · Context API`
-      : `${schedule} · ${weather} · Context ローカル`;
-  const parts = [base, location, weatherCoords, relations, loop, loopNarrative].filter(Boolean);
-  return parts.join(' · ');
 }
 
 function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, loading: boolean): string {
@@ -87,6 +45,7 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
     minute: '2-digit',
     hour12: false,
   });
+  const connectionSourceLine = formatConnectionSourceLine(life.source, life.sources);
 
   return (
     <div className={`dashboard dashboard--${phase}`}>
@@ -228,8 +187,8 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                 <span className={`online-dot${life.apiOnline ? '' : ' online-dot--off'}`} aria-hidden="true" />
                 {connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)}
               </p>
-              {sourceLine(life.source, life.sources) ? (
-                <p className="hint-line">{sourceLine(life.source, life.sources)}</p>
+              {connectionSourceLine ? (
+                <p className="hint-line">{connectionSourceLine}</p>
               ) : null}
             </div>
           ) : null}
