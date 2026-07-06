@@ -22,6 +22,12 @@ function toneClass(tone: 'calm' | 'warm' | 'focus'): string {
   return 'event-dot event-dot--calm';
 }
 
+function continuityLabel(continuity: NonNullable<LifeStateView['sources']>['loopContinuity']): string | null {
+  if (continuity === 'looped-today') return '今日ループ済';
+  if (continuity === 'new-day') return '新しい一日';
+  return null;
+}
+
 function sourceLine(
   source: LifeStateView['source'],
   sources: LifeStateView['sources'],
@@ -29,10 +35,14 @@ function sourceLine(
   if (!sources) return null;
   const weather = sources.weather === 'live' ? '天気 live' : '天気 —';
   const schedule = `予定 ${sources.scheduleEvents} 件`;
-  if (source === 'api') {
-    return `${schedule} · ${weather} · Context API`;
-  }
-  return `${schedule} · ${weather} · Context ローカル`;
+  const relations = sources.relations > 0 ? `関係 ${sources.relations}` : null;
+  const loop = continuityLabel(sources.loopContinuity);
+  const base =
+    source === 'api'
+      ? `${schedule} · ${weather} · Context API`
+      : `${schedule} · ${weather} · Context ローカル`;
+  const parts = [base, relations, loop].filter(Boolean);
+  return parts.join(' · ');
 }
 
 function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, loading: boolean): string {

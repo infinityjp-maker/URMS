@@ -15,16 +15,17 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | 項目 | 状態 |
 |------|------|
 | VT-1 SSOT 重力 | ✅ ~完了 |
-| VT-2 Context 脳（合成 narrative） | 🔄 着手 |
-| VT-4 日次ループ | 🔄 部分（advance + journal SSOT + meta） |
+| VT-2 Context 脳（合成 narrative） | 🔄 着手（関係グラフ信号） |
+| VT-4 日次ループ | 🔄 部分（journal 読取 · 翌日 narrative 完了） |
 | VT-3 知覚膜 | ⏳ |
 
 ## 直近の変更
 
 - `synthesizeSummaryNote` — 予定 · タスク · 天気から summary.note を合成
-- advance-task — `project_status` に直近ループ記録 · `.cursor/resources/loop/journal.md` へ追記
-- perception API — `meta.canAdvanceTask` · `meta.sources`（予定件数 · 天気 live/empty）
-- 窓 — 接続カードにソース行 · 完了後フィードバック表示
+- loop journal 読取 — 昨日 / 今日のループを summary · aiMemo に合成
+- VT-2 — Resource 関係件数を summary · meta.sources.relations に反映
+- API dev — ルート `.env` 自動読込（`DATABASE_URL`）
+- perception meta — `loopContinuity` · `loopJournalEntries` · `relations`
 
 ## User
 

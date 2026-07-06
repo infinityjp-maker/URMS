@@ -66,9 +66,9 @@
 - schedule: `recurrence: daily` + `time` で毎日窓に表示
 - location: `primary: true` の地点が天気 API の緯度経度 SSOT（env より優先）
 
-**Context 合成（VT-2）:** `buildPerceptionState` が時間帯 · 予定数 · タスク · 天気から summary.note / aiMemo を合成（フィクスチャなし）。
+**Context 合成（VT-2）:** `buildPerceptionState` が時間帯 · 予定数 · タスク · 天気 · **Resource 関係件数**から summary.note / aiMemo を合成（フィクスチャなし）。
 
-**日次ループ（VT-4）:** API+DB 接続時、窓タスクカードの **「完了 → 次へ」** → `POST /v1/context/advance-task`（operate Mode）→ `project_status` に直近ループ記録 · `.cursor/resources/loop/journal.md` へ追記 → `GET /v1/perception` の `meta.canAdvanceTask` / `meta.sources` で窓に反映。
+**日次ループ（VT-4）:** API+DB 接続時、窓タスクカードの **「完了 → 次へ」** → `POST /v1/context/advance-task` → `project_status` + `journal.md` 追記 → `GET /v1/perception` が journal を読み、**昨日 / 今日** の連続 narrative（summary · aiMemo · `meta.sources.loopContinuity`）を合成。
 
 **実装:** `@urms/domain` · `ResourceScheduleService` + `OpenMeteoWeatherService` → `GET /v1/perception` · 未取得時は空（偽フィクスチャなし）。
 

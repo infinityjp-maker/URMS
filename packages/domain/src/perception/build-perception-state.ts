@@ -1,6 +1,7 @@
 import type { ContextDashboard } from '@urms/shared';
 import type { PerceptionState } from '@urms/shared';
 
+import type { LoopJournalEntry } from '../loop-journal/loop-journal-service.js';
 import { resolveDayPhase, statusLineForPhase } from './day-phase.js';
 import { EMPTY_WEATHER, hasWeatherData } from './fixtures.js';
 import {
@@ -12,6 +13,8 @@ import {
 export type PerceptionOverrides = {
   weather?: PerceptionState['weather'];
   nextEvents?: PerceptionState['nextEvents'];
+  loopJournal?: LoopJournalEntry[];
+  graphRelations?: number;
 };
 
 function findSummary(dashboard: ContextDashboard, key: string): string | undefined {
@@ -47,9 +50,9 @@ export function buildPerceptionState(
       travelMinutes: 0,
       weight: dashboard.activeMode === 'operate' ? '中' : '低〜中',
       focus: dashboard.activeMode === 'audit' ? '監査' : '安定',
-      note: synthesizeSummaryNote(dashboard, phase, overrides),
+      note: synthesizeSummaryNote(dashboard, phase, { ...overrides, now }),
     },
     tasks,
-    aiMemo: synthesizeAiMemo(currentTask, nextTask, nextEvents),
+    aiMemo: synthesizeAiMemo(currentTask, nextTask, nextEvents, overrides?.loopJournal, now),
   };
 }

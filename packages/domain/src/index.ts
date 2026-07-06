@@ -65,12 +65,20 @@ export {
 } from './perception/weather/resolve-weather-config.js';
 export { buildPerceptionMeta } from './perception/build-perception-meta.js';
 export {
+  synthesizeLoopContinuity,
+  resolveLoopContinuity,
+  calendarDayKey,
+} from './perception/synthesize-loop-continuity.js';
+export {
   createLoopJournalService,
   LoopJournalService,
   resolveLoopJournalRepoRoot,
   extractLoopJournalEntry,
   LOOP_JOURNAL_PATH,
 } from './loop-journal/loop-journal-service.js';
+export { resolveRelationGraphSignal } from './perception/graph/relation-graph-signal.js';
+export type { RelationGraphSignal } from './perception/graph/relation-graph-signal.js';
+export { parseLoopJournalMarkdown } from './loop-journal/parse-loop-journal.js';
 export type { LoopJournalEntry } from './loop-journal/loop-journal-service.js';
 export { parseResourceMarkdown } from './ai-team/parse-resource-markdown.js';
 export {

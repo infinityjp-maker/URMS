@@ -34,12 +34,17 @@ export interface PerceptionState {
 
 export type PerceptionWeatherSource = 'live' | 'empty';
 
+export type LoopContinuity = 'none' | 'looped-today' | 'new-day';
+
 export type PerceptionMeta = {
   canAdvanceTask: boolean;
   sources: {
     context: 'api';
     scheduleEvents: number;
     weather: PerceptionWeatherSource;
+    loopJournalEntries: number;
+    loopContinuity: LoopContinuity;
+    relations: number;
   };
 };
 

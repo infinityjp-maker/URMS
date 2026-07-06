@@ -1,10 +1,15 @@
 import type { ContextDashboard, DayPhase, PerceptionState } from '@urms/shared';
 
+import type { LoopJournalEntry } from '../loop-journal/loop-journal-service.js';
 import { hasWeatherData } from './fixtures.js';
+import { synthesizeLoopContinuity } from './synthesize-loop-continuity.js';
 
 type SynthesisOverrides = {
   weather?: PerceptionState['weather'];
   nextEvents?: PerceptionState['nextEvents'];
+  loopJournal?: LoopJournalEntry[];
+  graphRelations?: number;
+  now?: Date;
 };
 
 const PHASE_LABELS: Record<DayPhase, string> = {
@@ -34,7 +39,11 @@ export function synthesizeSummaryNote(
   const segments = [
     currentPhase,
     `${PHASE_LABELS[phase]} · 予定 ${events.length} · タスク ${taskCount}`,
+    overrides?.graphRelations ? `関係 ${overrides.graphRelations}` : null,
     hasWeather ? `天気 ${weather?.tempC}°C` : '天気未取得',
+    overrides?.loopJournal?.length
+      ? synthesizeLoopContinuity(overrides.loopJournal, overrides.now)
+      : null,
   ].filter(Boolean);
 
   return segments.join(' · ');
@@ -44,6 +53,8 @@ export function synthesizeAiMemo(
   currentTask: string | undefined,
   nextTask: string | undefined,
   nextEvents: PerceptionState['nextEvents'],
+  loopJournal?: LoopJournalEntry[],
+  now = new Date(),
 ): string {
   const focus = nextTask ?? currentTask;
   if (!focus) {
@@ -51,11 +62,14 @@ export function synthesizeAiMemo(
   }
 
   const upcoming = nextEvents[0];
-  if (upcoming) {
-    return `${upcoming.time} ${upcoming.title} · いま: ${focus}`;
+  const loopLine = loopJournal?.length ? synthesizeLoopContinuity(loopJournal, now) : null;
+  const focusLine = upcoming ? `${upcoming.time} ${upcoming.title} · いま: ${focus}` : focus;
+
+  if (loopLine) {
+    return `${loopLine} · ${focusLine}`;
   }
 
-  return focus;
+  return focusLine;
 }
 
 export function synthesizeConditionScore(

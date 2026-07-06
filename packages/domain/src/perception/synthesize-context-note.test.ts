@@ -31,6 +31,14 @@ describe('synthesizeSummaryNote', () => {
 
     expect(note).toContain('天気未取得');
   });
+
+  it('includes relation graph in summary note', () => {
+    const note = synthesizeSummaryNote(buildDefaultContextDashboard('operate'), 'day', {
+      graphRelations: 3,
+    });
+
+    expect(note).toContain('関係 3');
+  });
 });
 
 describe('synthesizeAiMemo', () => {
@@ -38,6 +46,25 @@ describe('synthesizeAiMemo', () => {
     expect(
       synthesizeAiMemo('VT-1', 'VT-2', [{ time: '09:30', title: '朝会', tone: 'focus' }]),
     ).toBe('09:30 朝会 · いま: VT-2');
+  });
+
+  it('prefixes loop continuity when journal entries exist', () => {
+    const memo = synthesizeAiMemo(
+      'VT-2',
+      'VT-3',
+      [],
+      [
+        {
+          completed: 'VT-1 task',
+          actorId: 'window-user',
+          at: new Date('2026-07-05T17:30:00+09:00'),
+        },
+      ],
+      new Date('2026-07-06T09:00:00+09:00'),
+    );
+
+    expect(memo).toContain('新しい一日');
+    expect(memo).toContain('VT-3');
   });
 });
 

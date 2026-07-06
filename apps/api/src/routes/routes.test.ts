@@ -167,6 +167,7 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
     loopJournalService: {
       append: vi.fn(async () => undefined),
       recordAdvance: vi.fn(async () => null),
+      readRecent: vi.fn(async () => []),
     },
     integrationRegistry: {
       list: vi.fn(() => [
@@ -488,13 +489,16 @@ describe('Perception routes', () => {
     expect(response.statusCode).toBe(200);
     const body = response.json() as {
       data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
-      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string } };
+      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; loopJournalEntries: number; loopContinuity: string; relations: number } };
     };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
     expect(body.data.nextEvents[0]?.title).toBe('デイリー');
     expect(body.meta.sources.scheduleEvents).toBe(1);
     expect(body.meta.sources.weather).toBe('live');
+    expect(body.meta.sources.loopJournalEntries).toBe(0);
+    expect(body.meta.sources.loopContinuity).toBe('none');
+    expect(body.meta.sources.relations).toBe(0);
 
     await app.close();
   });

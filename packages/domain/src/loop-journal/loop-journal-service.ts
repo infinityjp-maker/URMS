@@ -1,7 +1,9 @@
-import { appendFile, mkdir } from 'node:fs/promises';
+import { appendFile, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import type { ContextDashboard } from '@urms/shared';
+
+import { parseLoopJournalMarkdown } from './parse-loop-journal.js';
 
 export const LOOP_JOURNAL_PATH = '.cursor/resources/loop/journal.md';
 
@@ -82,6 +84,22 @@ export class LoopJournalService {
 
     await this.append(entry);
     return entry;
+  }
+
+  async readRecent(limit = 20): Promise<LoopJournalEntry[]> {
+    try {
+      const raw = await readFile(this.journalPath, 'utf8');
+      const entries = parseLoopJournalMarkdown(raw);
+      if (limit <= 0) {
+        return entries;
+      }
+      return entries.slice(-limit);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return [];
+      }
+      throw error;
+    }
   }
 }
 

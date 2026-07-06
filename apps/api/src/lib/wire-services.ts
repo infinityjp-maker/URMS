@@ -37,7 +37,7 @@ import { createBuiltinResourceTypePlugins } from '@urms/plugin-resource-types';
 
 import type { AppServices } from '../types/services.js';
 
-const APP_CORE_VERSION = '1.0.0';
+const APP_CORE_VERSION = '0.2.0';
 
 export function createAppServices(databaseUrl?: string): AppServices {
   const prisma = createPrismaClient(databaseUrl);

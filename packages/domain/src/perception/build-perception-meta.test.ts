@@ -24,6 +24,9 @@ describe('buildPerceptionMeta', () => {
         context: 'api',
         scheduleEvents: 1,
         weather: 'live',
+        loopJournalEntries: 0,
+        loopContinuity: 'none',
+        relations: 0,
       },
     });
   });
@@ -33,5 +36,26 @@ describe('buildPerceptionMeta', () => {
     const state = buildPerceptionState(dashboard);
 
     expect(buildPerceptionMeta(dashboard, state).sources.weather).toBe('empty');
+  });
+
+  it('reflects loop journal continuity', () => {
+    const dashboard = buildDefaultContextDashboard('operate');
+    const state = buildPerceptionState(dashboard, new Date('2026-07-06T09:00:00+09:00'));
+    const loopJournal = [
+      {
+        completed: 'VT-1 task',
+        actorId: 'window-user',
+        at: new Date('2026-07-05T17:30:00+09:00'),
+      },
+    ];
+
+    expect(
+      buildPerceptionMeta(dashboard, state, loopJournal, new Date('2026-07-06T09:00:00+09:00')),
+    ).toMatchObject({
+      sources: {
+        loopJournalEntries: 1,
+        loopContinuity: 'new-day',
+      },
+    });
   });
 });

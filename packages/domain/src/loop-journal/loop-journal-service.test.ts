@@ -1,7 +1,11 @@
+import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { buildDefaultContextDashboard } from '../context/context-defaults.js';
-import { extractLoopJournalEntry } from './loop-journal-service.js';
+import { extractLoopJournalEntry, createLoopJournalService } from './loop-journal-service.js';
 
 describe('extractLoopJournalEntry', () => {
   it('captures completed and next task summaries', () => {
@@ -31,5 +35,26 @@ describe('extractLoopJournalEntry', () => {
   it('returns null when current_task did not change', () => {
     const dashboard = buildDefaultContextDashboard('operate');
     expect(extractLoopJournalEntry(dashboard, dashboard, 'window-user')).toBeNull();
+  });
+
+  it('reads recent entries from journal file', async () => {
+    const repoRoot = await mkdtemp(path.join(os.tmpdir(), 'urms-loop-'));
+    const journalPath = path.join(repoRoot, '.cursor/resources/loop/journal.md');
+    await mkdir(path.dirname(journalPath), { recursive: true });
+    await writeFile(
+      journalPath,
+      '- 2026/7/6 10:00 · 完了: VT-1 task → 次: VT-2 task (window-user)\n',
+      'utf8',
+    );
+
+    const service = createLoopJournalService({ repoRoot });
+    const entries = await service.readRecent();
+
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.completed).toBe('VT-1 task');
+    expect(entries[0]?.next).toBe('VT-2 task');
+
+    const raw = await readFile(journalPath, 'utf8');
+    expect(raw).toContain('VT-1 task');
   });
 });
