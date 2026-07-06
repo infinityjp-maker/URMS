@@ -42,6 +42,15 @@ describe('synthesizeSummaryNote', () => {
 
     expect(note).toContain('関係 3 · depends_on 2 · member_of 1');
   });
+
+  it('includes location label when provided', () => {
+    const note = synthesizeSummaryNote(buildDefaultContextDashboard('operate'), 'day', {
+      locationLabel: '自宅',
+      weather: { tempC: 22, precipitationPct: 0, humidityPct: 50, windKmh: 3, hint: '晴れ' },
+    });
+
+    expect(note).toContain('地点 自宅');
+  });
 });
 
 describe('synthesizeAiMemo', () => {

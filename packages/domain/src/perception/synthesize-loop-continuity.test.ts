@@ -22,7 +22,10 @@ const todayEntry: LoopJournalEntry = {
 describe('synthesizeLoopContinuity', () => {
   it('describes a new day after prior loop', () => {
     expect(
-      synthesizeLoopContinuity([yesterdayEntry], new Date('2026-07-06T09:00:00+09:00')),
+      synthesizeLoopContinuity(
+        [{ ...yesterdayEntry, next: undefined }],
+        new Date('2026-07-06T09:00:00+09:00'),
+      ),
     ).toBe('新しい一日 · 昨日のループ: VT-1 task');
   });
 
@@ -30,6 +33,21 @@ describe('synthesizeLoopContinuity', () => {
     expect(
       synthesizeLoopContinuity([todayEntry], new Date('2026-07-06T12:00:00+09:00')),
     ).toBe('今日 10:00 にループ · 完了: VT-2 task');
+  });
+
+  it('includes next task when journal entry has it', () => {
+    expect(
+      synthesizeLoopContinuity(
+        [{ ...todayEntry, next: 'VT-3 task' }],
+        new Date('2026-07-06T12:00:00+09:00'),
+      ),
+    ).toBe('今日 10:00 にループ · 完了: VT-2 task → 次: VT-3 task');
+  });
+
+  it('includes prior next task on a new day', () => {
+    expect(
+      synthesizeLoopContinuity([yesterdayEntry], new Date('2026-07-06T09:00:00+09:00')),
+    ).toBe('新しい一日 · 昨日のループ: VT-1 task → 次: VT-2 task');
   });
 });
 

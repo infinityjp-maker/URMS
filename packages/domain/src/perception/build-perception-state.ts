@@ -16,6 +16,7 @@ export type PerceptionOverrides = {
   nextEvents?: PerceptionState['nextEvents'];
   loopJournal?: LoopJournalEntry[];
   graphSignal?: RelationGraphSignal;
+  locationLabel?: string | null;
 };
 
 function findSummary(dashboard: ContextDashboard, key: string): string | undefined {

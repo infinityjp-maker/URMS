@@ -18,7 +18,12 @@ const sampleResource: ResourceEntity = {
 function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
   return {
     resourceService: {
-      list: vi.fn(async () => ({ items: [sampleResource], total: 1, page: 1, limit: 20 })),
+      list: vi.fn(async (filter) => {
+        if (filter?.resourceType === 'location') {
+          return { items: [], total: 0, page: 1, limit: filter.limit ?? 20 };
+        }
+        return { items: [sampleResource], total: 1, page: 1, limit: 20 };
+      }),
       create: vi.fn(async (input) => ({
         ...sampleResource,
         resourceType: input.resourceType,
@@ -489,7 +494,7 @@ describe('Perception routes', () => {
     expect(response.statusCode).toBe(200);
     const body = response.json() as {
       data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
-      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; loopJournalEntries: number; loopContinuity: string; relations: number; relationTypes: Record<string, number> } };
+      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; loopJournalEntries: number; loopContinuity: string; relations: number; relationTypes: Record<string, number>; location: string | null } };
     };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
@@ -500,6 +505,7 @@ describe('Perception routes', () => {
     expect(body.meta.sources.loopContinuity).toBe('none');
     expect(body.meta.sources.relations).toBe(0);
     expect(body.meta.sources.relationTypes).toEqual({});
+    expect(body.meta.sources.location).toBeNull();
 
     await app.close();
   });

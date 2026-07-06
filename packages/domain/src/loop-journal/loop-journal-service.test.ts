@@ -13,7 +13,7 @@ describe('extractLoopJournalEntry', () => {
     const after = buildDefaultContextDashboard('operate');
     after.items = after.items.map((item) =>
       item.key === 'current_task'
-        ? { ...item, summary: 'VT-2 — Context 脳（グラフ + 時間から「今」を合成）' }
+        ? { ...item, summary: 'VT-4 — 日次ループ narrative · journal 連続性' }
         : item,
     );
 
@@ -25,8 +25,8 @@ describe('extractLoopJournalEntry', () => {
     );
 
     expect(entry).toEqual({
-      completed: 'VT-1 — location/schedule SSOT · pnpm ssot:sync',
-      next: 'VT-2 — Context 脳（グラフ + 時間から「今」を合成）',
+      completed: 'VT-2 — Context 脳（地点 · グラフ · 時間から「今」を合成）',
+      next: 'VT-4 — 日次ループ narrative · journal 連続性',
       actorId: 'window-user',
       at: new Date('2026-07-06T10:00:00+09:00'),
     });

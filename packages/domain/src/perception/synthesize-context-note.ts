@@ -11,6 +11,7 @@ type SynthesisOverrides = {
   nextEvents?: PerceptionState['nextEvents'];
   loopJournal?: LoopJournalEntry[];
   graphSignal?: RelationGraphSignal;
+  locationLabel?: string | null;
   now?: Date;
 };
 
@@ -42,6 +43,7 @@ export function synthesizeSummaryNote(
     currentPhase,
     `${PHASE_LABELS[phase]} · 予定 ${events.length} · タスク ${taskCount}`,
     overrides?.graphSignal ? formatRelationGraphNote(overrides.graphSignal) : null,
+    overrides?.locationLabel ? `地点 ${overrides.locationLabel}` : null,
     hasWeather ? `天気 ${weather?.tempC}°C` : '天気未取得',
     overrides?.loopJournal?.length
       ? synthesizeLoopContinuity(overrides.loopJournal, overrides.now)

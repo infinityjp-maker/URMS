@@ -14,6 +14,7 @@ export function buildPerceptionMeta(
   loopJournal: LoopJournalEntry[] = [],
   now = new Date(),
   graphSignal: RelationGraphSignal = EMPTY_GRAPH_SIGNAL,
+  locationLabel: string | null = null,
 ): PerceptionMeta {
   const loopContinuity: LoopContinuity = resolveLoopContinuity(loopJournal, now);
 
@@ -27,6 +28,7 @@ export function buildPerceptionMeta(
       loopContinuity,
       relations: graphSignal.activeRelations,
       relationTypes: graphSignal.byType,
+      location: locationLabel,
     },
   };
 }

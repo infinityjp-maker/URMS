@@ -11,9 +11,9 @@ describe('buildDefaultContextDashboard', () => {
     expect(dashboard.items).toHaveLength(6);
     expect(state.statusLine).toContain('Vision 体験');
     expect(state.tasks).toEqual([
-      'VT-1 — location/schedule SSOT · pnpm ssot:sync',
-      'VT-2 — Context 脳（グラフ + 時間から「今」を合成）',
+      'VT-2 — Context 脳（地点 · グラフ · 時間から「今」を合成）',
+      'VT-4 — 日次ループ narrative · journal 連続性',
     ]);
-    expect(state.aiMemo).toContain('VT-2');
+    expect(state.aiMemo).toContain('VT-4');
   });
 });

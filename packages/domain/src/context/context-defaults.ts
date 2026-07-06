@@ -15,15 +15,15 @@ export const DEFAULT_CONTEXT_ITEMS: Record<
     ssotLinks: [{ label: 'VISION', path: '/docs/project/VISION.md' }],
   },
   current_task: {
-    summary: 'VT-1 — location/schedule SSOT · pnpm ssot:sync',
+    summary: 'VT-2 — Context 脳（地点 · グラフ · 時間から「今」を合成）',
     ssotLinks: [{ label: 'Desktop UI', path: '/docs/implementation/11-phase5-desktop-ui.md' }],
   },
   next_task: {
-    summary: 'VT-2 — Context 脳（グラフ + 時間から「今」を合成）',
+    summary: 'VT-4 — 日次ループ narrative · journal 連続性',
     ssotLinks: [{ label: 'Context Engine', path: '/docs/architecture/06-context-engine.md' }],
   },
   project_status: {
-    summary: 'Sprint 完了 · Vision 体験 ~12% — 天気 · 予定 SSOT 接続中',
+    summary: 'Vision 体験 ~19% — perception 合成 · 日次ループ接続中',
     ssotLinks: [{ label: 'VISION', path: '/docs/project/VISION.md' }],
   },
   active_mode: {

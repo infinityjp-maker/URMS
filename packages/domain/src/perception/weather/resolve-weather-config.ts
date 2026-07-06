@@ -1,4 +1,4 @@
-import type { ResourceEntity } from '@urms/shared';
+import type { ResourceEntity, UrmsMode } from '@urms/shared';
 
 import type { ResourceRepository } from '../../repository/resource-repository.js';
 import { resolveWeatherConfig, type WeatherConfig } from './weather-config.js';
@@ -27,6 +27,13 @@ function isPrimary(metadata: LocationMetadata): boolean {
   return metadata.primary === true || metadata.primary === 'true';
 }
 
+export function pickPrimaryLocationLabel(items: ResourceEntity[]): string | null {
+  const primary =
+    items.find((item) => isPrimary(item.metadata as LocationMetadata)) ?? items[0];
+  const label = primary?.name?.trim();
+  return label || null;
+}
+
 export function weatherConfigFromLocationResource(
   resource: ResourceEntity,
   baseConfig: WeatherConfig,
@@ -50,6 +57,53 @@ export function weatherConfigFromLocationResource(
     longitude,
     timezone,
   };
+}
+
+export async function resolvePrimaryLocationLabel(
+  repository: ResourceRepository | undefined,
+): Promise<string | null> {
+  if (!repository) {
+    return null;
+  }
+
+  try {
+    const { items } = await repository.list({
+      resourceType: LOCATION_RESOURCE_TYPE,
+      status: 'active',
+      limit: 16,
+    });
+
+    return pickPrimaryLocationLabel(items);
+  } catch {
+    return null;
+  }
+}
+
+type LocationListReader = {
+  list(
+    filter: { resourceType: string; status: string; limit?: number },
+    mode: UrmsMode,
+  ): Promise<{ items: ResourceEntity[] }>;
+};
+
+export async function resolvePrimaryLocationLabelForMode(
+  reader: LocationListReader | undefined,
+  mode: UrmsMode,
+): Promise<string | null> {
+  if (!reader) {
+    return null;
+  }
+
+  try {
+    const { items } = await reader.list(
+      { resourceType: LOCATION_RESOURCE_TYPE, status: 'active', limit: 16 },
+      mode,
+    );
+
+    return pickPrimaryLocationLabel(items);
+  } catch {
+    return null;
+  }
 }
 
 export async function resolveWeatherConfigWithLocation(

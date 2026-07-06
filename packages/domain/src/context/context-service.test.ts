@@ -130,6 +130,6 @@ describe('ContextService', () => {
     expect(after.items.find((item) => item.key === 'current_task')?.summary).toBe(next);
     expect(after.items.find((item) => item.key === 'project_status')?.summary).toContain('直近ループ');
     expect(handler.mock.calls.length).toBeGreaterThan(0);
-    expect(current).toContain('VT-1');
+    expect(current).toContain('VT-2');
   });
 });

@@ -14,12 +14,12 @@ describe('buildAdvanceTaskUpdates', () => {
     expect(updates).toEqual([
       {
         key: 'current_task',
-        summary: 'VT-2 — Context 脳（グラフ + 時間から「今」を合成）',
+        summary: 'VT-4 — 日次ループ narrative · journal 連続性',
         ssotLinks: expect.any(Array),
       },
       {
         key: 'next_task',
-        summary: expect.stringContaining('VT-1'),
+        summary: expect.stringContaining('VT-2'),
         ssotLinks: [],
       },
       {

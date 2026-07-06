@@ -28,6 +28,7 @@ describe('buildPerceptionMeta', () => {
         loopContinuity: 'none',
         relations: 0,
         relationTypes: {},
+        location: null,
       },
     });
   });

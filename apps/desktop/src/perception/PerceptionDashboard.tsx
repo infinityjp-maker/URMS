@@ -44,6 +44,7 @@ function sourceLine(
   if (!sources) return null;
   const weather = sources.weather === 'live' ? '天気 live' : '天気 —';
   const schedule = `予定 ${sources.scheduleEvents} 件`;
+  const location = sources.location ? `地点 ${sources.location}` : null;
   const relations =
     sources.relations > 0
       ? relationTypesLine(sources.relationTypes) ?? `関係 ${sources.relations}`
@@ -53,7 +54,7 @@ function sourceLine(
     source === 'api'
       ? `${schedule} · ${weather} · Context API`
       : `${schedule} · ${weather} · Context ローカル`;
-  const parts = [base, relations, loop].filter(Boolean);
+  const parts = [base, location, relations, loop].filter(Boolean);
   return parts.join(' · ');
 }
 

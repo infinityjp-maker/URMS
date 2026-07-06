@@ -62,6 +62,9 @@ export {
   LOCATION_RESOURCE_TYPE,
   resolveWeatherConfigWithLocation,
   weatherConfigFromLocationResource,
+  pickPrimaryLocationLabel,
+  resolvePrimaryLocationLabel,
+  resolvePrimaryLocationLabelForMode,
 } from './perception/weather/resolve-weather-config.js';
 export { buildPerceptionMeta } from './perception/build-perception-meta.js';
 export {

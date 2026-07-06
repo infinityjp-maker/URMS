@@ -50,7 +50,8 @@ export function synthesizeLoopContinuity(
       hour12: false,
       timeZone,
     });
-    return `今日 ${time} にループ · 完了: ${latest.completed}`;
+    const nextPart = latest.next ? ` → 次: ${latest.next}` : '';
+    return `今日 ${time} にループ · 完了: ${latest.completed}${nextPart}`;
   }
 
   const prior = [...entries].reverse().find((entry) => calendarDayKey(entry.at, timeZone) < today);
@@ -58,5 +59,6 @@ export function synthesizeLoopContinuity(
     return null;
   }
 
-  return `新しい一日 · 昨日のループ: ${prior.completed}`;
+  const priorNext = prior.next ? ` → 次: ${prior.next}` : '';
+  return `新しい一日 · 昨日のループ: ${prior.completed}${priorNext}`;
 }
