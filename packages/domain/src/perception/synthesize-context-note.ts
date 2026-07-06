@@ -2,13 +2,15 @@ import type { ContextDashboard, DayPhase, PerceptionState } from '@urms/shared';
 
 import type { LoopJournalEntry } from '../loop-journal/loop-journal-service.js';
 import { hasWeatherData } from './fixtures.js';
+import type { RelationGraphSignal } from './graph/relation-graph-signal.js';
+import { formatRelationGraphNote } from './graph/relation-graph-signal.js';
 import { synthesizeLoopContinuity } from './synthesize-loop-continuity.js';
 
 type SynthesisOverrides = {
   weather?: PerceptionState['weather'];
   nextEvents?: PerceptionState['nextEvents'];
   loopJournal?: LoopJournalEntry[];
-  graphRelations?: number;
+  graphSignal?: RelationGraphSignal;
   now?: Date;
 };
 
@@ -39,7 +41,7 @@ export function synthesizeSummaryNote(
   const segments = [
     currentPhase,
     `${PHASE_LABELS[phase]} · 予定 ${events.length} · タスク ${taskCount}`,
-    overrides?.graphRelations ? `関係 ${overrides.graphRelations}` : null,
+    overrides?.graphSignal ? formatRelationGraphNote(overrides.graphSignal) : null,
     hasWeather ? `天気 ${weather?.tempC}°C` : '天気未取得',
     overrides?.loopJournal?.length
       ? synthesizeLoopContinuity(overrides.loopJournal, overrides.now)
@@ -62,8 +64,13 @@ export function synthesizeAiMemo(
   }
 
   const upcoming = nextEvents[0];
+  const upcomingLine = upcoming
+    ? upcoming.note
+      ? `${upcoming.time} ${upcoming.title} (${upcoming.note})`
+      : `${upcoming.time} ${upcoming.title}`
+    : null;
   const loopLine = loopJournal?.length ? synthesizeLoopContinuity(loopJournal, now) : null;
-  const focusLine = upcoming ? `${upcoming.time} ${upcoming.title} · いま: ${focus}` : focus;
+  const focusLine = upcomingLine ? `${upcomingLine} · いま: ${focus}` : focus;
 
   if (loopLine) {
     return `${loopLine} · ${focusLine}`;

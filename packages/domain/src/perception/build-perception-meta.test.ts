@@ -27,6 +27,7 @@ describe('buildPerceptionMeta', () => {
         loopJournalEntries: 0,
         loopContinuity: 'none',
         relations: 0,
+        relationTypes: {},
       },
     });
   });

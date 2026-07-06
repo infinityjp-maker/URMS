@@ -45,6 +45,7 @@ export type PerceptionMeta = {
     loopJournalEntries: number;
     loopContinuity: LoopContinuity;
     relations: number;
+    relationTypes: Record<string, number>;
   };
 };
 

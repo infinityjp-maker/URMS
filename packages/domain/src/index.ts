@@ -76,8 +76,8 @@ export {
   extractLoopJournalEntry,
   LOOP_JOURNAL_PATH,
 } from './loop-journal/loop-journal-service.js';
-export { resolveRelationGraphSignal } from './perception/graph/relation-graph-signal.js';
-export type { RelationGraphSignal } from './perception/graph/relation-graph-signal.js';
+export { resolveRelationGraphSignal, formatRelationGraphNote, countRelationsByType } from './perception/graph/relation-graph-signal.js';
+export type { RelationGraphSignal, RelationTypeCounts } from './perception/graph/relation-graph-signal.js';
 export { parseLoopJournalMarkdown } from './loop-journal/parse-loop-journal.js';
 export type { LoopJournalEntry } from './loop-journal/loop-journal-service.js';
 export { parseResourceMarkdown } from './ai-team/parse-resource-markdown.js';

@@ -489,7 +489,7 @@ describe('Perception routes', () => {
     expect(response.statusCode).toBe(200);
     const body = response.json() as {
       data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
-      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; loopJournalEntries: number; loopContinuity: string; relations: number } };
+      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; loopJournalEntries: number; loopContinuity: string; relations: number; relationTypes: Record<string, number> } };
     };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
@@ -499,6 +499,7 @@ describe('Perception routes', () => {
     expect(body.meta.sources.loopJournalEntries).toBe(0);
     expect(body.meta.sources.loopContinuity).toBe('none');
     expect(body.meta.sources.relations).toBe(0);
+    expect(body.meta.sources.relationTypes).toEqual({});
 
     await app.close();
   });

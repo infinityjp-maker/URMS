@@ -4,6 +4,7 @@ import type { PerceptionState } from '@urms/shared';
 import type { LoopJournalEntry } from '../loop-journal/loop-journal-service.js';
 import { resolveDayPhase, statusLineForPhase } from './day-phase.js';
 import { EMPTY_WEATHER, hasWeatherData } from './fixtures.js';
+import type { RelationGraphSignal } from './graph/relation-graph-signal.js';
 import {
   synthesizeAiMemo,
   synthesizeConditionScore,
@@ -14,7 +15,7 @@ export type PerceptionOverrides = {
   weather?: PerceptionState['weather'];
   nextEvents?: PerceptionState['nextEvents'];
   loopJournal?: LoopJournalEntry[];
-  graphRelations?: number;
+  graphSignal?: RelationGraphSignal;
 };
 
 function findSummary(dashboard: ContextDashboard, key: string): string | undefined {

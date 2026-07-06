@@ -34,10 +34,13 @@ describe('synthesizeSummaryNote', () => {
 
   it('includes relation graph in summary note', () => {
     const note = synthesizeSummaryNote(buildDefaultContextDashboard('operate'), 'day', {
-      graphRelations: 3,
+      graphSignal: {
+        activeRelations: 3,
+        byType: { depends_on: 2, member_of: 1 },
+      },
     });
 
-    expect(note).toContain('関係 3');
+    expect(note).toContain('関係 3 · depends_on 2 · member_of 1');
   });
 });
 
@@ -46,6 +49,14 @@ describe('synthesizeAiMemo', () => {
     expect(
       synthesizeAiMemo('VT-1', 'VT-2', [{ time: '09:30', title: '朝会', tone: 'focus' }]),
     ).toBe('09:30 朝会 · いま: VT-2');
+  });
+
+  it('includes relative schedule note when present', () => {
+    expect(
+      synthesizeAiMemo('VT-1', 'VT-2', [
+        { time: '09:30', title: '朝会', note: 'あと 45m', tone: 'focus' },
+      ]),
+    ).toBe('09:30 朝会 (あと 45m) · いま: VT-2');
   });
 
   it('prefixes loop continuity when journal entries exist', () => {

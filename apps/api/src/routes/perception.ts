@@ -20,7 +20,7 @@ export async function registerPerceptionRoutes(
       weather,
       nextEvents,
       loopJournal,
-      graphRelations: graph.activeRelations,
+      graphSignal: graph,
     });
     return {
       data: state,
@@ -29,7 +29,7 @@ export async function registerPerceptionRoutes(
         state,
         loopJournal,
         now,
-        graph.activeRelations,
+        graph,
       ),
     };
   });

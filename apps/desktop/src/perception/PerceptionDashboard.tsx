@@ -28,6 +28,15 @@ function continuityLabel(continuity: NonNullable<LifeStateView['sources']>['loop
   return null;
 }
 
+function relationTypesLine(types: Record<string, number> | undefined): string | null {
+  if (!types) return null;
+  const segments = Object.entries(types)
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'en'))
+    .slice(0, 2)
+    .map(([type, count]) => `${type} ${count}`);
+  return segments.length > 0 ? segments.join(' · ') : null;
+}
+
 function sourceLine(
   source: LifeStateView['source'],
   sources: LifeStateView['sources'],
@@ -35,7 +44,10 @@ function sourceLine(
   if (!sources) return null;
   const weather = sources.weather === 'live' ? '天気 live' : '天気 —';
   const schedule = `予定 ${sources.scheduleEvents} 件`;
-  const relations = sources.relations > 0 ? `関係 ${sources.relations}` : null;
+  const relations =
+    sources.relations > 0
+      ? relationTypesLine(sources.relationTypes) ?? `関係 ${sources.relations}`
+      : null;
   const loop = continuityLabel(sources.loopContinuity);
   const base =
     source === 'api'
