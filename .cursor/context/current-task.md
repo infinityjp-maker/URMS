@@ -15,7 +15,7 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | 項目 | 状態 |
 |------|------|
 | VT-1 SSOT 重力 | ✅ ~完了 |
-| VT-2 Context 脳（合成 narrative） | 🔄 進行（地点 · 関係 · 予定 · **GPS 天気**） |
+| VT-2 Context 脳（合成 narrative） | 🔄 ~完了（contract テスト 5 件 ✅ · 維持） |
 | VT-4 日次ループ | 🔄 進行（journal 追記確認 · **advance 成功メッセージ** · 接続カード） |
 | VT-3 知覚膜 | 🔄 進行（weatherCoords · loopNarrative · **未取得は — 表示**） |
 
@@ -24,13 +24,14 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | Track | ~完了条件（残タスク） |
 |-------|----------------------|
 | VT-1 | schedule · location → 窓信号 · `ssot:sync` — **維持のみ** |
-| VT-2 | 合成 narrative 全信号（地点 · 関係 · 予定 · GPS）· **E2E テストで退行防止** |
+| VT-2 | 合成 narrative 全信号 · **contract テスト 5 件** ✅ — 維持 |
 | VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **viewing-guide §6 時間帯表** ✅ |
 | VT-4 | advance → journal → perception — **API E2E 追加 · 窓手動確認** |
 
 ## 直近の変更
 
-- VT-3 — viewing-guide §6 時間帯プレビュー表（朝/昼/夕/夜 · パネル · — 表示）
+- VT-2 — perception **契約テスト**（空 SSOT · 新しい一日 · ループ済 · 直近ループ優先 · 全信号）
+- viewing-guide §0 — setup-env（初回）vs start-dev-servers（毎日）の使い分け
 - VT-4 — API E2E（advance-task → journal → perception status/meta）
 - `test:vision` — domain + api routes + desktop 限定テスト
 - PM — progress-report · model-policy 閾値運用 · コミットタイミング PM 任せ

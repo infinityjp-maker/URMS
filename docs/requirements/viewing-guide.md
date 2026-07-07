@@ -31,6 +31,11 @@ scripts\launch\setup-env.bat
 
 Docker 初回起動時は Desktop のセットアップ完了後、もう一度 `setup-env.bat` を実行してください。
 
+| スクリプト | 用途 |
+|------------|------|
+| `scripts\launch\setup-env.bat` | **初回 / 環境再構築** — Docker · migrate · ssot:sync · サーバー起動 |
+| `scripts\launch\start-dev-servers.bat` | **毎日の開発開始** — dev:prepare · API · 5173 · 5180 · **1420** |
+
 ---
 
 ### 1. ワイヤーフレームだけ見る（DB 不要 · 最も簡単）
