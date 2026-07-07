@@ -5,7 +5,7 @@ import { useClock } from '../hooks/useClock.js';
 import { useLifeState } from '../hooks/useLifeState.js';
 import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
-import { formatWeatherCoordHint } from './weather-coord-hint.js';
+import { formatWeatherCoordHint, formatWeatherLocationLabel } from './weather-coord-hint.js';
 import {
   DAY_PHASES,
   DAY_PHASE_LABELS,
@@ -47,6 +47,11 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
     hour12: false,
   });
   const connectionSourceLine = formatConnectionSourceLine(life.source, life.sources);
+  const weatherLocationLabel = formatWeatherLocationLabel(
+    life.source,
+    life.sources?.location,
+    life.sources?.weatherCoords,
+  );
   const weatherCoordHint = formatWeatherCoordHint(
     life.source,
     life.sources?.weatherCoords,
@@ -79,6 +84,9 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
           {layout.showWeather ? (
             <div className="glass-card">
               <p className="card-kicker">天気</p>
+              {weatherLocationLabel ? (
+                <p className="metric-detail weather-location-label">{weatherLocationLabel}</p>
+              ) : null}
               {hasWeatherData(state.weather) ? (
                 <>
                   <p className="metric-large">{state.weather.tempC}°C</p>

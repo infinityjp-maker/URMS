@@ -126,6 +126,13 @@
   opacity: 0.62;
 }
 
+.weather-location-label {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.88;
+}
+
 .hint-line {
   margin: 10px 0 0;
   opacity: 0.78;

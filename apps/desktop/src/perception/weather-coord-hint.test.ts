@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatWeatherCoordHint } from './weather-coord-hint.js';
+import { formatWeatherCoordHint, formatWeatherLocationLabel } from './weather-coord-hint.js';
+
+describe('formatWeatherLocationLabel', () => {
+  it('shows SSOT location name in API mode', () => {
+    expect(formatWeatherLocationLabel('api', '自宅', 'ssot')).toBe('自宅');
+  });
+
+  it('shows 現在地 when GPS drives weather without SSOT label', () => {
+    expect(formatWeatherLocationLabel('api', null, 'device')).toBe('現在地');
+  });
+
+  it('shows dash when location is unknown in API mode', () => {
+    expect(formatWeatherLocationLabel('api', null, null)).toBe('—');
+  });
+
+  it('omits label in local fallback mode', () => {
+    expect(formatWeatherLocationLabel('local', '自宅', 'ssot')).toBeNull();
+  });
+});
 
 describe('formatWeatherCoordHint', () => {
   it('shows GPS label when device coords drive weather', () => {

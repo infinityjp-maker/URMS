@@ -40,6 +40,10 @@ test.describe('VT-3/VT-4 desktop perception smoke (1420)', () => {
     await expect(sourceLine).toContainText('Context API');
     await expect(sourceLine).toContainText(/予定 \d+ 件/);
     await expect(sourceLine).toContainText(/journal (—|\d+ 件)/);
+
+    const weatherPanel = page.getByRole('region', { name: '今' });
+    await expect(weatherPanel.locator('.weather-location-label')).toBeVisible();
+    await expect(weatherPanel.locator('.weather-location-label')).not.toBeEmpty();
   });
 
   test('時間帯プレビュー — 夕へ遷移し接続カードは維持 · 天気パネルは非表示', async ({ page }) => {
