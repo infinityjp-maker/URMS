@@ -17,7 +17,7 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | VT-1 SSOT 重力 | ✅ ~完了 |
 | VT-2 Context 脳（合成 narrative） | 🔄 ~完了（contract テスト 5 件 ✅ · 維持） |
 | VT-4 日次ループ | 🔄 進行（journal 追記確認 · **advance 成功メッセージ** · 接続カード） |
-| VT-3 知覚膜 | 🔄 進行（weatherCoords · loopNarrative · **未取得は — 表示**） |
+| VT-3 知覚膜 | 🔄 ~完了（Playwright smoke ✅ · 窓手動確認残） |
 
 ## Vision Track 完了定義（DoD · PM）
 
@@ -25,11 +25,12 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 |-------|----------------------|
 | VT-1 | schedule · location → 窓信号 · `ssot:sync` — **維持のみ** |
 | VT-2 | 合成 narrative 全信号 · **contract テスト 5 件** ✅ — 維持 |
-| VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **viewing-guide §6 時間帯表** ✅ |
+| VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **§6 時間帯表** ✅ · **Playwright smoke 1420** ✅ |
 | VT-4 | advance → journal → perception — **API E2E 追加 · 窓手動確認** |
 
 ## 直近の変更
 
+- A3 — **Playwright smoke**（1420 · 接続カード · 時間帯プレビュー）· `playwright.vision.config.ts` · `test:vision` 統合
 - VT-2 — perception **契約テスト**（空 SSOT · 新しい一日 · ループ済 · 直近ループ優先 · 全信号）
 - viewing-guide §0 — setup-env（初回）vs start-dev-servers（毎日）の使い分け
 - VT-4 — API E2E（advance-task → journal → perception status/meta）

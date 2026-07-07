@@ -199,3 +199,14 @@ npx pnpm@9.15.4 docker:down
 - DB 未起動: ヘッダーが **Context ローカル** · タスク advance ボタンなし
 
 > プレビュー（`?phase=`）中は statusLine が時間帯用デモ文になる場合があります。ループ narrative の確認は **昼（day）** 推奨。
+
+### 自動 smoke（開発者）
+
+初回のみ `pnpm exec playwright install chromium`。API+DB 起動後:
+
+```powershell
+cd D:\GitHub\URMS
+npx pnpm@9.15.4 test:vision
+```
+
+1420 本番窓の HTML · 接続カード · 時間帯プレビューを Playwright で検証します（`playwright.vision.config.ts`）。
