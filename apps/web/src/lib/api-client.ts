@@ -175,3 +175,41 @@ export function updateContextDashboard(
     body: JSON.stringify({ items }),
   });
 }
+
+export interface ModeListItem {
+  id: UrmsMode;
+}
+
+export function getAvailableModes(mode: UrmsMode = 'operate'): Promise<ApiListResponse<ModeListItem>> {
+  return request('/v1/modes', mode);
+}
+
+export interface IntegrationSummary {
+  integrationId: string;
+  name: string;
+  syncSupported: boolean;
+}
+
+export interface IntegrationHealth {
+  integrationId: string;
+  healthy: boolean;
+  detail: string;
+}
+
+export function getIntegrations(mode: UrmsMode): Promise<ApiListResponse<IntegrationSummary>> {
+  return request('/v1/integrations', mode);
+}
+
+export function getIntegrationHealth(
+  mode: UrmsMode,
+  integrationId: string,
+): Promise<ApiItemResponse<IntegrationHealth>> {
+  return request(`/v1/integrations/${encodeURIComponent(integrationId)}/health`, mode);
+}
+
+export function syncIntegration(mode: UrmsMode, integrationId: string): Promise<ApiItemResponse<unknown>> {
+  return request(`/v1/integrations/${encodeURIComponent(integrationId)}/sync`, mode, {
+    method: 'POST',
+    body: '{}',
+  });
+}

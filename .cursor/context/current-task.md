@@ -6,36 +6,33 @@
 
 ## Task
 
-**ADR-024 完了（M1–M4 + relates_to）→ 次 Sprint 待ち**
+**B-020 develop Mode 完了 → 次 Sprint 待ち**
 
-loop-entry · journal export · Context リレーションまで実装済。次テーマは PM / User が backlog から選定。
+暫定 Web UI で develop 切替 · Integration sync ページ実装済。次テーマは PM / User が backlog から選定。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| VT-1〜VT-4 Vision Track | ✅ クローズ（2026-07-08） |
-| ADR-024 M1–M4 | ✅ |
-| loop-entry → context relates_to | ✅ 2026-07-08 |
+| ADR-024 M1–M4 + relates_to | ✅ |
+| B-020 develop Mode | ✅ 2026-07-08 |
 
 ## 直近の変更
 
-- **loop-entry relates_to** — advance 時 `loop-entry` → `context:current-task` · `relates_to` 型追加
-- ADR-024 M4 — DB 正本 · journal export
-- Vision Track クローズ
+- **B-020** — Web ModeSwitcher が `GET /v1/modes` 連動 · `/develop/integrations` · `.env.example` に flag
+- loop-entry relates_to · ADR-024 M4
 
 ## 次 Sprint 候補（PM · 未承認）
 
 | 優先 | 候補 | 備考 |
 |------|------|------|
-| P1 | develop Mode（B-020） | backlog |
-| P2 | Phase 4 S13 続行 | project-status 参照 |
+| P1 | Phase 4 S13 続行 | security-audit チェックリスト |
+| P2 | Desktop develop Mode 切替 | S16 残課題 |
 | P2 | ADR-024 status → accepted | PM 承認後 |
-| P2 | loop-entry 既存データへの relation バックフィル | 任意 · loop:sync 後 |
 
 ## User
 
-1420 窓 advance → loop-entry Resource + context リレーション · journal.md export。
+5173 暫定 Web UI → ヘッダ「開発」→ 連携ページで cursor-local sync。要 `URMS_FF_DEVELOP_ENABLED=true` + API 起動。
 
 ## 運用
 

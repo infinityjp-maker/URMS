@@ -43,6 +43,11 @@ POST /v1/integrations/cursor-local/sync   # develop Mode + flag
 - 追加 Integration adapter（GitHub · Slack 等）
 - Desktop UI での develop Mode 切替
 
+## B-020 完了（2026-07-08）
+
+- 暫定 Web UI — develop Mode 切替（`GET /v1/modes` 連動）
+- `/develop/integrations` — cursor-local health · sync（UC-012）
+
 ## 参照
 
 - [04-api-architecture.md](../architecture/04-api-architecture.md)

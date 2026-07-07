@@ -224,3 +224,9 @@ npx pnpm@9.15.4 location:sync
 ```
 
 API: `POST /v1/schedule/sync` · `/v1/location/sync` · `/v1/loop/sync`
+
+### develop Mode（B-020 · 暫定 Web UI 5173）
+
+1. `.env` に `URMS_FF_DEVELOP_ENABLED=true`（`.env.example` 参照）
+2. http://127.0.0.1:5173/ — ヘッダ ModeSwitcher で **開発** を選択
+3. ナビ **連携** → `/develop/integrations` — cursor-local のヘルス · 同期（UC-012）

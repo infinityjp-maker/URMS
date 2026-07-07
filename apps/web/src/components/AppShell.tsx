@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 
 import { ModeSwitcher } from '../features/mode/ModeSwitcher.js';
 import { useMode } from '../features/mode/mode-context.js';
-import { canShowAuditNav, canShowContextNav } from '../features/mode/mode-ui.js';
+import { canShowAuditNav, canShowContextNav, canShowIntegrationsNav } from '../features/mode/mode-ui.js';
 
 export function AppShell() {
   const { mode } = useMode();
@@ -34,6 +34,14 @@ export function AppShell() {
           {canShowAuditNav(mode) ? (
             <NavLink to="/audit" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
               監査ログ
+            </NavLink>
+          ) : null}
+          {canShowIntegrationsNav(mode) ? (
+            <NavLink
+              to="/develop/integrations"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            >
+              連携
             </NavLink>
           ) : null}
           <NavLink

@@ -62,7 +62,7 @@
 
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
-| B-020 | develop Mode 実装 | Developer | todo | Phase 3+ |
+| B-020 | develop Mode 実装 | Developer | done | Web UI 切替 · Integrations · 2026-07-08 |
 | B-021 | pgvector 利用 | Architect | todo | Phase 4 |
 | B-022 | Redis キャッシュ | Developer | todo | Phase 3+ |
 

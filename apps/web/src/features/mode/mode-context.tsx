@@ -1,7 +1,9 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import type { UrmsMode } from '@urms/shared';
-import { URMS_MODES } from '@urms/shared';
+import { URMS_CORE_MODES } from '@urms/shared';
+
+import { getAvailableModes } from '../../lib/api-client.js';
 
 const STORAGE_KEY = 'urms.mode';
 
@@ -9,14 +11,31 @@ interface ModeContextValue {
   mode: UrmsMode;
   setMode: (mode: UrmsMode) => void;
   modes: readonly UrmsMode[];
+  modesLoading: boolean;
 }
 
 const ModeContext = createContext<ModeContextValue | undefined>(undefined);
 
+function isCoreMode(value: string): value is UrmsMode {
+  return (URMS_CORE_MODES as readonly string[]).includes(value);
+}
+
 function readStoredMode(): UrmsMode {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored && (URMS_MODES as readonly string[]).includes(stored)) {
-    return stored as UrmsMode;
+  if (stored && isCoreMode(stored)) {
+    return stored;
+  }
+
+  if (stored === 'develop') {
+    return 'develop';
+  }
+
+  return 'operate';
+}
+
+function normalizeMode(current: UrmsMode, available: readonly UrmsMode[]): UrmsMode {
+  if (available.includes(current)) {
+    return current;
   }
 
   return 'operate';
@@ -24,6 +43,40 @@ function readStoredMode(): UrmsMode {
 
 export function ModeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<UrmsMode>(() => readStoredMode());
+  const [modes, setModes] = useState<readonly UrmsMode[]>(URMS_CORE_MODES);
+  const [modesLoading, setModesLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getAvailableModes('operate')
+      .then((response) => {
+        if (cancelled) {
+          return;
+        }
+
+        const available = response.data.map((item) => item.id);
+        setModes(available);
+        setModeState((current) => normalizeMode(current, available));
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setModes(URMS_CORE_MODES);
+        setModeState((current) => (current === 'develop' ? 'operate' : current));
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setModesLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const setMode = (next: UrmsMode) => {
     setModeState(next);
@@ -34,9 +87,10 @@ export function ModeProvider({ children }: { children: ReactNode }) {
     () => ({
       mode,
       setMode,
-      modes: URMS_MODES,
+      modes,
+      modesLoading,
     }),
-    [mode],
+    [mode, modes, modesLoading],
   );
 
   return <ModeContext.Provider value={value}>{children}</ModeContext.Provider>;

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-export async function switchMode(page: Page, label: '計画' | '運用' | '監査'): Promise<void> {
+export async function switchMode(page: Page, label: '計画' | '運用' | '監査' | '開発'): Promise<void> {
   await page.getByRole('button', { name: label, exact: true }).click();
 }
 
