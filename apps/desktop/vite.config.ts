@@ -6,6 +6,10 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig({
   plugins: [react()],
   clearScreen: false,
+  optimizeDeps: {
+    // @urms/shared barrel は node:crypto を含む — 誤 pre-bundle で白画面になる
+    exclude: ['@urms/domain', '@urms/shared'],
+  },
   server: {
     port: 1420,
     strictPort: true,

@@ -28,3 +28,34 @@ button,
 input {
   font: inherit;
 }
+
+.desktop-boot-error {
+  max-width: 40rem;
+  margin: 4rem auto;
+  padding: 2rem;
+  line-height: 1.6;
+}
+
+.desktop-boot-error h1 {
+  font-size: 1.25rem;
+  margin: 0 0 1rem;
+}
+
+.desktop-boot-error__message {
+  color: #ffb4a8;
+  margin: 0 0 1rem;
+}
+
+.desktop-boot-error__steps {
+  margin: 0 0 1.5rem;
+  padding-left: 1.25rem;
+}
+
+.desktop-boot-error__button {
+  background: #2a3544;
+  border: 1px solid #4a5568;
+  border-radius: 0.5rem;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}

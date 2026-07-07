@@ -51,4 +51,35 @@ describe('browser-safe imports', () => {
 
     expect(violations).toEqual([]);
   });
+
+  it('keeps @urms/domain/perception browser chain free of shared barrel and node imports', () => {
+    const domainDist = path.resolve(SRC_ROOT, '../../../packages/domain/dist');
+    const chainFiles = [
+      'perception/index.js',
+      'perception/build-perception-state.js',
+      'perception/build-perception-meta.js',
+      'perception/synthesize-loop-continuity.js',
+      'perception/synthesize-context-note.js',
+      'perception/resolve-perception-status-line.js',
+      'perception/day-phase.js',
+      'perception/fixtures.js',
+      'perception/graph/relation-graph-signal.js',
+      'context/context-defaults.js',
+      'context/advance-context-task.js',
+    ];
+    const violations: string[] = [];
+
+    for (const relative of chainFiles) {
+      const filePath = path.join(domainDist, relative);
+      const content = readFileSync(filePath, 'utf8');
+      if (/from ['"]@urms\/shared['"]/.test(content)) {
+        violations.push(`${relative}: imports @urms/shared barrel`);
+      }
+      if (/from ['"]node:/.test(content)) {
+        violations.push(`${relative}: imports node built-in`);
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
 });
