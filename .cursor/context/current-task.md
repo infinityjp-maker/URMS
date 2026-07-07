@@ -6,28 +6,29 @@
 
 ## Task
 
-**Cursor 双方向同期 v1（export）完了 → 次 Sprint 待ち**
+**Cursor 双方向 export v2（Context SSOT）完了 → 次 Sprint 待ち**
 
-`POST /v1/integrations/cursor-local/export` — DB Resource.name を正本 Markdown H1 に書戻し。
+`POST /v1/integrations/cursor-local/export` — AI Team H1 + Context summary を `.cursor/context/` へ書戻し。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
 | v1.1.0 GA | ✅ |
-| **Cursor export（AI Team H1）** | ✅ **2026-07-08** |
+| **Cursor export v1（AI Team H1）** | ✅ **2026-07-08** |
+| **Cursor export v2（Context SSOT）** | ✅ **2026-07-08** |
 | sync（ファイル → Resource） | ✅ 既存 |
 
 ## 直近の変更
 
-- `AiTeamExportService` · IntegrationRegistry.export · API + Web/Desktop UI
-- develop Mode — 「書戻し」ボタン
+- `ContextSsotExportService` · `CursorCombinedExportReport`（aiTeam + context）
+- `.cursor/context/` — current-task · current-phase · project-status サマリ書戻し
 
 ## 次 Sprint 候補（PM · 未承認）
 
 | 優先 | 候補 | 備考 |
 |------|------|------|
-| P1 | export 拡張（本文 · Context SSOT） | v1.2 |
+| P1 | export 拡張（本文 merge） | v1.3 |
 | P2 | WCAG 改善 | S13 残課題 |
 
 ## User

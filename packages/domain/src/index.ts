@@ -147,6 +147,22 @@ export {
   validateSummary,
   validateSsotLinks,
 } from './context/context-validator.js';
+export {
+  createContextSsotExportService,
+  ContextSsotExportService,
+} from './context/context-ssot-export-service.js';
+export type {
+  ContextSsotExportReport,
+  ContextSsotExportItem,
+  CursorCombinedExportReport,
+} from './context/context-ssot-export-service.js';
+export { CONTEXT_SSOT_TARGETS } from './context/context-ssot-targets.js';
+export type { ContextSsotTarget } from './context/context-ssot-targets.js';
+export {
+  updateMarkdownSectionBoldLine,
+  updateMarkdownTableCell,
+  hasMarkdownHeading,
+} from './context/update-context-markdown-section.js';
 
 export { modePolicy, assertModeAllowed, type ModePolicy } from './mode/mode-policy.js';
 

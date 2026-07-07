@@ -33,6 +33,7 @@
 | **ADR-024** | ✅ **accepted** — loop-entry M1–M4 + relates_to |
 | **v1.1.0 GA** | ✅ **2026-07-08** — Vision Track · Desktop · k6 CI |
 | **Cursor export v1** | ✅ **2026-07-08** — AI Team H1 書戻し · integration export API |
+| **Cursor export v2** | ✅ **2026-07-08** — Context SSOT summary 書戻し · combined export report |
 
 ## リンク
 

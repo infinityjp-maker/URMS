@@ -211,10 +211,18 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         items: [],
       })),
       export: vi.fn(async () => ({
-        updated: 2,
-        unchanged: 10,
-        skipped: 1,
-        items: [],
+        aiTeam: {
+          updated: 2,
+          unchanged: 10,
+          skipped: 1,
+          items: [],
+        },
+        context: {
+          updated: 1,
+          unchanged: 2,
+          skipped: 0,
+          items: [],
+        },
       })),
     },
     checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
@@ -1082,7 +1090,8 @@ describe('Integration routes (S16)', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json().data.updated).toBe(2);
+    expect(response.json().data.aiTeam.updated).toBe(2);
+    expect(response.json().data.context.updated).toBe(1);
     expect(services.integrationRegistry.export).toHaveBeenCalledWith('cursor-local', expect.any(String));
     process.env.URMS_FF_DEVELOP_ENABLED = previous;
     await app.close();
