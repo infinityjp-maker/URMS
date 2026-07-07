@@ -1,12 +1,13 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { UrmsMode } from '@urms/shared';
+import type { UrmsMode, SsotLink } from '@urms/shared';
 
 import type { ContextRepository } from '../repository/context-repository.js';
 import { CONTEXT_SSOT_TARGETS } from './context-ssot-targets.js';
 import {
   updateMarkdownSectionBoldLine,
+  updateMarkdownSectionBulletLinks,
   updateMarkdownTableCell,
 } from './update-context-markdown-section.js';
 
@@ -61,7 +62,7 @@ export class ContextSsotExportService {
         continue;
       }
 
-      const item = await this.exportTarget(target, snapshot.summary);
+      const item = await this.exportTarget(target, snapshot.summary, snapshot.ssotLinks);
       report[item.action] += 1;
       report.items.push(item);
     }
@@ -72,15 +73,27 @@ export class ContextSsotExportService {
   private async exportTarget(
     target: (typeof CONTEXT_SSOT_TARGETS)[number],
     summary: string,
+    ssotLinks: SsotLink[],
   ): Promise<ContextSsotExportItem> {
     const absolutePath = path.join(this.repoRoot, target.relativePath);
 
     try {
       const content = await readFile(absolutePath, 'utf8');
-      const nextContent =
+      let nextContent =
         target.style === 'table-row' && target.rowLabel
           ? updateMarkdownTableCell(content, target.sectionHeading, target.rowLabel, summary)
           : updateMarkdownSectionBoldLine(content, target.sectionHeading, summary);
+
+      if (target.linksSectionHeading && ssotLinks.length > 0) {
+        const linkUpdate = updateMarkdownSectionBulletLinks(
+          nextContent ?? content,
+          target.linksSectionHeading,
+          ssotLinks.map((link) => ({ label: link.label, path: link.path })),
+        );
+        if (linkUpdate) {
+          nextContent = linkUpdate;
+        }
+      }
 
       if (!nextContent) {
         return {

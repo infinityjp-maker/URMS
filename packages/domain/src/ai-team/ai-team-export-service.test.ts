@@ -33,7 +33,7 @@ async function createFixture(title: string, resourceName: string): Promise<{
     resourceId: 'sample',
     name: resourceName,
     status: 'active',
-    metadata: { ssot: 'ai-team-sync', sourcePath: relativePath },
+    metadata: { ssot: 'ai-team-sync', sourcePath: relativePath, urmsSummary: resourceName },
     createdAt: now,
     updatedAt: now,
   };
@@ -65,6 +65,11 @@ describe('AiTeamExportService', () => {
 
   it('reports unchanged when title already matches', async () => {
     const fixture = await createFixture('Same Title', 'Same Title');
+    await writeFile(
+      path.join(fixture.repoRoot, fixture.relativePath),
+      `# Same Title\n\n**resource_type:** context\n**resource_id:** context:sample\n\n## URMS Export\n\n**Summary:** Same Title\n`,
+      'utf8',
+    );
     const service = createAiTeamExportService({
       repoRoot: fixture.repoRoot,
       resourceRepository: fixture.repository,
@@ -74,5 +79,33 @@ describe('AiTeamExportService', () => {
 
     expect(report.updated).toBe(0);
     expect(report.unchanged).toBeGreaterThanOrEqual(1);
+  });
+
+  it('writes URMS Export block from metadata.urmsSummary', async () => {
+    const fixture = await createFixture('Title', 'Title');
+    const now = new Date().toISOString();
+    const repository = createRepository({
+      resourceType: 'context',
+      resourceId: 'sample',
+      name: 'Title',
+      status: 'active',
+      metadata: {
+        ssot: 'ai-team-sync',
+        sourcePath: fixture.relativePath,
+        urmsSummary: 'Body summary from DB',
+      },
+      createdAt: now,
+      updatedAt: now,
+    });
+    const service = createAiTeamExportService({
+      repoRoot: fixture.repoRoot,
+      resourceRepository: repository,
+    });
+
+    const report = await service.export('developer', 'develop');
+
+    expect(report.updated).toBe(1);
+    const content = await readFile(path.join(fixture.repoRoot, fixture.relativePath), 'utf8');
+    expect(content).toContain('**Summary:** Body summary from DB');
   });
 });

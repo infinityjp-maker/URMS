@@ -45,4 +45,34 @@ describe('ContextSsotExportService', () => {
     const content = await readFile(absolutePath, 'utf8');
     expect(content).toContain('**Exported task summary**');
   });
+
+  it('writes ssotLinks into configured links section', async () => {
+    const repoRoot = path.join(os.tmpdir(), `urms-context-export-links-${Date.now()}`);
+    const relativePath = '.cursor/context/project-status.md';
+    const absolutePath = path.join(repoRoot, relativePath);
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    await writeFile(
+      absolutePath,
+      '# プロジェクト状態\n\n## サマリ\n\n| 項目 | 値 |\n| 状態 | **Old** |\n\n## リンク\n\n- [Old](old.md)\n',
+      'utf8',
+    );
+
+    const repository = createRepository([
+      {
+        key: 'project_status',
+        summary: 'New status',
+        ssotLinks: [{ label: 'Roadmap', path: '../../docs/project/roadmap.md' }],
+        updatedAt: new Date().toISOString(),
+        updatedBy: 'developer',
+      },
+    ]);
+
+    const service = createContextSsotExportService({ repoRoot, contextRepository: repository });
+    await service.export('developer', 'develop');
+
+    const content = await readFile(absolutePath, 'utf8');
+    expect(content).toContain('| 状態 | **New status** |');
+    expect(content).toContain('- [Roadmap](../../docs/project/roadmap.md)');
+    expect(content).not.toContain('[Old](old.md)');
+  });
 });

@@ -13,6 +13,7 @@ import {
 } from './ai-team-sources.js';
 import type { ParsedResourceMarkdown } from './parse-resource-markdown.js';
 import { parseResourceMarkdown } from './parse-resource-markdown.js';
+import { parseUrmsExportSummary } from './update-resource-markdown-urms-section.js';
 
 export const AI_TEAM_ID = 'urms-ai-v1';
 
@@ -76,7 +77,7 @@ export class AiTeamSyncService {
           continue;
         }
 
-        const action = await this.upsertResource(parsed);
+        const action = await this.upsertResource(parsed, content);
         report[action] += 1;
         report.items.push({
           resourceType: parsed.resourceType,
@@ -97,7 +98,10 @@ export class AiTeamSyncService {
     return report;
   }
 
-  private async upsertResource(parsed: ParsedResourceMarkdown): Promise<'created' | 'updated'> {
+  private async upsertResource(
+    parsed: ParsedResourceMarkdown,
+    rawContent = '',
+  ): Promise<'created' | 'updated'> {
     const existing = await this.resourceRepository.findByRef(parsed.resourceType, parsed.resourceId);
     const now = new Date().toISOString();
     const entity: ResourceEntity = {
@@ -109,6 +113,7 @@ export class AiTeamSyncService {
         sourcePath: parsed.sourcePath,
         contentHash: parsed.contentHash,
         ssot: 'ai-team-sync',
+        urmsSummary: parseUrmsExportSummary(rawContent) ?? parsed.name,
       },
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,

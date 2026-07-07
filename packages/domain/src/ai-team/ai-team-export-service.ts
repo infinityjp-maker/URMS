@@ -7,6 +7,7 @@ import type { ResourceRepository } from '../repository/resource-repository.js';
 import { AI_TEAM_SOURCES, fallbackNameFromPath, toRepoRelative } from './ai-team-sources.js';
 import { parseResourceMarkdown } from './parse-resource-markdown.js';
 import { updateMarkdownTitle } from './update-resource-markdown-title.js';
+import { updateUrmsExportSection } from './update-resource-markdown-urms-section.js';
 
 export type AiTeamExportItem = {
   resourceType: string;
@@ -87,7 +88,14 @@ export class AiTeamExportService {
         };
       }
 
-      const nextContent = updateMarkdownTitle(content, entity.name);
+      const nextTitle = updateMarkdownTitle(content, entity.name);
+      const exportSummary =
+        typeof entity.metadata.urmsSummary === 'string' && entity.metadata.urmsSummary.trim()
+          ? entity.metadata.urmsSummary.trim()
+          : entity.name.trim();
+      const nextBody = updateUrmsExportSection(nextTitle ?? content, exportSummary);
+      const nextContent = nextBody ?? nextTitle;
+
       if (!nextContent) {
         return {
           resourceType: parsed.resourceType,

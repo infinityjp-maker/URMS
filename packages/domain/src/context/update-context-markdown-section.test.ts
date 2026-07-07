@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   updateMarkdownSectionBoldLine,
+  updateMarkdownSectionBulletLinks,
   updateMarkdownTableCell,
 } from './update-context-markdown-section.js';
 
@@ -23,5 +24,16 @@ describe('updateMarkdownTableCell', () => {
   it('updates table cell in section', () => {
     const content = '## サマリ\n\n| 項目 | 値 |\n| 状態 | **Old** |\n';
     expect(updateMarkdownTableCell(content, 'サマリ', '状態', 'New status')).toContain('| 状態 | **New status** |');
+  });
+});
+
+describe('updateMarkdownSectionBulletLinks', () => {
+  it('replaces bullet links in section', () => {
+    const content = '## リンク\n\n- [Old](old.md)\n\n## Next\n';
+    const next = updateMarkdownSectionBulletLinks(content, 'リンク', [
+      { label: 'New', path: 'new.md' },
+    ]);
+    expect(next).toContain('- [New](new.md)');
+    expect(next).not.toContain('[Old](old.md)');
   });
 });

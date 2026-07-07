@@ -46,6 +46,10 @@ export { createAiTeamExportService, AiTeamExportService } from './ai-team/ai-tea
 export type { AiTeamExportReport, AiTeamExportItem } from './ai-team/ai-team-export-service.js';
 export { updateMarkdownTitle } from './ai-team/update-resource-markdown-title.js';
 export {
+  parseUrmsExportSummary,
+  updateUrmsExportSection,
+} from './ai-team/update-resource-markdown-urms-section.js';
+export {
   createScheduleSyncService,
   ScheduleSyncService,
   resolveScheduleRepoRoot,
@@ -161,8 +165,10 @@ export type { ContextSsotTarget } from './context/context-ssot-targets.js';
 export {
   updateMarkdownSectionBoldLine,
   updateMarkdownTableCell,
+  updateMarkdownSectionBulletLinks,
   hasMarkdownHeading,
 } from './context/update-context-markdown-section.js';
+export type { MarkdownLinkItem } from './context/update-context-markdown-section.js';
 
 export { modePolicy, assertModeAllowed, type ModePolicy } from './mode/mode-policy.js';
 

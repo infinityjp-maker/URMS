@@ -6,6 +6,7 @@ export type ContextSsotTarget = {
   sectionHeading: string;
   style: 'bold-line' | 'table-row';
   rowLabel?: string;
+  linksSectionHeading?: string;
 };
 
 /** Context Engine → `.cursor/context/*.md` 書戻し対象 */
@@ -15,6 +16,7 @@ export const CONTEXT_SSOT_TARGETS: readonly ContextSsotTarget[] = [
     relativePath: '.cursor/context/current-task.md',
     sectionHeading: 'Task',
     style: 'bold-line',
+    linksSectionHeading: '運用',
   },
   {
     key: 'current_phase',
@@ -28,5 +30,6 @@ export const CONTEXT_SSOT_TARGETS: readonly ContextSsotTarget[] = [
     sectionHeading: 'サマリ',
     style: 'table-row',
     rowLabel: '状態',
+    linksSectionHeading: 'リンク',
   },
 ];

@@ -1,5 +1,10 @@
 const HEADING_PATTERN = /^##\s+(.+)$/m;
 
+export type MarkdownLinkItem = {
+  label: string;
+  path: string;
+};
+
 function findSectionBounds(content: string, sectionHeading: string): { start: number; end: number } | null {
   const headingRegex = new RegExp(`^##\\s+${escapeRegex(sectionHeading)}\\s*$`, 'm');
   const match = headingRegex.exec(content);
@@ -83,6 +88,40 @@ export function updateMarkdownTableCell(
   }
 
   const updatedSection = section.replace(rowPattern, `$1${nextCell}$5`);
+  return `${content.slice(0, bounds.start)}${updatedSection}${content.slice(bounds.end)}`;
+}
+
+/** `## Section` 内の先頭 bullet リストを SSOT リンクに差し替え */
+export function updateMarkdownSectionBulletLinks(
+  content: string,
+  sectionHeading: string,
+  links: readonly MarkdownLinkItem[],
+): string | null {
+  if (links.length === 0) {
+    return null;
+  }
+
+  const bounds = findSectionBounds(content, sectionHeading);
+  if (!bounds) {
+    return null;
+  }
+
+  const section = content.slice(bounds.start, bounds.end);
+  const bulletBlock = links.map((link) => `- [${link.label}](${link.path})`).join('\n');
+  const bulletPattern = /(?:\r?\n)- \[[^\]]+\]\([^)]+\)(?:\r?\n- \[[^\]]+\]\([^)]+\))*/;
+  const match = bulletPattern.exec(section);
+
+  if (!match) {
+    const insertion = `\n\n${bulletBlock}\n`;
+    return `${content.slice(0, bounds.start)}${insertion}${content.slice(bounds.end)}`;
+  }
+
+  const nextBlock = `\n${bulletBlock}`;
+  if (match[0] === nextBlock) {
+    return null;
+  }
+
+  const updatedSection = `${section.slice(0, match.index)}${nextBlock}${section.slice(match.index + match[0].length)}`;
   return `${content.slice(0, bounds.start)}${updatedSection}${content.slice(bounds.end)}`;
 }
 
