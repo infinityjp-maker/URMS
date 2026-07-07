@@ -47,7 +47,7 @@ export async function ensureContextCurrentTaskResource(
     }
   }
 
-  const created = await resourceService.create(
+  await resourceService.create(
     {
       resourceType: CONTEXT_RESOURCE_TYPE,
       resourceId: CONTEXT_CURRENT_TASK_RESOURCE_ID,

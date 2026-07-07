@@ -101,6 +101,13 @@ export {
 export type { LoopEntryPersister, LoopJournalServiceOptions } from './loop-journal/loop-journal-service.js';
 export {
   persistLoopEntryResource,
+  buildLoopEntryResourceId,
+  buildLoopEntryDisplayName,
+  toLoopEntryResourceInput,
+  fromLoopEntryResource,
+  LOOP_ENTRY_RESOURCE_TYPE,
+} from './loop-journal/loop-entry-resource.js';
+export {
   persistLoopEntryWithRelation,
   relateLoopEntryToCurrentTask,
   ensureContextCurrentTaskResource,
@@ -108,12 +115,7 @@ export {
   CONTEXT_RESOURCE_TYPE,
   CONTEXT_CURRENT_TASK_RESOURCE_ID,
   LOOP_CONTEXT_RELATION_TYPE,
-  buildLoopEntryResourceId,
-  buildLoopEntryDisplayName,
-  toLoopEntryResourceInput,
-  fromLoopEntryResource,
-  LOOP_ENTRY_RESOURCE_TYPE,
-} from './loop-journal/loop-entry-resource.js';
+} from './loop-journal/loop-entry-relation.js';
 export {
   createCompositeLoopJournalReader,
   createResourceOnlyLoopJournalReader,

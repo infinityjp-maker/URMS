@@ -28,7 +28,7 @@ function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, l
   if (loading) return '接続確認中…';
   if (source === 'api') return dbReady ? 'API 接続 · SSOT から合成' : 'API 接続 · DB 未起動';
   if (apiOnline) return 'API 応答なし — Context ローカル';
-  return 'オフライン — Context ローカル';
+  return 'API 未起動 — pnpm dev:api または start-dev-servers.bat';
 }
 
 export function PerceptionDashboard({ state: stateOverride }: Props) {

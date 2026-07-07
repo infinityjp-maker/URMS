@@ -22,8 +22,10 @@ export default defineConfig({
       ignored: ['**/src-tauri/**'],
     },
     proxy: {
-      '/v1': 'http://localhost:3000',
-      '/health': 'http://localhost:3000',
+      '^/(v1|health|metrics)': {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
     },
   },
   envPrefix: ['VITE_', 'TAURI_ENV_*'],
