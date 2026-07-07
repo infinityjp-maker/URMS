@@ -1,8 +1,8 @@
 import type { UrmsMode } from '@urms/shared';
-import { URMS_CORE_MODES } from '@urms/shared';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { fetchAvailableModes } from '../../api/client.js';
+import { DESKTOP_CORE_MODES } from '../../lib/urms-modes.js';
 
 const STORAGE_KEY = 'urms.mode';
 
@@ -38,7 +38,7 @@ function normalizeMode(current: UrmsMode, available: readonly UrmsMode[]): UrmsM
 
 export function ModeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<UrmsMode>(() => readStoredMode());
-  const [modes, setModes] = useState<readonly UrmsMode[]>(URMS_CORE_MODES);
+  const [modes, setModes] = useState<readonly UrmsMode[]>(DESKTOP_CORE_MODES);
   const [modesLoading, setModesLoading] = useState(true);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function ModeProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        setModes(URMS_CORE_MODES);
+        setModes(DESKTOP_CORE_MODES);
         setModeState((current) => (current === 'develop' ? 'operate' : current));
       })
       .finally(() => {

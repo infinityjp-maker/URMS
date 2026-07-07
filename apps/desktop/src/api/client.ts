@@ -1,7 +1,7 @@
 import type { AdvanceTaskResponse, PerceptionResponse, UrmsMode } from '@urms/shared';
-import { URMS_CORE_MODES } from '@urms/shared';
 
 import type { DeviceCoords } from '../lib/device-location.js';
+import { DESKTOP_CORE_MODES } from '../lib/urms-modes.js';
 
 const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 
@@ -102,7 +102,7 @@ async function fetchJsonResult<T>(path: string, mode: UrmsMode, init?: RequestIn
 export async function fetchAvailableModes(mode: UrmsMode = 'operate'): Promise<readonly UrmsMode[]> {
   const body = await fetchJson<ApiListBody<{ id: UrmsMode }>>('/v1/modes', mode);
   if (!body?.data?.length) {
-    return URMS_CORE_MODES;
+    return DESKTOP_CORE_MODES;
   }
 
   return body.data.map((item) => item.id);
