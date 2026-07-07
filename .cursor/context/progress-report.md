@@ -129,6 +129,7 @@ const LAST_CURSOR = { at, usagePct, dailyDelta, mode, model, nextSession };
 | 2026-07-07 | 初版 — 8 セクション · SSOT 連携 · 見直しサイクル |
 | 2026-07-07 | Cursor 枠 · 運用モード · usage-log 連携 |
 | 2026-07-07 | 閾値内最適/超過削減 · PM 単独模型選定 |
+| 2026-07-07 | **コミットタイミング PM 任せ** — Go 待ち不要 · 論理単位で commit |
 
 ---
 
