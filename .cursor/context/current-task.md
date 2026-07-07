@@ -6,23 +6,18 @@
 
 ## Task
 
-**Cursor 双方向 export v2（Context SSOT）完了 → 次 Sprint 待ち**
+**v1.2.0 GA 完了 → 次 Sprint 待ち**
 
-`POST /v1/integrations/cursor-local/export` — AI Team H1 + Context summary を `.cursor/context/` へ書戻し。
+Cursor 双方向 export v1/v2 · dev 起動安定化を含むマイナーリリース。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| v1.1.0 GA | ✅ |
-| **Cursor export v1（AI Team H1）** | ✅ **2026-07-08** |
-| **Cursor export v2（Context SSOT）** | ✅ **2026-07-08** |
-| sync（ファイル → Resource） | ✅ 既存 |
-
-## 直近の変更
-
-- `ContextSsotExportService` · `CursorCombinedExportReport`（aiTeam + context）
-- `.cursor/context/` — current-task · current-phase · project-status サマリ書戻し
+| **v1.2.0 GA** | ✅ **2026-07-08** |
+| Cursor export v1（AI Team H1） | ✅ |
+| Cursor export v2（Context SSOT） | ✅ |
+| dev:prepare プラグイン再ビルド | ✅ |
 
 ## 次 Sprint 候補（PM · 未承認）
 
@@ -33,8 +28,10 @@
 
 ## User
 
-- develop Mode + `/develop/integrations` または 1420 DevelopPanel — **書戻し**
+- 本番窓: http://127.0.0.1:1420/ — develop Mode · 書戻し
+- 起動: `scripts\launch\start-dev-servers.bat` または `corepack pnpm dev:prepare` 後に API
 
 ## 運用
 
+- **リリースノート:** [v1.2.0.md](../../docs/project/releases/v1.2.0.md)
 - **S16 正本:** [15-phase5-s16-external-integration.md](../../docs/implementation/15-phase5-s16-external-integration.md)

@@ -22,13 +22,13 @@
 | 3 prep | Phase 3 Ready | **完了** |
 | 3 | MVP 実装（S1〜S10） | **完了** — tag `v0.2.0-mvp` |
 | 4 | 品質・運用（S11〜S13） | **完了** — tag `v0.3.0` |
-| 5 | 本番 · 拡張（S14〜S16 + 知覚層 UI） | **完了** — tag `v1.1.0` · 2026-07-08 |
+| 5 | 本番 · 拡張（S14〜S16 + 知覚層 UI） | **完了** — tag `v1.2.0` · 2026-07-08 |
 
 ## 現在
 
 - **Phase 3 MVP 完了** — Sprint S1〜S10 · tag `v0.2.0-mvp`（`0d3e18d`）
 - **Phase 4 完了** — S11〜S13 · tags `v0.3.0-alpha` / `beta` / `v0.3.0`
-- **Phase 5 完了** — S14〜S16 · Vision Track · tag **`v1.1.0`**（2026-07-08）
+- **Phase 5 完了** — S14〜S16 · Vision Track · tag **`v1.2.0`**（2026-07-08 · Cursor export）
 - **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx`
 
 ## Phase 3 開始条件（記録）

@@ -1,3 +1,4 @@
+import { URMS_APP_VERSION } from '@urms/shared';
 import { NavLink, Outlet } from 'react-router-dom';
 
 import { ModeSwitcher } from '../features/mode/ModeSwitcher.js';
@@ -55,7 +56,7 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
-      <footer className="app-footer">URMS v1.1.0</footer>
+      <footer className="app-footer">URMS v{URMS_APP_VERSION}</footer>
     </div>
   );
 }

@@ -8,8 +8,8 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 5 完了 · v1.1.0 GA（2026-07-08）** |
-| バージョン | Git タグ **`v1.1.0`** · root 1.1.0 |
+| 状態 | **Phase 5 完了 · v1.2.0 GA（2026-07-08）** |
+| バージョン | Git タグ **`v1.2.0`** · root 1.2.0 |
 | User Go | ✅ 2026-07-05 |
 | User Vision | ✅ UI 確定 · Tauri 2 + React（User Go 2026-07-05） |
 
@@ -27,7 +27,8 @@
 | **Vision Track VT-1〜4** | ✅ **2026-07-08 クローズ** — ADR-024 M1–M4 · resource-catalog v1.4 |
 | **B-020 develop Mode** | ✅ **2026-07-08** — Web UI 切替 · Integrations ページ |
 | **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
-| **dev オフライン修正** | ✅ **2026-07-08** — domain export 修正 · desktop proxy · start-ui に API 同梱 |
+| **v1.2.0 GA** | ✅ **2026-07-08** — Cursor export v1/v2 · dev:prepare 安定化 |
+| **dev オフライン修正（plugin）** | ✅ **2026-07-08** — plugin-resource-types 再ビルド · dev:prepare 拡張 |
 | **S16 Desktop develop Mode** | ✅ **2026-07-08** — 1420 Mode 切替 · DevelopPanel |
 | **k6 smoke CI** | ✅ **2026-07-08** — GitHub Actions `perf-k6` |
 | **ADR-024** | ✅ **accepted** — loop-entry M1–M4 + relates_to |

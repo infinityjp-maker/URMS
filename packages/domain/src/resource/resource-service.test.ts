@@ -122,7 +122,7 @@ describe('ResourceService', () => {
     const plugin: ResourceTypePlugin = {
       resourceType: 'physical',
       version: '1.0.0',
-      coreVersion: '1.1.0',
+      coreVersion: '1.2.0',
       validateCreate: (input) =>
         input.metadata?.location
           ? []
@@ -131,7 +131,7 @@ describe('ResourceService', () => {
         input.name === 'Bad' ? [{ field: 'name', message: 'invalid' }] : [],
       searchableFields: () => ['name'],
     };
-    const registry = new PluginRegistry('1.1.0');
+    const registry = new PluginRegistry('1.2.0');
     registry.register(plugin);
     const { service } = createService(registry);
 

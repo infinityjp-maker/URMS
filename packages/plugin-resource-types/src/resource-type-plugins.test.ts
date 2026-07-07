@@ -6,7 +6,7 @@ import { createBuiltinResourceTypePlugins, createPhysicalPlugin } from './resour
 
 describe('resource type plugins', () => {
   it('registers all builtin plugins', () => {
-    const registry = new PluginRegistry('1.1.0');
+    const registry = new PluginRegistry('1.2.0');
     for (const plugin of createBuiltinResourceTypePlugins()) {
       registry.register(plugin);
     }

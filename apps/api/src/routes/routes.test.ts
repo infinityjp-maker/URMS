@@ -92,7 +92,7 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
       })),
     },
     pluginRegistry: {
-      list: vi.fn(() => [{ resourceType: 'physical', version: '1.0.0', coreVersion: '1.1.0' }]),
+      list: vi.fn(() => [{ resourceType: 'physical', version: '1.0.0', coreVersion: '1.2.0' }]),
       get: vi.fn(),
       require: vi.fn(),
       register: vi.fn(),
@@ -243,7 +243,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'ok',
-        version: '1.1.0',
+        version: '1.2.0',
       },
     });
 
@@ -262,7 +262,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'ready',
-        version: '1.1.0',
+        version: '1.2.0',
         checks: { database: 'ok' },
       },
     });
@@ -287,7 +287,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'not_ready',
-        version: '1.1.0',
+        version: '1.2.0',
         checks: { database: 'unavailable' },
       },
     });
