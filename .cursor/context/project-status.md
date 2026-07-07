@@ -23,10 +23,11 @@
 | Docker Compose · CI build | ✅ |
 | S11 ローカル認証方針 | ✅ bypass + 内部 API |
 | PostgreSQL（User 環境） | ✅ Docker Desktop + db:up（2026-07-07） |
-| Cursor モデル方針 | ✅ [model-policy.md](../context/model-policy.md) · 次回見直し 2026-08-07 |
+| Cursor モデル方針 | ✅ [model-policy.md](../context/model-policy.md) · **日次監視** · 次回月次見直し 2026-08-07 |
 
 ## リンク
 
+- **PM 進捗報告 SSOT:** [progress-report.md](../context/progress-report.md)
 - Canvas 進捗: `canvases/urms-progress-plan.canvas.tsx`
 - [roadmap.md](../../docs/project/roadmap.md)
 - [backlog.md](../../docs/project/backlog.md)

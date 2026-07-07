@@ -39,4 +39,6 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 
 ## 運用
 
-- **モデル選定 · セッション · Pro 枠:** [model-policy.md](./model-policy.md)（PM 制定 2026-07-07 · **月次見直し**）
+- **進捗報告 SSOT:** [progress-report.md](./progress-report.md) — 8 セクション · 適宜見直し
+- **モデル選定 · 枠監視:** [model-policy.md](./model-policy.md) — **閾値内は最適 · 超過で削減** · PM 単独選定 · 日次監視
+- **使用率ログ:** [usage-log.md](./usage-log.md)
