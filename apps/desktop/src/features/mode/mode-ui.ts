@@ -1,8 +1,7 @@
 import type { UrmsMode } from '@urms/shared';
-import { modePolicy } from '@urms/domain';
 
 export function canShowIntegrationsNav(mode: UrmsMode): boolean {
-  return modePolicy.canSyncIntegrations(mode);
+  return mode === 'develop';
 }
 
 export function getModeLabel(mode: UrmsMode): string {
