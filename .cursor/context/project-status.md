@@ -24,6 +24,7 @@
 | S11 ローカル認証方針 | ✅ bypass + 内部 API |
 | PostgreSQL（User 環境） | ✅ Docker Desktop + db:up（2026-07-07） |
 | Cursor モデル方針 | ✅ [model-policy.md](../context/model-policy.md) · **日次監視** · 次回月次見直し 2026-08-07 |
+| **Vision Track VT-1〜4** | ✅ **2026-07-08 クローズ** — ADR-024 M1–M4 · resource-catalog v1.4 |
 | **B-020 develop Mode** | ✅ **2026-07-08** — Web UI 切替 · Integrations ページ |
 
 ## リンク
