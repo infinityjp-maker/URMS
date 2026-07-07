@@ -38,6 +38,7 @@ Desktop.ini
 e2e/.e2e-state.json
 playwright-report/
 test-results/
+tmp-desktop-check*.png
 
 # Prisma generated (if custom output path is used later)
 **/node_modules/.prisma/

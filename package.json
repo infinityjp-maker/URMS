@@ -35,6 +35,7 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/plugin-ollama test && pnpm --filter @urms/plugin-resource-types test && pnpm --filter @urms/db test && pnpm --filter @urms/api test && pnpm --filter @urms/web test && pnpm --filter @urms/desktop test",
+    "test:vision": "pnpm --filter @urms/domain test && pnpm --filter @urms/api test -- src/routes/routes.test.ts && pnpm --filter @urms/desktop test",
     "test:coverage": "pnpm --filter @urms/domain test:coverage && pnpm --filter @urms/api test:coverage",
     "test:integration": "pnpm --filter @urms/db test:integration && pnpm --filter @urms/api test:integration",
     "test:e2e": "playwright test"

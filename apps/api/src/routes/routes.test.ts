@@ -605,6 +605,111 @@ describe('Context routes', () => {
   });
 });
 
+describe('VT-4 daily loop E2E', () => {
+  it('connects advance-task journal to perception status and meta', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-06T12:00:00+09:00'));
+
+    type JournalEntry = {
+      completed: string;
+      next?: string;
+      actorId: string;
+      at: Date;
+    };
+
+    const journalStore: JournalEntry[] = [];
+    const before = {
+      activeMode: 'operate' as const,
+      items: [
+        { key: 'project_status', summary: 'Vision 体験 進行中', ssotLinks: [] },
+        { key: 'current_task', summary: 'VT-1 task', ssotLinks: [] },
+        { key: 'next_task', summary: 'VT-2 task', ssotLinks: [] },
+      ],
+    };
+    const after = {
+      activeMode: 'operate' as const,
+      items: [
+        {
+          key: 'project_status',
+          summary: '直近ループ 7/6 10:00 · 次: VT-2 task',
+          ssotLinks: [],
+        },
+        { key: 'current_task', summary: 'VT-2 task', ssotLinks: [] },
+        { key: 'next_task', summary: '次を plan Mode で設定', ssotLinks: [] },
+      ],
+    };
+
+    let dashboard = before;
+    const services = createMockServices();
+    services.contextService.getDashboard = vi.fn(async () => dashboard);
+    services.contextService.advanceTask = vi.fn(async () => {
+      dashboard = after;
+      return after;
+    });
+    services.loopJournalService.recordAdvance = vi.fn(async (_before, _after, actorId) => {
+      const entry: JournalEntry = {
+        completed: 'VT-1 task',
+        next: 'VT-2 task',
+        actorId,
+        at: new Date(),
+      };
+      journalStore.push(entry);
+      return entry;
+    });
+    services.loopJournalService.readRecent = vi.fn(async () => journalStore);
+
+    const app = await createApp({ services, logger: false });
+
+    const beforePerception = await app.inject({
+      method: 'GET',
+      url: '/v1/perception',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+    expect(beforePerception.statusCode).toBe(200);
+    const beforeBody = beforePerception.json() as {
+      data: { statusLine: string };
+      meta: { sources: { loopJournalEntries: number; loopContinuity: string } };
+    };
+    expect(beforeBody.meta.sources.loopJournalEntries).toBe(0);
+    expect(beforeBody.meta.sources.loopContinuity).toBe('none');
+
+    const advanceResponse = await app.inject({
+      method: 'POST',
+      url: '/v1/context/advance-task',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+    expect(advanceResponse.statusCode).toBe(200);
+    expect(advanceResponse.json().meta.journalEntry?.completed).toBe('VT-1 task');
+
+    const afterPerception = await app.inject({
+      method: 'GET',
+      url: '/v1/perception',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+    expect(afterPerception.statusCode).toBe(200);
+    const afterBody = afterPerception.json() as {
+      data: { statusLine: string; aiMemo: string };
+      meta: {
+        sources: {
+          loopJournalEntries: number;
+          loopContinuity: string;
+          loopNarrative: string | null;
+        };
+      };
+    };
+
+    expect(afterBody.meta.sources.loopJournalEntries).toBe(1);
+    expect(afterBody.meta.sources.loopContinuity).toBe('looped-today');
+    expect(afterBody.meta.sources.loopNarrative).toContain('VT-1 task');
+    expect(afterBody.meta.sources.loopNarrative).toContain('→ 次: VT-2 task');
+    expect(afterBody.data.statusLine).toContain('直近ループ');
+    expect(afterBody.data.statusLine).toContain('VT-2 task');
+
+    vi.useRealTimers();
+    await app.close();
+  });
+});
+
 describe('Plugin routes', () => {
   it('lists resource type plugins', async () => {
     const app = await createApp({ services: createMockServices(), logger: false });

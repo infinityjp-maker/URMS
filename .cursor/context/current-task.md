@@ -19,9 +19,20 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | VT-4 日次ループ | 🔄 進行（journal 追記確認 · **advance 成功メッセージ** · 接続カード） |
 | VT-3 知覚膜 | 🔄 進行（weatherCoords · loopNarrative · **未取得は — 表示**） |
 
+## Vision Track 完了定義（DoD · PM）
+
+| Track | ~完了条件（残タスク） |
+|-------|----------------------|
+| VT-1 | schedule · location → 窓信号 · `ssot:sync` — **維持のみ** |
+| VT-2 | 合成 narrative 全信号（地点 · 関係 · 予定 · GPS）· **E2E テストで退行防止** |
+| VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **時間帯ガイド未作成** |
+| VT-4 | advance → journal → perception — **API E2E 追加 · 窓手動確認** |
+
 ## 直近の変更
 
-- VT-4 — statusLine が journal 連続性を優先 · aiMemo/summary から重複 narrative を省略
+- VT-4 — API E2E（advance-task → journal → perception status/meta）
+- `test:vision` — domain + api routes + desktop 限定テスト
+- PM — progress-report · model-policy 閾値運用 · コミットタイミング PM 任せ
 - VT-4 — advance-task が `meta.journalEntry` を返却 · 窓に journal 追記メッセージ
 - 接続カード — `journal N 件` / `journal —` を表示
 - VT-3 — 天気カードに座標 GPS/SSOT/— を表示（接続カードと同じ正直表示）
