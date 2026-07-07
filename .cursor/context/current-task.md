@@ -17,7 +17,7 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | VT-1 SSOT 重力 | ✅ ~完了 |
 | VT-2 Context 脳（合成 narrative） | 🔄 ~完了（contract テスト 5 件 ✅ · 維持） |
 | VT-3 知覚膜 | ✅ ~完了（Playwright smoke ✅ · 天気地点名 ✅） |
-| VT-4 日次ループ | 🔄 ~完了（API E2E ✅ · ADR-024 **M3 loop:sync** ✅ · **窓手動確認**） |
+| VT-4 日次ループ | ✅ ~完了（API E2E ✅ · ADR-024 M3 ✅ · **Playwright advance E2E** ✅） |
 
 ## Vision Track 完了定義（DoD · PM）
 
@@ -26,10 +26,11 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | VT-1 | schedule · location → 窓信号 · `ssot:sync` — **維持のみ** |
 | VT-2 | 合成 narrative 全信号 · **contract テスト 5 件** ✅ — 維持 |
 | VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **§6 時間帯表** ✅ · **Playwright smoke 1420** ✅ |
-| VT-4 | advance → journal → perception — **API E2E ✅** · **ADR-024 M3 loop:sync** · 窓手動確認 |
+| VT-4 | advance → journal → perception — **API E2E ✅** · **Playwright advance E2E ✅** |
 
 ## 直近の変更
 
+- A4 — **Playwright VT-4 E2E**（1420 · advance → journal 追記メッセージ · statusLine / 接続カード更新）
 - A4 — **ADR-024 M3**（`pnpm loop:sync` · `POST /v1/loop/sync` · `ssot:sync` に loop 追加）
 - A4 — **ADR-024 M2**（`readRecent()` Resource 優先 + file マージ · `LoopJournalReader` 抽象）
 - A4 — **ADR-024 M1**（advance 時 Markdown + `loop-entry` Resource デュアルライト）

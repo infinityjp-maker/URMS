@@ -11,7 +11,47 @@ test.beforeEach(() => {
 });
 
 async function waitForLifeStateReady(page: import('@playwright/test').Page): Promise<void> {
-  await expect(page.getByText('接続確認中…')).toBeHidden({ timeout: 20_000 });
+  const outlook = page.getByRole('region', { name: '展望' });
+  await expect(outlook.getByText('接続確認中…')).toBeHidden({ timeout: 20_000 });
+}
+
+/** タスクパネル表示 — day(10–17 JST) */
+async function installTaskPanelClock(page: import('@playwright/test').Page): Promise<void> {
+  await page.clock.install({ time: new Date('2026-07-06T03:00:00.000Z') });
+}
+
+async function advanceFrozenClock(page: import('@playwright/test').Page, ms = 5000): Promise<void> {
+  await page.clock.runFor(ms);
+}
+
+async function ensureAdvanceableContext(page: import('@playwright/test').Page): Promise<void> {
+  const response = await page.request.put('http://127.0.0.1:3000/v1/context', {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-URMS-Mode': 'plan',
+    },
+    data: {
+      items: [
+        { key: 'current_task', summary: 'E2E current task', ssotLinks: [] },
+        { key: 'next_task', summary: 'E2E next task', ssotLinks: [] },
+      ],
+    },
+  });
+
+  expect(response.ok()).toBeTruthy();
+}
+
+function parseJournalCount(sourceLine: string | null): number | null {
+  if (!sourceLine) {
+    return null;
+  }
+
+  const match = sourceLine.match(/journal (\d+) 件/);
+  if (match) {
+    return Number(match[1]);
+  }
+
+  return sourceLine.includes('journal —') ? 0 : null;
 }
 
 test.describe('VT-3/VT-4 desktop perception smoke (1420)', () => {
@@ -62,11 +102,11 @@ test.describe('VT-3/VT-4 desktop perception smoke (1420)', () => {
   });
 
   test('タスクパネル — DB 起動済み時に「完了 → 次へ」が表示される', async ({ page }) => {
-    const hour = new Date().getHours();
-    const tasksPanelPhase = hour >= 10 && hour < 21;
-    test.skip(!tasksPanelPhase, 'タスクパネル非表示の時間帯（朝/夜）— advance smoke をスキップ');
+    await installTaskPanelClock(page);
+    await ensureAdvanceableContext(page);
 
     await page.goto('/');
+    await advanceFrozenClock(page, 8000);
     await waitForLifeStateReady(page);
 
     const connectionStatus = page
@@ -77,5 +117,51 @@ test.describe('VT-3/VT-4 desktop perception smoke (1420)', () => {
     test.skip(!dbReady, 'DB 未起動 — advance ボタン smoke をスキップ');
 
     await expect(page.getByRole('button', { name: '完了 → 次へ' })).toBeVisible();
+  });
+
+  test('VT-4 日次ループ — advance で journal 追記 · statusLine / 接続カード更新', async ({ page }) => {
+    await installTaskPanelClock(page);
+    await ensureAdvanceableContext(page);
+
+    await page.goto('/');
+    await advanceFrozenClock(page, 8000);
+    await waitForLifeStateReady(page);
+
+    const outlook = page.getByRole('region', { name: '展望' });
+    const connectionStatus = outlook.locator('.online-line').first();
+    const dbReady = (await connectionStatus.textContent())?.includes('SSOT から合成') ?? false;
+    test.skip(!dbReady, 'DB 未起動 — VT-4 E2E をスキップ');
+
+    const advanceButton = page.getByRole('button', { name: '完了 → 次へ' });
+    await expect(advanceButton).toBeVisible();
+
+    const statusBefore = (await page.locator('.status-line').textContent())?.trim() ?? '';
+    const sourceBefore = await outlook.locator('.hint-line').first().textContent();
+    const journalBefore = parseJournalCount(sourceBefore);
+
+    await advanceButton.click();
+    await page.waitForResponse(
+      (response) =>
+        response.url().includes('/v1/context/advance-task') && response.status() === 200,
+      { timeout: 15_000 },
+    );
+    await advanceFrozenClock(page, 1500);
+
+    await expect(page.locator('.task-action__success')).toContainText('journal.md に追記');
+    await advanceFrozenClock(page, 2000);
+    await expect(advanceButton).toBeEnabled({ timeout: 15_000 });
+
+    const statusAfter = (await page.locator('.status-line').textContent())?.trim() ?? '';
+    const sourceAfter = await outlook.locator('.hint-line').first().textContent();
+    const journalAfter = parseJournalCount(sourceAfter);
+
+    expect(statusAfter.length).toBeGreaterThan(0);
+    expect(statusAfter).not.toBe(statusBefore);
+
+    if (journalBefore !== null && journalAfter !== null) {
+      expect(journalAfter).toBeGreaterThanOrEqual(journalBefore + 1);
+    } else {
+      expect(sourceAfter).toMatch(/journal \d+ 件|今日ループ済/);
+    }
   });
 });

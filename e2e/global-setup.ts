@@ -4,6 +4,7 @@ import { writeFileSync } from 'node:fs';
 
 const rootDir = process.cwd();
 const stateFile = path.join(rootDir, 'e2e', '.e2e-state.json');
+const dbPackageRoot = path.join(rootDir, 'packages/db');
 
 async function waitForHealth(url: string, timeoutMs = 60_000): Promise<void> {
   const started = Date.now();
@@ -28,10 +29,11 @@ function tryMigrate(): boolean {
   process.env.DATABASE_URL ??= 'postgresql://urms:urms@localhost:5432/urms?schema=public';
   process.env.URMS_AUTH_BYPASS ??= 'true';
   process.env.URMS_FF_AI_ENABLED ??= 'false';
+  process.env.URMS_REPO_ROOT ??= rootDir;
 
   try {
-    execSync(process.platform === 'win32' ? 'corepack pnpm db:migrate' : 'pnpm db:migrate', {
-      cwd: rootDir,
+    execSync('corepack pnpm exec prisma migrate deploy', {
+      cwd: dbPackageRoot,
       stdio: 'pipe',
       env: process.env,
       shell: process.platform === 'win32',
@@ -50,8 +52,10 @@ export default async function globalSetup(): Promise<void> {
   }
 
   const apiProcess: ChildProcess = spawn(
-    process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-    ['--filter', '@urms/api', 'dev'],
+    process.platform === 'win32' ? 'corepack' : 'pnpm',
+    process.platform === 'win32'
+      ? ['pnpm', '--filter', '@urms/api', 'dev']
+      : ['--filter', '@urms/api', 'dev'],
     {
       cwd: rootDir,
       env: process.env,

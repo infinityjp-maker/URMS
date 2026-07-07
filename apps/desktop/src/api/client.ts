@@ -8,21 +8,27 @@ type ApiEnvelope<T> = {
   data?: T;
 };
 
-function apiHeaders(): HeadersInit {
-  return {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    'X-URMS-Mode': 'operate',
-  };
-}
-
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T | null> {
   try {
+    const method = init?.method?.toUpperCase() ?? 'GET';
+    const usesJsonBody = method === 'POST' || method === 'PUT' || method === 'PATCH';
+    const body = init?.body ?? (usesJsonBody ? '{}' : undefined);
+    const headers: Record<string, string> = {
+      Accept: 'application/json',
+      'X-URMS-Mode': 'operate',
+    };
+
+    if (body !== undefined) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_BASE}${path}`, {
       ...init,
+      method,
+      body,
       headers: {
-        ...apiHeaders(),
-        ...(init?.headers ?? {}),
+        ...headers,
+        ...(init?.headers as Record<string, string> | undefined),
       },
     });
     if (!response.ok) return null;
