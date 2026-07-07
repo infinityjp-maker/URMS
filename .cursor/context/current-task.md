@@ -6,41 +6,41 @@
 
 ## Task
 
-**S16 Desktop develop Mode 完了 → 次 Sprint 待ち**
+**S13 k6 CI · ADR-024 accepted 完了 → 次 Sprint 待ち**
 
-本番窓（1420）で Mode 切替 · develop 時 Integrations パネルを実装。次テーマは PM / User が backlog から選定。
+k6 スモーク CI と Desktop 白画面再発防止テストを追加。ADR-024 を accepted に更新。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| ADR-024 M1–M4 + relates_to | ✅ |
-| B-020 develop Mode（Web） | ✅ |
-| S13 再監査（2026-07-08） | ✅ |
-| dev オフライン修正 | ✅ |
-| **S16 Desktop develop Mode** | ✅ **2026-07-08** |
+| S16 Desktop develop Mode | ✅ |
+| 白画面修正（shared/domain barrel） | ✅ |
+| **k6 負荷テスト CI** | ✅ **2026-07-08** |
+| **ADR-024 accepted** | ✅ **2026-07-08** |
+| Desktop Playwright 5/5 | ✅ |
 
 ## 直近の変更
 
-- **Desktop develop Mode** — ModeProvider · ヘッダー切替 · DevelopPanel（cursor-local）
-- dev オフライン修正 — domain export · desktop proxy
+- k6 — `scripts/perf/k6-smoke.js` · CI `perf-k6` job · `pnpm perf:k6`
+- Desktop — `browser-imports.test.ts`（barrel import 禁止）
+- ADR-024 status → accepted
 
 ## 次 Sprint 候補（PM · 未承認）
 
 | 優先 | 候補 | 備考 |
 |------|------|------|
-| P1 | v1.0.0 GA タグ · ADR-024 accepted | PM 承認後 |
-| P2 | k6 負荷テスト CI | S13 残課題 |
+| P1 | v1.0.0 GA タグ | PM · User 承認後 |
 | P2 | Cursor 双方向同期 | S16 v1.x |
-| P2 | Phase 5 残バックログ | roadmap 参照 |
+| P2 | WCAG 改善 | S13 残課題 |
 
 ## User
 
-- develop Mode 表示: API `.env` に `URMS_FF_DEVELOP_ENABLED=true` · API 再起動
-- 本番窓: http://127.0.0.1:1420/ — ヘッダーで Mode 切替 · develop 時サイドに連携パネル
+- 本番窓: http://127.0.0.1:1420/
+- k6 ローカル: `pnpm perf:k6`（k6 CLI + API 起動要）
 
 ## 運用
 
 - **進捗報告 SSOT:** [progress-report.md](./progress-report.md)
-- **S16 正本:** [15-phase5-s16-external-integration.md](../../docs/implementation/15-phase5-s16-external-integration.md)
-- **モデル選定:** [model-policy.md](./model-policy.md)
+- **S13 正本:** [12-phase4-s13-security-audit.md](../../docs/implementation/12-phase4-s13-security-audit.md)
+- **ADR-024:** [ADR-024-loop-journal-resource.md](../../docs/project/decisions/ADR-024-loop-journal-resource.md)

@@ -15,6 +15,7 @@
     "setup:env": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/setup-env.ps1 -StartServers",
     "audit:security": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/security-audit.ps1",
     "perf:spot": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/perf-spot-check.ps1",
+    "perf:k6": "k6 run scripts/perf/k6-smoke.js",
     "dev:desktop": "pnpm --filter @urms/desktop dev",
     "dev:desktop:web": "pnpm --filter @urms/desktop dev:web",
     "dev:ui": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/start-ui.ps1",

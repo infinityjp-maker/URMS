@@ -29,6 +29,8 @@
 | **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
 | **dev オフライン修正** | ✅ **2026-07-08** — domain export 修正 · desktop proxy · start-ui に API 同梱 |
 | **S16 Desktop develop Mode** | ✅ **2026-07-08** — 1420 Mode 切替 · DevelopPanel |
+| **k6 smoke CI** | ✅ **2026-07-08** — GitHub Actions `perf-k6` |
+| **ADR-024** | ✅ **accepted** — loop-entry M1–M4 + relates_to |
 
 ## リンク
 

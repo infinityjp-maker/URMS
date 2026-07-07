@@ -2,7 +2,7 @@
 
 > **resource_type:** decision  
 > **resource_id:** decision:ADR-024  
-> **status:** draft — PM / Architect 承認待ち  
+> **status:** accepted — PM 承認 · M1–M4 + relates_to 完了（2026-07-08）  
 > **date:** 2026-07-07  
 > **author:** Architect（PM 依頼 · Vision Track A4）
 

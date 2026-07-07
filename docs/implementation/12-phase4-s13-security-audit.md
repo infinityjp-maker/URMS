@@ -37,11 +37,14 @@ pnpm audit:security
 
 # 性能スポット（API 起動時）
 pnpm perf:spot
+
+# k6 スモーク（k6 CLI 要 · API 起動時）
+pnpm perf:k6
 ```
 
 ## 残課題（v0.3.0 以降）
 
-- k6 負荷テスト CI
+- ~~k6 負荷テスト CI~~ — **✅ 2026-07-08**（`perf-k6` job · `pnpm perf:k6`）
 - WCAG 改善（暫定 Web UI）
 - Secret Store 本番注入（B-010 後続）
 - `undici` 脆弱性 — **testcontainers 経由 devDependency のみ**（本番ランタイム外 · 2026-07-08 確認）
@@ -69,7 +72,7 @@ pnpm --filter @urms/domain test
 | 日付 | 変更 |
 |------|------|
 | 2026-07-05 | 初版 — S13 スコープ |
-| 2026-07-08 | 再監査 — Vision Track 後 delta · loop モードゲート · undici 所見 |
+| 2026-07-08 | k6 smoke CI — `scripts/perf/k6-smoke.js` · GitHub Actions `perf-k6` |
 
 ## 参照
 

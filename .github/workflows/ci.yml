@@ -70,3 +70,61 @@ jobs:
 
       - name: Verify Docker Compose build
         run: docker compose build
+
+  perf-k6:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: urms
+          POSTGRES_PASSWORD: urms
+          POSTGRES_DB: urms
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U urms -d urms"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://urms:urms@localhost:5432/urms?schema=public
+      URMS_AUTH_BYPASS: 'true'
+      URMS_FF_AI_ENABLED: 'false'
+      URMS_SECURITY_PLUGINS: 'false'
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Migrate database
+        run: pnpm db:migrate
+
+      - name: Build API dependencies
+        run: pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/db build && pnpm --filter @urms/api build
+
+      - name: Start API
+        run: pnpm --filter @urms/api start &
+
+      - name: Wait for API
+        run: bash scripts/perf/wait-for-api.sh
+
+      - name: k6 smoke load test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: scripts/perf/k6-smoke.js
+          flags: --quiet
