@@ -13,4 +13,14 @@ export async function registerLoopRoutes(app: FastifyInstance, services: AppServ
     const report = await services.loopSyncService.sync(request.actorId, request.urmsMode);
     return { data: report };
   });
+
+  app.post('/v1/loop/export', async (request) => {
+    assertModeAllowed(
+      modePolicy.canSyncIntegrations(request.urmsMode) || modePolicy.canWriteResource(request.urmsMode),
+      'Loop export requires develop or operate mode',
+    );
+
+    const report = await services.loopExportService.export(request.actorId, request.urmsMode);
+    return { data: report };
+  });
 }

@@ -70,7 +70,7 @@ export async function readLoopJournalFromResources(
   resourceRepository: ResourceRepository,
   limit: number,
 ): Promise<LoopJournalEntry[]> {
-  const fetchLimit = limit <= 0 ? 100 : Math.max(limit * 2, 50);
+  const fetchLimit = limit <= 0 ? 500 : Math.max(limit * 2, 50);
   const result = await resourceRepository.list({
     resourceType: LOOP_ENTRY_RESOURCE_TYPE,
     status: 'active',
@@ -88,6 +88,16 @@ export async function readLoopJournalFromResources(
   }
 
   return entries.slice(-limit);
+}
+
+export function createResourceOnlyLoopJournalReader(
+  resourceRepository: ResourceRepository,
+): LoopJournalReader {
+  return {
+    async readRecent(limit: number): Promise<LoopJournalEntry[]> {
+      return readLoopJournalFromResources(resourceRepository, limit);
+    },
+  };
 }
 
 export function createCompositeLoopJournalReader(

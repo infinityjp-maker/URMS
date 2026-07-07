@@ -15,8 +15,10 @@ import {
   createScheduleSyncService,
   createLocationSyncService,
   createLoopSyncService,
+  createLoopExportService,
   createLoopJournalService,
-  persistLoopEntryResource,
+  persistLoopEntryWithRelation,
+  resolveLoopJournalSsotMode,
   resolveAiTeamRepoRoot,
   resolveScheduleRepoRoot,
   resolveLocationRepoRoot,
@@ -96,12 +98,24 @@ export function createAppServices(databaseUrl?: string): AppServices {
     repoRoot: resolveLoopJournalRepoRoot(),
     resourceRepository,
   });
+  const loopExportService = createLoopExportService({
+    repoRoot: resolveLoopJournalRepoRoot(),
+    resourceRepository,
+  });
+  const loopJournalSsotMode = resolveLoopJournalSsotMode();
   const loopJournalService = createLoopJournalService({
     repoRoot: resolveLoopJournalRepoRoot(),
     resourceRepository,
+    ssotMode: loopJournalSsotMode,
     persistLoopEntry: async (entry, actorId, mode) => {
-      await persistLoopEntryResource(resourceService, entry, actorId, mode);
+      await persistLoopEntryWithRelation(resourceService, relationService, entry, actorId, mode);
     },
+    exportJournal:
+      loopJournalSsotMode === 'resource-export'
+        ? async () => {
+            await loopExportService.export('loop-journal-export', 'operate');
+          }
+        : undefined,
   });
 
   const integrationRegistry = new IntegrationRegistry();
@@ -126,6 +140,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
     scheduleSyncService,
     locationSyncService,
     loopSyncService,
+    loopExportService,
     loopJournalService,
     integrationRegistry,
     checkReadiness: async () => ({

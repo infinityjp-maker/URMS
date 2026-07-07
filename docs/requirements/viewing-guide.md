@@ -150,7 +150,7 @@ npx pnpm@9.15.4 docker:down
 2. 接続カードに `Context API` · `journal N 件` · ループ narrative · 天気カードに **座標 GPS/SSOT** が出ることを確認
 3. タスクカードの **「完了 → 次へ」** を押す
 4. 成功メッセージに `journal.md に追記` と表示されること
-5. リポジトリの `.cursor/resources/loop/journal.md` に 1 行追記されていること
+5. リポジトリの `.cursor/resources/loop/journal.md` に export されていること（M4: DB 正本 · advance 後に自動 export）
 6. 接続カードの `今日ループ済` · narrative が更新されること
 
 > DB 未起動時は Context ローカル fallback になり、「完了 → 次へ」は表示されません。
@@ -217,7 +217,8 @@ npx pnpm@9.15.4 test:vision
 cd D:\GitHub\URMS
 npx pnpm@9.15.4 ssot:sync    # schedule + location + loop 一括
 # 個別:
-npx pnpm@9.15.4 loop:sync     # journal.md → loop-entry Resource
+npx pnpm@9.15.4 loop:sync     # 移行: journal.md → loop-entry Resource（初回のみ）
+npx pnpm@9.15.4 loop:export   # DB 正本 → journal.md export（M4）
 npx pnpm@9.15.4 schedule:sync
 npx pnpm@9.15.4 location:sync
 ```

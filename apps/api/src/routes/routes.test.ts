@@ -177,6 +177,12 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         items: [],
       })),
     },
+    loopExportService: {
+      export: vi.fn(async () => ({
+        entryCount: 2,
+        sourcePath: '.cursor/resources/loop/journal.md',
+      })),
+    },
     loopJournalService: {
       append: vi.fn(async () => undefined),
       recordAdvance: vi.fn(async () => null),
@@ -556,6 +562,23 @@ describe('Loop sync routes', () => {
     expect(response.statusCode).toBe(200);
     expect(services.loopSyncService.sync).toHaveBeenCalledWith(expect.any(String), 'operate');
     expect(response.json().data.created).toBe(2);
+
+    await app.close();
+  });
+
+  it('exports journal markdown via POST /v1/loop/export', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/loop/export',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(services.loopExportService.export).toHaveBeenCalledWith(expect.any(String), 'operate');
+    expect(response.json().data.entryCount).toBe(2);
 
     await app.close();
   });

@@ -25,6 +25,7 @@
     "schedule:sync": "pnpm --filter @urms/db schedule:sync",
     "location:sync": "pnpm --filter @urms/db location:sync",
     "loop:sync": "pnpm --filter @urms/db loop:sync",
+    "loop:export": "pnpm --filter @urms/db loop:export",
     "ssot:sync": "pnpm --filter @urms/db ssot:sync",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d --build",

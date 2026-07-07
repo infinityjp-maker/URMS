@@ -30,7 +30,7 @@ export function toLoopEntryResourceInput(entry: LoopJournalEntry): CreateResourc
       actorId: entry.actorId,
       occurredAt: entry.at.toISOString(),
       sourcePath: LOOP_JOURNAL_PATH,
-      ssot: 'loop-journal-dual-write',
+      ssot: 'loop-resource-ssot',
     },
   };
 }

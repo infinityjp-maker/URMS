@@ -76,7 +76,7 @@ ADR-016 / [18-ai-provider-architecture.md](../architecture/18-ai-provider-archit
 |---------------|------|-----------|----------|-----|
 | `schedule` | 予定イベント | `.cursor/resources/schedule/*.md` | `pnpm schedule:sync` | `POST /v1/schedule/sync` |
 | `location` | 地点（天気 SSOT） | `.cursor/resources/location/*.md` | `pnpm location:sync` | `POST /v1/location/sync` |
-| `loop-entry` | 日次ループ完了 1 件 | `.cursor/resources/loop/journal.md` | `pnpm loop:sync` | `POST /v1/loop/sync` |
+| `loop-entry` | 日次ループ完了 1 件 | **DB 正本** · `.cursor/resources/loop/journal.md`（export） | `pnpm loop:export` | `POST /v1/loop/export` |
 
 一括: **`pnpm ssot:sync`**（schedule + location + loop）。
 
@@ -129,6 +129,7 @@ ADR-016 / [18-ai-provider-architecture.md](../architecture/18-ai-provider-archit
 | `provided_by` | ai-model → ai-provider |
 | `generated_from` | generated-image → 親 Resource |
 | `member_of` | role → team |
+| `relates_to` | loop-entry → context:current-task（日次ループ完了） |
 
 ---
 
@@ -138,4 +139,4 @@ ADR-016 / [18-ai-provider-architecture.md](../architecture/18-ai-provider-archit
 |------|------|
 | 2026-07-05 | v1.0 初版 |
 | 2026-07-05 | v1.1 — ai-provider, ai-model 追加（ADR-016） |
-| 2026-07-08 | v1.3 — schedule · location · loop-entry（SSOT Perception · ADR-024 M3） |
+| 2026-07-08 | v1.4 — loop-entry M4（DB 正本 · journal export · ADR-024 完了） |

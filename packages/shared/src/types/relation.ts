@@ -8,6 +8,7 @@ export const RESOURCE_RELATION_TYPES = [
   'provided_by',
   'generated_from',
   'member_of',
+  'relates_to',
 ] as const;
 
 export type ResourceRelationType = (typeof RESOURCE_RELATION_TYPES)[number];

@@ -21,6 +21,7 @@
     "schedule:sync": "tsx scripts/sync-schedule.ts",
     "location:sync": "tsx scripts/sync-location.ts",
     "loop:sync": "tsx scripts/sync-loop.ts",
+    "loop:export": "tsx scripts/export-loop.ts",
     "ssot:sync": "tsx scripts/sync-ssot.ts",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts"

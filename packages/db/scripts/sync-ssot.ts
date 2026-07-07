@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
   LocationSyncService,
   LoopSyncService,
+  LoopExportService,
   ScheduleSyncService,
   resolveLocationRepoRoot,
   resolveLoopJournalRepoRoot,
@@ -36,6 +37,11 @@ async function main(): Promise<void> {
     resourceRepository,
   }).sync('ssot-sync', 'operate');
 
+  const loopExportReport = await new LoopExportService({
+    repoRoot: resolveLoopJournalRepoRoot({ URMS_REPO_ROOT: repoRoot }),
+    resourceRepository,
+  }).export('ssot-sync', 'operate');
+
   console.log(
     JSON.stringify(
       {
@@ -43,6 +49,7 @@ async function main(): Promise<void> {
         schedule: scheduleReport,
         location: locationReport,
         loop: loopReport,
+        loopExport: loopExportReport,
       },
       null,
       2,

@@ -3,10 +3,14 @@ import path from 'node:path';
 
 import type { ContextDashboard, UrmsMode } from '@urms/shared';
 
+import { formatLoopJournalLine } from './format-loop-journal-markdown.js';
 import {
   createCompositeLoopJournalReader,
+  createResourceOnlyLoopJournalReader,
   type LoopJournalReader,
 } from './loop-journal-repository.js';
+import type { LoopJournalSsotMode } from './loop-journal-ssot-mode.js';
+import { resolveLoopJournalSsotMode } from './loop-journal-ssot-mode.js';
 import type { ResourceRepository } from '../repository/resource-repository.js';
 
 export const LOOP_JOURNAL_PATH = '.cursor/resources/loop/journal.md';
@@ -27,7 +31,11 @@ export type LoopEntryPersister = (
 export type LoopJournalServiceOptions = {
   repoRoot: string;
   persistLoopEntry?: LoopEntryPersister;
-  /** ADR-024 M2 — 未指定時は file のみ */
+  /** ADR-024 M4 — 未指定時は env URMS_LOOP_SSOT（既定 resource-export） */
+  ssotMode?: LoopJournalSsotMode;
+  /** ADR-024 M4 — resource-export 時 advance 後に journal.md を再生成 */
+  exportJournal?: () => Promise<void>;
+  /** ADR-024 M2 — 未指定時は ssotMode に応じて reader を構築 */
   journalReader?: LoopJournalReader;
   resourceRepository?: ResourceRepository;
 };
@@ -61,32 +69,32 @@ export function extractLoopJournalEntry(
 }
 
 function formatJournalLine(entry: LoopJournalEntry): string {
-  const stamp = entry.at.toLocaleString('ja-JP', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const nextPart = entry.next ? ` → 次: ${entry.next}` : '';
-  return `- ${stamp} · 完了: ${entry.completed}${nextPart} (${entry.actorId})\n`;
+  return `${formatLoopJournalLine(entry)}\n`;
 }
 
 export class LoopJournalService {
   private readonly journalPath: string;
   private readonly persistLoopEntry?: LoopEntryPersister;
   private readonly journalReader: LoopJournalReader;
+  private readonly ssotMode: LoopJournalSsotMode;
+  private readonly exportJournal?: () => Promise<void>;
 
   constructor(options: LoopJournalServiceOptions) {
     this.journalPath = path.join(options.repoRoot, LOOP_JOURNAL_PATH);
     this.persistLoopEntry = options.persistLoopEntry;
-    this.journalReader =
-      options.journalReader ??
-      createCompositeLoopJournalReader({
+    this.ssotMode = options.ssotMode ?? resolveLoopJournalSsotMode();
+    this.exportJournal = options.exportJournal;
+
+    if (options.journalReader) {
+      this.journalReader = options.journalReader;
+    } else if (this.ssotMode === 'resource-export' && options.resourceRepository) {
+      this.journalReader = createResourceOnlyLoopJournalReader(options.resourceRepository);
+    } else {
+      this.journalReader = createCompositeLoopJournalReader({
         repoRoot: options.repoRoot,
         resourceRepository: options.resourceRepository,
       });
+    }
   }
 
   async append(entry: LoopJournalEntry): Promise<void> {
@@ -106,9 +114,16 @@ export class LoopJournalService {
       return null;
     }
 
-    await this.append(entry);
+    if (this.ssotMode === 'dual-write') {
+      await this.append(entry);
+    }
+
     if (this.persistLoopEntry) {
       await this.persistLoopEntry(entry, actorId, mode);
+    }
+
+    if (this.ssotMode === 'resource-export' && this.exportJournal) {
+      await this.exportJournal();
     }
 
     return entry;

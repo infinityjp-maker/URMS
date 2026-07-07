@@ -83,4 +83,35 @@ describe('extractLoopJournalEntry', () => {
     expect(persisted[0]?.mode).toBe('operate');
     expect(persisted[0]?.entry.next).toContain('VT-4');
   });
+
+  it('resource-export mode skips file append and runs exportJournal', async () => {
+    const repoRoot = await mkdtemp(path.join(os.tmpdir(), 'urms-loop-export-mode-'));
+    const journalPath = path.join(repoRoot, '.cursor/resources/loop/journal.md');
+    await mkdir(path.dirname(journalPath), { recursive: true });
+    await writeFile(journalPath, '- stale line\n', 'utf8');
+
+    const before = buildDefaultContextDashboard('operate');
+    const after = buildDefaultContextDashboard('operate');
+    after.items = after.items.map((item) =>
+      item.key === 'current_task'
+        ? { ...item, summary: 'VT-4 — 日次ループ narrative · journal 連続性' }
+        : item,
+    );
+
+    let exportCalls = 0;
+    const service = createLoopJournalService({
+      repoRoot,
+      ssotMode: 'resource-export',
+      persistLoopEntry: async () => undefined,
+      exportJournal: async () => {
+        exportCalls += 1;
+      },
+    });
+
+    await service.recordAdvance(before, after, 'window-user', 'operate');
+
+    const raw = await readFile(journalPath, 'utf8');
+    expect(raw).toBe('- stale line\n');
+    expect(exportCalls).toBe(1);
+  });
 });

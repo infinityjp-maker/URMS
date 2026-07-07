@@ -1,4 +1,4 @@
-import type { ResourceService, AuditLogRepository, ContextService, AiManager, PluginRegistry, LocalAuthService, WeatherService, ScheduleService, RelationService, AiTeamSyncService, ScheduleSyncService, LocationSyncService, LoopSyncService, LoopJournalService, IntegrationRegistry } from '@urms/domain';
+import type { ResourceService, AuditLogRepository, ContextService, AiManager, PluginRegistry, LocalAuthService, WeatherService, ScheduleService, RelationService, AiTeamSyncService, ScheduleSyncService, LocationSyncService, LoopSyncService, LoopExportService, LoopJournalService, IntegrationRegistry } from '@urms/domain';
 
 export type ReadinessCheckResult = {
   database: 'ok' | 'unavailable';
@@ -18,6 +18,7 @@ export interface AppServices {
   scheduleSyncService: ScheduleSyncService;
   locationSyncService: LocationSyncService;
   loopSyncService: LoopSyncService;
+  loopExportService: LoopExportService;
   loopJournalService: LoopJournalService;
   integrationRegistry: IntegrationRegistry;
   checkReadiness: () => Promise<ReadinessCheckResult>;

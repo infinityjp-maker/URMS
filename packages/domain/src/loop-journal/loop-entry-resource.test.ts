@@ -83,7 +83,7 @@ describe('loop-entry resource', () => {
         actorId: 'window-user',
         occurredAt: '2026-07-06T01:00:00.000Z',
         sourcePath: '.cursor/resources/loop/journal.md',
-        ssot: 'loop-journal-dual-write',
+        ssot: 'loop-resource-ssot',
       },
     });
   });

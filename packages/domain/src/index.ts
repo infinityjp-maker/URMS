@@ -61,6 +61,11 @@ export {
   LoopSyncService,
 } from './loop-sync/loop-sync-service.js';
 export type { LoopSyncReport, LoopSyncItem } from './loop-sync/loop-sync-service.js';
+export {
+  createLoopExportService,
+  LoopExportService,
+} from './loop-export/loop-export-service.js';
+export type { LoopExportReport } from './loop-export/loop-export-service.js';
 export { parseLocationMarkdown } from './location-sync/parse-location-markdown.js';
 export { LOCATION_SOURCE_DIR } from './location-sync/location-sources.js';
 export {
@@ -96,6 +101,13 @@ export {
 export type { LoopEntryPersister, LoopJournalServiceOptions } from './loop-journal/loop-journal-service.js';
 export {
   persistLoopEntryResource,
+  persistLoopEntryWithRelation,
+  relateLoopEntryToCurrentTask,
+  ensureContextCurrentTaskResource,
+  buildLoopEntryRelationRef,
+  CONTEXT_RESOURCE_TYPE,
+  CONTEXT_CURRENT_TASK_RESOURCE_ID,
+  LOOP_CONTEXT_RELATION_TYPE,
   buildLoopEntryResourceId,
   buildLoopEntryDisplayName,
   toLoopEntryResourceInput,
@@ -104,12 +116,22 @@ export {
 } from './loop-journal/loop-entry-resource.js';
 export {
   createCompositeLoopJournalReader,
+  createResourceOnlyLoopJournalReader,
   mergeLoopJournalEntries,
   readLoopJournalFromFile,
   readLoopJournalFromResources,
   loopJournalEntryKey,
 } from './loop-journal/loop-journal-repository.js';
 export type { LoopJournalReader, LoopJournalReaderOptions } from './loop-journal/loop-journal-repository.js';
+export {
+  formatLoopJournalLine,
+  formatLoopJournalMarkdown,
+  LOOP_JOURNAL_EXPORT_HEADER,
+} from './loop-journal/format-loop-journal-markdown.js';
+export {
+  resolveLoopJournalSsotMode,
+  type LoopJournalSsotMode,
+} from './loop-journal/loop-journal-ssot-mode.js';
 export { resolveRelationGraphSignal, formatRelationGraphNote, countRelationsByType } from './perception/graph/relation-graph-signal.js';
 export type { RelationGraphSignal, RelationTypeCounts } from './perception/graph/relation-graph-signal.js';
 export { parseLoopJournalMarkdown } from './loop-journal/parse-loop-journal.js';
