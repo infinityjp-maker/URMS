@@ -51,6 +51,25 @@ describe('synthesizeSummaryNote', () => {
 
     expect(note).toContain('地点 自宅');
   });
+
+  it('omits loop continuity from summary when flagged', () => {
+    const journal = [
+      {
+        completed: 'VT-1 task',
+        next: 'VT-2 task',
+        actorId: 'window-user',
+        at: new Date('2026-07-05T17:30:00+09:00'),
+      },
+    ];
+    const note = synthesizeSummaryNote(buildDefaultContextDashboard('operate'), 'day', {
+      loopJournal: journal,
+      now: new Date('2026-07-06T09:00:00+09:00'),
+      omitLoopContinuity: true,
+    });
+
+    expect(note).not.toContain('新しい一日');
+    expect(note).toContain('昼 · 予定 0');
+  });
 });
 
 describe('synthesizeAiMemo', () => {

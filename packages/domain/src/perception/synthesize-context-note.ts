@@ -13,6 +13,8 @@ type SynthesisOverrides = {
   graphSignal?: RelationGraphSignal;
   locationLabel?: string | null;
   now?: Date;
+  /** statusLine に loop narrative を出しているとき summary から省略 */
+  omitLoopContinuity?: boolean;
 };
 
 const PHASE_LABELS: Record<DayPhase, string> = {
@@ -45,7 +47,7 @@ export function synthesizeSummaryNote(
     overrides?.graphSignal ? formatRelationGraphNote(overrides.graphSignal) : null,
     overrides?.locationLabel ? `地点 ${overrides.locationLabel}` : null,
     hasWeather ? `天気 ${weather?.tempC}°C` : '天気未取得',
-    overrides?.loopJournal?.length
+    overrides?.loopJournal?.length && !overrides.omitLoopContinuity
       ? synthesizeLoopContinuity(overrides.loopJournal, overrides.now)
       : null,
   ].filter(Boolean);

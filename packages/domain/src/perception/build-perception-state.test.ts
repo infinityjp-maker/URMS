@@ -81,5 +81,8 @@ describe('buildPerceptionState', () => {
 
     expect(state.statusLine).toContain('新しい一日');
     expect(state.statusLine).toContain('→ 次: VT-2 task');
+    expect(state.aiMemo).not.toContain('新しい一日');
+    expect(state.summary.note).not.toContain('新しい一日');
+    expect(state.aiMemo).toContain('VT-4');
   });
 });

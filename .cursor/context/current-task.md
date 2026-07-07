@@ -21,7 +21,7 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 
 ## 直近の変更
 
-- VT-4 — statusLine が journal 連続性（新しい一日 · 今日ループ済）を優先表示
+- VT-4 — statusLine が journal 連続性を優先 · aiMemo/summary から重複 narrative を省略
 - VT-4 — advance-task が `meta.journalEntry` を返却 · 窓に journal 追記メッセージ
 - 接続カード — `journal N 件` / `journal —` を表示
 - VT-3 — 天気カードに座標 GPS/SSOT/— を表示（接続カードと同じ正直表示）

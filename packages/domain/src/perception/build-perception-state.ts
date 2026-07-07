@@ -6,6 +6,7 @@ import { resolveDayPhase } from './day-phase.js';
 import { EMPTY_WEATHER, hasWeatherData } from './fixtures.js';
 import type { RelationGraphSignal } from './graph/relation-graph-signal.js';
 import { resolvePerceptionStatusLine } from './resolve-perception-status-line.js';
+import { synthesizeLoopContinuity } from './synthesize-loop-continuity.js';
 import {
   synthesizeAiMemo,
   synthesizeConditionScore,
@@ -39,9 +40,15 @@ export function buildPerceptionState(
   const weather = overrides?.weather ?? EMPTY_WEATHER;
   const hasWeather = hasWeatherData(weather);
 
+  const loopJournal = overrides?.loopJournal;
+  const statusLine = resolvePerceptionStatusLine(dashboard, phase, loopJournal, now);
+  const loopNarrative =
+    loopJournal && loopJournal.length > 0 ? synthesizeLoopContinuity(loopJournal, now) : null;
+  const loopShownInStatus = loopNarrative != null && loopNarrative === statusLine;
+
   return {
     phase,
-    statusLine: resolvePerceptionStatusLine(dashboard, phase, overrides?.loopJournal, now),
+    statusLine,
     weather,
     nextEvents,
     summary: {
@@ -52,9 +59,19 @@ export function buildPerceptionState(
       travelMinutes: 0,
       weight: dashboard.activeMode === 'operate' ? '中' : '低〜中',
       focus: dashboard.activeMode === 'audit' ? '監査' : '安定',
-      note: synthesizeSummaryNote(dashboard, phase, { ...overrides, now }),
+      note: synthesizeSummaryNote(dashboard, phase, {
+        ...overrides,
+        now,
+        omitLoopContinuity: loopShownInStatus,
+      }),
     },
     tasks,
-    aiMemo: synthesizeAiMemo(currentTask, nextTask, nextEvents, overrides?.loopJournal, now),
+    aiMemo: synthesizeAiMemo(
+      currentTask,
+      nextTask,
+      nextEvents,
+      loopShownInStatus ? undefined : loopJournal,
+      now,
+    ),
   };
 }
