@@ -27,6 +27,7 @@
 | **Vision Track VT-1〜4** | ✅ **2026-07-08 クローズ** — ADR-024 M1–M4 · resource-catalog v1.4 |
 | **B-020 develop Mode** | ✅ **2026-07-08** — Web UI 切替 · Integrations ページ |
 | **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
+| **dev オフライン修正** | ✅ **2026-07-08** — domain export 修正 · desktop proxy · start-ui に API 同梱 |
 
 ## リンク
 
