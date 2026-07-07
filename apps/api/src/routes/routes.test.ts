@@ -190,7 +190,12 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
     },
     integrationRegistry: {
       list: vi.fn(() => [
-        { integrationId: 'cursor-local', name: 'Cursor Local Workspace', syncSupported: true },
+        {
+          integrationId: 'cursor-local',
+          name: 'Cursor Local Workspace',
+          syncSupported: true,
+          exportSupported: true,
+        },
       ]),
       require: vi.fn(),
       healthCheck: vi.fn(async () => ({
@@ -203,6 +208,12 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         updated: 40,
         skipped: 1,
         relationsCreated: 7,
+        items: [],
+      })),
+      export: vi.fn(async () => ({
+        updated: 2,
+        unchanged: 10,
+        skipped: 1,
         items: [],
       })),
     },
@@ -1054,6 +1065,25 @@ describe('Integration routes (S16)', () => {
 
     expect(response.statusCode).toBe(403);
     expect(response.json().error.code).toBe('MODE_NOT_ALLOWED');
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
+    await app.close();
+  });
+
+  it('exports integration in develop mode', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    process.env.URMS_FF_DEVELOP_ENABLED = 'true';
+
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/integrations/cursor-local/export',
+      headers: { 'x-urms-mode': 'develop' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data.updated).toBe(2);
+    expect(services.integrationRegistry.export).toHaveBeenCalledWith('cursor-local', expect.any(String));
     process.env.URMS_FF_DEVELOP_ENABLED = previous;
     await app.close();
   });

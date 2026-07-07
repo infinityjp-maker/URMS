@@ -24,4 +24,15 @@ export async function registerIntegrationRoutes(app: FastifyInstance, services: 
     const result = await services.integrationRegistry.sync(params.id, request.actorId);
     return { data: result };
   });
+
+  app.post('/v1/integrations/:id/export', async (request) => {
+    assertModeAllowed(
+      modePolicy.canSyncIntegrations(request.urmsMode),
+      'Integration export requires develop mode',
+    );
+
+    const params = request.params as { id: string };
+    const result = await services.integrationRegistry.export(params.id, request.actorId);
+    return { data: result };
+  });
 }

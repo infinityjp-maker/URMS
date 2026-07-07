@@ -5,6 +5,7 @@ import {
   getIntegrationHealth,
   getIntegrations,
   syncIntegration,
+  exportIntegration,
   type IntegrationHealth,
   type IntegrationSummary,
 } from '../../lib/api-client.js';
@@ -14,6 +15,7 @@ import { canShowIntegrationsNav } from '../mode/mode-ui.js';
 type IntegrationRow = IntegrationSummary & {
   health?: IntegrationHealth;
   syncing?: boolean;
+  exporting?: boolean;
   message?: string;
 };
 
@@ -98,6 +100,32 @@ export function IntegrationsPage() {
     }
   }
 
+  async function handleExport(integrationId: string): Promise<void> {
+    setItems((current) =>
+      current.map((item) =>
+        item.integrationId === integrationId ? { ...item, exporting: true, message: undefined } : item,
+      ),
+    );
+
+    try {
+      await exportIntegration(mode, integrationId);
+      setItems((current) =>
+        current.map((item) =>
+          item.integrationId === integrationId
+            ? { ...item, exporting: false, message: '書戻し完了' }
+            : item,
+        ),
+      );
+    } catch (cause) {
+      const message = cause instanceof ApiClientError ? cause.message : '書戻しに失敗しました';
+      setItems((current) =>
+        current.map((item) =>
+          item.integrationId === integrationId ? { ...item, exporting: false, message } : item,
+        ),
+      );
+    }
+  }
+
   return (
     <section className="page-card">
       <h2>外部連携（develop）</h2>
@@ -116,6 +144,7 @@ export function IntegrationsPage() {
               <th>ID</th>
               <th>名称</th>
               <th>sync</th>
+              <th>export</th>
               <th>状態</th>
               <th>操作</th>
             </tr>
@@ -128,6 +157,7 @@ export function IntegrationsPage() {
                 </td>
                 <td>{item.name}</td>
                 <td>{item.syncSupported ? '対応' : '—'}</td>
+                <td>{item.exportSupported ? '対応' : '—'}</td>
                 <td>
                   {item.health ? (
                     <span>{item.health.healthy ? 'OK' : 'NG'} — {item.health.detail}</span>
@@ -148,6 +178,16 @@ export function IntegrationsPage() {
                       onClick={() => void handleSync(item.integrationId)}
                     >
                       {item.syncing ? '同期中…' : '同期'}
+                    </button>
+                  ) : null}
+                  {item.exportSupported ? (
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={item.exporting}
+                      onClick={() => void handleExport(item.integrationId)}
+                    >
+                      {item.exporting ? '書戻し中…' : '書戻し'}
                     </button>
                   ) : null}
                 </td>

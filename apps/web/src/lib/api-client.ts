@@ -188,6 +188,7 @@ export interface IntegrationSummary {
   integrationId: string;
   name: string;
   syncSupported: boolean;
+  exportSupported: boolean;
 }
 
 export interface IntegrationHealth {
@@ -209,6 +210,13 @@ export function getIntegrationHealth(
 
 export function syncIntegration(mode: UrmsMode, integrationId: string): Promise<ApiItemResponse<unknown>> {
   return request(`/v1/integrations/${encodeURIComponent(integrationId)}/sync`, mode, {
+    method: 'POST',
+    body: '{}',
+  });
+}
+
+export function exportIntegration(mode: UrmsMode, integrationId: string): Promise<ApiItemResponse<unknown>> {
+  return request(`/v1/integrations/${encodeURIComponent(integrationId)}/export`, mode, {
     method: 'POST',
     body: '{}',
   });

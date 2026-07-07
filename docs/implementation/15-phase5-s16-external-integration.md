@@ -33,13 +33,15 @@
 GET  /v1/integrations
 GET  /v1/integrations/cursor-local/health
 POST /v1/integrations/cursor-local/sync   # develop Mode + flag
+POST /v1/integrations/cursor-local/export # develop Mode · Resource.name → 正本 H1
 ```
 
 `cursor-local` は `.cursor/rules` の存在で health を判定し、sync 時に `AiTeamSyncService` を呼び出します。
 
 ## 残課題（v1.x 以降）
 
-- Cursor 双方向同期（Resource → 正本ファイル書戻し）
+- ~~Cursor 双方向同期（Resource → 正本ファイル書戻し）~~ — **v1.1.1 部分対応**（AI Team H1 書戻し · `POST .../export`）
+- 本文・メタデータの双方向 merge
 - 追加 Integration adapter（GitHub · Slack 等）
 
 ## B-020 完了（2026-07-08）

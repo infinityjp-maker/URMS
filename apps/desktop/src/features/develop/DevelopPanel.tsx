@@ -4,6 +4,7 @@ import {
   fetchIntegrationHealth,
   fetchIntegrations,
   syncIntegration,
+  exportIntegration,
   type IntegrationHealth,
   type IntegrationSummary,
 } from '../../api/client.js';
@@ -13,6 +14,7 @@ import { canShowIntegrationsNav } from '../mode/mode-ui.js';
 type IntegrationRow = IntegrationSummary & {
   health?: IntegrationHealth;
   syncing?: boolean;
+  exporting?: boolean;
   message?: string;
 };
 
@@ -96,6 +98,27 @@ export function DevelopPanel() {
     );
   }
 
+  async function handleExport(integrationId: string): Promise<void> {
+    setItems((current) =>
+      current.map((item) =>
+        item.integrationId === integrationId ? { ...item, exporting: true, message: undefined } : item,
+      ),
+    );
+
+    const response = await exportIntegration(mode, integrationId);
+    setItems((current) =>
+      current.map((item) =>
+        item.integrationId === integrationId
+          ? {
+              ...item,
+              exporting: false,
+              message: response.ok ? '書戻し完了' : (response.error ?? '書戻しに失敗しました'),
+            }
+          : item,
+      ),
+    );
+  }
+
   return (
     <div className="glass-card develop-panel" aria-label="外部連携">
       <p className="card-kicker">外部連携（develop）</p>
@@ -129,6 +152,16 @@ export function DevelopPanel() {
                     onClick={() => void handleSync(item.integrationId)}
                   >
                     {item.syncing ? '同期中…' : '同期'}
+                  </button>
+                ) : null}
+                {item.exportSupported ? (
+                  <button
+                    type="button"
+                    className="develop-panel__button"
+                    disabled={item.exporting}
+                    onClick={() => void handleExport(item.integrationId)}
+                  >
+                    {item.exporting ? '書戻し中…' : '書戻し'}
                   </button>
                 ) : null}
               </div>

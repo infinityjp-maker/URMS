@@ -17,6 +17,7 @@ import {
   createLoopSyncService,
   createLoopExportService,
   createLoopJournalService,
+  createAiTeamExportService,
   persistLoopEntryWithRelation,
   resolveLoopJournalSsotMode,
   resolveAiTeamRepoRoot,
@@ -85,6 +86,10 @@ export function createAppServices(databaseUrl?: string): AppServices {
     resourceRepository,
     relationService,
   });
+  const aiTeamExportService = createAiTeamExportService({
+    repoRoot: aiTeamRepoRoot,
+    resourceRepository,
+  });
   const scheduleSyncService = createScheduleSyncService({
     repoRoot: resolveScheduleRepoRoot(),
     resourceRepository,
@@ -122,6 +127,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
     new CursorLocalIntegration({
       repoRoot: aiTeamRepoRoot,
       aiTeamSyncService,
+      aiTeamExportService,
     }),
   );
 

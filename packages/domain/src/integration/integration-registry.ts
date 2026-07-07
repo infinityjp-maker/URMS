@@ -14,6 +14,7 @@ export class IntegrationRegistry {
       integrationId: adapter.integrationId,
       name: adapter.name,
       syncSupported: typeof adapter.sync === 'function',
+      exportSupported: typeof adapter.export === 'function',
     }));
   }
 
@@ -35,5 +36,13 @@ export class IntegrationRegistry {
       throw new AppError(ERROR_CODES.INTEGRATION_SYNC_UNSUPPORTED, `Sync not supported: ${integrationId}`);
     }
     return adapter.sync(actorId);
+  }
+
+  async export(integrationId: string, actorId: string): Promise<unknown> {
+    const adapter = this.require(integrationId);
+    if (!adapter.export) {
+      throw new AppError(ERROR_CODES.INTEGRATION_SYNC_UNSUPPORTED, `Export not supported: ${integrationId}`);
+    }
+    return adapter.export(actorId);
   }
 }

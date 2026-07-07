@@ -1,12 +1,14 @@
 import { access } from 'node:fs/promises';
 import path from 'node:path';
 
+import type { AiTeamExportService } from '../ai-team/ai-team-export-service.js';
 import type { AiTeamSyncService } from '../ai-team/ai-team-sync-service.js';
 import type { IntegrationAdapter, IntegrationHealth } from './integration-adapter.js';
 
 export type CursorIntegrationOptions = {
   repoRoot: string;
   aiTeamSyncService: AiTeamSyncService;
+  aiTeamExportService: AiTeamExportService;
 };
 
 export class CursorLocalIntegration implements IntegrationAdapter {
@@ -14,10 +16,12 @@ export class CursorLocalIntegration implements IntegrationAdapter {
   readonly name = 'Cursor Local Workspace';
   private readonly repoRoot: string;
   private readonly aiTeamSyncService: AiTeamSyncService;
+  private readonly aiTeamExportService: AiTeamExportService;
 
   constructor(options: CursorIntegrationOptions) {
     this.repoRoot = options.repoRoot;
     this.aiTeamSyncService = options.aiTeamSyncService;
+    this.aiTeamExportService = options.aiTeamExportService;
   }
 
   async healthCheck(): Promise<IntegrationHealth> {
@@ -39,5 +43,9 @@ export class CursorLocalIntegration implements IntegrationAdapter {
 
   async sync(actorId: string) {
     return this.aiTeamSyncService.sync(actorId, 'develop');
+  }
+
+  async export(actorId: string) {
+    return this.aiTeamExportService.export(actorId, 'develop');
   }
 }

@@ -21,6 +21,7 @@ export type IntegrationSummary = {
   integrationId: string;
   name: string;
   syncSupported: boolean;
+  exportSupported: boolean;
 };
 
 export type IntegrationHealth = {
@@ -196,6 +197,12 @@ export async function fetchIntegrationHealth(
 
 export async function syncIntegration(mode: UrmsMode, integrationId: string): Promise<ApiResult<unknown>> {
   return fetchJsonResult<unknown>(`/v1/integrations/${encodeURIComponent(integrationId)}/sync`, mode, {
+    method: 'POST',
+  });
+}
+
+export async function exportIntegration(mode: UrmsMode, integrationId: string): Promise<ApiResult<unknown>> {
+  return fetchJsonResult<unknown>(`/v1/integrations/${encodeURIComponent(integrationId)}/export`, mode, {
     method: 'POST',
   });
 }
