@@ -47,11 +47,7 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
     hour12: false,
   });
   const connectionSourceLine = formatConnectionSourceLine(life.source, life.sources);
-  const weatherLocationLabel = formatWeatherLocationLabel(
-    life.source,
-    life.sources?.location,
-    life.sources?.weatherCoords,
-  );
+  const weatherLocationLabel = formatWeatherLocationLabel(life.source, life.sources?.placeName);
   const weatherCoordHint = formatWeatherCoordHint(
     life.source,
     life.sources?.weatherCoords,

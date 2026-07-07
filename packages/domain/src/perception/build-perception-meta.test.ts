@@ -30,6 +30,7 @@ describe('buildPerceptionMeta', () => {
         loopNarrative: null,
         relations: 0,
         relationTypes: {},
+        placeName: null,
         location: null,
       },
     });
@@ -53,12 +54,14 @@ describe('buildPerceptionMeta', () => {
       loopJournal,
       new Date('2026-07-06T10:30:00+09:00'),
       { activeRelations: 0, byType: {} },
-      '現在地',
+      '自宅',
       'device',
+      '東京都渋谷区',
     );
 
     expect(meta.sources.weatherCoords).toBe('device');
-    expect(meta.sources.location).toBe('現在地');
+    expect(meta.sources.location).toBe('自宅');
+    expect(meta.sources.placeName).toBe('東京都渋谷区');
     expect(meta.sources.loopNarrative).toContain('→ 次: VT-3 task');
     expect(meta.sources.loopContinuity).toBe('looped-today');
   });

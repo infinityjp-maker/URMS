@@ -1,22 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
+import type { PerceptionMeta } from '@urms/shared';
+
 import { formatWeatherCoordHint, formatWeatherLocationLabel } from './weather-coord-hint.js';
 
 describe('formatWeatherLocationLabel', () => {
-  it('shows SSOT location name in API mode', () => {
-    expect(formatWeatherLocationLabel('api', '自宅', 'ssot')).toBe('自宅');
+  it('shows resolved place name in API mode', () => {
+    expect(formatWeatherLocationLabel('api', '東京都渋谷区')).toBe('東京都渋谷区');
   });
 
-  it('shows 現在地 when GPS drives weather without SSOT label', () => {
-    expect(formatWeatherLocationLabel('api', null, 'device')).toBe('現在地');
-  });
-
-  it('shows dash when location is unknown in API mode', () => {
-    expect(formatWeatherLocationLabel('api', null, null)).toBe('—');
+  it('shows dash when place name is unavailable', () => {
+    expect(formatWeatherLocationLabel('api', null)).toBe('—');
   });
 
   it('omits label in local fallback mode', () => {
-    expect(formatWeatherLocationLabel('local', '自宅', 'ssot')).toBeNull();
+    expect(formatWeatherLocationLabel('local', '東京都渋谷区')).toBeNull();
   });
 });
 

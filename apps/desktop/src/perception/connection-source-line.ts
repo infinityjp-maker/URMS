@@ -23,8 +23,23 @@ function loopContinuityLabel(continuity: PerceptionMeta['sources']['loopContinui
   return 'ループ 未記録';
 }
 
-function locationLabel(location: string | null, source: LifeStateSource): string | null {
-  if (location) return `地点 ${location}`;
+function locationLabel(
+  location: string | null,
+  placeName: string | null,
+  source: LifeStateSource,
+): string | null {
+  const geo = placeName?.trim();
+  const context = location?.trim();
+
+  if (geo && context && geo !== context) {
+    return `地点 ${geo} · ${context}`;
+  }
+  if (geo) {
+    return `地点 ${geo}`;
+  }
+  if (context) {
+    return `地点 ${context}`;
+  }
   if (source === 'api') return '地点 —';
   return null;
 }
@@ -62,7 +77,7 @@ export function formatConnectionSourceLine(
 
   const parts = [
     base,
-    locationLabel(sources.location, source),
+    locationLabel(sources.location, sources.placeName ?? null, source),
     source === 'api' ? weatherCoordsLabel(sources.weatherCoords) : null,
     relationsLabel(sources.relations, sources.relationTypes, source),
     journalEntriesLabel(sources.loopJournalEntries, source),

@@ -62,10 +62,19 @@ export {
   LOCATION_RESOURCE_TYPE,
   resolveWeatherConfigWithLocation,
   weatherConfigFromLocationResource,
+  pickPrimaryLocation,
   pickPrimaryLocationLabel,
+  resolvePrimaryLocationForMode,
   resolvePrimaryLocationLabel,
   resolvePrimaryLocationLabelForMode,
 } from './perception/weather/resolve-weather-config.js';
+export type { PrimaryLocation } from './perception/weather/resolve-weather-config.js';
+export {
+  buildReverseGeocodeUrl,
+  formatPlaceName,
+  reverseGeocodePlaceName,
+} from './perception/place/reverse-geocode.js';
+export { resolvePlaceName } from './perception/place/resolve-place-name.js';
 export { buildPerceptionMeta } from './perception/build-perception-meta.js';
 export {
   synthesizeLoopContinuity,

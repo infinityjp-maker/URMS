@@ -22,6 +22,7 @@ export function buildPerceptionMeta(
   graphSignal: RelationGraphSignal = EMPTY_GRAPH_SIGNAL,
   locationLabel: string | null = null,
   weatherCoords: WeatherCoordSource | null = null,
+  placeName: string | null = null,
 ): PerceptionMeta {
   const loopContinuity: LoopContinuity = resolveLoopContinuity(loopJournal, now);
 
@@ -37,6 +38,7 @@ export function buildPerceptionMeta(
       loopNarrative: synthesizeLoopContinuity(loopJournal, now),
       relations: graphSignal.activeRelations,
       relationTypes: graphSignal.byType,
+      placeName,
       location: locationLabel,
     },
   };

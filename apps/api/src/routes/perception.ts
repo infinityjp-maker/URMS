@@ -1,4 +1,10 @@
-import { buildPerceptionMeta, buildPerceptionState, resolveRelationGraphSignal, resolvePrimaryLocationLabelForMode } from '@urms/domain';
+import {
+  buildPerceptionMeta,
+  buildPerceptionState,
+  resolvePlaceName,
+  resolvePrimaryLocationForMode,
+  resolveRelationGraphSignal,
+} from '@urms/domain';
 import type { FastifyInstance } from 'fastify';
 
 import type { AppServices } from '../types/services.js';
@@ -22,21 +28,40 @@ export async function registerPerceptionRoutes(
     const deviceCoords =
       latitude !== null && longitude !== null ? { latitude, longitude } : undefined;
 
+    const primaryLocation = await resolvePrimaryLocationForMode(
+      services.resourceService,
+      request.urmsMode,
+    );
+
+    const weatherCoords = deviceCoords
+      ? { latitude: deviceCoords.latitude, longitude: deviceCoords.longitude }
+      : primaryLocation
+        ? { latitude: primaryLocation.latitude, longitude: primaryLocation.longitude }
+        : undefined;
+
     const dashboard = await services.contextService.getDashboard(request.urmsMode);
-    const [weather, nextEvents, loopJournal, graph, locationLabel] = await Promise.all([
+
+    const [weather, nextEvents, loopJournal, graph, placeName] = await Promise.all([
       services.weatherService.getCurrentWeather(deviceCoords),
       services.scheduleService.getTodayEvents(request.urmsMode, now),
       services.loopJournalService.readRecent(20),
       resolveRelationGraphSignal(services.relationService, request.urmsMode),
-      resolvePrimaryLocationLabelForMode(services.resourceService, request.urmsMode),
+      resolvePlaceName(
+        weatherCoords,
+        primaryLocation?.placeName ?? null,
+        {},
+        Boolean(deviceCoords),
+      ),
     ]);
+
     const state = buildPerceptionState(dashboard, now, {
       weather,
       nextEvents,
       loopJournal,
       graphSignal: graph,
-      locationLabel,
+      locationLabel: primaryLocation?.label ?? null,
     });
+
     return {
       data: state,
       meta: buildPerceptionMeta(
@@ -45,8 +70,9 @@ export async function registerPerceptionRoutes(
         loopJournal,
         now,
         graph,
-        locationLabel,
-        deviceCoords ? 'device' : locationLabel ? 'ssot' : null,
+        primaryLocation?.label ?? null,
+        deviceCoords ? 'device' : primaryLocation ? 'ssot' : null,
+        placeName,
       ),
     };
   });

@@ -52,6 +52,7 @@ export type PerceptionMeta = {
     loopNarrative: string | null;
     relations: number;
     relationTypes: Record<string, number>;
+    placeName: string | null;
     location: string | null;
   };
 };

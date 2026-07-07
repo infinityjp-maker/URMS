@@ -9,6 +9,7 @@ export type ParsedLocationMarkdown = {
     longitude: number;
     timezone?: string;
     primary?: boolean;
+    placeName?: string;
   };
 };
 
@@ -18,6 +19,7 @@ const LATITUDE_PATTERN = /\*\*latitude:\*\*\s*([^\s\r\n]+)/;
 const LONGITUDE_PATTERN = /\*\*longitude:\*\*\s*([^\s\r\n]+)/;
 const TIMEZONE_PATTERN = /\*\*timezone:\*\*\s*([^\s\r\n]+)/;
 const PRIMARY_PATTERN = /\*\*primary:\*\*\s*([^\s\r\n]+)/;
+const PLACE_NAME_PATTERN = /\*\*place_name:\*\*\s*([^\r\n]+)/;
 const TITLE_PATTERN = /^#\s+(.+)$/m;
 
 function parseTitle(content: string, fallback: string): string {
@@ -73,6 +75,7 @@ export function parseLocationMarkdown(
 
   const timezone = content.match(TIMEZONE_PATTERN)?.[1]?.trim();
   const primaryRaw = content.match(PRIMARY_PATTERN)?.[1]?.trim().toLowerCase();
+  const placeName = content.match(PLACE_NAME_PATTERN)?.[1]?.trim();
 
   return {
     resourceType: 'location',
@@ -85,6 +88,7 @@ export function parseLocationMarkdown(
       longitude,
       ...(timezone ? { timezone } : {}),
       ...(primaryRaw === 'true' ? { primary: true } : {}),
+      ...(placeName ? { placeName } : {}),
     },
   };
 }

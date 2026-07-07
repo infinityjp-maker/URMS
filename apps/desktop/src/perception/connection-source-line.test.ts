@@ -12,6 +12,7 @@ const emptySources: PerceptionMeta['sources'] = {
   loopJournalEntries: 0,
   loopContinuity: 'none',
   loopNarrative: null,
+  placeName: null,
   relations: 0,
   relationTypes: {},
   location: null,
@@ -26,6 +27,16 @@ describe('formatConnectionSourceLine', () => {
     expect(line).toContain('関係 —');
     expect(line).toContain('journal —');
     expect(line).toContain('ループ 未記録');
+  });
+
+  it('shows place name with context label when both differ', () => {
+    const line = formatConnectionSourceLine('api', {
+      ...emptySources,
+      location: '自宅',
+      placeName: '東京都渋谷区',
+    });
+
+    expect(line).toContain('地点 東京都渋谷区 · 自宅');
   });
 
   it('shows GPS coords and loop narrative when present', () => {

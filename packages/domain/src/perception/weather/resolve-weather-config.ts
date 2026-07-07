@@ -10,6 +10,8 @@ type LocationMetadata = {
   longitude?: unknown;
   timezone?: unknown;
   primary?: unknown;
+  placeName?: unknown;
+  place_name?: unknown;
 };
 
 function parseCoordinate(value: unknown): number | null {
@@ -27,11 +29,48 @@ function isPrimary(metadata: LocationMetadata): boolean {
   return metadata.primary === true || metadata.primary === 'true';
 }
 
-export function pickPrimaryLocationLabel(items: ResourceEntity[]): string | null {
+function readStoredPlaceName(metadata: LocationMetadata): string | null {
+  const raw =
+    (typeof metadata.placeName === 'string' ? metadata.placeName : null) ??
+    (typeof metadata.place_name === 'string' ? metadata.place_name : null);
+  const trimmed = raw?.trim();
+  return trimmed || null;
+}
+
+export type PrimaryLocation = {
+  /** 地点コンテキスト名（自宅 · 勤務先 等） */
+  label: string;
+  latitude: number;
+  longitude: number;
+  /** SSOT に明示した地名（省略時は座標から解決） */
+  placeName: string | null;
+};
+
+export function pickPrimaryLocation(items: ResourceEntity[]): PrimaryLocation | null {
   const primary =
     items.find((item) => isPrimary(item.metadata as LocationMetadata)) ?? items[0];
-  const label = primary?.name?.trim();
-  return label || null;
+  if (!primary) {
+    return null;
+  }
+
+  const metadata = primary.metadata as LocationMetadata;
+  const latitude = parseCoordinate(metadata.latitude);
+  const longitude = parseCoordinate(metadata.longitude);
+  const label = primary.name?.trim();
+  if (latitude === null || longitude === null || !label) {
+    return null;
+  }
+
+  return {
+    label,
+    latitude,
+    longitude,
+    placeName: readStoredPlaceName(metadata),
+  };
+}
+
+export function pickPrimaryLocationLabel(items: ResourceEntity[]): string | null {
+  return pickPrimaryLocation(items)?.label ?? null;
 }
 
 export function weatherConfigFromLocationResource(
@@ -90,6 +129,14 @@ export async function resolvePrimaryLocationLabelForMode(
   reader: LocationListReader | undefined,
   mode: UrmsMode,
 ): Promise<string | null> {
+  const location = await resolvePrimaryLocationForMode(reader, mode);
+  return location?.label ?? null;
+}
+
+export async function resolvePrimaryLocationForMode(
+  reader: LocationListReader | undefined,
+  mode: UrmsMode,
+): Promise<PrimaryLocation | null> {
   if (!reader) {
     return null;
   }
@@ -100,7 +147,7 @@ export async function resolvePrimaryLocationLabelForMode(
       mode,
     );
 
-    return pickPrimaryLocationLabel(items);
+    return pickPrimaryLocation(items);
   } catch {
     return null;
   }
