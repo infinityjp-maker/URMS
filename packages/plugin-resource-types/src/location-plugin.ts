@@ -44,7 +44,11 @@ export function createLocationPlugin(): ResourceTypePlugin {
       if (!('latitude' in input.metadata) && !('longitude' in input.metadata)) {
         return [];
       }
-      return createLocationPlugin().validateCreate({ ...input, metadata: input.metadata });
+      return createLocationPlugin().validateCreate({
+        resourceId: 'location-update',
+        name: input.name ?? 'location',
+        metadata: input.metadata,
+      });
     },
   };
 }

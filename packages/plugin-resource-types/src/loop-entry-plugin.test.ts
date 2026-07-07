@@ -6,9 +6,11 @@ describe('createLoopEntryPlugin', () => {
   it('requires completed, actorId, and occurredAt on create', () => {
     const plugin = createLoopEntryPlugin();
 
-    expect(plugin.validateCreate({ metadata: {} })).toHaveLength(3);
+    expect(plugin.validateCreate({ resourceId: 'loop-1', name: 'entry', metadata: {} })).toHaveLength(3);
     expect(
       plugin.validateCreate({
+        resourceId: 'loop-1',
+        name: 'entry',
         metadata: {
           completed: 'VT-1 task',
           actorId: 'window-user',
@@ -21,6 +23,8 @@ describe('createLoopEntryPlugin', () => {
   it('rejects invalid occurredAt', () => {
     const plugin = createLoopEntryPlugin();
     const details = plugin.validateCreate({
+      resourceId: 'loop-1',
+      name: 'entry',
       metadata: {
         completed: 'VT-1 task',
         actorId: 'window-user',

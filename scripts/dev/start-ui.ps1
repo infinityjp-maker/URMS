@@ -12,7 +12,7 @@ Start-Process powershell -ArgumentList @(
   '-NoProfile',
   '-ExecutionPolicy', 'Bypass',
   '-Command',
-  "Set-Location '$Root'; npx pnpm@9.15.4 --filter @urms/shared build; npx pnpm@9.15.4 --filter @urms/domain build; npx pnpm@9.15.4 --filter @urms/api dev"
+  "Set-Location '$Root'; npx pnpm@9.15.4 dev:prepare; npx pnpm@9.15.4 --filter @urms/api dev"
 )
 
 Start-Process powershell -ArgumentList @(
@@ -26,7 +26,7 @@ Start-Process powershell -ArgumentList @(
   '-NoProfile',
   '-ExecutionPolicy', 'Bypass',
   '-Command',
-  "Set-Location '$Root'; npx pnpm@9.15.4 --filter @urms/shared build; npx pnpm@9.15.4 --filter @urms/domain build; npx pnpm@9.15.4 dev:desktop:web"
+  "Set-Location '$Root'; npx pnpm@9.15.4 dev:prepare; npx pnpm@9.15.4 dev:desktop:web"
 )
 
 Write-Host 'Done — 3 windows opened (API · wireframes · desktop). Close them to stop servers.'
