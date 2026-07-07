@@ -24,7 +24,7 @@ function createLoopEntryTestPlugin(): ResourceTypePlugin {
   return {
     resourceType: 'loop-entry',
     version: '1.0.0',
-    coreVersion: '0.2.0',
+    coreVersion: '1.1.0',
     searchableFields: () => ['name'],
     validateCreate(input) {
       const details = [];
@@ -43,7 +43,7 @@ function createContextTestPlugin(): ResourceTypePlugin {
   return {
     resourceType: 'context',
     version: '1.0.0',
-    coreVersion: '0.2.0',
+    coreVersion: '1.1.0',
     searchableFields: () => ['name'],
     validateCreate: () => [],
   };
@@ -139,7 +139,7 @@ function createServices(): {
   relationRepository: InMemoryRelationRepository;
   resourceRepository: InMemoryResourceRepository;
 } {
-  const registry = new PluginRegistry('0.2.0');
+  const registry = new PluginRegistry('1.1.0');
   registry.register(createLoopEntryTestPlugin());
   registry.register(createContextTestPlugin());
   const eventBus = new InProcessEventBus();

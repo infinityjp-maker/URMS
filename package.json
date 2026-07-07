@@ -1,6 +1,6 @@
 {
   "name": "urms",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Unified Resource Management System",
   "packageManager": "pnpm@9.15.4",
@@ -38,7 +38,7 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/plugin-ollama test && pnpm --filter @urms/plugin-resource-types test && pnpm --filter @urms/db test && pnpm --filter @urms/api test && pnpm --filter @urms/web test && pnpm --filter @urms/desktop test",
-    "test:vision": "pnpm --filter @urms/domain test && pnpm --filter @urms/api test -- src/routes/routes.test.ts && pnpm --filter @urms/desktop test && playwright test --config playwright.vision.config.ts",
+    "test:vision": "corepack pnpm --filter @urms/domain test && corepack pnpm --filter @urms/api test -- src/routes/routes.test.ts && corepack pnpm --filter @urms/desktop test && corepack pnpm exec playwright test --config playwright.vision.config.ts",
     "test:coverage": "pnpm --filter @urms/domain test:coverage && pnpm --filter @urms/api test:coverage",
     "test:integration": "pnpm --filter @urms/db test:integration && pnpm --filter @urms/api test:integration",
     "test:e2e": "playwright test"

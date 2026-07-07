@@ -1,6 +1,7 @@
+import { URMS_CORE_VERSION } from '@urms/shared';
 import type { ResourceTypePlugin } from '@urms/domain';
 
-const CORE_VERSION = '0.2.0';
+const CORE_VERSION = URMS_CORE_VERSION;
 const PLUGIN_VERSION = '1.0.0';
 
 function createPassthroughPlugin(resourceType: string): ResourceTypePlugin {

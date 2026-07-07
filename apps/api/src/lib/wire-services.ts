@@ -37,11 +37,10 @@ import {
   PrismaUserRepository,
 } from '@urms/db';
 import { OllamaAdapter } from '@urms/plugin-ollama';
+import { URMS_CORE_VERSION } from '@urms/shared';
 import { createBuiltinResourceTypePlugins } from '@urms/plugin-resource-types';
 
 import type { AppServices } from '../types/services.js';
-
-const APP_CORE_VERSION = '0.2.0';
 
 export function createAppServices(databaseUrl?: string): AppServices {
   const prisma = createPrismaClient(databaseUrl);
@@ -55,7 +54,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
 
   registerAuditHandlers(eventBus, auditHandler);
 
-  const pluginRegistry = new PluginRegistry(APP_CORE_VERSION);
+  const pluginRegistry = new PluginRegistry(URMS_CORE_VERSION);
   for (const plugin of createBuiltinResourceTypePlugins()) {
     pluginRegistry.register(plugin);
   }

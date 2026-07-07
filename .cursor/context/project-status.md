@@ -8,8 +8,8 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 4 完了 · 本番UI v1 · Vision Track 完了 · S13 再監査（2026-07-08）** |
-| バージョン | Git タグ v0.2.0-mvp（S11 は未タグ） |
+| 状態 | **Phase 5 完了 · v1.1.0 GA（2026-07-08）** |
+| バージョン | Git タグ **`v1.1.0`** · root 1.1.0 |
 | User Go | ✅ 2026-07-05 |
 | User Vision | ✅ UI 確定 · Tauri 2 + React（User Go 2026-07-05） |
 
@@ -31,6 +31,7 @@
 | **S16 Desktop develop Mode** | ✅ **2026-07-08** — 1420 Mode 切替 · DevelopPanel |
 | **k6 smoke CI** | ✅ **2026-07-08** — GitHub Actions `perf-k6` |
 | **ADR-024** | ✅ **accepted** — loop-entry M1–M4 + relates_to |
+| **v1.1.0 GA** | ✅ **2026-07-08** — Vision Track · Desktop · k6 CI |
 
 ## リンク
 

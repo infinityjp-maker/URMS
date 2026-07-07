@@ -55,7 +55,7 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
-      <footer className="app-footer">URMS v0.2.0</footer>
+      <footer className="app-footer">URMS v1.1.0</footer>
     </div>
   );
 }

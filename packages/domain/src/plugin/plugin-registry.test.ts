@@ -9,7 +9,7 @@ function createTestPlugin(overrides: Partial<ResourceTypePlugin> = {}): Resource
   return {
     resourceType: 'physical',
     version: '1.0.0',
-    coreVersion: '0.2.0',
+    coreVersion: '1.1.0',
     validateCreate: () => [],
     searchableFields: () => ['name'],
     ...overrides,
@@ -18,7 +18,7 @@ function createTestPlugin(overrides: Partial<ResourceTypePlugin> = {}): Resource
 
 describe('PluginRegistry', () => {
   it('registers compatible plugins', () => {
-    const registry = new PluginRegistry('0.2.0');
+    const registry = new PluginRegistry('1.1.0');
     registry.register(createTestPlugin());
 
     expect(registry.list()).toHaveLength(1);
@@ -26,15 +26,15 @@ describe('PluginRegistry', () => {
   });
 
   it('rejects incompatible core major version', () => {
-    const registry = new PluginRegistry('0.2.0');
+    const registry = new PluginRegistry('1.1.0');
 
     expect(() =>
-      registry.register(createTestPlugin({ coreVersion: '1.0.0' })),
+      registry.register(createTestPlugin({ coreVersion: '2.0.0' })),
     ).toThrowError(expect.objectContaining({ code: ERROR_CODES.PLUGIN_INCOMPATIBLE_VERSION }));
   });
 
   it('throws PLUGIN_NOT_FOUND for unknown type', () => {
-    const registry = new PluginRegistry('0.2.0');
+    const registry = new PluginRegistry('1.1.0');
 
     expect(() => registry.require('unknown')).toThrowError(
       expect.objectContaining({ code: ERROR_CODES.PLUGIN_NOT_FOUND }),

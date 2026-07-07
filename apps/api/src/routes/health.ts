@@ -1,8 +1,7 @@
 import type { FastifyInstance } from 'fastify';
+import { URMS_APP_VERSION } from '@urms/shared';
 
 import type { AppServices } from '../types/services.js';
-
-const APP_VERSION = '1.0.0';
 
 export async function registerHealthRoutes(
   app: FastifyInstance,
@@ -11,7 +10,7 @@ export async function registerHealthRoutes(
   app.get('/health', async () => ({
     data: {
       status: 'ok',
-      version: APP_VERSION,
+      version: URMS_APP_VERSION,
     },
   }));
 
@@ -25,7 +24,7 @@ export async function registerHealthRoutes(
     return reply.status(ready ? 200 : 503).send({
       data: {
         status: ready ? 'ready' : 'not_ready',
-        version: APP_VERSION,
+        version: URMS_APP_VERSION,
         checks: {
           database: database.database,
         },

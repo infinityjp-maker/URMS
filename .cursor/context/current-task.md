@@ -6,41 +6,39 @@
 
 ## Task
 
-**S13 k6 CI · ADR-024 accepted 完了 → 次 Sprint 待ち**
+**v1.1.0 GA リリース完了 → 次 Sprint 待ち**
 
-k6 スモーク CI と Desktop 白画面再発防止テストを追加。ADR-024 を accepted に更新。
+Vision Track · ADR-024 · S16 · k6 CI を反映した v1.1.0 をタグ付け。次テーマは PM / User が backlog から選定。
 
 ## 進捗
 
 | 項目 | 状態 |
 |------|------|
-| S16 Desktop develop Mode | ✅ |
-| 白画面修正（shared/domain barrel） | ✅ |
-| **k6 負荷テスト CI** | ✅ **2026-07-08** |
-| **ADR-024 accepted** | ✅ **2026-07-08** |
+| k6 smoke CI · ADR-024 accepted | ✅ |
+| **v1.1.0 バージョン SSOT** | ✅ **2026-07-08** |
+| **Git tag `v1.1.0`** | ✅ |
 | Desktop Playwright 5/5 | ✅ |
 
 ## 直近の変更
 
-- k6 — `scripts/perf/k6-smoke.js` · CI `perf-k6` job · `pnpm perf:k6`
-- Desktop — `browser-imports.test.ts`（barrel import 禁止）
-- ADR-024 status → accepted
+- `URMS_APP_VERSION` / `URMS_CORE_VERSION` — `@urms/shared` 正本
+- リリースノート — [v1.1.0.md](../../docs/project/releases/v1.1.0.md)
+- roadmap — Phase 5 完了
 
 ## 次 Sprint 候補（PM · 未承認）
 
 | 優先 | 候補 | 備考 |
 |------|------|------|
-| P1 | v1.0.0 GA タグ | PM · User 承認後 |
-| P2 | Cursor 双方向同期 | S16 v1.x |
+| P1 | Cursor 双方向同期 | S16 v1.x |
 | P2 | WCAG 改善 | S13 残課題 |
+| P2 | v1.2 計画 | Phase 6 未定 |
 
 ## User
 
 - 本番窓: http://127.0.0.1:1420/
-- k6 ローカル: `pnpm perf:k6`（k6 CLI + API 起動要）
+- リリース: `git tag -l v1.1.0` · `/health` → version 1.1.0
 
 ## 運用
 
 - **進捗報告 SSOT:** [progress-report.md](./progress-report.md)
-- **S13 正本:** [12-phase4-s13-security-audit.md](../../docs/implementation/12-phase4-s13-security-audit.md)
-- **ADR-024:** [ADR-024-loop-journal-resource.md](../../docs/project/decisions/ADR-024-loop-journal-resource.md)
+- **リリース正本:** [v1.1.0.md](../../docs/project/releases/v1.1.0.md)

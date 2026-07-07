@@ -1,3 +1,4 @@
+export * from './constants/app-version.js';
 export * from './types/mode.js';
 export * from './types/resource.js';
 export * from './types/relation.js';
