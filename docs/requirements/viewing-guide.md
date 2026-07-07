@@ -209,4 +209,17 @@ cd D:\GitHub\URMS
 npx pnpm@9.15.4 test:vision
 ```
 
-1420 本番窓の HTML · 接続カード · 時間帯プレビューを Playwright で検証します（`playwright.vision.config.ts`）。
+1420 本番窓の HTML · 接続カード · 時間帯プレビュー · **VT-4 advance（journal 追記）** を Playwright で検証します（`playwright.vision.config.ts`）。
+
+### SSOT 同期（VT-1 · DB 起動後）
+
+```powershell
+cd D:\GitHub\URMS
+npx pnpm@9.15.4 ssot:sync    # schedule + location + loop 一括
+# 個別:
+npx pnpm@9.15.4 loop:sync     # journal.md → loop-entry Resource
+npx pnpm@9.15.4 schedule:sync
+npx pnpm@9.15.4 location:sync
+```
+
+API: `POST /v1/schedule/sync` · `/v1/location/sync` · `/v1/loop/sync`

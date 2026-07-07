@@ -65,7 +65,11 @@ describe.runIf(dockerAvailable)('Plugin API (integration)', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json().data.length).toBeGreaterThanOrEqual(4);
+    const types = (response.json().data as Array<{ resourceType: string }>).map(
+      (item) => item.resourceType,
+    );
+    expect(types).toContain('loop-entry');
+    expect(types.length).toBeGreaterThanOrEqual(14);
   });
 
   it('rejects physical resource without required metadata', async () => {

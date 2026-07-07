@@ -8,7 +8,7 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 4 S13 次 · 本番UI v1** |
+| 状態 | **Phase 4 S13 次 · 本番UI v1 · Vision Track 完了（2026-07-08）** |
 | バージョン | Git タグ v0.2.0-mvp（S11 は未タグ） |
 | User Go | ✅ 2026-07-05 |
 | User Vision | ✅ UI 確定 · Tauri 2 + React（User Go 2026-07-05） |
@@ -24,6 +24,7 @@
 | S11 ローカル認証方針 | ✅ bypass + 内部 API |
 | PostgreSQL（User 環境） | ✅ Docker Desktop + db:up（2026-07-07） |
 | Cursor モデル方針 | ✅ [model-policy.md](../context/model-policy.md) · **日次監視** · 次回月次見直し 2026-08-07 |
+| **Vision Track VT-1〜4** | ✅ **2026-07-08 クローズ** — Playwright E2E · ADR-024 M1–M3 · resource-catalog v1.3 |
 
 ## リンク
 

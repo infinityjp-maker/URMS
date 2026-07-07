@@ -22,13 +22,14 @@ VT-4 日次ループは、窓の **「完了 → 次へ」** 操作を `POST /v1
 |------|-----------------|------|------------|
 | 予定 | `.cursor/resources/schedule/*.md` | `pnpm schedule:sync` | `schedule` Resource |
 | 地点 | `.cursor/resources/location/*.md` | `pnpm location:sync` | `location` Resource |
-| **ループ** | `.cursor/resources/loop/journal.md` | **なし** | **ファイル直読** |
+| **ループ** | `.cursor/resources/loop/journal.md` | `pnpm loop:sync` · **`pnpm ssot:sync`** | **Resource 優先 + file マージ**（M2） |
 
-loop journal だけが Resource 重力場の外にあり、以下の負債が残る:
+loop journal は **M1–M3 実装済**（2026-07-08）。M4（Markdown export のみ）は PM 判断待ち。
 
-- 監査 · 検索 · リレーション（Context · task · actor）が Resource API と非対称
-- 複数端末 · 将来クラウド同期で file append のみでは競合リスク
-- `ssot:sync` 一括の対象外 — 運用が二系統
+**残負債（M4 以降）**
+
+- 監査 · リレーション（Context · task · actor）の `relates_to` — 未決 #3
+- 複数端末同期時の Markdown 正本 — M4 で PM 判断
 
 ## 決定（提案）
 
@@ -54,24 +55,24 @@ loop journal だけが Resource 重力場の外にあり、以下の負債が残
 
 ### 2. 移行フェーズ（段階的 · 破壊的変更なし）
 
-| Phase | 内容 | ユーザー影響 |
-|-------|------|--------------|
-| **M0（現状）** | Markdown append · file `readRecent()` | なし |
-| **M1 デュアルライト** | advance 時に **Markdown + Resource CREATE** | なし（読取は file のまま） |
-| **M2 読取切替** | `readRecent()` → ResourceRepository 優先 · file フォールバック | なし |
-| **M3 同期 CLI** | `pnpm loop:sync` — 既存 `journal.md` 行を Resource に import | 初回 migrate 1 回 |
-| **M4（任意）** | Markdown を export のみ · 正本は DB | Git diff 運用変更 · PM 判断 |
+| Phase | 内容 | ユーザー影響 | 状態 |
+|-------|------|--------------|------|
+| **M0** | Markdown append · file `readRecent()` | なし | 完了 |
+| **M1 デュアルライト** | advance 時 **Markdown + Resource CREATE** | なし | ✅ 2026-07-07 |
+| **M2 読取切替** | Resource 優先 + file マージ | なし | ✅ 2026-07-07 |
+| **M3 同期 CLI** | `pnpm loop:sync` · `ssot:sync` + loop | 初回 migrate 1 回 | ✅ 2026-07-08 |
+| **M4（任意）** | Markdown export のみ · 正本 DB | Git diff 運用変更 | 未着手 · PM 判断 |
 
-**M0→M1 は VT-4 DoD 完了後。** M3 までを Vision Track VT-1 拡張として扱う。
+**M0→M3 完了（Vision Track）。** M4 は PM 判断。
 
 ### 3. API · コマンド
 
-| 操作 | 現状 | 将来 |
-|------|------|------|
-| 追記 | `LoopJournalService.append` | 同上 + `resourceService.create` |
-| 読取 | `readRecent(limit)` file | `list({ resourceType: 'loop-entry', ... })` 時系列 |
-| 一括同期 | — | `POST /v1/loop/sync` · `pnpm loop:sync` |
-| ssot:sync | schedule + location | **+ loop（M3）** |
+| 操作 | 実装（2026-07-08） |
+|------|---------------------|
+| 追記 | `LoopJournalService.append` + `resourceService.create`（M1） |
+| 読取 | `readRecent()` — Resource 優先 + file マージ（M2） |
+| 一括同期 | `POST /v1/loop/sync` · `pnpm loop:sync`（M3） |
+| ssot:sync | schedule + location + **loop** |
 
 ### 4. perception 合成への影響
 
@@ -98,7 +99,7 @@ loop journal だけが Resource 重力場の外にあり、以下の負債が残
 
 | 項目 | 変更 |
 |------|------|
-| `resource-catalog.md` | `loop-entry` Type 追加（承認後） |
+| `resource-catalog.md` | `loop-entry` Type 追加 | **✅ v1.3 2026-07-08** |
 | `packages/domain/loop-journal/` | Repository 抽象 · sync service（M1 以降） |
 | `pnpm ssot:sync` | loop sync 追加（M3） |
 | `.cursor/resources/loop/journal.md` | M0–M2 は正本のまま · M4 で export 化検討 |

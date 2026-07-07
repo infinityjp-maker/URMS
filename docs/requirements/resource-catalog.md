@@ -2,7 +2,7 @@
 
 > **resource_type:** knowledge  
 > **resource_id:** knowledge:resource-catalog  
-> **version:** 1.2 — Architecture Freeze 反映  
+> **version:** 1.3 — SSOT Perception Resource 追加  
 > **phase:** 1 / 2（AI Resource は ADR-016）
 
 ## 参照
@@ -68,7 +68,22 @@ Resource
 
 ADR-016 / [18-ai-provider-architecture.md](../architecture/18-ai-provider-architecture.md) 参照。
 
-### 2.4 将来 Resource Type
+### 2.4 SSOT Perception Resource（Vision Track · 実装済）
+
+窓の Context 合成 · 日次ループ用。Markdown SSOT → `pnpm *:sync` → DB Resource → `GET /v1/perception` で読取。
+
+| resource_type | 説明 | SSOT 正本 | 同期 CLI | API |
+|---------------|------|-----------|----------|-----|
+| `schedule` | 予定イベント | `.cursor/resources/schedule/*.md` | `pnpm schedule:sync` | `POST /v1/schedule/sync` |
+| `location` | 地点（天気 SSOT） | `.cursor/resources/location/*.md` | `pnpm location:sync` | `POST /v1/location/sync` |
+| `loop-entry` | 日次ループ完了 1 件 | `.cursor/resources/loop/journal.md` | `pnpm loop:sync` | `POST /v1/loop/sync` |
+
+一括: **`pnpm ssot:sync`**（schedule + location + loop）。
+
+- `loop-entry` の `resource_id` 例: `loop:2026-07-07T13:00:00.000Z`（`occurredAt` ISO8601）
+- 詳細: [ADR-024](../project/decisions/ADR-024-loop-journal-resource.md) · [11-phase5-desktop-ui.md](../implementation/11-phase5-desktop-ui.md)
+
+### 2.5 将来 Resource Type
 
 | resource_type | 説明 | Phase |
 |---------------|------|-------|
@@ -123,4 +138,4 @@ ADR-016 / [18-ai-provider-architecture.md](../architecture/18-ai-provider-archit
 |------|------|
 | 2026-07-05 | v1.0 初版 |
 | 2026-07-05 | v1.1 — ai-provider, ai-model 追加（ADR-016） |
-| 2026-07-05 | v1.2 — embedding-model, generated-image, ai-usage（Architecture Freeze） |
+| 2026-07-08 | v1.3 — schedule · location · loop-entry（SSOT Perception · ADR-024 M3） |
