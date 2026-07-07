@@ -25,11 +25,12 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 |-------|----------------------|
 | VT-1 | schedule · location → 窓信号 · `ssot:sync` — **維持のみ** |
 | VT-2 | 合成 narrative 全信号（地点 · 関係 · 予定 · GPS）· **E2E テストで退行防止** |
-| VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **時間帯ガイド未作成** |
+| VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **viewing-guide §6 時間帯表** ✅ |
 | VT-4 | advance → journal → perception — **API E2E 追加 · 窓手動確認** |
 
 ## 直近の変更
 
+- VT-3 — viewing-guide §6 時間帯プレビュー表（朝/昼/夕/夜 · パネル · — 表示）
 - VT-4 — API E2E（advance-task → journal → perception status/meta）
 - `test:vision` — domain + api routes + desktop 限定テスト
 - PM — progress-report · model-policy 閾値運用 · コミットタイミング PM 任せ
