@@ -36,3 +36,7 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 ## User
 
 `pnpm ssot:sync` · API+DB 起動後、窓で「完了 → 次へ」→ ステータス行 · まとめが変わる · journal.md に 1 行追記 · 接続カードに GPS/SSOT · ループ narrative · 未取得は — を確認。
+
+## 運用
+
+- **モデル選定 · セッション · Pro 枠:** [model-policy.md](./model-policy.md)（PM 制定 2026-07-07 · **月次見直し**）
