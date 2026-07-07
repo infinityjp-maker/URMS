@@ -2,10 +2,12 @@ import type { PluginValidationDetail } from '@urms/shared';
 import type { ResourceTypePlugin } from '@urms/domain';
 
 import { createLocationPlugin } from './location-plugin.js';
+import { createLoopEntryPlugin } from './loop-entry-plugin.js';
 import { createSchedulePlugin } from './schedule-plugin.js';
 import { createSystemResourceTypePlugins } from './system-resource-plugins.js';
 
 export { createLocationPlugin };
+export { createLoopEntryPlugin };
 export { createSchedulePlugin };
 
 const CORE_VERSION = '0.2.0';
@@ -92,6 +94,7 @@ export function createBuiltinResourceTypePlugins(): ResourceTypePlugin[] {
     createKnowledgePlugin(),
     createSchedulePlugin(),
     createLocationPlugin(),
+    createLoopEntryPlugin(),
     ...createSystemResourceTypePlugins(),
   ];
 }

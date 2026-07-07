@@ -1,7 +1,7 @@
 import { appendFile, mkdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { ContextDashboard } from '@urms/shared';
+import type { ContextDashboard, UrmsMode } from '@urms/shared';
 
 import { parseLoopJournalMarkdown } from './parse-loop-journal.js';
 
@@ -14,8 +14,15 @@ export type LoopJournalEntry = {
   at: Date;
 };
 
+export type LoopEntryPersister = (
+  entry: LoopJournalEntry,
+  actorId: string,
+  mode: UrmsMode,
+) => Promise<void>;
+
 export type LoopJournalServiceOptions = {
   repoRoot: string;
+  persistLoopEntry?: LoopEntryPersister;
 };
 
 function findSummary(dashboard: ContextDashboard, key: string): string | undefined {
@@ -61,9 +68,11 @@ function formatJournalLine(entry: LoopJournalEntry): string {
 
 export class LoopJournalService {
   private readonly journalPath: string;
+  private readonly persistLoopEntry?: LoopEntryPersister;
 
   constructor(options: LoopJournalServiceOptions) {
     this.journalPath = path.join(options.repoRoot, LOOP_JOURNAL_PATH);
+    this.persistLoopEntry = options.persistLoopEntry;
   }
 
   async append(entry: LoopJournalEntry): Promise<void> {
@@ -75,6 +84,7 @@ export class LoopJournalService {
     before: ContextDashboard,
     after: ContextDashboard,
     actorId: string,
+    mode: UrmsMode = 'operate',
     at = new Date(),
   ): Promise<LoopJournalEntry | null> {
     const entry = extractLoopJournalEntry(before, after, actorId, at);
@@ -83,6 +93,10 @@ export class LoopJournalService {
     }
 
     await this.append(entry);
+    if (this.persistLoopEntry) {
+      await this.persistLoopEntry(entry, actorId, mode);
+    }
+
     return entry;
   }
 

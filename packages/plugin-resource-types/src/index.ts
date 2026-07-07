@@ -3,6 +3,7 @@ export {
   createDigitalPlugin,
   createHumanPlugin,
   createKnowledgePlugin,
+  createLoopEntryPlugin,
   createPhysicalPlugin,
   createSchedulePlugin,
 } from './resource-type-plugins.js';

@@ -5,7 +5,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { buildDefaultContextDashboard } from '../context/context-defaults.js';
-import { extractLoopJournalEntry, createLoopJournalService } from './loop-journal-service.js';
+import { extractLoopJournalEntry, createLoopJournalService, type LoopJournalEntry } from './loop-journal-service.js';
 
 describe('extractLoopJournalEntry', () => {
   it('captures completed and next task summaries', () => {
@@ -56,5 +56,31 @@ describe('extractLoopJournalEntry', () => {
 
     const raw = await readFile(journalPath, 'utf8');
     expect(raw).toContain('VT-1 task');
+  });
+
+  it('calls persistLoopEntry after append when configured', async () => {
+    const repoRoot = await mkdtemp(path.join(os.tmpdir(), 'urms-loop-persist-'));
+    const before = buildDefaultContextDashboard('operate');
+    const after = buildDefaultContextDashboard('operate');
+    after.items = after.items.map((item) =>
+      item.key === 'current_task'
+        ? { ...item, summary: 'VT-4 — 日次ループ narrative · journal 連続性' }
+        : item,
+    );
+
+    const persisted: Array<{ entry: LoopJournalEntry; mode: string }> = [];
+    const service = createLoopJournalService({
+      repoRoot,
+      persistLoopEntry: async (entry, _actorId, mode) => {
+        persisted.push({ entry, mode });
+      },
+    });
+
+    const recorded = await service.recordAdvance(before, after, 'window-user', 'operate');
+
+    expect(recorded?.completed).toContain('VT-2');
+    expect(persisted).toHaveLength(1);
+    expect(persisted[0]?.mode).toBe('operate');
+    expect(persisted[0]?.entry.next).toContain('VT-4');
   });
 });

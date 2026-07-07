@@ -37,7 +37,7 @@ export async function registerContextRoutes(app: FastifyInstance, services: AppS
     const before = await contextService.getDashboard(request.urmsMode);
     const dashboard = await contextService.advanceTask(request.actorId, request.urmsMode);
     const journalEntry = toRecordedEntry(
-      await loopJournalService.recordAdvance(before, dashboard, request.actorId),
+      await loopJournalService.recordAdvance(before, dashboard, request.actorId, request.urmsMode),
     );
     return {
       data: dashboard,

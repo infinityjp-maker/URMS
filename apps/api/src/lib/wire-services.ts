@@ -15,6 +15,7 @@ import {
   createScheduleSyncService,
   createLocationSyncService,
   createLoopJournalService,
+  persistLoopEntryResource,
   resolveAiTeamRepoRoot,
   resolveScheduleRepoRoot,
   resolveLocationRepoRoot,
@@ -92,6 +93,9 @@ export function createAppServices(databaseUrl?: string): AppServices {
   });
   const loopJournalService = createLoopJournalService({
     repoRoot: resolveLoopJournalRepoRoot(),
+    persistLoopEntry: async (entry, actorId, mode) => {
+      await persistLoopEntryResource(resourceService, entry, actorId, mode);
+    },
   });
 
   const integrationRegistry = new IntegrationRegistry();

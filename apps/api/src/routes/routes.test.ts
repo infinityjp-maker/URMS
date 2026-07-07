@@ -494,7 +494,7 @@ describe('Perception routes', () => {
     expect(response.statusCode).toBe(200);
     const body = response.json() as {
       data: { statusLine: string; weather: { tempC: number }; nextEvents: Array<{ title: string }> };
-      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; weatherCoords: string | null; loopJournalEntries: number; loopContinuity: string; loopNarrative: string | null; relations: number; relationTypes: Record<string, number>; location: string | null } };
+      meta: { canAdvanceTask: boolean; sources: { scheduleEvents: number; weather: string; weatherCoords: string | null; loopJournalEntries: number; loopContinuity: string; loopNarrative: string | null; relations: number; relationTypes: Record<string, number>; placeName: string | null; location: string | null } };
     };
     expect(body.data.statusLine).toBe('Phase 4 進行中');
     expect(body.data.weather.tempC).toBe(18);
@@ -507,6 +507,7 @@ describe('Perception routes', () => {
     expect(body.meta.sources.loopNarrative).toBeNull();
     expect(body.meta.sources.relations).toBe(0);
     expect(body.meta.sources.relationTypes).toEqual({});
+    expect(body.meta.sources.placeName).toBeNull();
     expect(body.meta.sources.location).toBeNull();
 
     await app.close();
@@ -594,7 +595,12 @@ describe('Context routes', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(services.loopJournalService.recordAdvance).toHaveBeenCalledWith(before, after, expect.any(String));
+    expect(services.loopJournalService.recordAdvance).toHaveBeenCalledWith(
+      before,
+      after,
+      expect.any(String),
+      'operate',
+    );
     expect(response.json().meta.journalEntry).toEqual({
       completed: 'VT-1 task',
       next: 'VT-2 task',
