@@ -44,6 +44,32 @@ pnpm perf:spot
 - k6 負荷テスト CI
 - WCAG 改善（暫定 Web UI）
 - Secret Store 本番注入（B-010 後続）
+- `undici` 脆弱性 — **testcontainers 経由 devDependency のみ**（本番ランタイム外 · 2026-07-08 確認）
+
+## 再監査（Vision Track · ADR-024 · B-020 後 · 2026-07-08）
+
+| # | ゲート | 結果 |
+|---|--------|------|
+| 1 | `pnpm audit:security` | **PASSED**（1 warn — undici@5 via testcontainers · dev のみ） |
+| 2 | 秘密情報 grep | **OK** |
+| 3 | Helmet / rate-limit プラグイン | **OK** |
+| 4 | develop Mode — flag OFF 時 403 | **API テスト** |
+| 5 | Integration sync — develop のみ | **API テスト**（既存） |
+| 6 | loop/sync · loop/export — operate/develop のみ | **API テスト追加** |
+| 7 | loop-entry relates_to — Resource 書込 | **domain テスト** |
+
+```bash
+pnpm audit:security
+pnpm --filter @urms/api test -- src/routes/routes.test.ts
+pnpm --filter @urms/domain test
+```
+
+## 変更履歴
+
+| 日付 | 変更 |
+|------|------|
+| 2026-07-05 | 初版 — S13 スコープ |
+| 2026-07-08 | 再監査 — Vision Track 後 delta · loop モードゲート · undici 所見 |
 
 ## 参照
 

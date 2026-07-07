@@ -76,6 +76,7 @@
 | `pnpm audit:security` スクリプト | ✅ |
 | `pnpm perf:spot` スクリプト | ✅ |
 | k6 負荷テスト CI | ⏳ 将来 |
+| S13 再監査（Vision Track 後） | ✅ 2026-07-08 — [12-phase4-s13-security-audit.md](./12-phase4-s13-security-audit.md) §再監査 |
 
 ---
 

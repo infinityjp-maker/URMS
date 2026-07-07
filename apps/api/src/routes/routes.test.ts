@@ -582,6 +582,43 @@ describe('Loop sync routes', () => {
 
     await app.close();
   });
+
+  it('denies loop sync outside operate/develop modes', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const auditResponse = await app.inject({
+      method: 'POST',
+      url: '/v1/loop/sync',
+      headers: { 'x-urms-mode': 'audit' },
+    });
+    expect(auditResponse.statusCode).toBe(403);
+    expect(auditResponse.json().error.code).toBe('MODE_NOT_ALLOWED');
+
+    const planResponse = await app.inject({
+      method: 'POST',
+      url: '/v1/loop/sync',
+      headers: { 'x-urms-mode': 'plan' },
+    });
+    expect(planResponse.statusCode).toBe(403);
+    expect(planResponse.json().error.code).toBe('MODE_NOT_ALLOWED');
+
+    await app.close();
+  });
+
+  it('denies loop export outside operate/develop modes', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/loop/export',
+      headers: { 'x-urms-mode': 'audit' },
+    });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.json().error.code).toBe('MODE_NOT_ALLOWED');
+
+    await app.close();
+  });
 });
 
 describe('Context routes', () => {
@@ -1039,6 +1076,24 @@ describe('Security gate (S13)', () => {
     const route = app.printRoutes({ commonPrefix: false });
     expect(route).toContain('v1/ai/chat');
 
+    await app.close();
+  });
+
+  it('rejects develop mode when feature flag is disabled', async () => {
+    const previous = process.env.URMS_FF_DEVELOP_ENABLED;
+    delete process.env.URMS_FF_DEVELOP_ENABLED;
+
+    const app = await createApp({ services: createMockServices(), logger: false, security: true });
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/resources',
+      headers: { 'x-urms-mode': 'develop' },
+    });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.json().error.code).toBe('FEATURE_DISABLED');
+
+    process.env.URMS_FF_DEVELOP_ENABLED = previous;
     await app.close();
   });
 });

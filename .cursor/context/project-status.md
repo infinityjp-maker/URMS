@@ -8,7 +8,7 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 4 S13 次 · 本番UI v1 · Vision Track 完了（2026-07-08）** |
+| 状態 | **Phase 4 完了 · 本番UI v1 · Vision Track 完了 · S13 再監査（2026-07-08）** |
 | バージョン | Git タグ v0.2.0-mvp（S11 は未タグ） |
 | User Go | ✅ 2026-07-05 |
 | User Vision | ✅ UI 確定 · Tauri 2 + React（User Go 2026-07-05） |
@@ -26,6 +26,7 @@
 | Cursor モデル方針 | ✅ [model-policy.md](../context/model-policy.md) · **日次監視** · 次回月次見直し 2026-08-07 |
 | **Vision Track VT-1〜4** | ✅ **2026-07-08 クローズ** — ADR-024 M1–M4 · resource-catalog v1.4 |
 | **B-020 develop Mode** | ✅ **2026-07-08** — Web UI 切替 · Integrations ページ |
+| **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
 
 ## リンク
 
