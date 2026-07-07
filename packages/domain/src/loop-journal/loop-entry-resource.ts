@@ -35,7 +35,44 @@ export function toLoopEntryResourceInput(entry: LoopJournalEntry): CreateResourc
   };
 }
 
-/** ADR-024 M1 — journal.md 追記と同時に loop-entry Resource を作成（読取は file のまま） */
+export function fromLoopEntryResource(entity: ResourceEntity): LoopJournalEntry | null {
+  if (entity.resourceType !== LOOP_ENTRY_RESOURCE_TYPE) {
+    return null;
+  }
+
+  if (entity.status !== 'active') {
+    return null;
+  }
+
+  const completed = entity.metadata.completed;
+  const actorId = entity.metadata.actorId;
+  const occurredAt = entity.metadata.occurredAt;
+
+  if (typeof completed !== 'string' || !completed.trim()) {
+    return null;
+  }
+  if (typeof actorId !== 'string' || !actorId.trim()) {
+    return null;
+  }
+  if (typeof occurredAt !== 'string' || !occurredAt.trim()) {
+    return null;
+  }
+
+  const at = new Date(occurredAt);
+  if (Number.isNaN(at.getTime())) {
+    return null;
+  }
+
+  const next = entity.metadata.next;
+  return {
+    completed,
+    next: typeof next === 'string' && next.trim() ? next : undefined,
+    actorId,
+    at,
+  };
+}
+
+/** ADR-024 M1 — journal.md 追記と同時に loop-entry Resource を作成 */
 export async function persistLoopEntryResource(
   resourceService: ResourceService,
   entry: LoopJournalEntry,

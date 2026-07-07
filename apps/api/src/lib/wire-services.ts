@@ -93,6 +93,7 @@ export function createAppServices(databaseUrl?: string): AppServices {
   });
   const loopJournalService = createLoopJournalService({
     repoRoot: resolveLoopJournalRepoRoot(),
+    resourceRepository,
     persistLoopEntry: async (entry, actorId, mode) => {
       await persistLoopEntryResource(resourceService, entry, actorId, mode);
     },

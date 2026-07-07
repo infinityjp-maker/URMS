@@ -94,8 +94,17 @@ export {
   buildLoopEntryResourceId,
   buildLoopEntryDisplayName,
   toLoopEntryResourceInput,
+  fromLoopEntryResource,
   LOOP_ENTRY_RESOURCE_TYPE,
 } from './loop-journal/loop-entry-resource.js';
+export {
+  createCompositeLoopJournalReader,
+  mergeLoopJournalEntries,
+  readLoopJournalFromFile,
+  readLoopJournalFromResources,
+  loopJournalEntryKey,
+} from './loop-journal/loop-journal-repository.js';
+export type { LoopJournalReader, LoopJournalReaderOptions } from './loop-journal/loop-journal-repository.js';
 export { resolveRelationGraphSignal, formatRelationGraphNote, countRelationsByType } from './perception/graph/relation-graph-signal.js';
 export type { RelationGraphSignal, RelationTypeCounts } from './perception/graph/relation-graph-signal.js';
 export { parseLoopJournalMarkdown } from './loop-journal/parse-loop-journal.js';

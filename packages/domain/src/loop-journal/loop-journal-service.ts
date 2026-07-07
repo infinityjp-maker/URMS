@@ -1,9 +1,13 @@
-import { appendFile, mkdir, readFile } from 'node:fs/promises';
+import { appendFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
 import type { ContextDashboard, UrmsMode } from '@urms/shared';
 
-import { parseLoopJournalMarkdown } from './parse-loop-journal.js';
+import {
+  createCompositeLoopJournalReader,
+  type LoopJournalReader,
+} from './loop-journal-repository.js';
+import type { ResourceRepository } from '../repository/resource-repository.js';
 
 export const LOOP_JOURNAL_PATH = '.cursor/resources/loop/journal.md';
 
@@ -23,6 +27,9 @@ export type LoopEntryPersister = (
 export type LoopJournalServiceOptions = {
   repoRoot: string;
   persistLoopEntry?: LoopEntryPersister;
+  /** ADR-024 M2 — 未指定時は file のみ */
+  journalReader?: LoopJournalReader;
+  resourceRepository?: ResourceRepository;
 };
 
 function findSummary(dashboard: ContextDashboard, key: string): string | undefined {
@@ -69,10 +76,17 @@ function formatJournalLine(entry: LoopJournalEntry): string {
 export class LoopJournalService {
   private readonly journalPath: string;
   private readonly persistLoopEntry?: LoopEntryPersister;
+  private readonly journalReader: LoopJournalReader;
 
   constructor(options: LoopJournalServiceOptions) {
     this.journalPath = path.join(options.repoRoot, LOOP_JOURNAL_PATH);
     this.persistLoopEntry = options.persistLoopEntry;
+    this.journalReader =
+      options.journalReader ??
+      createCompositeLoopJournalReader({
+        repoRoot: options.repoRoot,
+        resourceRepository: options.resourceRepository,
+      });
   }
 
   async append(entry: LoopJournalEntry): Promise<void> {
@@ -101,19 +115,7 @@ export class LoopJournalService {
   }
 
   async readRecent(limit = 20): Promise<LoopJournalEntry[]> {
-    try {
-      const raw = await readFile(this.journalPath, 'utf8');
-      const entries = parseLoopJournalMarkdown(raw);
-      if (limit <= 0) {
-        return entries;
-      }
-      return entries.slice(-limit);
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        return [];
-      }
-      throw error;
-    }
+    return this.journalReader.readRecent(limit);
   }
 }
 

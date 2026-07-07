@@ -17,7 +17,7 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | VT-1 SSOT 重力 | ✅ ~完了 |
 | VT-2 Context 脳（合成 narrative） | 🔄 ~完了（contract テスト 5 件 ✅ · 維持） |
 | VT-3 知覚膜 | ✅ ~完了（Playwright smoke ✅ · 天気地点名 ✅） |
-| VT-4 日次ループ | 🔄 ~完了（API E2E ✅ · **窓手動確認** · ADR-024 草案 ✅） |
+| VT-4 日次ループ | 🔄 ~完了（API E2E ✅ · ADR-024 **M2 読取切替** ✅ · **窓手動確認**） |
 
 ## Vision Track 完了定義（DoD · PM）
 
@@ -26,12 +26,14 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 | VT-1 | schedule · location → 窓信号 · `ssot:sync` — **維持のみ** |
 | VT-2 | 合成 narrative 全信号 · **contract テスト 5 件** ✅ — 維持 |
 | VT-3 | 接続/天気/予定の `—` 表示 · 偽データなし — **§6 時間帯表** ✅ · **Playwright smoke 1420** ✅ |
-| VT-4 | advance → journal → perception — **API E2E ✅** · **ADR-024 草案** · 窓手動確認 |
+| VT-4 | advance → journal → perception — **API E2E ✅** · **ADR-024 M2 読取切替** · 窓手動確認 |
 
 ## 直近の変更
 
-- A4 — **ADR-024 草案**（loop journal → `loop-entry` Resource · デュアルライト移行計画）
-- 天気カード — **地点名**表示（SSOT 名 · GPS 時は現在地 · 未取得は —）
+- A4 — **ADR-024 M2**（`readRecent()` Resource 優先 + file マージ · `LoopJournalReader` 抽象）
+- A4 — **ADR-024 M1**（advance 時 Markdown + `loop-entry` Resource デュアルライト）
+- A4 — **ADR-024 草案**（loop journal → `loop-entry` Resource · 移行計画）
+- 天気カード — **地名**表示（逆ジオコーディング · 地点コンテキスト分離 · 未取得は —）
 - A3 — **Playwright smoke**（1420 · 接続カード · 時間帯プレビュー）· `playwright.vision.config.ts` · `test:vision` 統合
 - VT-2 — perception **契約テスト**（空 SSOT · 新しい一日 · ループ済 · 直近ループ優先 · 全信号）
 - viewing-guide §0 — setup-env（初回）vs start-dev-servers（毎日）の使い分け
@@ -55,6 +57,6 @@ SSOT（schedule · location · loop journal）と advance-task 接続済み。Co
 
 ## 運用
 
-- **進捗報告 SSOT:** [progress-report.md](./progress-report.md) — 8 セクション · 適宜見直し
+- **進捗報告 SSOT:** [progress-report.md](./progress-report.md) — 10 セクション（改修実績 · 改修予定含む）· 適宜見直し
 - **モデル選定 · 枠監視:** [model-policy.md](./model-policy.md) — **閾値内は最適 · 超過で削減** · PM 単独選定 · 日次監視
 - **使用率ログ:** [usage-log.md](./usage-log.md)
