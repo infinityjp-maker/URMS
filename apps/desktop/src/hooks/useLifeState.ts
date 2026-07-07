@@ -3,6 +3,7 @@ import type { PerceptionMeta, PerceptionState } from '@urms/shared';
 import { useCallback, useEffect, useState } from 'react';
 
 import { advanceContextTask, fetchHealth, fetchPerception, fetchReady } from '../api/client.js';
+import { useMode } from '../features/mode/mode-context.js';
 import { resolveDeviceLocation } from '../lib/device-location.js';
 
 export type LifeStateSource = 'api' | 'local';
@@ -44,14 +45,15 @@ function fallbackView(): Omit<LifeStateView, 'refresh' | 'advanceTask'> {
 }
 
 export function useLifeState(): LifeStateView {
+  const { mode } = useMode();
   const [view, setView] = useState<Omit<LifeStateView, 'refresh' | 'advanceTask'>>(fallbackView);
 
   const refresh = useCallback(async () => {
     const deviceCoords = await resolveDeviceLocation();
     const [healthOk, readyOk, perception] = await Promise.all([
-      fetchHealth(),
-      fetchReady(),
-      fetchPerception(deviceCoords),
+      fetchHealth(mode),
+      fetchReady(mode),
+      fetchPerception(mode, deviceCoords),
     ]);
 
     if (perception) {
@@ -85,7 +87,7 @@ export function useLifeState(): LifeStateView {
       advanceError: null,
       advanceSuccess: current.advanceSuccess,
     }));
-  }, []);
+  }, [mode]);
 
   useEffect(() => {
     void refresh();
@@ -96,7 +98,7 @@ export function useLifeState(): LifeStateView {
   const advanceTask = useCallback(async () => {
     setView((current) => ({ ...current, advancing: true, advanceError: null, advanceSuccess: null }));
 
-    const result = await advanceContextTask();
+    const result = await advanceContextTask(mode);
     if (!result.ok) {
       setView((current) => ({
         ...current,
@@ -118,7 +120,7 @@ export function useLifeState(): LifeStateView {
     }, 4000);
 
     return true;
-  }, [refresh]);
+  }, [mode, refresh]);
 
   return { ...view, refresh, advanceTask };
 }

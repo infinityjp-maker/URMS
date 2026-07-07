@@ -39,8 +39,97 @@
 }
 
 .dashboard__header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
   font-size: 0.75rem;
   opacity: 0.45;
+}
+
+.dashboard__mode-label {
+  letter-spacing: 0.06em;
+}
+
+.mode-switcher {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.mode-switcher__button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.72;
+}
+
+.mode-switcher__button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 1;
+}
+
+.mode-switcher__button--active {
+  background: rgba(120, 160, 220, 0.22);
+  opacity: 1;
+}
+
+.develop-panel__row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.develop-panel__row:first-of-type {
+  margin-top: 6px;
+}
+
+.develop-panel__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.develop-panel__name {
+  font-size: 0.9rem;
+}
+
+.develop-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.develop-panel__button {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e8ecf2;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.develop-panel__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.develop-panel__error,
+.develop-panel__message {
+  opacity: 0.8;
 }
 
 .dashboard__grid {

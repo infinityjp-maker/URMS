@@ -3,6 +3,10 @@ import type { PerceptionState } from '@urms/shared';
 
 import { useClock } from '../hooks/useClock.js';
 import { useLifeState } from '../hooks/useLifeState.js';
+import { DevelopPanel } from '../features/develop/DevelopPanel.js';
+import { ModeSwitcher } from '../features/mode/ModeSwitcher.js';
+import { getModeLabel } from '../features/mode/mode-ui.js';
+import { useMode } from '../features/mode/mode-context.js';
 import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
 import { formatWeatherCoordHint, formatWeatherLocationLabel } from './weather-coord-hint.js';
@@ -33,6 +37,7 @@ function connectionLabel(apiOnline: boolean, dbReady: boolean, source: string, l
 
 export function PerceptionDashboard({ state: stateOverride }: Props) {
   const clock = useClock();
+  const { mode } = useMode();
   const life = useLifeState();
   const state = stateOverride ?? life.state;
   const actualPhase = resolveDayPhase();
@@ -60,13 +65,19 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
 
       <header className="dashboard__header">
         <span className="dashboard__brand">URMS</span>
-        <span className="dashboard__header-meta">
+        <div className="dashboard__header-meta">
+          {!previewPhase && !stateOverride ? (
+            <>
+              <span className="dashboard__mode-label">{getModeLabel(mode)}</span>
+              <ModeSwitcher />
+              <span>
+                {connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)}
+              </span>
+            </>
+          ) : null}
           {previewPhase ? `プレビュー · ${DAY_PHASE_LABELS[phase]}` : null}
           {!previewPhase && stateOverride ? '固定表示' : null}
-          {!previewPhase && !stateOverride
-            ? connectionLabel(life.apiOnline, life.dbReady, life.source, life.loading)
-            : null}
-        </span>
+        </div>
       </header>
 
       <main className={`dashboard__grid dashboard__grid--${layout.gridMode}`}>
@@ -208,6 +219,8 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
               ) : null}
             </div>
           ) : null}
+
+          <DevelopPanel />
         </section>
       </main>
 

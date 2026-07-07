@@ -41,12 +41,17 @@ POST /v1/integrations/cursor-local/sync   # develop Mode + flag
 
 - Cursor 双方向同期（Resource → 正本ファイル書戻し）
 - 追加 Integration adapter（GitHub · Slack 等）
-- Desktop UI での develop Mode 切替
 
 ## B-020 完了（2026-07-08）
 
 - 暫定 Web UI — develop Mode 切替（`GET /v1/modes` 連動）
 - `/develop/integrations` — cursor-local health · sync（UC-012）
+
+## Desktop develop Mode（2026-07-08）
+
+- 本番窓（1420）— `ModeProvider` · `GET /v1/modes` 連動 · ヘッダー切替
+- develop Mode 時 — サイドパネルに `DevelopPanel`（cursor-local health · sync）
+- API 呼び出し — `X-URMS-Mode` を選択モードに追従
 
 ## 参照
 

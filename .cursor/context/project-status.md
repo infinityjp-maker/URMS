@@ -28,6 +28,7 @@
 | **B-020 develop Mode** | ✅ **2026-07-08** — Web UI 切替 · Integrations ページ |
 | **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
 | **dev オフライン修正** | ✅ **2026-07-08** — domain export 修正 · desktop proxy · start-ui に API 同梱 |
+| **S16 Desktop develop Mode** | ✅ **2026-07-08** — 1420 Mode 切替 · DevelopPanel |
 
 ## リンク
 
