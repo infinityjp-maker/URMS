@@ -3,8 +3,10 @@ import { fileURLToPath } from 'node:url';
 
 import {
   LocationSyncService,
+  LoopSyncService,
   ScheduleSyncService,
   resolveLocationRepoRoot,
+  resolveLoopJournalRepoRoot,
   resolveScheduleRepoRoot,
 } from '@urms/domain';
 import { PrismaResourceRepository, createPrismaClient } from '@urms/db';
@@ -29,12 +31,18 @@ async function main(): Promise<void> {
     resourceRepository,
   }).sync('ssot-sync', 'operate');
 
+  const loopReport = await new LoopSyncService({
+    repoRoot: resolveLoopJournalRepoRoot({ URMS_REPO_ROOT: repoRoot }),
+    resourceRepository,
+  }).sync('ssot-sync', 'operate');
+
   console.log(
     JSON.stringify(
       {
         repoRoot,
         schedule: scheduleReport,
         location: locationReport,
+        loop: loopReport,
       },
       null,
       2,

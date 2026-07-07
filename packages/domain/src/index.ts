@@ -56,6 +56,11 @@ export {
   resolveLocationRepoRoot,
 } from './location-sync/location-sync-service.js';
 export type { LocationSyncReport, LocationSyncItem } from './location-sync/location-sync-service.js';
+export {
+  createLoopSyncService,
+  LoopSyncService,
+} from './loop-sync/loop-sync-service.js';
+export type { LoopSyncReport, LoopSyncItem } from './loop-sync/loop-sync-service.js';
 export { parseLocationMarkdown } from './location-sync/parse-location-markdown.js';
 export { LOCATION_SOURCE_DIR } from './location-sync/location-sources.js';
 export {

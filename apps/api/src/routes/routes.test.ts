@@ -169,6 +169,14 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         items: [],
       })),
     },
+    loopSyncService: {
+      sync: vi.fn(async () => ({
+        created: 2,
+        updated: 0,
+        skipped: 0,
+        items: [],
+      })),
+    },
     loopJournalService: {
       append: vi.fn(async () => undefined),
       recordAdvance: vi.fn(async () => null),
@@ -529,6 +537,25 @@ describe('Perception routes', () => {
     });
     const body = response.json() as { meta: { sources: { weatherCoords: string | null } } };
     expect(body.meta.sources.weatherCoords).toBe('device');
+
+    await app.close();
+  });
+});
+
+describe('Loop sync routes', () => {
+  it('syncs journal entries via POST /v1/loop/sync', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/loop/sync',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(services.loopSyncService.sync).toHaveBeenCalledWith(expect.any(String), 'operate');
+    expect(response.json().data.created).toBe(2);
 
     await app.close();
   });

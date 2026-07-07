@@ -61,10 +61,10 @@
 |------|----------|-----|
 | `.cursor/resources/schedule/*.md` | `pnpm schedule:sync` | `POST /v1/schedule/sync` |
 | `.cursor/resources/location/*.md` | `pnpm location:sync` | `POST /v1/location/sync` |
-| `.cursor/resources/loop/journal.md` | **（現状）advance 時 append のみ** | — |
-| 両方一括 | **`pnpm ssot:sync`** | — |
+| `.cursor/resources/loop/journal.md` | `pnpm loop:sync` | `POST /v1/loop/sync` |
+| 一括 | **`pnpm ssot:sync`**（schedule + location + loop） | — |
 
-> **loop journal → Resource 化:** [ADR-024](../project/decisions/ADR-024-loop-journal-resource.md)（草案 · M1 デュアルライト以降）
+> **loop journal → Resource 化:** [ADR-024](../project/decisions/ADR-024-loop-journal-resource.md)（M1 デュアルライト · M2 読取 · **M3 sync** 実装済）
 
 - schedule: `recurrence: daily` + `time` で毎日窓に表示
 - location: `primary: true` の地点が天気 API の緯度経度 SSOT（env より優先）
