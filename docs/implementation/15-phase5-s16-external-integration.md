@@ -40,7 +40,7 @@ POST /v1/integrations/cursor-local/export # develop Mode · AI Team H1 + Context
 
 ## 残課題（v1.x 以降）
 
-- ~~Cursor 双方向同期（Resource → 正本ファイル書戻し）~~ — **v1.3 部分対応**（H1 · Context summary · SSOT links · AI Team `## URMS Export`）
+- ~~Cursor 双方向同期（Resource → 正本ファイル書戻し）~~ — **v1.3.0 部分対応**（H1 · summary · SSOT links · `## URMS Export`）
 - 全文 merge · 競合解決 UI
 - 追加 Integration adapter（GitHub · Slack 等）
 

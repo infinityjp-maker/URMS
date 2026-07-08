@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: URMS API
-  version: 1.2.0
+  version: 1.3.0
   description: |
     Unified Resource Management System API.
     Local app — no login UI (ADR-022). Dev uses URMS_AUTH_MODE=bypass by default.
