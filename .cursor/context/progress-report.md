@@ -153,7 +153,35 @@ const LAST_CURSOR = { at, usagePct, dailyDelta, mode, model, nextSession };
 | 2026-07-07 | 初版 — 8 セクション · SSOT 連携 · 見直しサイクル |
 | 2026-07-07 | Cursor 枠 · 運用モード · usage-log 連携 |
 | 2026-07-07 | 閾値内最適/超過削減 · PM 単独模型選定 |
-| 2026-07-07 | **改修実績 · 改修予定** セクション追加（§3 · §4）— 具体表示を必須化 |
+| 2026-07-08 | **PM 承認 S17** — B-023/B-024 · v1.3.0 GA クローズ確認 |
+
+---
+
+## 最新 PM 承認（2026-07-08）
+
+### 一行サマリ
+
+v1.3.0 GA クローズを PM 承認 · 次 Sprint **S17（B-023 export v1.4）** 実装開始を承認。
+
+### 承認内容
+
+| ID | 内容 | 判定 |
+|----|------|------|
+| v1.3.0 GA | tag `v1.3.0` · export v1〜v3 · Desktop ErrorBoundary | ✅ クローズ承認 |
+| **B-023** | Cursor export v1.4 — 競合検知 · 限定 merge · v1.4.0 目標 | ✅ **着手可** |
+| **B-024** | WCAG 改善（5173） | ✅ P1 完了後 |
+
+### 検証（dev:verify · 承認時点）
+
+```
+[NG] Web UI shell http://localhost:5173/ — not running
+[OK] API health http://localhost:3000/health
+[OK] API readiness /health/ready (DB connected)
+[OK] Wireframes http://localhost:5180/
+[OK] Desktop UI shell http://localhost:1420/ (本番UI dev)
+```
+
+5173 未起動は既知（1420 本番窓確認に不要）。
 
 ---
 

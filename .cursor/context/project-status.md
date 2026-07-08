@@ -29,6 +29,7 @@
 | **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
 | **v1.3.0 GA** | ✅ **2026-07-08** — export v3 · Desktop ErrorBoundary |
 | **Cursor export v3** | ✅ **2026-07-08** — URMS Export block · SSOT links 書戻し |
+| **PM 承認 S17** | ✅ **2026-07-08** — B-023 export v1.4 · B-024 WCAG（P1 後） |
 | **dev オフライン修正（plugin）** | ✅ **2026-07-08** — plugin-resource-types 再ビルド · dev:prepare 拡張 |
 | **S16 Desktop develop Mode** | ✅ **2026-07-08** — 1420 Mode 切替 · DevelopPanel |
 | **k6 smoke CI** | ✅ **2026-07-08** — GitHub Actions `perf-k6` |
