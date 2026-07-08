@@ -10,6 +10,7 @@ import {
 } from '../../api/client.js';
 import { useMode } from '../mode/mode-context.js';
 import { canShowIntegrationsNav } from '../mode/mode-ui.js';
+import { formatExportResultMessage } from './export-result-message.js';
 
 type IntegrationRow = IntegrationSummary & {
   health?: IntegrationHealth;
@@ -112,7 +113,9 @@ export function DevelopPanel() {
           ? {
               ...item,
               exporting: false,
-              message: response.ok ? '書戻し完了' : (response.error ?? '書戻しに失敗しました'),
+              message: response.ok
+                ? formatExportResultMessage(response.data)
+                : (response.error ?? '書戻しに失敗しました'),
             }
           : item,
       ),

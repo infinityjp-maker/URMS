@@ -33,12 +33,13 @@ model Resource {
 }
 
 model ContextSnapshot {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  summary   String
-  ssotLinks Json     @map("ssot_links")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  updatedBy String?  @map("updated_by")
+  id                String   @id @default(cuid())
+  key               String   @unique
+  summary           String
+  ssotLinks         Json     @map("ssot_links")
+  exportContentHash String?  @map("export_content_hash")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  updatedBy         String?  @map("updated_by")
 
   @@map("context_snapshots")
 }

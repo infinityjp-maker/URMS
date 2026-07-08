@@ -1,3 +1,5 @@
+import { hashContent } from '../shared/hash-content.js';
+
 export type ParsedResourceMarkdown = {
   resourceType: string;
   resourceId: string;
@@ -54,12 +56,4 @@ export function parseResourceMarkdown(
     sourcePath,
     contentHash: hashContent(content),
   };
-}
-
-function hashContent(content: string): string {
-  let hash = 0;
-  for (let index = 0; index < content.length; index += 1) {
-    hash = (hash * 31 + content.charCodeAt(index)) >>> 0;
-  }
-  return hash.toString(16);
 }

@@ -48,10 +48,11 @@
 4. 差戻し時は Developer へ修正指示（PM が `current-task.md` 更新）
 5. 承認時は Tester 結果と合わせ PM が完成判断
 
-## 独立性
+## 独立性（必須 · 2026-07-08）
 
-- 自分が実装したコードの最終レビューは行わない
-- 可能な限り別 Agent セッションで実施
+- 自分が実装したコードの最終レビューは **行わない**
+- **必ず別 Agent**（Task `bugbot` · readonly）。実装 Agent との兼務 **禁止**
+- レビュー単位は **Package**（Backlog 1 件）。Package 完了時のみ実施
 
 ## Command
 

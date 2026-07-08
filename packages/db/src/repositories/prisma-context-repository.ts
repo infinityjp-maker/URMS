@@ -30,17 +30,26 @@ export class PrismaContextRepository implements ContextRepository {
         key: item.key,
         summary: item.summary,
         ssotLinks: item.ssotLinks as unknown as Prisma.InputJsonValue,
+        exportContentHash: item.exportContentHash ?? null,
         updatedAt: new Date(item.updatedAt),
         updatedBy: item.updatedBy,
       },
       update: {
         summary: item.summary,
         ssotLinks: item.ssotLinks as unknown as Prisma.InputJsonValue,
+        exportContentHash: item.exportContentHash ?? null,
         updatedAt: new Date(item.updatedAt),
         updatedBy: item.updatedBy,
       },
     });
 
     return toContextSnapshotItem(row);
+  }
+
+  async updateExportContentHash(key: ContextKey, exportContentHash: string): Promise<void> {
+    await this.prisma.contextSnapshot.update({
+      where: { key },
+      data: { exportContentHash },
+    });
   }
 }

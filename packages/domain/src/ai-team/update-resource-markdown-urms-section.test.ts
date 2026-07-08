@@ -18,6 +18,25 @@ describe('updateUrmsExportSection', () => {
     expect(updateUrmsExportSection(content, 'New')).not.toContain('**Summary:** Old');
   });
 
+  it('updates Status and Owner lines in URMS Export block', () => {
+    const content = '# Title\n\n## URMS Export\n\n**Summary:** Old\n\n## Next\n';
+    const updated = updateUrmsExportSection(content, {
+      summary: 'New',
+      status: 'doing',
+      owner: 'PM',
+    });
+    expect(updated).toContain('**Summary:** New');
+    expect(updated).toContain('**Status:** doing');
+    expect(updated).toContain('**Owner:** PM');
+  });
+
+  it('preserves Status and Owner lines when metadata omits them', () => {
+    const content =
+      '# Title\n\n## URMS Export\n\n**Summary:** Same\n**Status:** local\n**Owner:** user\n\n## Next\n';
+    expect(updateUrmsExportSection(content, 'Same')).toBeNull();
+    expect(content).toContain('**Status:** local');
+  });
+
   it('returns null when summary matches', () => {
     const content = '# Title\n\n## URMS Export\n\n**Summary:** Same\n';
     expect(updateUrmsExportSection(content, 'Same')).toBeNull();

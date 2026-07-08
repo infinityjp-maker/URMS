@@ -18,7 +18,7 @@ function createLoopEntryTestPlugin(): ResourceTypePlugin {
   return {
     resourceType: 'loop-entry',
     version: '1.0.0',
-    coreVersion: '1.3.0',
+    coreVersion: '1.4.0',
     searchableFields: () => ['name'],
     validateCreate(input) {
       const details = [];
@@ -34,7 +34,7 @@ function createLoopEntryTestPlugin(): ResourceTypePlugin {
 }
 
 function createResourceService(): ResourceService {
-  const registry = new PluginRegistry('1.3.0');
+  const registry = new PluginRegistry('1.4.0');
   registry.register(createLoopEntryTestPlugin());
   return new ResourceService(new InMemoryResourceRepository(), new InProcessEventBus(), registry);
 }

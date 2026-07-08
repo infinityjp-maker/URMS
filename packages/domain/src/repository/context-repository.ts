@@ -4,4 +4,5 @@ export interface ContextRepository {
   findByKey(key: ContextKey): Promise<ContextSnapshotItem | null>;
   findAll(): Promise<ContextSnapshotItem[]>;
   upsert(item: ContextSnapshotItem): Promise<ContextSnapshotItem>;
+  updateExportContentHash(key: ContextKey, exportContentHash: string): Promise<void>;
 }

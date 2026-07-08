@@ -87,10 +87,12 @@ export class ContextService {
     const now = new Date().toISOString();
 
     for (const item of items) {
+      const existing = await this.repository.findByKey(item.key);
       const saved: ContextSnapshotItem = {
         key: item.key,
         summary: item.summary.trim(),
         ssotLinks: item.ssotLinks ?? [],
+        exportContentHash: existing?.exportContentHash ?? null,
         updatedAt: now,
         updatedBy: actorId,
       };

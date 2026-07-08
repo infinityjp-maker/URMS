@@ -7,10 +7,18 @@ alwaysApply: false
 
 > **resource_id:** rule:04-review
 
-## 独立性
+## 独立性（必須）
 
-- 実装者自身の最終レビュー禁止
-- 可能な限り別セッションで実施
+- 実装者自身の最終レビュー **禁止**
+- Reviewer は **必ず別 Agent**（Task `bugbot` · readonly）。実装 Agent と同一セッション兼務 **禁止**
+- Tester 合格判定も **別 Agent**（Task `shell` 等）— Developer の自己申告のみでは不可
+
+## Package レビュー（コスト最適化）
+
+- **1 Package = 1 Backlog 項目**（目安 diff 400 行以下）。Package 内の中間コミットに Reviewer を回さない
+- Package 完了時のみ: Tester → Reviewer の順で **別 Agent 2 本** を PM が起動
+- PM が結果を要約し **User Go** を取得してから GA / tag
+- セキュリティ境界変更時は Reviewer に加え security-review Agent を追加
 
 ## 指摘分類
 

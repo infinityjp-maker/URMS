@@ -18,10 +18,24 @@
 ## 報告の原則
 
 1. **誇張禁止** — 「すべて完了」「S11 完了」等 · 実態のみ（00_共通ルール）
-2. **dev:verify** — 出力を **そのまま** 貼る（要約しない）
+2. **dev:verify** — 出力を **そのまま** 貼る（要約しない）。User 向け見出しは **「動作確認の結果」**
 3. **未確認は未確認** — usage · 窓目視 · 数値の推測禁止
 4. **1 画面** — User が 30 秒で把握できる長さ
 5. **SSOT 更新とセット** — チャット報告だけで終わらない
+6. **User 向けは専門用語禁止（2026-07-08）** — 判断依頼・進捗報告・Go 提示では [glossary 言い換え表](../../docs/project/glossary.md#pm--user-言い換え表) に従う。内部（Context · コミット · AI 間）は従来どおり可
+
+### User 向け文体（必須）
+
+- **GA** → 「正式版として区切った」
+- **tag** → 「版番号 vX.Y.Z を付けた」
+- **Go-1 / Go-2** → 「実装してよいですか？」「正式版にしてよいですか？」
+- **Reviewer / Tester** → 「別担当のコード確認」「自動テスト」
+- **Package** → 「作業の塊（B-023 など）」
+- **Backlog / Sprint** → 「やることリスト」「開発の区切り」
+- 英略語だけの文は書かない（例: ❌「S17 Go-2 待ちで tag 案 v1.4.0」→ ✅「作業 B-023 が終わったら、正式版 v1.4.0 にしてよいか確認します」）
+- **機能名は「何が起きるか」で説明**（例: ❌「Cursor export v1.4」→ ✅「URMS の内容を Cursor 用メモに書き戻す · 食い違いは報告」）
+
+用語の平易説明: [glossary.md § 平易語辞典](../../docs/project/glossary.md#平易語辞典userpm-報告向け)
 
 ## 必須セクション（この順 · PM チャット報告）
 
@@ -154,6 +168,69 @@ const LAST_CURSOR = { at, usagePct, dailyDelta, mode, model, nextSession };
 | 2026-07-07 | Cursor 枠 · 運用モード · usage-log 連携 |
 | 2026-07-07 | 閾値内最適/超過削減 · PM 単独模型選定 |
 | 2026-07-08 | **PM 承認 S17** — B-023/B-024 · v1.3.0 GA クローズ確認 |
+| 2026-07-08 | **Multi-Agent Batch Gate** — User 指示 · 複数 Agent 必須 · Package 単位レビュー |
+| 2026-07-08 | **User 向け平易語** — glossary 拡充 · PM 報告で専門用語禁止 |
+| 2026-07-08 | **v1.4.0 正式版** — B-023 書き戻し v1.4 · User Go-2 |
+
+## Multi-Agent Batch Gate（運用正本 · 2026-07-08）
+
+> User 指示: 同一 Agent の自己レビュー禁止 · レビューは塊で · PM 経由で User Go を 2 回取る。
+
+### Package 定義
+
+| 項目 | ルール |
+|------|--------|
+| 単位 | **Backlog 1 件**（例: B-023）または Sprint サブフェーズ |
+| サイズ目安 | diff **400 行以下**（超過時は Package 分割） |
+| 中間コミット | Developer のみ · Reviewer / 独立 Tester **不要** |
+
+### 必須 Agent 分離
+
+| 順 | Agent | 起動 | 兼務禁止 |
+|----|-------|------|----------|
+| 1 | **Architect** | Task explore / readonly | Developer |
+| 2 | **Developer** | 実装 Agent（User 実装 Go 後） | Reviewer · Tester 最終判定 |
+| 3 | **Tester** | Task shell — `pnpm test` 等 | Developer · Reviewer |
+| 4 | **Reviewer** | Task bugbot · readonly · branch diff | Developer |
+
+PM は **起票・要約・User Go 取得のみ**。Reviewer / Tester の役割を自分で兼務しない。
+
+### User Go（2 回）— User 向けの言い方
+
+| # | タイミング | PM が User に聞く言い方 | User 返答例 |
+|---|------------|-------------------------|-------------|
+| **Go-1** | 設計確認後 · コード着手前 | 「この内容で **実装を始めてよいですか？**」 | 「Go」「実装して」 |
+| **Go-2** | 自動テスト OK + 別担当レビュー OK 後 | 「**正式版 vX.Y.Z として区切ってよいですか？**」 | 「Go」「正式版にして」 |
+
+内部記録では Go-1 / Go-2 / tag / GA を使用可。**User チャットでは上表の言い方のみ。**
+
+**Go-1 なしに実装開始禁止。** **Go-2 なしに版番号ラベル（tag）・正式リリース（GA）禁止。**
+
+### コスト（User 仮説への PM 回答）
+
+| 方式 | Agent 起動 | 概算コスト | リスク |
+|------|------------|------------|--------|
+| コミット毎 Reviewer | 多 | **高** | 低 |
+| **Package 毎（採用）** | 少 | **中〜低** | 中（Package を小さく保てば許容） |
+| Sprint 末のみ | 最少 | **最低** | **高**（手戻りで相殺しうる） |
+
+**結論:** User の方針（塊レビュー + User Go 2 回）は **コスト削減と独立性の両立** に有効。Sprint 末一括のみは URMS 品質目標と合わないため **不採用**。
+
+### Package 完了時 PM 報告テンプレ（Go-2 用）
+
+1. 一行サマリ
+2. 改修実績（Before → After）
+3. Tester Agent — コマンド · passed/failed
+4. Reviewer Agent — 承認/差戻し · 重大指摘有無
+5. dev:verify 全文
+6. Cursor 枠
+7. **User Go-2 待ち**（正式版案: vX.Y.Z）
+
+---
+
+## User 向け用語（参照）
+
+平易語・言い換え表: [docs/project/glossary.md](../../docs/project/glossary.md#pm--user-言い換え表)
 
 ---
 

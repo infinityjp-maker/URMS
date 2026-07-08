@@ -7,6 +7,7 @@ import type {
   ContextSsotExportService,
   CursorCombinedExportReport,
 } from '../context/context-ssot-export-service.js';
+import { sumExportConflicts } from '../context/context-ssot-export-service.js';
 import type { IntegrationAdapter, IntegrationHealth } from './integration-adapter.js';
 
 export type CursorIntegrationOptions = {
@@ -57,6 +58,6 @@ export class CursorLocalIntegration implements IntegrationAdapter {
       this.aiTeamExportService.export(actorId, 'develop'),
       this.contextSsotExportService.export(actorId, 'develop'),
     ]);
-    return { aiTeam, context };
+    return { aiTeam, context, conflicts: sumExportConflicts(aiTeam, context) };
   }
 }

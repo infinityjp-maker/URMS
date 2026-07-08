@@ -37,6 +37,8 @@ export interface ContextSnapshotItem {
   ssotLinks: SsotLink[];
   updatedAt: string;
   updatedBy: string;
+  /** 最後に書き戻し成功した `.cursor/context/` ファイルの fingerprint */
+  exportContentHash?: string | null;
 }
 
 export interface ContextDashboard {

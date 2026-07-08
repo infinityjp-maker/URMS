@@ -46,29 +46,35 @@ User
 | `role:document-writer` | Document Writer | [06_DocumentWriter.md](./06_DocumentWriter.md) | `/document` | markdown-doc |
 | `role:knowledge-manager` | Knowledge Manager | [07_KnowledgeManager.md](./07_KnowledgeManager.md) | `/knowledge` | — |
 
-## 開発フロー
+## 開発フロー（Multi-Agent Batch Gate · 2026-07-08）
 
 ```
-PM（要件・承認・Context 更新）
+PM — Package 定義（Backlog 1 件 · DoD · 影響範囲）
   ↓
-/plan → Architect（設計・ADR 草案）
+Architect Agent — 設計 / ADR 整合（別 Agent · readonly 可）
   ↓
-/design → Developer（PM+Architect 承認後 /implement）
+PM → User — **実装 Go**（スコープ・設計要約 · 1 画面）
   ↓
-/test → Reviewer（/review）
+Developer Agent — 実装（Package 内コミット可 · Reviewer 不要）
   ↓
-/document → Knowledge Manager（/knowledge で ADR・用語・履歴を正本化）
+Tester Agent — テスト実行・合格判定（別 Agent 必須）
   ↓
-PM（次イテレーション）
+Reviewer Agent — diff レビュー（別 Agent 必須 · 実装 Agent 禁止）
+  ↓
+PM → User — **完成 Go**（テスト · レビュー · dev:verify · 1 画面）
+  ↓
+/document → Knowledge Manager（必要時）
 ```
+
+**コスト方針:** レビュー回数は Package 境界に集約。コミット毎の Reviewer 起動は行わない。
 
 ## 承認ゲート
 
 | 操作 | 必要条件 |
 |------|----------|
-| 実装 | PM 承認 + Architect 設計成果物 |
+| **実装開始** | **User Go** + PM スコープ承認 + Architect 設計成果物 |
 | 設計変更 | Architect 提案 → PM 承認 → KM 記録 |
-| 完成 | Reviewer 承認 + Tester 合格 |
+| **完成（GA / tag）** | **User Go** + **別 Agent** Reviewer 承認 + **別 Agent** Tester 合格 |
 | 知識更新 | KM が `docs/project/` を更新（PM 確認） |
 
 ## SSOT（情報の正本）

@@ -92,7 +92,7 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
       })),
     },
     pluginRegistry: {
-      list: vi.fn(() => [{ resourceType: 'physical', version: '1.0.0', coreVersion: '1.3.0' }]),
+      list: vi.fn(() => [{ resourceType: 'physical', version: '1.0.0', coreVersion: '1.4.0' }]),
       get: vi.fn(),
       require: vi.fn(),
       register: vi.fn(),
@@ -215,14 +215,17 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
           updated: 2,
           unchanged: 10,
           skipped: 1,
+          conflicts: 0,
           items: [],
         },
         context: {
           updated: 1,
           unchanged: 2,
           skipped: 0,
+          conflicts: 0,
           items: [],
         },
+        conflicts: 0,
       })),
     },
     checkReadiness: vi.fn(async () => ({ database: 'ok' as const })),
@@ -243,7 +246,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'ok',
-        version: '1.3.0',
+        version: '1.4.0',
       },
     });
 
@@ -262,7 +265,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'ready',
-        version: '1.3.0',
+        version: '1.4.0',
         checks: { database: 'ok' },
       },
     });
@@ -287,7 +290,7 @@ describe('Health route', () => {
     expect(response.json()).toEqual({
       data: {
         status: 'not_ready',
-        version: '1.3.0',
+        version: '1.4.0',
         checks: { database: 'unavailable' },
       },
     });
@@ -1090,6 +1093,7 @@ describe('Integration routes (S16)', () => {
     });
 
     expect(response.statusCode).toBe(200);
+    expect(response.json().data.conflicts).toBe(0);
     expect(response.json().data.aiTeam.updated).toBe(2);
     expect(response.json().data.context.updated).toBe(1);
     expect(services.integrationRegistry.export).toHaveBeenCalledWith('cursor-local', expect.any(String));

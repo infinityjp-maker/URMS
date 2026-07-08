@@ -63,7 +63,7 @@
 | ID | タスク | 担当 | 状態 | 備考 |
 |----|--------|------|------|------|
 | B-020 | develop Mode 実装 | Developer | done | Web UI 切替 · Integrations · 2026-07-08 |
-| B-023 | Cursor export v1.4（競合検知 · 限定 merge） | Developer | **doing** | PM 承認 **2026-07-08** · S17 P1 |
+| B-023 | Cursor export v1.4（競合検知 · 限定 merge） | Developer | **done** | v1.4.0 **2026-07-08** |
 | B-024 | WCAG 改善（暫定 Web 5173） | Developer | todo | PM 承認 **2026-07-08** · S17 P2 |
 | B-021 | pgvector 利用 | Architect | todo | Phase 4 |
 | B-022 | Redis キャッシュ | Developer | todo | Phase 3+ |

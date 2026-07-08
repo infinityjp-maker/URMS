@@ -69,6 +69,12 @@ function createMemoryRepository(): ContextRepository & { items: Map<string, Cont
       items.set(item.key, item);
       return item;
     },
+    async updateExportContentHash(key, exportContentHash) {
+      const existing = items.get(key);
+      if (existing) {
+        items.set(key, { ...existing, exportContentHash });
+      }
+    },
   };
 }
 

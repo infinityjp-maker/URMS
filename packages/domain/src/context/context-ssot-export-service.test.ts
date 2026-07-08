@@ -9,10 +9,21 @@ import type { ContextRepository } from '../repository/context-repository.js';
 import { createContextSsotExportService } from './context-ssot-export-service.js';
 
 function createRepository(items: ContextSnapshotItem[]): ContextRepository {
+  const store = new Map(items.map((item) => [item.key, { ...item }]));
+
   return {
-    findAll: async () => items,
-    upsert: async (item) => item,
-    findByKey: async (key) => items.find((item) => item.key === key) ?? null,
+    findAll: async () => [...store.values()],
+    upsert: async (item) => {
+      store.set(item.key, item);
+      return item;
+    },
+    findByKey: async (key) => store.get(key) ?? null,
+    updateExportContentHash: async (key, exportContentHash) => {
+      const existing = store.get(key);
+      if (existing) {
+        store.set(key, { ...existing, exportContentHash });
+      }
+    },
   };
 }
 
@@ -74,5 +85,31 @@ describe('ContextSsotExportService', () => {
     expect(content).toContain('| 状態 | **New status** |');
     expect(content).toContain('- [Roadmap](../../docs/project/roadmap.md)');
     expect(content).not.toContain('[Old](old.md)');
+  });
+
+  it('reports conflict and skips write when export baseline hash mismatches', async () => {
+    const repoRoot = path.join(os.tmpdir(), `urms-context-export-conflict-${Date.now()}`);
+    const relativePath = '.cursor/context/current-task.md';
+    const absolutePath = path.join(repoRoot, relativePath);
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    const content = '# 現在タスク\n\n## Task\n\n**Local edit**\n\nBody\n';
+    await writeFile(absolutePath, content, 'utf8');
+
+    const repository = createRepository([
+      {
+        key: 'current_task',
+        summary: 'Exported task summary',
+        ssotLinks: [],
+        exportContentHash: 'baseline-mismatch',
+        updatedAt: new Date().toISOString(),
+        updatedBy: 'developer',
+      },
+    ]);
+
+    const service = createContextSsotExportService({ repoRoot, contextRepository: repository });
+    const report = await service.export('developer', 'develop');
+
+    expect(report.conflicts).toBe(1);
+    expect(await readFile(absolutePath, 'utf8')).toBe(content);
   });
 });

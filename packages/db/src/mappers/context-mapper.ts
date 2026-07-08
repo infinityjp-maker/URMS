@@ -6,6 +6,7 @@ export function toContextSnapshotItem(row: PrismaContextSnapshot): ContextSnapsh
     key: row.key as ContextKey,
     summary: row.summary,
     ssotLinks: parseSsotLinks(row.ssotLinks),
+    exportContentHash: row.exportContentHash,
     updatedAt: row.updatedAt.toISOString(),
     updatedBy: row.updatedBy ?? 'system',
   };

@@ -6,14 +6,19 @@ import { describe, expect, it } from 'vitest';
 import type { ResourceEntity } from '@urms/shared';
 
 import type { ResourceRepository } from '../repository/resource-repository.js';
+import { hashContent } from '../shared/hash-content.js';
 import { createAiTeamExportService } from './ai-team-export-service.js';
 
 function createRepository(entity: ResourceEntity): ResourceRepository {
+  let saved = entity;
   return {
     findByRef: async (resourceType, resourceId) =>
-      resourceType === entity.resourceType && resourceId === entity.resourceId ? entity : null,
-    list: async () => ({ items: [entity], total: 1, page: 1, limit: 1 }),
-    save: async (next) => next,
+      resourceType === saved.resourceType && resourceId === saved.resourceId ? saved : null,
+    list: async () => ({ items: [saved], total: 1, page: 1, limit: 1 }),
+    save: async (next) => {
+      saved = next;
+      return next;
+    },
     exists: async () => true,
   };
 }
@@ -107,5 +112,70 @@ describe('AiTeamExportService', () => {
     expect(report.updated).toBe(1);
     const content = await readFile(path.join(fixture.repoRoot, fixture.relativePath), 'utf8');
     expect(content).toContain('**Summary:** Body summary from DB');
+  });
+
+  it('reports conflict when file contentHash differs from stored metadata', async () => {
+    const fixture = await createFixture('Title', 'Title');
+    const absolutePath = path.join(fixture.repoRoot, fixture.relativePath);
+    const fileContent = await readFile(absolutePath, 'utf8');
+    const now = new Date().toISOString();
+    const repository = createRepository({
+      resourceType: 'context',
+      resourceId: 'sample',
+      name: 'Title',
+      status: 'active',
+      metadata: {
+        ssot: 'ai-team-sync',
+        sourcePath: fixture.relativePath,
+        contentHash: 'stale-hash',
+        urmsSummary: 'Title',
+      },
+      createdAt: now,
+      updatedAt: now,
+    });
+    const service = createAiTeamExportService({
+      repoRoot: fixture.repoRoot,
+      resourceRepository: repository,
+    });
+
+    const report = await service.export('developer', 'develop');
+
+    expect(report.conflicts).toBe(1);
+    expect(report.items.some((item) => item.action === 'conflict')).toBe(true);
+    expect(await readFile(absolutePath, 'utf8')).toBe(fileContent);
+  });
+
+  it('writes Status and Owner into URMS Export block from metadata', async () => {
+    const fixture = await createFixture('Title', 'Title');
+    const now = new Date().toISOString();
+    const repository = createRepository({
+      resourceType: 'context',
+      resourceId: 'sample',
+      name: 'Title',
+      status: 'active',
+      metadata: {
+        ssot: 'ai-team-sync',
+        sourcePath: fixture.relativePath,
+        contentHash: hashContent(
+          await readFile(path.join(fixture.repoRoot, fixture.relativePath), 'utf8'),
+        ),
+        urmsSummary: 'Summary line',
+        urmsStatus: 'doing',
+        urmsOwner: 'PM',
+      },
+      createdAt: now,
+      updatedAt: now,
+    });
+    const service = createAiTeamExportService({
+      repoRoot: fixture.repoRoot,
+      resourceRepository: repository,
+    });
+
+    await service.export('developer', 'develop');
+
+    const content = await readFile(path.join(fixture.repoRoot, fixture.relativePath), 'utf8');
+    expect(content).toContain('**Summary:** Summary line');
+    expect(content).toContain('**Status:** doing');
+    expect(content).toContain('**Owner:** PM');
   });
 });

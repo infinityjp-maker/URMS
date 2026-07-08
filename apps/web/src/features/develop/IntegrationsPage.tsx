@@ -11,6 +11,7 @@ import {
 } from '../../lib/api-client.js';
 import { useMode } from '../mode/mode-context.js';
 import { canShowIntegrationsNav } from '../mode/mode-ui.js';
+import { formatExportResultMessage } from './export-result-message.js';
 
 type IntegrationRow = IntegrationSummary & {
   health?: IntegrationHealth;
@@ -108,11 +109,11 @@ export function IntegrationsPage() {
     );
 
     try {
-      await exportIntegration(mode, integrationId);
+      const response = await exportIntegration(mode, integrationId);
       setItems((current) =>
         current.map((item) =>
           item.integrationId === integrationId
-            ? { ...item, exporting: false, message: '書戻し完了' }
+            ? { ...item, exporting: false, message: formatExportResultMessage(response.data) }
             : item,
         ),
       );

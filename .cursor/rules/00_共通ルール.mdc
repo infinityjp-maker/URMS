@@ -31,10 +31,16 @@ User が `/design` `/implement` 等を PM 経由なく実行した場合:
 
 | 操作 | 条件 |
 |------|------|
-| 実装 | PM 承認 + Architect 設計成果物 |
+| **実装開始** | **User Go** + PM スコープ承認 + Architect 設計成果物 |
 | 設計変更 | Architect 提案 → PM 承認 → KM 記録 |
-| 完成 | Reviewer 承認 + Tester 合格 |
+| **完成（GA / tag）** | **User Go** + **別 Agent** Reviewer 承認 + **別 Agent** Tester 合格 |
 | Knowledge 更新 | KM + PM 確認 |
+
+## 複数 Agent 必須（2026-07-08 · User 指示）
+
+- **同一 Agent が Developer · Reviewer · Tester 判定を兼務禁止**
+- レビューは **Package 単位**（Backlog 1 件 / Sprint サブフェーズ）— コミット毎のフルレビュー禁止
+- 運用正本: `.cursor/context/progress-report.md` § Multi-Agent Batch Gate
 
 ## Context 読込
 

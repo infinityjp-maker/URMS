@@ -41,7 +41,8 @@ POST /v1/integrations/cursor-local/export # develop Mode · AI Team H1 + Context
 ## 残課題（v1.x 以降）
 
 - ~~Cursor 双方向同期（Resource → 正本ファイル書戻し）~~ — **v1.3.0 部分対応**（H1 · summary · SSOT links · `## URMS Export`）
-- 全文 merge · 競合解決 UI
+- ~~全文 merge · 競合解決 UI~~ — **v1.4.0 部分対応**（contentHash 競合報告 · 上書き禁止 · conflicts 集計）
+- 競合解決 UI（手動マージ画面）
 - 追加 Integration adapter（GitHub · Slack 等）
 
 ## B-020 完了（2026-07-08）
