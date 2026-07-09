@@ -156,6 +156,64 @@ describe('OpenMeteoWeatherService', () => {
     expect(calledUrl).toContain('latitude=34.69');
     expect(calledUrl).toContain('longitude=135.5');
   });
+
+  it('fetches weekly forecast when enabled', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        daily: {
+          time: ['2026-07-09'],
+          weather_code: [0],
+          temperature_2m_max: [28],
+          temperature_2m_min: [22],
+          precipitation_probability_max: [15],
+          precipitation_sum: [0],
+        },
+      }),
+    })) as unknown as typeof fetch;
+
+    const service = createWeatherService({
+      config: {
+        enabled: true,
+        latitude: 35.6762,
+        longitude: 139.6503,
+        timezone: 'Asia/Tokyo',
+      },
+      fetchImpl,
+    });
+
+    const weekly = await service.getWeeklyForecast();
+    expect(weekly.source).toBe('live');
+    expect(weekly.days).toHaveLength(1);
+    expect(weekly.days[0]?.tempMaxC).toBe(28);
+  });
+
+  it('fetches hourly forecast when enabled', async () => {
+    const fetchImpl = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({
+        hourly: {
+          time: ['2026-07-09T09:00', '2026-07-09T12:00'],
+          precipitation_probability: [15, 30],
+          temperature_2m: [24, 27],
+        },
+      }),
+    })) as unknown as typeof fetch;
+
+    const service = createWeatherService({
+      config: {
+        enabled: true,
+        latitude: 35.6762,
+        longitude: 139.6503,
+        timezone: 'Asia/Tokyo',
+      },
+      fetchImpl,
+    });
+
+    const hourly = await service.getHourlyForecast(undefined, new Date('2026-07-09T08:00:00+09:00'));
+    expect(hourly.source).toBe('live');
+    expect(hourly.slots.length).toBeGreaterThan(0);
+  });
 });
 
 describe('resolveWeatherConfigWithLocation', () => {

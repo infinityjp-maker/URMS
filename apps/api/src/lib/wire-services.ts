@@ -15,6 +15,9 @@ import {
   createTransportService,
   createOperationsService,
   createKnowledgeService,
+  createAssetService,
+  createStorageService,
+  createVideoService,
   resolveAiTeamRepoRoot,
   createAiTeamSyncService,
   createScheduleSyncService,
@@ -162,6 +165,9 @@ export function createAppServices(databaseUrl?: string): AppServices {
   });
 
   const knowledgeService = createKnowledgeService({ repoRoot: resolveAiTeamRepoRoot() });
+  const assetService = createAssetService({ resourceService });
+  const storageService = createStorageService({ resourceService });
+  const videoService = createVideoService({ resourceService });
 
   return {
     resourceService,
@@ -177,6 +183,9 @@ export function createAppServices(databaseUrl?: string): AppServices {
     transportService,
     operationsService,
     knowledgeService,
+    assetService,
+    storageService,
+    videoService,
     aiTeamSyncService,
     scheduleSyncService,
     locationSyncService,

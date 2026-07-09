@@ -61,6 +61,53 @@ export function knowledgeDocumentHref(documentId: string): string {
   return query ? `${path}?${query}#/M-DOC-VIEW` : `${path}#/M-DOC-VIEW`;
 }
 
+export function readAssetId(search = window.location.search): string | null {
+  const value = new URLSearchParams(search).get('assetId')?.trim();
+  return value || null;
+}
+
+export function assetPcHref(assetId: string): string {
+  return pcPartsHref(assetId);
+}
+
+export function pcPartsHref(assetId?: string): string {
+  const path = typeof window === 'undefined' ? '/' : window.location.pathname || '/';
+  const search = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+  if (assetId) {
+    search.set('assetId', assetId);
+  } else {
+    search.delete('assetId');
+  }
+  const query = search.toString();
+  return query ? `${path}?${query}#/M-AST-PC` : `${path}#/M-AST-PC`;
+}
+
+export function readStorageVolumeId(search = window.location.search): string | null {
+  const value = new URLSearchParams(search).get('volumeId')?.trim();
+  return value || null;
+}
+
+export function storageDetailHref(volumeId: string): string {
+  const path = typeof window === 'undefined' ? '/' : window.location.pathname || '/';
+  const search = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+  search.set('volumeId', volumeId);
+  const query = search.toString();
+  return query ? `${path}?${query}#/M-STR-DET` : `${path}#/M-STR-DET`;
+}
+
+export function readVideoId(search = window.location.search): string | null {
+  const value = new URLSearchParams(search).get('videoId')?.trim();
+  return value || null;
+}
+
+export function videoDetailHref(videoId: string): string {
+  const path = typeof window === 'undefined' ? '/' : window.location.pathname || '/';
+  const search = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+  search.set('videoId', videoId);
+  const query = search.toString();
+  return query ? `${path}?${query}#/M-VID-DET` : `${path}#/M-VID-DET`;
+}
+
 export function phaseHref(phase: string): string {
   return `?phase=${phase}`;
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { calendarDetailHref, catalogHref, knowledgeDocumentHref, parseAppRoute, phaseHref, readCalendarDetailDate, readKnowledgeDocumentId, screenHref } from './appRoute.js';
+import { calendarDetailHref, catalogHref, knowledgeDocumentHref, parseAppRoute, pcPartsHref, phaseHref, readAssetId, readCalendarDetailDate, readKnowledgeDocumentId, screenHref } from './appRoute.js';
 
 describe('appRoute', () => {
   it('parses catalog hash', () => {
@@ -43,5 +43,11 @@ describe('appRoute', () => {
   it('builds knowledge document href with docId param', () => {
     expect(knowledgeDocumentHref('readme')).toContain('docId=readme');
     expect(knowledgeDocumentHref('readme')).toContain('#/M-DOC-VIEW');
+  });
+
+  it('reads asset id and builds pc parts href', () => {
+    expect(readAssetId('?assetId=gpu-rtx4070')).toBe('gpu-rtx4070');
+    expect(pcPartsHref('gpu-rtx4070')).toContain('assetId=gpu-rtx4070');
+    expect(pcPartsHref('gpu-rtx4070')).toContain('#/M-AST-PC');
   });
 });

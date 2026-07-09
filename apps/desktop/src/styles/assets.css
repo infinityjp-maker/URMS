@@ -1,0 +1,127 @@
+.knowledge-layout {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(200px, 260px) 1fr;
+}
+
+.asset-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.asset-list__link {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 8px;
+}
+
+.asset-list__link:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.asset-list__link--active {
+  background: rgba(120, 200, 160, 0.12);
+  border-color: rgba(120, 200, 160, 0.35);
+}
+
+.asset-list__name {
+  font-weight: 600;
+}
+
+.asset-list__meta {
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
+
+.asset-list__summary {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.asset-list__budget {
+  font-size: 0.85rem;
+  color: #9fd4b0;
+}
+
+.asset-list--compact .asset-list__link {
+  grid-template-columns: 1fr;
+  margin-bottom: 6px;
+  padding: 10px 12px;
+}
+
+.asset-pc-layout {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(200px, 240px) 1fr;
+}
+
+@media (max-width: 720px) {
+  .asset-pc-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.asset-pc-layout__sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding-right: 16px;
+}
+
+.asset-detail-title {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+.asset-detail-budget {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #9fd4b0;
+}
+
+.asset-roadmap {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.asset-roadmap__title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.asset-roadmap__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.asset-roadmap__item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.asset-roadmap__phase {
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.asset-roadmap__name {
+  font-weight: 600;
+}
+
+.asset-roadmap__detail {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.asset-roadmap__budget {
+  font-size: 0.85rem;
+  color: #9fd4b0;
+}

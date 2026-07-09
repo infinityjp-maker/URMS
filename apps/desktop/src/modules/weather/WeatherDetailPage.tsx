@@ -1,6 +1,8 @@
 import { hasWeatherData, adviseUmbrella } from '@urms/domain/perception';
 
+import { screenHref } from '../../app/appRoute.js';
 import { useLifeState } from '../../hooks/useLifeState.js';
+import { useWeatherHourly } from '../../hooks/useWeatherHourly.js';
 import { ModuleScreenLayout } from '../ModuleScreenLayout.js';
 import { WeatherIllustration } from './WeatherIllustration.js';
 
@@ -13,6 +15,7 @@ function umbrellaLevelClass(level: string): string {
 
 export function WeatherDetailPage() {
   const life = useLifeState();
+  const hourly = useWeatherHourly({ apiOnline: life.apiOnline });
   const weather = life.state.weather;
   const hasData = hasWeatherData(weather);
   const advice = adviseUmbrella({
@@ -52,18 +55,26 @@ export function WeatherDetailPage() {
       </section>
 
       <section className="glass-card">
-        <p className="card-kicker">時間別（拡張予定）</p>
-        <p className="hint-line">
-          Open-Meteo 時間別降水量 API 連携は S2 後半で追加。現在は現在値ベースの判断のみ。
-        </p>
-        <ul className="hourly-preview">
-          {['06:00', '09:00', '12:00', '15:00', '18:00', '21:00'].map((slot) => (
-            <li key={slot} className="hourly-preview__row">
-              <span>{slot}</span>
-              <span>{hasData ? `${Math.max(0, weather.precipitationPct - 10)}–${Math.min(100, weather.precipitationPct + 10)}%` : '—'}</span>
-            </li>
-          ))}
-        </ul>
+        <p className="card-kicker">時間別 · 週間</p>
+        <a href={screenHref('M-WEA-WK')} className="module-shortcuts__link">
+          週間予報を見る →
+        </a>
+        {hourly.loading ? (
+          <p className="hint-line">時間別予報を読み込み中…</p>
+        ) : hourly.payload && hourly.payload.slots.length > 0 ? (
+          <ul className="hourly-preview">
+            {hourly.payload.slots.map((slot) => (
+              <li key={slot.time} className="hourly-preview__row">
+                <span>{slot.time}</span>
+                <span>
+                  {slot.tempC}°C · 降水 {slot.precipitationPct}%
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="hint-line">時間別データ未取得 — Open-Meteo · 位置情報を確認してください</p>
+        )}
       </section>
     </ModuleScreenLayout>
   );

@@ -138,6 +138,27 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
         windKmh: 6,
         hint: '穏やかな天気です',
       })),
+      getWeeklyForecast: vi.fn(async () => ({
+        timezone: 'Asia/Tokyo',
+        source: 'live' as const,
+        days: [
+          {
+            dateKey: '2026-07-09',
+            weekdayLabel: '水',
+            tempMaxC: 30,
+            tempMinC: 24,
+            precipitationPct: 20,
+            precipitationMm: 0,
+            illustrationId: 'clear-day' as const,
+            summary: '穏やかな天気です',
+          },
+        ],
+      })),
+      getHourlyForecast: vi.fn(async () => ({
+        timezone: 'Asia/Tokyo',
+        source: 'live' as const,
+        slots: [{ time: '09:00', precipitationPct: 20, tempC: 24 }],
+      })),
     },
     scheduleService: {
       getTodayEvents: vi.fn(async () => [
@@ -240,6 +261,132 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
           content: '# URMS\n\nOverview',
         };
       }),
+    },
+    assetService: {
+      listAssets: vi.fn(async () => ({
+        source: 'catalog' as const,
+        assets: [
+          {
+            id: 'gpu-rtx4070',
+            name: 'NVIDIA RTX 4070',
+            status: 'active',
+            location: 'デスク PC',
+            category: 'pc-part' as const,
+            partType: 'gpu' as const,
+            summary: '1440p GPU',
+            budgetJpy: 85000,
+          },
+        ],
+      })),
+      getAsset: vi.fn(async (id: string) => {
+        if (id !== 'gpu-rtx4070') {
+          return null;
+        }
+        return {
+          id: 'gpu-rtx4070',
+          name: 'NVIDIA RTX 4070',
+          status: 'active',
+          location: 'デスク PC',
+          category: 'pc-part' as const,
+          partType: 'gpu' as const,
+          summary: '1440p GPU',
+          budgetJpy: 85000,
+          notes: 'Test GPU',
+        };
+      }),
+      listPcParts: vi.fn(async () => ({
+        parts: [
+          {
+            id: 'gpu-rtx4070',
+            name: 'NVIDIA RTX 4070',
+            status: 'active',
+            location: 'デスク PC',
+            category: 'pc-part' as const,
+            partType: 'gpu' as const,
+            summary: '1440p GPU',
+            budgetJpy: 85000,
+          },
+        ],
+        roadmap: [{ phase: 'Phase 1', title: 'RAM', detail: '64GB', estimatedJpy: 20000 }],
+        totalBudgetJpy: 85000,
+      })),
+    },
+    storageService: {
+      getOverview: vi.fn(async () => ({
+        source: 'catalog' as const,
+        totalUsedGb: 4390,
+        totalCapacityGb: 7680,
+        volumes: [
+          {
+            id: 'vol-system',
+            name: 'システム SSD (C:)',
+            kind: 'system' as const,
+            path: 'C:\\',
+            totalGb: 512,
+            usedGb: 318,
+            freeGb: 194,
+            usagePct: 62,
+            summary: 'OS · アプリ',
+          },
+        ],
+      })),
+      getVolume: vi.fn(async (id: string) => {
+        if (id !== 'vol-system') {
+          return null;
+        }
+        return {
+          id: 'vol-system',
+          name: 'システム SSD (C:)',
+          kind: 'system' as const,
+          path: 'C:\\',
+          totalGb: 512,
+          usedGb: 318,
+          freeGb: 194,
+          usagePct: 62,
+          summary: 'OS · アプリ',
+          largestItems: [{ label: 'Windows', sizeGb: 142 }],
+          cleanupHint: 'pnpm store prune',
+        };
+      }),
+      listCleanupTips: vi.fn(() => ['Docker: docker system prune']),
+    },
+    videoService: {
+      getLibrary: vi.fn(async () => ({
+        source: 'catalog' as const,
+        totalSizeGb: 608,
+        totalDurationMin: 976,
+        items: [
+          {
+            id: 'vid-urms-demo',
+            title: 'URMS 製品デモ',
+            kind: 'export' as const,
+            path: 'E:\\Media\\Exports\\demo.mp4',
+            durationMin: 4,
+            sizeGb: 0.8,
+            resolution: '1920x1080',
+            summary: 'screencast',
+          },
+        ],
+      })),
+      getVideo: vi.fn(async (id: string) => {
+        if (id !== 'vid-urms-demo') {
+          return null;
+        }
+        return {
+          id: 'vid-urms-demo',
+          title: 'URMS 製品デモ',
+          kind: 'export' as const,
+          path: 'E:\\Media\\Exports\\demo.mp4',
+          durationMin: 4,
+          sizeGb: 0.8,
+          resolution: '1920x1080',
+          summary: 'screencast',
+          codec: 'H.264',
+          tags: ['urms'],
+          storageHint: 'Keep on E:',
+        };
+      }),
+      listStoragePolicies: vi.fn(() => ['raw と export を混在させない']),
     },
     aiTeamSyncService: {
       sync: vi.fn(async () => ({
@@ -731,6 +878,187 @@ describe('Perception routes', () => {
     const response = await app.inject({
       method: 'GET',
       url: '/v1/knowledge/documents/missing',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(404);
+    expect(response.json().error.code).toBe(ERROR_CODES.RESOURCE_NOT_FOUND);
+
+    await app.close();
+  });
+
+  it('returns asset list', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/assets',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { assets: Array<{ id: string }>; source: string } };
+    expect(body.data.assets[0]?.id).toBe('gpu-rtx4070');
+    expect(services.assetService.listAssets).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns pc parts payload', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/assets/pc-parts',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { totalBudgetJpy: number; roadmap: unknown[] } };
+    expect(body.data.totalBudgetJpy).toBe(85000);
+    expect(body.data.roadmap.length).toBeGreaterThan(0);
+    expect(services.assetService.listPcParts).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns weekly weather forecast', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/weather/weekly',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { days: Array<{ dateKey: string }>; source: string } };
+    expect(body.data.source).toBe('live');
+    expect(body.data.days[0]?.dateKey).toBe('2026-07-09');
+    expect(services.weatherService.getWeeklyForecast).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns hourly weather forecast', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/weather/hourly',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { slots: Array<{ time: string }>; source: string } };
+    expect(body.data.source).toBe('live');
+    expect(body.data.slots[0]?.time).toBe('09:00');
+    expect(services.weatherService.getHourlyForecast).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns storage overview', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/storage/overview',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { volumes: Array<{ id: string }>; source: string } };
+    expect(body.data.source).toBe('catalog');
+    expect(body.data.volumes[0]?.id).toBe('vol-system');
+    expect(services.storageService.getOverview).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns storage volume detail', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/storage/volumes/vol-system',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { id: string; cleanupHint: string } };
+    expect(body.data.id).toBe('vol-system');
+    expect(body.data.cleanupHint).toContain('pnpm');
+    expect(services.storageService.getVolume).toHaveBeenCalledWith('vol-system', 'operate');
+
+    await app.close();
+  });
+
+  it('returns 404 for unknown storage volume', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/storage/volumes/missing',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(404);
+    expect(response.json().error.code).toBe(ERROR_CODES.RESOURCE_NOT_FOUND);
+
+    await app.close();
+  });
+
+  it('returns video library', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/videos/library',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { items: Array<{ id: string }>; source: string } };
+    expect(body.data.source).toBe('catalog');
+    expect(body.data.items[0]?.id).toBe('vid-urms-demo');
+    expect(services.videoService.getLibrary).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns video detail', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/videos/vid-urms-demo',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { id: string; codec: string } };
+    expect(body.data.id).toBe('vid-urms-demo');
+    expect(body.data.codec).toBe('H.264');
+    expect(services.videoService.getVideo).toHaveBeenCalledWith('vid-urms-demo', 'operate');
+
+    await app.close();
+  });
+
+  it('returns 404 for unknown video', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/videos/missing',
       headers: { 'x-urms-mode': 'operate' },
     });
 

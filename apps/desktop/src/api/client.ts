@@ -1,4 +1,4 @@
-import type { AdvanceTaskResponse, CalendarMonthPayload, CalendarMonthResponse, GoogleCalendarStatusResponse, KnowledgeDocumentResponse, KnowledgeListResponse, OperationsDetailResponse, OperationsListResponse, PerceptionResponse, TransportDepartureResponse, UrmsMode } from '@urms/shared';
+import type { AdvanceTaskResponse, AssetDetailResponse, AssetsListResponse, CalendarMonthPayload, CalendarMonthResponse, GoogleCalendarStatusResponse, KnowledgeDocumentResponse, KnowledgeListResponse, OperationsDetailResponse, OperationsListResponse, PcPartsResponse, PerceptionResponse, StorageOverviewResponse, StorageVolumeResponse, TransportDepartureResponse, UrmsMode, VideoDetailResponse, VideoLibraryResponse, WeatherHourlyResponse, WeatherWeeklyResponse } from '@urms/shared';
 
 import type { DeviceCoords } from '../lib/device-location.js';
 import { DESKTOP_CORE_MODES } from '../lib/urms-modes.js';
@@ -132,6 +132,24 @@ export async function fetchPerception(
   return body;
 }
 
+export async function fetchWeatherWeekly(mode: UrmsMode, deviceCoords?: DeviceCoords | null) {
+  const query =
+    deviceCoords != null
+      ? `?latitude=${encodeURIComponent(String(deviceCoords.latitude))}&longitude=${encodeURIComponent(String(deviceCoords.longitude))}`
+      : '';
+  const body = await fetchJson<WeatherWeeklyResponse>(`/v1/weather/weekly${query}`, mode);
+  return body?.data ?? null;
+}
+
+export async function fetchWeatherHourly(mode: UrmsMode, deviceCoords?: DeviceCoords | null) {
+  const query =
+    deviceCoords != null
+      ? `?latitude=${encodeURIComponent(String(deviceCoords.latitude))}&longitude=${encodeURIComponent(String(deviceCoords.longitude))}`
+      : '';
+  const body = await fetchJson<WeatherHourlyResponse>(`/v1/weather/hourly${query}`, mode);
+  return body?.data ?? null;
+}
+
 export async function fetchCalendarMonth(
   mode: UrmsMode,
   year: number,
@@ -175,6 +193,41 @@ export async function fetchKnowledgeDocument(mode: UrmsMode, documentId: string)
 
 export async function fetchGoogleCalendarStatus(mode: UrmsMode) {
   const body = await fetchJson<GoogleCalendarStatusResponse>('/v1/schedule/google/status', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchAssets(mode: UrmsMode) {
+  const body = await fetchJson<AssetsListResponse>('/v1/assets', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchAssetDetail(mode: UrmsMode, assetId: string) {
+  const body = await fetchJson<AssetDetailResponse>(`/v1/assets/${encodeURIComponent(assetId)}`, mode);
+  return body?.data ?? null;
+}
+
+export async function fetchPcParts(mode: UrmsMode) {
+  const body = await fetchJson<PcPartsResponse>('/v1/assets/pc-parts', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchStorageOverview(mode: UrmsMode) {
+  const body = await fetchJson<StorageOverviewResponse>('/v1/storage/overview', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchStorageVolume(mode: UrmsMode, volumeId: string) {
+  const body = await fetchJson<StorageVolumeResponse>(`/v1/storage/volumes/${encodeURIComponent(volumeId)}`, mode);
+  return body?.data ?? null;
+}
+
+export async function fetchVideoLibrary(mode: UrmsMode) {
+  const body = await fetchJson<VideoLibraryResponse>('/v1/videos/library', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchVideoDetail(mode: UrmsMode, videoId: string) {
+  const body = await fetchJson<VideoDetailResponse>(`/v1/videos/${encodeURIComponent(videoId)}`, mode);
   return body?.data ?? null;
 }
 

@@ -6,6 +6,10 @@ export type PhaseLayout = {
   showCalendarMini: boolean;
   showTransportMini: boolean;
   showOperationsMini: boolean;
+  showAssetMini: boolean;
+  showStorageMini: boolean;
+  showVideoMini: boolean;
+  showWeatherWeeklyMini: boolean;
   showSummaryHero: boolean;
   showSummaryStats: boolean;
   showWeight: boolean;
@@ -25,6 +29,10 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
         showCalendarMini: true,
         showTransportMini: true,
         showOperationsMini: true,
+        showAssetMini: true,
+        showStorageMini: true,
+        showVideoMini: true,
+        showWeatherWeeklyMini: true,
         showSummaryHero: false,
         showSummaryStats: false,
         showWeight: false,
@@ -40,6 +48,10 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
         showCalendarMini: true,
         showTransportMini: true,
         showOperationsMini: true,
+        showAssetMini: true,
+        showStorageMini: true,
+        showVideoMini: true,
+        showWeatherWeeklyMini: true,
         showSummaryHero: true,
         showSummaryStats: true,
         showWeight: true,
@@ -55,6 +67,10 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
         showCalendarMini: true,
         showTransportMini: false,
         showOperationsMini: false,
+        showAssetMini: false,
+        showStorageMini: false,
+        showVideoMini: false,
+        showWeatherWeeklyMini: false,
         showSummaryHero: true,
         showSummaryStats: false,
         showWeight: true,
@@ -70,6 +86,10 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
         showCalendarMini: true,
         showTransportMini: false,
         showOperationsMini: false,
+        showAssetMini: false,
+        showStorageMini: false,
+        showVideoMini: false,
+        showWeatherWeeklyMini: false,
         showSummaryHero: false,
         showSummaryStats: false,
         showWeight: false,

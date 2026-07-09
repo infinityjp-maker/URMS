@@ -33,7 +33,9 @@ export {
   weatherIllustrationLabel,
   type WeatherIllustrationId,
 } from './perception/weather/weather-illustration.js';
-export { buildOpenMeteoUrl, mapOpenMeteoResponse } from './perception/weather/open-meteo.js';
+export { buildOpenMeteoUrl, buildOpenMeteoHourlyUrl, buildOpenMeteoWeeklyUrl, mapOpenMeteoResponse } from './perception/weather/open-meteo.js';
+export { mapOpenMeteoWeeklyResponse, emptyWeeklyPayload } from './perception/weather/map-weekly-forecast.js';
+export { mapOpenMeteoHourlyResponse, emptyHourlyPayload } from './perception/weather/map-hourly-forecast.js';
 export { createScheduleService, ResourceScheduleService, type ScheduleService } from './perception/schedule/schedule-service.js';
 export {
   createGoogleCalendarService,
@@ -53,6 +55,24 @@ export {
   type KnowledgeService,
 } from './knowledge/knowledge-service.js';
 export { KNOWLEDGE_DOCUMENT_CATALOG, findKnowledgeDocument } from './knowledge/document-catalog.js';
+export {
+  createAssetService,
+  ResourceAssetService,
+  type AssetService,
+} from './assets/asset-service.js';
+export { ASSET_CATALOG, PC_ROADMAP, findAssetCatalogEntry } from './assets/asset-catalog.js';
+export {
+  createStorageService,
+  ResourceStorageService,
+  type StorageService,
+} from './storage/storage-service.js';
+export { STORAGE_CATALOG, findStorageVolume, kindLabel } from './storage/storage-catalog.js';
+export {
+  createVideoService,
+  ResourceVideoService,
+  type VideoService,
+} from './video/video-service.js';
+export { VIDEO_CATALOG, findVideoEntry, kindLabel as videoKindLabel } from './video/video-catalog.js';
 export {
   createOperationsService,
   ResourceOperationsService,

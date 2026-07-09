@@ -6,6 +6,9 @@ import './styles/dashboard.css';
 import './styles/screen-catalog.css';
 import './styles/calendar.css';
 import './styles/knowledge.css';
+import './styles/assets.css';
+import './styles/storage.css';
+import './styles/video.css';
 
 const root = document.getElementById('root');
 

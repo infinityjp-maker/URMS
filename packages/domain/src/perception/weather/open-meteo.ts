@@ -16,6 +16,15 @@ export type OpenMeteoResponse = {
   hourly?: {
     time?: string[];
     precipitation_probability?: number[];
+    temperature_2m?: number[];
+  };
+  daily?: {
+    time?: string[];
+    weather_code?: number[];
+    temperature_2m_max?: number[];
+    temperature_2m_min?: number[];
+    precipitation_probability_max?: number[];
+    precipitation_sum?: number[];
   };
 };
 
@@ -59,8 +68,35 @@ export function buildOpenMeteoUrl(config: Pick<WeatherConfig, 'latitude' | 'long
     longitude: String(config.longitude),
     timezone: config.timezone,
     current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day',
-    hourly: 'precipitation_probability',
+    hourly: 'precipitation_probability,temperature_2m',
     forecast_days: '1',
+    wind_speed_unit: 'kmh',
+  });
+
+  return `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+}
+
+export function buildOpenMeteoHourlyUrl(config: Pick<WeatherConfig, 'latitude' | 'longitude' | 'timezone'>): string {
+  const params = new URLSearchParams({
+    latitude: String(config.latitude),
+    longitude: String(config.longitude),
+    timezone: config.timezone,
+    hourly: 'precipitation_probability,temperature_2m',
+    forecast_days: '1',
+    wind_speed_unit: 'kmh',
+  });
+
+  return `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+}
+
+export function buildOpenMeteoWeeklyUrl(config: Pick<WeatherConfig, 'latitude' | 'longitude' | 'timezone'>): string {
+  const params = new URLSearchParams({
+    latitude: String(config.latitude),
+    longitude: String(config.longitude),
+    timezone: config.timezone,
+    daily:
+      'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum',
+    forecast_days: '7',
     wind_speed_unit: 'kmh',
   });
 

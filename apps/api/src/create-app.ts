@@ -23,6 +23,10 @@ import { registerScheduleRoutes } from './routes/schedule.js';
 import { registerTransportRoutes } from './routes/transport.js';
 import { registerOperationsRoutes } from './routes/operations.js';
 import { registerKnowledgeRoutes } from './routes/knowledge.js';
+import { registerAssetRoutes } from './routes/assets.js';
+import { registerWeatherRoutes } from './routes/weather.js';
+import { registerStorageRoutes } from './routes/storage.js';
+import { registerVideoRoutes } from './routes/video.js';
 import { registerIntegrationRoutes } from './routes/integrations.js';
 import type { AppServices } from './types/services.js';
 
@@ -78,6 +82,10 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerTransportRoutes(app, services);
   await registerOperationsRoutes(app, services);
   await registerKnowledgeRoutes(app, services);
+  await registerAssetRoutes(app, services);
+  await registerWeatherRoutes(app, services);
+  await registerStorageRoutes(app, services);
+  await registerVideoRoutes(app, services);
   await registerLocationRoutes(app, services);
   await registerLoopRoutes(app, services);
   await registerIntegrationRoutes(app, services);

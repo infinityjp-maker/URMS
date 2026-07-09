@@ -148,6 +148,71 @@ if ($fail -eq 0) {
     Write-Host "[NG] Knowledge GET /v1/knowledge/documents — request failed"
     $fail++
   }
+
+  try {
+    $assetsBody = & curl.exe -s -H "X-URMS-Mode: operate" "http://localhost:3000/v1/assets"
+    if ($assetsBody -match '"assets"') {
+      Write-Host "[OK] Assets GET /v1/assets (S7)"
+    } else {
+      Write-Host "[NG] Assets GET /v1/assets — unexpected response"
+      $fail++
+    }
+  } catch {
+    Write-Host "[NG] Assets GET /v1/assets — request failed"
+    $fail++
+  }
+
+  try {
+    $weeklyBody = & curl.exe -s -H "X-URMS-Mode: operate" "http://localhost:3000/v1/weather/weekly"
+    if ($weeklyBody -match '"days"') {
+      Write-Host "[OK] Weather weekly GET /v1/weather/weekly (M-WEA-WK)"
+    } else {
+      Write-Host "[NG] Weather weekly GET /v1/weather/weekly — unexpected response"
+      $fail++
+    }
+  } catch {
+    Write-Host "[NG] Weather weekly GET /v1/weather/weekly — request failed"
+    $fail++
+  }
+
+  try {
+    $hourlyBody = & curl.exe -s -H "X-URMS-Mode: operate" "http://localhost:3000/v1/weather/hourly"
+    if ($hourlyBody -match '"slots"') {
+      Write-Host "[OK] Weather hourly GET /v1/weather/hourly (M-WEA-DET)"
+    } else {
+      Write-Host "[NG] Weather hourly GET /v1/weather/hourly — unexpected response"
+      $fail++
+    }
+  } catch {
+    Write-Host "[NG] Weather hourly GET /v1/weather/hourly — request failed"
+    $fail++
+  }
+
+  try {
+    $storageBody = & curl.exe -s -H "X-URMS-Mode: operate" "http://localhost:3000/v1/storage/overview"
+    if ($storageBody -match '"volumes"') {
+      Write-Host "[OK] Storage GET /v1/storage/overview (S8)"
+    } else {
+      Write-Host "[NG] Storage GET /v1/storage/overview — unexpected response"
+      $fail++
+    }
+  } catch {
+    Write-Host "[NG] Storage GET /v1/storage/overview — request failed"
+    $fail++
+  }
+
+  try {
+    $videoBody = & curl.exe -s -H "X-URMS-Mode: operate" "http://localhost:3000/v1/videos/library"
+    if ($videoBody -match '"items"') {
+      Write-Host "[OK] Video GET /v1/videos/library (S9)"
+    } else {
+      Write-Host "[NG] Video GET /v1/videos/library — unexpected response"
+      $fail++
+    }
+  } catch {
+    Write-Host "[NG] Video GET /v1/videos/library — request failed"
+    $fail++
+  }
 }
 
 Write-Host ""

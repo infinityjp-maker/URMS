@@ -11,6 +11,10 @@ import { catalogHref, screenHref } from '../app/appRoute.js';
 import { CalendarHubPreview } from '../modules/calendar/CalendarHubPreview.js';
 import { TransportHubPreview } from '../modules/transport/TransportHubPreview.js';
 import { OperationsHubPreview } from '../modules/operations/OperationsHubPreview.js';
+import { AssetHubPreview } from '../modules/assets/AssetHubPreview.js';
+import { StorageHubPreview } from '../modules/storage/StorageHubPreview.js';
+import { VideoHubPreview } from '../modules/video/VideoHubPreview.js';
+import { WeatherWeeklyHubPreview } from '../modules/weather/WeatherWeeklyHubPreview.js';
 import { WeatherIllustration } from '../modules/weather/WeatherIllustration.js';
 import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
@@ -124,6 +128,8 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
             </a>
           ) : null}
 
+          {layout.showWeatherWeeklyMini ? <WeatherWeeklyHubPreview /> : null}
+
           {layout.showCalendarMini ? (
             <CalendarHubPreview compact={layout.gridMode !== 'full'} />
           ) : null}
@@ -131,6 +137,12 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
           {layout.showTransportMini ? <TransportHubPreview /> : null}
 
           {layout.showOperationsMini ? <OperationsHubPreview /> : null}
+
+          {layout.showAssetMini ? <AssetHubPreview /> : null}
+
+          {layout.showStorageMini ? <StorageHubPreview /> : null}
+
+          {layout.showVideoMini ? <VideoHubPreview /> : null}
 
           {events.length > 0 ? (
             <div className="glass-card">
@@ -271,6 +283,12 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
         </a>
         <a href={screenHref('M-AST-LST')} className="module-shortcuts__link">
           資産
+        </a>
+        <a href={screenHref('M-STR-LST')} className="module-shortcuts__link">
+          ストレージ
+        </a>
+        <a href={screenHref('M-VID-LST')} className="module-shortcuts__link">
+          動画
         </a>
         <a href={screenHref('M-DOC-VIEW')} className="module-shortcuts__link">
           ドキュメント

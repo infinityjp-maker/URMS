@@ -16,16 +16,20 @@
 | 画面 ID | モジュール | 名称 | 状態 |
 |---------|------------|------|------|
 | **M-WEA-DET** | 天気 | 詳細 · 傘アドバイス | **live（S2）** |
-| M-WEA-WK | 天気 | 週間予報 | stub |
+| M-WEA-WK | 天気 | 週間予報 | **live** |
 | M-CAL-MON | カレンダー | マンスリー | live（S3 · Google 後半） |
 | M-CAL-DET | カレンダー | 予定詳細 | stub |
-| M-TRN-DEP | 交通 | 出発 · 駅発 | stub（S4） |
-| M-TRN-ROUTE | 交通 | ルート | stub |
-| M-OPS-LST | 運用 | フロー一覧 | stub（S5） |
-| M-OPS-DET | 運用 | フロー詳細 | stub |
-| M-DOC-VIEW | 知識 | アプリ内ドキュメント | stub（S6） |
-| M-AST-LST | 資産 | 資産一覧 | stub（S7） |
-| M-AST-PC | 資産 | PC パーツ | stub |
+| M-TRN-DEP | 交通 | 出発 · 駅発 | **live（S4）** |
+| M-TRN-ROUTE | 交通 | ルート | **live（S4）** |
+| M-OPS-LST | 運用 | フロー一覧 | **live（S5）** |
+| M-OPS-DET | 運用 | フロー詳細 | **live（S5）** |
+| M-DOC-VIEW | 知識 | アプリ内ドキュメント | **live（S6）** |
+| M-AST-LST | 資産 | 資産一覧 | **live（S7）** |
+| M-AST-PC | 資産 | PC パーツ | **live（S7）** |
+| M-STR-LST | ストレージ | 容量一覧 | **live（S8）** |
+| M-STR-DET | ストレージ | ボリューム詳細 | **live（S8）** |
+| M-VID-LST | 動画 | ライブラリ | **live（S9）** |
+| M-VID-DET | 動画 | 詳細 | **live（S9）** |
 
 ## ナビゲーション
 

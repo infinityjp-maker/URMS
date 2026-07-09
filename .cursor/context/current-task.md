@@ -14,7 +14,7 @@
 
 
 
-**v0.2 製品実装 — S4 交通モジュール（次）**
+**v0.2 製品実装 — v0.2 live 画面完成 · S10+ 拡張検討**
 
 
 
@@ -32,7 +32,15 @@
 
 | S2 天気詳細 | ✅ M-WEA-DET · 傘アドバイス（Domain + UI） |
 
-| S3 カレンダー | ✅ M-CAL-MON · 月次 API · 種別リードタイム（Google 連携は後半） |
+| S3 カレンダー | ✅ M-CAL-MON · Google ICS · 種別リードタイム |
+| S4 交通 | ✅ M-TRN-DEP · M-TRN-ROUTE |
+| S5 運用フロー | ✅ M-OPS-LST · M-OPS-DET |
+| S6 ドキュメント | ✅ M-DOC-VIEW |
+| S7 資産 | ✅ M-AST-LST · M-AST-PC |
+| S8 ストレージ | ✅ M-STR-LST · M-STR-DET · ハブプレビュー |
+| S9 動画 | ✅ M-VID-LST · M-VID-DET · ハブプレビュー · ストレージ連携 |
+| M-WEA-WK | ✅ 週間予報 · Open-Meteo 7 日 |
+| ハブ polish | ✅ 資産 · 週間天気 · ストレージ · 動画 · 時間別 live |
 
 | サーバー | PM が dev:verify 管理 |
 
