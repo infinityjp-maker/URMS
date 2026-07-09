@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
-import { AppNav } from './AppNav.js';
-import { moduleAccentForScreen } from './module-nav.js';
+import { AppNav } from '../app/AppNav.js';
+import { moduleAccentForScreen } from '../app/module-nav.js';
 import { catalogHref, hubHref } from '../app/appRoute.js';
-import { screenById } from '../modules/screen-registry.js';
+import { screenById } from './screen-registry.js';
 
 type Props = {
   readonly screenId: string;

@@ -7,7 +7,7 @@ import { DevelopPanel } from '../features/develop/DevelopPanel.js';
 import { ModeSwitcher } from '../features/mode/ModeSwitcher.js';
 import { getModeLabel } from '../features/mode/mode-ui.js';
 import { useMode } from '../features/mode/mode-context.js';
-import { screenHref } from '../../app/appRoute.js';
+import { screenHref } from '../app/appRoute.js';
 import { AppNav } from '../app/AppNav.js';
 import { ModuleLauncher } from '../app/ModuleLauncher.js';
 import { CalendarHubPreview } from '../modules/calendar/CalendarHubPreview.js';
