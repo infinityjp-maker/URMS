@@ -1,34 +1,38 @@
 import { screenHref } from '../../app/appRoute.js';
 import { useLifeState } from '../../hooks/useLifeState.js';
 import { useWeatherWeekly } from '../../hooks/useWeatherWeekly.js';
-import { WeatherIllustration } from './WeatherIllustration.js';
+import { WeatherIcon } from './WeatherIcon.js';
 
 export function WeatherWeeklyHubPreview() {
   const life = useLifeState();
   const weekly = useWeatherWeekly({ apiOnline: life.apiOnline });
-  const previewDays = weekly.payload?.days.slice(0, 3) ?? [];
+  const previewDays = weekly.payload?.days.slice(0, 5) ?? [];
 
   return (
-    <a href={screenHref('M-WEA-WK')} className="glass-card glass-card--link weather-weekly-hub">
-      <p className="card-kicker">週間 · 予報へ</p>
+    <div className="weather-hub-strip-wrap">
+      <div className="weather-hub-strip__header">
+        <span className="card-kicker">週間</span>
+        <a href={screenHref('M-WEA-WK')} className="text-link">
+          詳細 →
+        </a>
+      </div>
       {weekly.loading ? (
         <p className="hint-line">週間予報を読み込み中…</p>
       ) : previewDays.length > 0 ? (
-        <ul className="weather-weekly-hub__list">
+        <div className="weather-hub-strip">
           {previewDays.map((day) => (
-            <li key={day.dateKey} className="weather-weekly-hub__item">
-              <span className="weather-weekly-hub__weekday">{day.weekdayLabel}</span>
-              <WeatherIllustration illustrationId={day.illustrationId} compact />
-              <span className="weather-weekly-hub__temp">
+            <div key={day.dateKey} className="weather-hub-strip__day">
+              <span className="weather-hub-strip__label">{day.weekdayLabel}</span>
+              <WeatherIcon illustrationId={day.illustrationId} size="sm" />
+              <span className="weather-hub-strip__temp">
                 {day.tempMaxC}°/{day.tempMinC}°
               </span>
-              <span className="weather-weekly-hub__precip">{day.precipitationPct}%</span>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p className="hint-line">週間予報未取得</p>
       )}
-    </a>
+    </div>
   );
 }

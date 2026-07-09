@@ -47,20 +47,62 @@
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .calendar-grid__cell {
   position: relative;
-  min-height: 52px;
-  padding: 6px 4px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
+  min-height: 64px;
+  padding: 8px 6px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
   color: inherit;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.calendar-grid__cell:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.calendar-grid__cell--has-events {
+  border-color: rgba(184, 156, 255, 0.25);
+}
+
+.calendar-grid__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  align-items: center;
+}
+
+.calendar-grid__chip {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+}
+
+.calendar-grid__chip--tv {
+  background: #8ea8ff;
+}
+
+.calendar-grid__chip--reservation {
+  background: #d4a574;
+}
+
+.calendar-grid__chip--outgoing {
+  background: #5fd9a0;
+}
+
+.calendar-grid__more {
+  font-size: 0.65rem;
+  opacity: 0.7;
 }
 
 .calendar-grid__cell--blank {
@@ -69,27 +111,23 @@
 }
 
 .calendar-grid__cell--today {
-  border-color: rgba(120, 180, 255, 0.45);
+  border-color: rgba(184, 156, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(184, 156, 255, 0.25);
 }
 
 .calendar-grid__cell--selected {
-  background: rgba(120, 180, 255, 0.15);
-  border-color: rgba(120, 180, 255, 0.55);
+  background: rgba(184, 156, 255, 0.14);
+  border-color: rgba(184, 156, 255, 0.65);
 }
 
 .calendar-grid__day {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 .calendar-grid__dot {
-  display: block;
-  width: 6px;
-  height: 6px;
-  margin: 6px auto 0;
-  border-radius: 50%;
-  background: #8ec5ff;
+  display: none;
 }
 
 .calendar-event-list {

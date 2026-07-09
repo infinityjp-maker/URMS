@@ -4,7 +4,7 @@ import { screenHref } from '../../app/appRoute.js';
 import { useLifeState } from '../../hooks/useLifeState.js';
 import { useWeatherHourly } from '../../hooks/useWeatherHourly.js';
 import { ModuleScreenLayout } from '../ModuleScreenLayout.js';
-import { WeatherIllustration } from './WeatherIllustration.js';
+import { WeatherIcon } from './WeatherIcon.js';
 
 function umbrellaLevelClass(level: string): string {
   if (level === 'required') return 'umbrella-advice umbrella-advice--required';
@@ -30,7 +30,7 @@ export function WeatherDetailPage() {
       <section className="glass-card glass-card--weather-detail">
         <p className="card-kicker">いま</p>
         <div className="weather-detail__now">
-          <WeatherIllustration illustrationId={weather.illustrationId} compact />
+          <WeatherIcon illustrationId={weather.illustrationId} size="lg" />
           <div className="weather-detail__metrics">
             {hasData ? (
               <>
@@ -51,12 +51,11 @@ export function WeatherDetailPage() {
         <p className="card-kicker">傘 · 外出アドバイス</p>
         <p className="umbrella-advice__headline">{advice.headline}</p>
         <p className="hint-line">{advice.detail}</p>
-        <p className="hint-line">v0.2 — 降水量 · 時間帯 · 通勤/外出予定を主軸（Domain 正本）</p>
       </section>
 
-      <section className="glass-card">
+      <section className="glass-card glass-card--accent">
         <p className="card-kicker">時間別 · 週間</p>
-        <a href={screenHref('M-WEA-WK')} className="module-shortcuts__link">
+        <a href={screenHref('M-WEA-WK')} className="text-link">
           週間予報を見る →
         </a>
         {hourly.loading ? (

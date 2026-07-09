@@ -1,4 +1,5 @@
 import { catalogHref, currentDashboardHref, hubHref, screenHref } from './appRoute.js';
+import { AppNav } from './AppNav.js';
 import { DAY_PHASE_LABELS, previewPhaseHref } from '../perception/previewPhase.js';
 import { screensByModule } from '../modules/screen-registry.js';
 
@@ -173,16 +174,12 @@ export function ScreenCatalog() {
 
 
       <footer className="screen-catalog__footer">
-
         <a href={catalogHref()}>この一覧</a>
-
         <span>1420 · URMS v0.2</span>
-
       </footer>
 
+      <AppNav />
     </div>
-
   );
-
 }
 

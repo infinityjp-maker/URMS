@@ -115,13 +115,17 @@ export class ResourceScheduleService implements ScheduleService {
         : { connected: false, statusNote: null, days: {} };
 
       const mergedDays = mergeCalendarMonthDays(days, google.days);
+      const fullDays: Record<string, CalendarMonthEvent[]> = {};
+      for (const dateKey of buildMonthDateKeys(year, month)) {
+        fullDays[dateKey] = mergedDays[dateKey] ?? [];
+      }
 
       return {
         year,
         month,
         timezone: this.config.timezone,
         googleConnected: google.connected,
-        days: mergedDays,
+        days: fullDays,
       };
     } catch {
       return emptyMonthPayload(year, month, this.config.timezone);

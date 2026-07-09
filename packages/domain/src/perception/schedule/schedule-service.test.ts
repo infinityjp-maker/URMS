@@ -66,5 +66,7 @@ describe('ResourceScheduleService', () => {
     expect(month.googleConnected).toBe(false);
     expect(month.days['2026-07-05']?.[0]?.title).toBe('デイリー');
     expect(month.days['2026-07-05']?.[0]?.category).toBe('tv');
+    expect(Object.keys(month.days)).toHaveLength(31);
+    expect(month.days['2026-07-01']).toEqual([]);
   });
 });

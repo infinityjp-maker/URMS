@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { AppNav } from './AppNav.js';
+import { moduleAccentForScreen } from './module-nav.js';
 import { catalogHref, hubHref } from '../app/appRoute.js';
 import { screenById } from '../modules/screen-registry.js';
 
@@ -12,16 +14,20 @@ type Props = {
 
 export function ModuleScreenLayout({ screenId, title, moduleLabel, children }: Props) {
   const meta = screenById(screenId);
+  const accent = moduleAccentForScreen(screenId);
 
   return (
-    <div className="module-screen">
+    <div className={`module-screen${accent ? ` module-screen--${accent}` : ''}`}>
       <header className="module-screen__header">
-        <a className="module-screen__back" href={hubHref()}>
-          ← ハブ
-        </a>
-        <a className="module-screen__catalog" href={catalogHref()}>
-          画面一覧
-        </a>
+        <div className="module-screen__accent-bar" aria-hidden="true" />
+        <nav className="module-screen__nav-row" aria-label="画面ナビ">
+          <a className="module-screen__back" href={hubHref()}>
+            ← ハブ
+          </a>
+          <a className="module-screen__catalog" href={catalogHref()}>
+            画面一覧
+          </a>
+        </nav>
         <p className="module-screen__kicker">
           {moduleLabel} · {screenId}
         </p>
@@ -31,6 +37,7 @@ export function ModuleScreenLayout({ screenId, title, moduleLabel, children }: P
         ) : null}
       </header>
       <main className="module-screen__body">{children}</main>
+      <AppNav />
     </div>
   );
 }

@@ -7,15 +7,13 @@ import { DevelopPanel } from '../features/develop/DevelopPanel.js';
 import { ModeSwitcher } from '../features/mode/ModeSwitcher.js';
 import { getModeLabel } from '../features/mode/mode-ui.js';
 import { useMode } from '../features/mode/mode-context.js';
-import { catalogHref, screenHref } from '../app/appRoute.js';
+import { screenHref } from '../../app/appRoute.js';
+import { AppNav } from '../app/AppNav.js';
+import { ModuleLauncher } from '../app/ModuleLauncher.js';
 import { CalendarHubPreview } from '../modules/calendar/CalendarHubPreview.js';
 import { TransportHubPreview } from '../modules/transport/TransportHubPreview.js';
-import { OperationsHubPreview } from '../modules/operations/OperationsHubPreview.js';
-import { AssetHubPreview } from '../modules/assets/AssetHubPreview.js';
-import { StorageHubPreview } from '../modules/storage/StorageHubPreview.js';
-import { VideoHubPreview } from '../modules/video/VideoHubPreview.js';
 import { WeatherWeeklyHubPreview } from '../modules/weather/WeatherWeeklyHubPreview.js';
-import { WeatherIllustration } from '../modules/weather/WeatherIllustration.js';
+import { WeatherIcon } from '../modules/weather/WeatherIcon.js';
 import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
 import { formatWeatherCoordHint, formatWeatherLocationLabel } from './weather-coord-hint.js';
@@ -98,17 +96,16 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
           <p className="status-line">{statusLine}</p>
 
           {layout.showWeather ? (
-            <a href={screenHref('M-WEA-DET')} className="glass-card glass-card--link glass-card--weather">
-              <p className="card-kicker">天気 · 詳細へ</p>
+            <a
+              href={screenHref('M-WEA-DET')}
+              className="glass-card glass-card--link glass-card--weather module-tile--weather"
+            >
+              <p className="card-kicker">天気</p>
               <div className="weather-card__body">
-                <WeatherIllustration
-                  illustrationId={state.weather.illustrationId}
-                  compact
-                  className="weather-card__art"
-                />
+                <WeatherIcon illustrationId={state.weather.illustrationId} size="lg" />
                 <div className="weather-card__metrics">
                   {weatherLocationLabel ? (
-                    <p className="metric-detail weather-location-label">{weatherLocationLabel}</p>
+                    <p className="weather-location-label">{weatherLocationLabel}</p>
                   ) : null}
                   {hasWeatherData(state.weather) ? (
                     <>
@@ -125,24 +122,15 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                   {weatherCoordHint ? <p className="hint-line">{weatherCoordHint}</p> : null}
                 </div>
               </div>
+              <WeatherWeeklyHubPreview />
             </a>
           ) : null}
-
-          {layout.showWeatherWeeklyMini ? <WeatherWeeklyHubPreview /> : null}
 
           {layout.showCalendarMini ? (
             <CalendarHubPreview compact={layout.gridMode !== 'full'} />
           ) : null}
 
           {layout.showTransportMini ? <TransportHubPreview /> : null}
-
-          {layout.showOperationsMini ? <OperationsHubPreview /> : null}
-
-          {layout.showAssetMini ? <AssetHubPreview /> : null}
-
-          {layout.showStorageMini ? <StorageHubPreview /> : null}
-
-          {layout.showVideoMini ? <VideoHubPreview /> : null}
 
           {events.length > 0 ? (
             <div className="glass-card">
@@ -166,6 +154,8 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
               <p className="hint-line">予定 — （schedule SSOT 未設定 · 本日分なし）</p>
             </div>
           ) : null}
+
+          {layout.showModuleLauncher && layout.gridMode !== 'full' ? <ModuleLauncher /> : null}
         </section>
 
         {layout.gridMode !== 'minimal' ? (
@@ -230,6 +220,8 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
                 ) : null}
               </div>
             ) : null}
+
+            {layout.showModuleLauncher && layout.gridMode === 'full' ? <ModuleLauncher /> : null}
           </section>
         ) : null}
 
@@ -267,52 +259,24 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
         </span>
       </footer>
 
-      <nav className="module-shortcuts" aria-label="機能モジュール">
-        <span className="module-shortcuts__label">機能</span>
-        <a href={screenHref('M-WEA-DET')} className="module-shortcuts__link">
-          天気
-        </a>
-        <a href={screenHref('M-CAL-MON')} className="module-shortcuts__link">
-          カレンダー
-        </a>
-        <a href={screenHref('M-TRN-DEP')} className="module-shortcuts__link">
-          交通
-        </a>
-        <a href={screenHref('M-OPS-LST')} className="module-shortcuts__link">
-          運用
-        </a>
-        <a href={screenHref('M-AST-LST')} className="module-shortcuts__link">
-          資産
-        </a>
-        <a href={screenHref('M-STR-LST')} className="module-shortcuts__link">
-          ストレージ
-        </a>
-        <a href={screenHref('M-VID-LST')} className="module-shortcuts__link">
-          動画
-        </a>
-        <a href={screenHref('M-DOC-VIEW')} className="module-shortcuts__link">
-          ドキュメント
-        </a>
-      </nav>
-
-      <nav className="phase-preview" aria-label="画面切替">
-          <span className="phase-preview__label">画面</span>
-          <a href={catalogHref()} className="phase-preview__link">
-            一覧
-          </a>
+      {previewPhase ? (
+        <nav className="dashboard-dev-preview" aria-label="時間帯プレビュー">
           {DAY_PHASES.map((item) => (
             <a
               key={item}
               href={previewPhaseHref(item)}
-              className={`phase-preview__link${phase === item ? ' phase-preview__link--active' : ''}`}
+              className={`dashboard-dev-preview__link${phase === item ? ' dashboard-dev-preview__link--active' : ''}`}
             >
               {DAY_PHASE_LABELS[item]}
             </a>
           ))}
-          <a href={window.location.pathname || '/'} className="phase-preview__link">
+          <a href={window.location.pathname || '/'} className="dashboard-dev-preview__link">
             現在
           </a>
         </nav>
+      ) : null}
+
+      <AppNav />
     </div>
   );
 }

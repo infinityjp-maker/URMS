@@ -1,6 +1,6 @@
 .screen-catalog {
   min-height: 100vh;
-  padding: 32px 24px 96px;
+  padding: 32px 24px calc(var(--urms-nav-height) + 24px);
   color: #e8ecf2;
   background: radial-gradient(circle at top, #1a2438 0%, #0b0f16 55%);
 }

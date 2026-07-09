@@ -6,7 +6,7 @@ type Props = {
   className?: string;
 };
 
-const SIZE_PX = { sm: 56, md: 80, lg: 112 } as const;
+const SIZE_PX = { sm: 28, md: 40, lg: 52 } as const;
 
 function IconDefs() {
   return (
@@ -175,7 +175,6 @@ export function WeatherIcon({ illustrationId, size = 'md', className }: Props) {
     <span className={rootClass} aria-hidden="true">
       <svg viewBox="0 0 64 64" width={px} height={px} role="presentation">
         <IconDefs />
-        <rect x="0" y="0" width="64" height="64" rx="16" fill="rgba(12, 18, 36, 0.45)" />
         <IconArt id={illustrationId} />
       </svg>
     </span>

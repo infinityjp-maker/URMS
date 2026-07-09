@@ -8,7 +8,11 @@ export function useAppRoute(): AppRoute {
   useEffect(() => {
     const sync = () => setRoute(parseAppRoute());
     window.addEventListener('hashchange', sync);
-    return () => window.removeEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
+    return () => {
+      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('popstate', sync);
+    };
   }, []);
 
   return route;
