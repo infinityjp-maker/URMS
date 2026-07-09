@@ -35,6 +35,29 @@ describe('open-meteo', () => {
       windKmh: 12,
       precipitationPct: 45,
       hint: '折りたたみ傘があると安心です',
+      isDay: true,
+      illustrationId: 'partly-cloudy',
     });
+  });
+
+  it('maps weather_code and is_day into illustrationId', () => {
+    const weather = mapOpenMeteoResponse({
+      current: {
+        time: '2026-07-05T14:00',
+        temperature_2m: 18,
+        relative_humidity_2m: 90,
+        wind_speed_10m: 8,
+        weather_code: 61,
+        is_day: 1,
+      },
+      hourly: {
+        time: ['2026-07-05T14:00'],
+        precipitation_probability: [80],
+      },
+    });
+
+    expect(weather.illustrationId).toBe('rain');
+    expect(weather.weatherCode).toBe(61);
+    expect(weather.isDay).toBe(true);
   });
 });

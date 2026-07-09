@@ -8,11 +8,7 @@ describe('previewPhase', () => {
     expect(parsePreviewPhase('?foo=bar')).toBeNull();
   });
 
-  it('parses valid phase query in dev builds', () => {
-    if (!import.meta.env.DEV) {
-      expect(parsePreviewPhase('?phase=day')).toBeNull();
-      return;
-    }
+  it('parses valid phase query', () => {
     expect(parsePreviewPhase('?phase=day')).toBe('day');
     expect(parsePreviewPhase('?phase=invalid')).toBeNull();
   });

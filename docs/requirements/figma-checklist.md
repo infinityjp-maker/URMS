@@ -1,22 +1,19 @@
-# URMS MVP — 画面ワイヤーフレーム（User 作業不要）
+# URMS MVP — 画面ワイヤーフレーム（アーカイブ）
 
-> **status:** 完了 — PM/Developer が HTML で作成済み
+> **status:** アーカイブ — 製品 v0.2 では 1420 が正本
 
-## 見方（これだけ）
+## 見方（参照のみ）
 
 1. エクスプローラーで以下を開く:
 
    `D:\GitHub\URMS\docs\design\wireframes\index.html`
 
-2. ブラウザで画面一覧が表示されます
-3. 各 SCR をクリックしてレイアウトを確認
+2. ブラウザで SCR-01〜09 のレイアウトを確認（Phase 3 管理 UI 用 · **製品 v0.2 とは無関係**）
 
-## Figma について
+## 製品 UI（User 向け）
 
-- Figma アカウント作成済みで問題ありません
-- **MVP では Figma 作業は不要** です
-- ビジュアル SSOT は [ui-design-links.md](./ui-design-links.md) の HTML ワイヤーフレーム
+**http://127.0.0.1:1420/** — Canvas [urms-hub](C:/Users/infin/.cursor/projects/d-GitHub-URMS/canvases/urms-hub.canvas.tsx) の青リンクから Cursor 内タブで開く。
 
-## 動くアプリ
+## Figma
 
-実装済み UI: `pnpm dev` → http://localhost:5173（API + DB 起動時）
+MVP では Figma 作業は不要。ビジュアル SSOT は [ui-design-links.md](./ui-design-links.md) を参照。

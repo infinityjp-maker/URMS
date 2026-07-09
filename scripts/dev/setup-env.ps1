@@ -159,18 +159,14 @@ if ($FullDocker) {
 if (-not $dockerReady) {
   Write-Host ''
   Write-Host '--- Without DB ---' -ForegroundColor Yellow
-  Write-Host 'Wireframes (5180) and desktop shell (1420) work without PostgreSQL.'
+  Write-Host 'Product UI (1420) works without PostgreSQL.'
   Write-Host 'Re-run after Docker Desktop: scripts\launch\setup-env.bat'
 }
 
 if ($StartServers -and -not $FullDocker) {
   Write-Step 'Starting dev servers (new windows)'
   & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'start-ui.ps1')
-  $apiCmd = "Set-Location '$Root'; npx pnpm@9.15.4 dev:api"
-  $webCmd = "Set-Location '$Root'; npx pnpm@9.15.4 dev"
-  Start-Process powershell -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $apiCmd
-  Start-Process powershell -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $webCmd
-  Write-Host 'OK: API, Web, wireframes, desktop web started'
+  Write-Host 'OK: API and desktop web started'
   Start-Sleep -Seconds 10
 }
 
@@ -181,8 +177,7 @@ $verifyExit = $LASTEXITCODE
 Write-Host ''
 Write-Host '=== Setup complete ===' -ForegroundColor Green
 Write-Host 'Desktop:    http://127.0.0.1:1420/'
-Write-Host 'Wireframes: http://127.0.0.1:5180/index.html'
-Write-Host 'Web UI:     http://127.0.0.1:5173/'
+Write-Host 'Screens:    http://127.0.0.1:1420/#/screens'
 Write-Host 'API:        http://127.0.0.1:3000/health'
 if ($FullDocker -and $dockerReady) {
   Write-Host 'MVP stack:  http://localhost:8080/'

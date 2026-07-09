@@ -120,6 +120,10 @@
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "terminal.integrated.cwd": "${workspaceFolder}",
 
+  // --- URMS live preview (Cursor 統合ブラウザ · IDE 内 · localhost リンク) ---
+  "workbench.browser.openLocalhostLinks": true,
+  "simpleBrowser.useIntegratedBrowser": true,
+
   // --- Git ---
   "git.autofetch": true,
   "git.confirmSync": true,

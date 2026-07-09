@@ -14,6 +14,13 @@ describe('layoutForPhase', () => {
     const layout = layoutForPhase('day');
     expect(layout.gridMode).toBe('full');
     expect(layout.showTasks).toBe(true);
+    expect(layout.showCalendarMini).toBe(true);
     expect(layout.maxEvents).toBe(3);
+  });
+
+  it('keeps calendar mini at night in compact mode', () => {
+    const layout = layoutForPhase('night');
+    expect(layout.showCalendarMini).toBe(true);
+    expect(layout.gridMode).toBe('minimal');
   });
 });

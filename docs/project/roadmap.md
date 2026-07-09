@@ -26,10 +26,10 @@
 
 ## 現在
 
-- **Phase 3 MVP 完了** — Sprint S1〜S10 · tag `v0.2.0-mvp`（`0d3e18d`）
-- **Phase 4 完了** — S11〜S13 · tags `v0.3.0-alpha` / `beta` / `v0.3.0`
-- **Phase 5 完了** — S14〜S16 · Vision Track · tag **`v1.4.0`**（2026-07-08 · 書き戻し v1.4 食い違い報告）
-- **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx`
+- **製品 v0.2 実装（2026-07-08）** — User Go · S1 画面基盤 + S2 天気詳細 着手
+- **Phase 5 技術区切り** — tag `v1.4.0`（柱 C · 書き戻し v1.4）
+- **Phase 6** — 製品 v0.2 モジュール実装 → v1.0 確定 → Tauri 本番 v2.0
+- **User 向け進捗:** Canvas `urms-progress-plan.canvas.tsx` · **設計:** [product/README.md](./product/README.md)
 
 ## Phase 3 開始条件（記録）
 

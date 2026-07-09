@@ -3,6 +3,9 @@ import type { DayPhase } from '@urms/shared';
 export type PhaseLayout = {
   maxEvents: number;
   showWeather: boolean;
+  showCalendarMini: boolean;
+  showTransportMini: boolean;
+  showOperationsMini: boolean;
   showSummaryHero: boolean;
   showSummaryStats: boolean;
   showWeight: boolean;
@@ -19,6 +22,9 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
       return {
         maxEvents: 1,
         showWeather: true,
+        showCalendarMini: true,
+        showTransportMini: true,
+        showOperationsMini: true,
         showSummaryHero: false,
         showSummaryStats: false,
         showWeight: false,
@@ -31,6 +37,9 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
       return {
         maxEvents: 3,
         showWeather: true,
+        showCalendarMini: true,
+        showTransportMini: true,
+        showOperationsMini: true,
         showSummaryHero: true,
         showSummaryStats: true,
         showWeight: true,
@@ -43,6 +52,9 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
       return {
         maxEvents: 2,
         showWeather: false,
+        showCalendarMini: true,
+        showTransportMini: false,
+        showOperationsMini: false,
         showSummaryHero: true,
         showSummaryStats: false,
         showWeight: true,
@@ -55,6 +67,9 @@ export function layoutForPhase(phase: DayPhase): PhaseLayout {
       return {
         maxEvents: 0,
         showWeather: false,
+        showCalendarMini: true,
+        showTransportMini: false,
+        showOperationsMini: false,
         showSummaryHero: false,
         showSummaryStats: false,
         showWeight: false,

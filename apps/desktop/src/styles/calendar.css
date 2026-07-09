@@ -1,0 +1,165 @@
+.calendar-google-banner {
+  border-color: rgba(120, 160, 220, 0.25);
+}
+
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calendar-toolbar__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.calendar-toolbar__nav {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  padding: 8px 12px;
+}
+
+.calendar-toolbar__nav:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.calendar-grid-wrap {
+  padding-bottom: 12px;
+}
+
+.calendar-grid__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.calendar-grid__weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-grid__cell {
+  position: relative;
+  min-height: 52px;
+  padding: 6px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+
+.calendar-grid__cell--blank {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.calendar-grid__cell--today {
+  border-color: rgba(120, 180, 255, 0.45);
+}
+
+.calendar-grid__cell--selected {
+  background: rgba(120, 180, 255, 0.15);
+  border-color: rgba(120, 180, 255, 0.55);
+}
+
+.calendar-grid__day {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.calendar-grid__dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 6px auto 0;
+  border-radius: 50%;
+  background: #8ec5ff;
+}
+
+.calendar-event-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calendar-event {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.calendar-event__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.calendar-event__time {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.calendar-event__category {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.calendar-event__category--tv {
+  border-color: rgba(180, 180, 220, 0.35);
+}
+
+.calendar-event__category--reservation {
+  border-color: rgba(220, 180, 120, 0.4);
+}
+
+.calendar-event__category--outgoing {
+  border-color: rgba(120, 200, 160, 0.4);
+}
+
+.calendar-event__title {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.calendar-event__note {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.calendar-event__lead {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.calendar-event__lead-headline {
+  margin: 0 0 4px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #d4c4a0;
+}

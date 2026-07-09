@@ -15,7 +15,15 @@ describe('synthesizeSummaryNote', () => {
       'day',
       {
         nextEvents: [{ time: '09:30', title: '朝会', tone: 'focus' }],
-        weather: { tempC: 22, precipitationPct: 0, humidityPct: 50, windKmh: 3, hint: '晴れ' },
+        weather: {
+          tempC: 22,
+          precipitationPct: 0,
+          humidityPct: 50,
+          windKmh: 3,
+          hint: '晴れ',
+          isDay: true,
+          illustrationId: 'clear-day',
+        },
       },
     );
 
@@ -46,7 +54,7 @@ describe('synthesizeSummaryNote', () => {
   it('includes location label when provided', () => {
     const note = synthesizeSummaryNote(buildDefaultContextDashboard('operate'), 'day', {
       locationLabel: '自宅',
-      weather: { tempC: 22, precipitationPct: 0, humidityPct: 50, windKmh: 3, hint: '晴れ' },
+      weather: { tempC: 22, precipitationPct: 0, humidityPct: 50, windKmh: 3, hint: '晴れ', illustrationId: 'clear-day' },
     });
 
     expect(note).toContain('地点 自宅');

@@ -3,13 +3,14 @@
 > **resource_type:** knowledge  
 > **resource_id:** decision:adr-023  
 > **status:** Accepted — User Go 2026-07-05  
-> **supersedes-in-part:** Phase 5 デスクトップ UI 技術未決状態
+> **supersedes-in-part:** Phase 5 デスクトップ UI 技術未決状態  
+> **注記（2026-07-08）:** 5173 · 5180 は削除済。製品 UI 正本は **1420（apps/desktop）** のみ。v0.2 は [07-full-product-v0.2-draft.md](../../product/07-full-product-v0.2-draft.md)。
 
 ## コンテキスト
 
 User Vision（2026-07-05）により、本番 UI は **生活の状態を圧縮したリアルタイム知覚層（窓）** と定義された。5180 SCR ワイヤー · 旧 URMS（VSCode+Copilot 失敗作）は正本ではない。
 
-Phase 3 の暫定 Web UI（5173）は開発確認用のまま維持する。
+~~Phase 3 の暫定 Web UI（5173）は開発確認用のまま維持する。~~ **2026-07-08 削除。1420 のみ。**
 
 ## 決定
 

@@ -1,32 +1,14 @@
-# URMS 画面確認用 — ワイヤー(5180) + 本番窓(1420) + API(3000) を起動
+# URMS 画面確認用 — 製品窓(1420) + API(3000) をバックグラウンド起動
 $ErrorActionPreference = 'Stop'
-$Root = Resolve-Path (Join-Path $PSScriptRoot '..\..')
+$Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Set-Location $Root
 
-Write-Host 'URMS UI servers starting...'
-Write-Host '  Wireframes: http://127.0.0.1:5180/index.html'
-Write-Host '  Desktop:    http://127.0.0.1:1420/  (API proxy -> :3000)'
-Write-Host '  API:        http://127.0.0.1:3000/health'
+. (Join-Path $Root 'scripts\launch\_dev-server-utils.ps1')
 
-Start-Process powershell -ArgumentList @(
-  '-NoProfile',
-  '-ExecutionPolicy', 'Bypass',
-  '-Command',
-  "Set-Location '$Root'; npx pnpm@9.15.4 dev:prepare; npx pnpm@9.15.4 --filter @urms/api dev"
-)
+Write-Host 'URMS UI launcher (background)'
+Write-Host '  Product UI: http://127.0.0.1:1420/'
+Write-Host '  Screen list: http://127.0.0.1:1420/#/screens'
+Write-Host ''
 
-Start-Process powershell -ArgumentList @(
-  '-NoProfile',
-  '-ExecutionPolicy', 'Bypass',
-  '-Command',
-  "Set-Location '$Root'; npx pnpm@9.15.4 wireframes:serve"
-)
-
-Start-Process powershell -ArgumentList @(
-  '-NoProfile',
-  '-ExecutionPolicy', 'Bypass',
-  '-Command',
-  "Set-Location '$Root'; npx pnpm@9.15.4 dev:prepare; npx pnpm@9.15.4 dev:desktop:web"
-)
-
-Write-Host 'Done — 3 windows opened (API · wireframes · desktop). Close them to stop servers.'
+Start-UrmsDevServers -DesktopTarget web | Out-Null
+Write-Host 'Done — servers run in background. Stop: scripts\launch\stop-dev-servers.bat'

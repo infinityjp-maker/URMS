@@ -8,9 +8,9 @@
 
 | 項目 | 値 |
 |------|-----|
-| 状態 | **Phase 5 完了 · v1.4.0 正式版（2026-07-08）** |
-| バージョン | Git タグ **`v1.4.0`** · root 1.4.0 |
-| User Go | ✅ 2026-07-05 |
+| 状態 | **v0.2 製品実装中 — S3 完了 · S4 次** |
+| バージョン | Git タグ **`v1.4.0`** · v0.2 User Go 2026-07-08 |
+| User Go | ✅ v0.2 — 2026-07-08 |
 | User Vision | ✅ UI 確定 · Tauri 2 + React（User Go 2026-07-05） |
 
 ## ゲート
@@ -27,10 +27,12 @@
 | **Vision Track VT-1〜4** | ✅ **2026-07-08 クローズ** — ADR-024 M1–M4 · resource-catalog v1.4 |
 | **B-020 develop Mode** | ✅ **2026-07-08** — Web UI 切替 · Integrations ページ |
 | **S13 再監査** | ✅ **2026-07-08** — audit:security · loop モードゲート |
-| **v1.4.0 正式版** | ✅ **2026-07-08** — 書き戻し v1.4 · 食い違い報告 · B-023 完了 |
+| **v0.2 User Go** | ✅ **2026-07-08** — S1 画面基盤 · S2 天気 · **S3 マンスリーカレンダー（2026-07-09）** |
+| **設計再出発** | ✅ **2026-07-08** — `docs/product/` v0.2 承認 · 実装再開 |
+| **v1.4.0 正式版** | ✅ **2026-07-08** — 書き戻し v1.4 · 柱 C 区切り |
 | **v1.3.0 GA** | ✅ **2026-07-08** — export v3 · Desktop ErrorBoundary |
 | **Cursor export v3** | ✅ **2026-07-08** — URMS Export block · SSOT links 書戻し |
-| **PM 承認 S17** | ✅ **2026-07-08** — B-023 export v1.4 · B-024 WCAG（P1 後） |
+| **PM 承認 S17** | ✅ **2026-07-08** — B-023 export v1.4 · B-024 cancelled（5173 削除） |
 | **Multi-Agent Batch Gate** | ✅ **2026-07-08** — 複数 Agent 必須 · Package レビュー · User Go×2 |
 | **User 向け平易語** | ✅ **2026-07-08** — glossary 拡充 · PM 報告は専門用語不使用 |
 | **dev オフライン修正（plugin）** | ✅ **2026-07-08** — plugin-resource-types 再ビルド · dev:prepare 拡張 |
@@ -43,7 +45,8 @@
 
 ## リンク
 
-- **PM 進捗報告 SSOT:** [progress-report.md](../context/progress-report.md)
-- Canvas 進捗: `canvases/urms-progress-plan.canvas.tsx`
+- **User 入口 Canvas:** `canvases/urms-hub.canvas.tsx` — **情報の中心**
+- PM 進捗報告 SSOT: [progress-report.md](../context/progress-report.md)
+- Canvas 進捗詳細: `canvases/urms-progress-plan.canvas.tsx`
 - [roadmap.md](../../docs/project/roadmap.md)
 - [backlog.md](../../docs/project/backlog.md)

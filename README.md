@@ -10,17 +10,18 @@ Unified Resource Management System — pnpm workspace（MVP v0.2.0）。
 
 ## クイックスタート
 
-### 開発（Web + API を別プロセス）
+### 開発（製品 UI + API）
 
 ```bash
 cp .env.example .env   # Windows: copy .env.example .env
 pnpm install
 pnpm db:up && pnpm db:migrate
-pnpm dev:api   # ターミナル 1
-pnpm dev       # ターミナル 2
+pnpm dev:api        # ターミナル 1
+pnpm dev            # 1420 製品 UI（ターミナル 2）
 ```
 
-- Web: http://localhost:5173/
+- 製品 UI: http://127.0.0.1:1420/
+- 画面一覧: http://127.0.0.1:1420/#/screens
 - API: http://localhost:3000/health
 
 ### Docker Compose 一式（MVP 公開形）
@@ -55,7 +56,7 @@ pnpm test:e2e
 | `@urms/domain` | Domain / Mode / Resource / Context / AI |
 | `@urms/db` | Prisma + Repository |
 | `@urms/api` | Fastify API |
-| `@urms/web` | React + Vite UI |
+| `@urms/desktop` | Tauri + 製品 UI（1420） |
 
 設計正本: [docs/implementation/01-implementation-contract.md](docs/implementation/01-implementation-contract.md)
 

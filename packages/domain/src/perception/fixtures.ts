@@ -8,6 +8,9 @@ export const DEV_DEMO_FIXTURES = {
     humidityPct: 78,
     windKmh: 12,
     hint: '傘を持っていくと安心です',
+    weatherCode: 2,
+    isDay: true,
+    illustrationId: 'partly-cloudy' as const,
   },
   nextEvents: [
     { time: '09:30', title: 'プロジェクト定例', note: 'あと 1h 48m', tone: 'calm' as const },
@@ -35,6 +38,8 @@ export const EMPTY_WEATHER: PerceptionState['weather'] = {
   humidityPct: 0,
   windKmh: 0,
   hint: '天気データは未取得です',
+  isDay: true,
+  illustrationId: 'unknown',
 };
 
 export function hasWeatherData(weather: PerceptionState['weather']): boolean {

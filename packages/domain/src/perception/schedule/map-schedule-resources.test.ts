@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { ResourceEntity } from '@urms/shared';
 
-import { formatRelativeEventNote, mapScheduleResourcesToEvents, buildDailyOccurrence } from './map-schedule-resources.js';
+import { formatRelativeEventNote, mapScheduleResourcesToEvents, buildDailyOccurrence, mapScheduleResourcesForMonth } from './map-schedule-resources.js';
 
 const sampleResource = (overrides: Partial<ResourceEntity> = {}): ResourceEntity => ({
   resourceType: 'schedule',
@@ -102,5 +102,40 @@ describe('formatRelativeEventNote', () => {
     const now = new Date('2026-07-05T10:00:00+09:00');
     const start = new Date('2026-07-05T09:00:00+09:00');
     expect(formatRelativeEventNote(start, now)).toBeUndefined();
+  });
+});
+
+describe('mapScheduleResourcesForMonth', () => {
+  it('maps one-off and daily events across the month', () => {
+    const now = new Date('2026-07-05T08:00:00+09:00');
+    const days = mapScheduleResourcesForMonth(
+      [
+        sampleResource(),
+        sampleResource({
+          resourceId: 'daily-standup',
+          name: 'URMS 朝チェックイン',
+          metadata: {
+            recurrence: 'daily',
+            time: '09:30',
+            timezone: 'Asia/Tokyo',
+            tone: 'focus',
+          },
+        }),
+        sampleResource({
+          resourceId: 'evt-other-day',
+          metadata: { startAt: '2026-07-10T15:00:00+09:00' },
+        }),
+      ],
+      2026,
+      7,
+      now,
+      'Asia/Tokyo',
+    );
+
+    expect(days['2026-07-05']).toHaveLength(2);
+    expect(days['2026-07-06']).toHaveLength(1);
+    expect(days['2026-07-06']?.[0]?.title).toBe('URMS 朝チェックイン');
+    expect(days['2026-07-10']).toHaveLength(2);
+    expect(days['2026-07-01']?.[0]?.title).toBe('URMS 朝チェックイン');
   });
 });

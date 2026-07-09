@@ -1,8 +1,6 @@
 @echo off
-REM URMS: 本番UI（窓）— Tauri デスクトップ起動
+REM URMS: 本番UI（Tauri）— API + desktop をバックグラウンド起動
 cd /d "%~dp0..\.."
-call npx pnpm@9.15.4 run dev:prepare
-start "URMS API" cmd /k "npx pnpm@9.15.4 dev:api"
-timeout /t 3 /nobreak >nul
-start "URMS Desktop" cmd /k "npx pnpm@9.15.4 dev:desktop"
-echo API + 本番UI（Tauri）を起動しました。初回は Rust ビルドに数分かかることがあります。
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { . '%~dp0_dev-server-utils.ps1'; Start-UrmsDevServers -DesktopTarget tauri -SkipPreview | Out-Null }"
+if errorlevel 1 exit /b 1
+echo API + Tauri desktop started in background. Logs: .logs\dev\

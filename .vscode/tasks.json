@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "URMS · ハブを統合ブラウザで開く",
+      "type": "shell",
+      "command": "echo ${input:urmsOpenHub}",
+      "problemMatcher": [],
+      "presentation": { "reveal": "never", "echo": false, "focus": false, "panel": "shared" }
+    },
+    {
+      "label": "URMS · 画面一覧を統合ブラウザで開く",
+      "type": "shell",
+      "command": "echo ${input:urmsOpenScreens}",
+      "problemMatcher": [],
+      "presentation": { "reveal": "never", "echo": false, "focus": false, "panel": "shared" }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "urmsOpenHub",
+      "type": "command",
+      "command": "simpleBrowser.show",
+      "args": ["http://127.0.0.1:1420/"]
+    },
+    {
+      "id": "urmsOpenScreens",
+      "type": "command",
+      "command": "simpleBrowser.show",
+      "args": ["http://127.0.0.1:1420/#/screens"]
+    }
+  ]
+}

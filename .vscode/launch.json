@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "editor-browser",
+      "request": "launch",
+      "name": "URMS · ハブ (1420)",
+      "url": "http://127.0.0.1:1420/"
+    },
+    {
+      "type": "editor-browser",
+      "request": "launch",
+      "name": "URMS · 画面一覧",
+      "url": "http://127.0.0.1:1420/#/screens"
+    },
+    {
+      "type": "editor-browser",
+      "request": "launch",
+      "name": "URMS · 朝",
+      "url": "http://127.0.0.1:1420/?phase=morning"
+    },
+    {
+      "type": "editor-browser",
+      "request": "launch",
+      "name": "URMS · 昼",
+      "url": "http://127.0.0.1:1420/?phase=day"
+    },
+    {
+      "type": "editor-browser",
+      "request": "launch",
+      "name": "URMS · 夕",
+      "url": "http://127.0.0.1:1420/?phase=evening"
+    },
+    {
+      "type": "editor-browser",
+      "request": "launch",
+      "name": "URMS · 夜",
+      "url": "http://127.0.0.1:1420/?phase=night"
+    }
+  ]
+}

@@ -143,6 +143,103 @@ function createMockServices(overrides: Partial<AppServices> = {}): AppServices {
       getTodayEvents: vi.fn(async () => [
         { time: '10:00', title: 'デイリー', tone: 'calm' as const },
       ]),
+      getMonthEvents: vi.fn(async () => ({
+        year: 2026,
+        month: 7,
+        timezone: 'Asia/Tokyo',
+        googleConnected: false,
+        days: {
+          '2026-07-05': [{ time: '10:00', title: 'デイリー', tone: 'calm' as const, resourceId: 'evt-1', category: 'tv' as const }],
+        },
+      })),
+    },
+    googleCalendarService: {
+      getStatus: vi.fn(async () => ({
+        connected: false,
+        statusNote: 'URMS_GOOGLE_CALENDAR_ICS_URL 未設定',
+      })),
+      getMonthEvents: vi.fn(async () => ({
+        connected: false,
+        statusNote: null,
+        days: {},
+      })),
+    },
+    transportService: {
+      getDepartureAdvice: vi.fn(async () => ({
+        timezone: 'Asia/Tokyo',
+        stationName: '渋谷',
+        advice: {
+          eventTitle: '定例',
+          eventTime: '10:00',
+          stationName: '渋谷',
+          recommendedTrainDeparture: '09:30',
+          leaveHomeBy: '09:17',
+          leaveInMinutes: 17,
+          spareMinutes: 17,
+          spareSuggestion: '余裕あり · 缶コーヒーなど短時間の余白可',
+          headline: '09:17 までに家を出る',
+          detail: '渋谷 09:30 発 · 徒歩 8 分 + 余裕 5 分',
+        },
+        route: {
+          originStation: '渋谷',
+          destinationLabel: '定例',
+          trainDeparture: '09:30',
+          estimatedArrival: '09:55',
+          rideMinutes: 25,
+          transferCount: 0,
+          steps: ['渋谷 09:30 発 — 各駅停車', '09:55 到着予想 — 定例'],
+          headline: '09:55 到着予想',
+          detail: '渋谷 → 定例 · 乗車 25 分 · 予定 10:00 開始',
+        },
+        note: null,
+        timetableSource: 'interval',
+      })),
+    },
+    operationsService: {
+      listFlows: vi.fn(async () => ({
+        checkedAt: new Date().toISOString(),
+        alertCount: 1,
+        flows: [
+          { id: 'api-server', name: 'API サーバー', status: 'ok', summary: '正常稼働中' },
+          { id: 'database', name: 'データベース', status: 'ok', summary: '接続正常' },
+        ],
+      })),
+      getFlowDetail: vi.fn(async (flowId: string) => ({
+        flow: {
+          id: flowId,
+          name: 'API サーバー',
+          status: 'ok',
+          summary: '正常稼働中',
+          checks: [{ label: 'API プロセス', status: 'ok', detail: 'ヘルスチェック応答あり' }],
+          nextAction: '特になし',
+          logs: ['checkedAt test'],
+        },
+      })),
+    },
+    knowledgeService: {
+      listDocuments: vi.fn(async () => ({
+        documents: [
+          {
+            id: 'readme',
+            title: 'URMS ドキュメント概要',
+            category: '概要',
+            summary: 'docs 配下の入口',
+          },
+        ],
+      })),
+      getDocument: vi.fn(async (id: string) => {
+        if (id !== 'readme') {
+          return null;
+        }
+        return {
+          id: 'readme',
+          title: 'URMS ドキュメント概要',
+          category: '概要',
+          summary: 'docs 配下の入口',
+          path: 'docs/README.md',
+          content: '# URMS\n\nOverview',
+        };
+      }),
     },
     aiTeamSyncService: {
       sync: vi.fn(async () => ({
@@ -545,6 +642,139 @@ describe('Perception routes', () => {
     expect(body.meta.sources.relationTypes).toEqual({});
     expect(body.meta.sources.placeName).toBeNull();
     expect(body.meta.sources.location).toBeNull();
+
+    await app.close();
+  });
+
+  it('returns calendar month payload', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/schedule/month?year=2026&month=7',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as {
+      data: { year: number; month: number; googleConnected: boolean; days: Record<string, unknown[]> };
+    };
+    expect(body.data.year).toBe(2026);
+    expect(body.data.month).toBe(7);
+    expect(body.data.googleConnected).toBe(false);
+    expect(body.data.days['2026-07-05']).toHaveLength(1);
+    expect(services.scheduleService.getMonthEvents).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns google calendar status', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/schedule/google/status',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { connected: boolean; statusNote: string | null } };
+    expect(body.data.connected).toBe(false);
+    expect(body.data.statusNote).toContain('ICS_URL');
+    expect(services.googleCalendarService.getStatus).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns knowledge document list', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/knowledge/documents',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { documents: Array<{ id: string }> } };
+    expect(body.data.documents[0]?.id).toBe('readme');
+    expect(services.knowledgeService.listDocuments).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns knowledge document detail', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/knowledge/documents/readme',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { id: string; content: string } };
+    expect(body.data.id).toBe('readme');
+    expect(body.data.content).toContain('URMS');
+    expect(services.knowledgeService.getDocument).toHaveBeenCalledWith('readme');
+
+    await app.close();
+  });
+
+  it('returns 404 for unknown knowledge document', async () => {
+    const app = await createApp({ services: createMockServices(), logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/knowledge/documents/missing',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(404);
+    expect(response.json().error.code).toBe(ERROR_CODES.RESOURCE_NOT_FOUND);
+
+    await app.close();
+  });
+
+  it('returns transport departure advice', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/transport/departure',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as {
+      data: { advice: { eventTitle: string } | null; stationName: string };
+    };
+    expect(body.data.stationName).toBe('渋谷');
+    expect(body.data.advice?.eventTitle).toBe('定例');
+    expect(services.transportService.getDepartureAdvice).toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('returns operations flow list', async () => {
+    const services = createMockServices();
+    const app = await createApp({ services, logger: false });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/v1/operations/flows',
+      headers: { 'x-urms-mode': 'operate' },
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: { flows: Array<{ id: string }>; alertCount: number } };
+    expect(body.data.flows.length).toBeGreaterThan(0);
+    expect(services.operationsService.listFlows).toHaveBeenCalled();
 
     await app.close();
   });

@@ -1,3 +1,8 @@
 @echo off
-REM URMS: ブラウザでワイヤーフレームを開く
-start "" "http://localhost:5180/"
+
+REM 旧 5180 — 削除済。1420 製品 UI へリダイレクト。
+
+start "" "http://127.0.0.1:1420/#/screens"
+
+echo 5180 は削除済です。1420 画面一覧を開きました。
+

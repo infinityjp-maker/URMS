@@ -10,8 +10,6 @@ export const DAY_PHASE_LABELS: Record<DayPhase, string> = {
 };
 
 export function parsePreviewPhase(search = window.location.search): DayPhase | null {
-  if (!import.meta.env.DEV) return null;
-
   const raw = new URLSearchParams(search).get('phase');
   if (!raw) return null;
   return DAY_PHASES.includes(raw as DayPhase) ? (raw as DayPhase) : null;

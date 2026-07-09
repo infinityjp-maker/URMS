@@ -52,4 +52,19 @@ describe('ResourceScheduleService', () => {
 
     await expect(service.getTodayEvents('operate')).resolves.toEqual([]);
   });
+
+  it('loads month events grouped by date', async () => {
+    const list = vi.fn(async () => ({ items: [sampleEvent], total: 1, page: 1, limit: 64 }));
+    const service = createScheduleService({
+      resourceService: { list } as never,
+      config: { enabled: true, timezone: 'Asia/Tokyo', limit: 8 },
+    });
+
+    const month = await service.getMonthEvents('operate', 2026, 7, new Date('2026-07-05T08:00:00+09:00'));
+    expect(month.year).toBe(2026);
+    expect(month.month).toBe(7);
+    expect(month.googleConnected).toBe(false);
+    expect(month.days['2026-07-05']?.[0]?.title).toBe('デイリー');
+    expect(month.days['2026-07-05']?.[0]?.category).toBe('tv');
+  });
 });

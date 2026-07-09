@@ -27,8 +27,43 @@ export { resolveDayPhase, statusLineForPhase } from './perception/day-phase.js';
 export { createWeatherService, OpenMeteoWeatherService, type WeatherService } from './perception/weather/weather-service.js';
 export { resolveWeatherConfig, type WeatherConfig } from './perception/weather/weather-config.js';
 export { buildWeatherHint } from './perception/weather/weather-hint.js';
+export { adviseUmbrella, type UmbrellaAdvice, type UmbrellaAdviceInput } from './perception/weather/umbrella-advice.js';
+export {
+  resolveWeatherIllustration,
+  weatherIllustrationLabel,
+  type WeatherIllustrationId,
+} from './perception/weather/weather-illustration.js';
 export { buildOpenMeteoUrl, mapOpenMeteoResponse } from './perception/weather/open-meteo.js';
 export { createScheduleService, ResourceScheduleService, type ScheduleService } from './perception/schedule/schedule-service.js';
+export {
+  createGoogleCalendarService,
+  IcsGoogleCalendarService,
+  type GoogleCalendarService,
+} from './perception/schedule/google-calendar/google-calendar-service.js';
+export { resolveGoogleCalendarConfig } from './perception/schedule/google-calendar/google-calendar-config.js';
+export {
+  createTransportService,
+  ResourceTransportService,
+  type TransportService,
+} from './perception/transport/transport-service.js';
+export { resolveTransportConfig } from './perception/transport/transport-config.js';
+export {
+  createKnowledgeService,
+  FileKnowledgeService,
+  type KnowledgeService,
+} from './knowledge/knowledge-service.js';
+export { KNOWLEDGE_DOCUMENT_CATALOG, findKnowledgeDocument } from './knowledge/document-catalog.js';
+export {
+  createOperationsService,
+  ResourceOperationsService,
+  type OperationsService,
+} from './operations/operations-service.js';
+export {
+  buildOperationFlows,
+  buildOperationFlowDetail,
+  isOperationFlowId,
+  type OperationsSnapshot,
+} from './operations/operation-flows.js';
 export {
   resolveScheduleConfig,
   SCHEDULE_RESOURCE_TYPE,
@@ -37,9 +72,17 @@ export {
 export {
   mapScheduleResourceToEvent,
   mapScheduleResourcesToEvents,
+  mapScheduleResourcesForMonth,
   formatRelativeEventNote,
   buildDailyOccurrence,
+  buildDailyOccurrenceForDate,
+  buildMonthDateKeys,
+  type MappedScheduleEvent,
 } from './perception/schedule/map-schedule-resources.js';
+export {
+  adviseEventLeadTime,
+  resolveScheduleEventCategory,
+} from './perception/schedule/event-lead-time.js';
 export { createAiTeamSyncService, AiTeamSyncService, resolveAiTeamRepoRoot, AI_TEAM_ID } from './ai-team/ai-team-sync-service.js';
 export type { AiTeamSyncReport, AiTeamSyncItem } from './ai-team/ai-team-sync-service.js';
 export { createAiTeamExportService, AiTeamExportService } from './ai-team/ai-team-export-service.js';

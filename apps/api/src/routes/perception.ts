@@ -42,7 +42,7 @@ export async function registerPerceptionRoutes(
     const dashboard = await services.contextService.getDashboard(request.urmsMode);
 
     const [weather, nextEvents, loopJournal, graph, placeName] = await Promise.all([
-      services.weatherService.getCurrentWeather(deviceCoords),
+      services.weatherService.getCurrentWeather(weatherCoords),
       services.scheduleService.getTodayEvents(request.urmsMode, now),
       services.loopJournalService.readRecent(20),
       resolveRelationGraphSignal(services.relationService, request.urmsMode),

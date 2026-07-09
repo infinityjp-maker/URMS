@@ -1,3 +1,8 @@
 @echo off
-REM URMS: ブラウザで Web アプリ (dev) を開く
-start "" "http://localhost:5173/"
+
+REM 旧 5173 — 削除済。1420 製品 UI へリダイレクト。
+
+start "" "http://127.0.0.1:1420/"
+
+echo 5173 は削除済です。1420 製品 UI を開きました。
+

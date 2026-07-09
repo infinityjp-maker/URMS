@@ -90,7 +90,7 @@ test.describe('VT-3/VT-4 desktop perception smoke (1420)', () => {
     await page.goto('/?phase=day');
     await waitForLifeStateReady(page);
 
-    const previewNav = page.getByRole('navigation', { name: '時間帯プレビュー（開発用）' });
+    const previewNav = page.getByRole('navigation', { name: '画面切替' });
     await previewNav.getByRole('link', { name: '夕' }).click();
 
     await expect(page).toHaveURL(/phase=evening/);
@@ -163,5 +163,18 @@ test.describe('VT-3/VT-4 desktop perception smoke (1420)', () => {
     } else {
       expect(sourceAfter).toMatch(/journal \d+ 件|今日ループ済/);
     }
+  test('画面一覧 — カタログから時間帯へ遷移', async ({ page }) => {
+    await page.goto('/#/screens');
+
+    await expect(page.getByRole('heading', { name: '画面一覧' })).toBeVisible();
+    await expect(page.getByText('D-01b')).toBeVisible();
+
+    await page.getByRole('link', { name: /知覚の窓 · 夕/ }).click();
+    await expect(page).toHaveURL(/phase=evening/);
+    await expect(page.getByText('プレビュー · 夕')).toBeVisible();
+
+    const nav = page.getByRole('navigation', { name: '画面切替' });
+    await nav.getByRole('link', { name: '一覧' }).click();
+    await expect(page).toHaveURL(/#\/screens$/);
   });
 });

@@ -8,10 +8,12 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "pnpm --filter @urms/web dev",
+    "dev": "pnpm dev:desktop:web",
     "dev:api": "pnpm --filter @urms/api dev",
     "dev:prepare": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/logger build && pnpm --filter @urms/plugin-ollama build && pnpm --filter @urms/plugin-resource-types build && pnpm --filter @urms/db build",
     "dev:verify": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/verify-dev.ps1",
+    "dev:capture-previews": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/capture-canvas-previews.ps1",
+    "dev:preview": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/launch/open-ide-preview.ps1",
     "setup:env": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/setup-env.ps1 -StartServers",
     "audit:security": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/security-audit.ps1",
     "perf:spot": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev/perf-spot-check.ps1",
@@ -31,13 +33,10 @@
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
-    "wireframes": "pnpm wireframes:serve",
-    "wireframes:serve": "pnpm exec serve docs/design/wireframes -l 5180",
-    "preview:web": "pnpm --filter @urms/web build && pnpm --filter @urms/web preview",
-    "build": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/logger build && pnpm --filter @urms/plugin-ollama build && pnpm --filter @urms/plugin-resource-types build && pnpm --filter @urms/db build && pnpm --filter @urms/api build && pnpm --filter @urms/web build && pnpm --filter @urms/desktop build:web",
+    "build": "pnpm --filter @urms/shared build && pnpm --filter @urms/domain build && pnpm --filter @urms/logger build && pnpm --filter @urms/plugin-ollama build && pnpm --filter @urms/plugin-resource-types build && pnpm --filter @urms/db build && pnpm --filter @urms/api build && pnpm --filter @urms/desktop build:web",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/plugin-ollama test && pnpm --filter @urms/plugin-resource-types test && pnpm --filter @urms/db test && pnpm --filter @urms/api test && pnpm --filter @urms/web test && pnpm --filter @urms/desktop test",
+    "test": "pnpm --filter @urms/domain test && pnpm --filter @urms/plugin-ollama test && pnpm --filter @urms/plugin-resource-types test && pnpm --filter @urms/db test && pnpm --filter @urms/api test && pnpm --filter @urms/desktop test",
     "test:vision": "corepack pnpm --filter @urms/domain test && corepack pnpm --filter @urms/api test -- src/routes/routes.test.ts && corepack pnpm --filter @urms/desktop test && corepack pnpm exec playwright test --config playwright.vision.config.ts",
     "test:coverage": "pnpm --filter @urms/domain test:coverage && pnpm --filter @urms/api test:coverage",
     "test:integration": "pnpm --filter @urms/db test:integration && pnpm --filter @urms/api test:integration",
@@ -48,7 +47,6 @@
     "@playwright/test": "^1.51.0",
     "eslint": "^9.18.0",
     "prettier": "^3.4.2",
-    "serve": "^14.2.4",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.21.0"
   }

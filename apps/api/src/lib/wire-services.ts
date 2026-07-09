@@ -11,6 +11,11 @@ import {
   RelationService,
   createWeatherService,
   createScheduleService,
+  createGoogleCalendarService,
+  createTransportService,
+  createOperationsService,
+  createKnowledgeService,
+  resolveAiTeamRepoRoot,
   createAiTeamSyncService,
   createScheduleSyncService,
   createLocationSyncService,
@@ -25,9 +30,12 @@ import {
   resolveScheduleRepoRoot,
   resolveLocationRepoRoot,
   resolveLoopJournalRepoRoot,
+  resolveScheduleConfig,
+  resolveTransportConfig,
   IntegrationRegistry,
   CursorLocalIntegration,
 } from '@urms/domain';
+import { hasWeatherData } from '@urms/domain/perception';
 import {
   createPrismaClient,
   checkDatabaseHealth,
@@ -80,7 +88,9 @@ export function createAppServices(databaseUrl?: string): AppServices {
   const jwtSecret = process.env.JWT_SECRET?.trim() || 'dev-local-jwt-secret-change-me';
   const localAuthService = new LocalAuthService(userRepository, { jwtSecret });
   const weatherService = createWeatherService({ resourceRepository });
-  const scheduleService = createScheduleService({ resourceService });
+  const googleCalendarService = createGoogleCalendarService();
+  const scheduleService = createScheduleService({ resourceService, googleCalendarService });
+  const transportService = createTransportService({ resourceService });
   const aiTeamRepoRoot = resolveAiTeamRepoRoot();
   const aiTeamSyncService = createAiTeamSyncService({
     repoRoot: aiTeamRepoRoot,
@@ -137,6 +147,22 @@ export function createAppServices(databaseUrl?: string): AppServices {
     }),
   );
 
+  const operationsService = createOperationsService({
+    checkReadiness: async () => ({
+      database: await checkDatabaseHealth(prisma),
+    }),
+    transportService,
+    integrationRegistry,
+    scheduleEnabled: resolveScheduleConfig().enabled,
+    transportEnabled: resolveTransportConfig().enabled,
+    weatherProbe: async () => {
+      const weather = await weatherService.getCurrentWeather();
+      return hasWeatherData(weather) ? 'live' : 'empty';
+    },
+  });
+
+  const knowledgeService = createKnowledgeService({ repoRoot: resolveAiTeamRepoRoot() });
+
   return {
     resourceService,
     relationService,
@@ -147,6 +173,10 @@ export function createAppServices(databaseUrl?: string): AppServices {
     localAuthService,
     weatherService,
     scheduleService,
+    googleCalendarService,
+    transportService,
+    operationsService,
+    knowledgeService,
     aiTeamSyncService,
     scheduleSyncService,
     locationSyncService,

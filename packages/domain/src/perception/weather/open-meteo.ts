@@ -1,6 +1,7 @@
 import type { PerceptionState } from '@urms/shared';
 
 import { buildWeatherHint } from './weather-hint.js';
+import { resolveWeatherIllustration } from './weather-illustration.js';
 import type { WeatherConfig } from './weather-config.js';
 
 export type OpenMeteoResponse = {
@@ -9,6 +10,8 @@ export type OpenMeteoResponse = {
     temperature_2m?: number;
     relative_humidity_2m?: number;
     wind_speed_10m?: number;
+    weather_code?: number;
+    is_day?: number;
   };
   hourly?: {
     time?: string[];
@@ -37,11 +40,16 @@ export function mapOpenMeteoResponse(payload: OpenMeteoResponse): PerceptionStat
   const humidityPct = round(payload.current?.relative_humidity_2m ?? 0);
   const windKmh = round(payload.current?.wind_speed_10m ?? 0);
   const precipitationPct = resolvePrecipitationPct(payload.current?.time, payload.hourly);
+  const weatherCode = payload.current?.weather_code;
+  const isDay = payload.current?.is_day === undefined ? true : payload.current.is_day === 1;
 
   const metrics = { tempC, precipitationPct, humidityPct, windKmh };
   return {
     ...metrics,
     hint: buildWeatherHint(metrics),
+    ...(weatherCode !== undefined ? { weatherCode } : {}),
+    isDay,
+    illustrationId: resolveWeatherIllustration(weatherCode, isDay, precipitationPct),
   };
 }
 
@@ -50,7 +58,7 @@ export function buildOpenMeteoUrl(config: Pick<WeatherConfig, 'latitude' | 'long
     latitude: String(config.latitude),
     longitude: String(config.longitude),
     timezone: config.timezone,
-    current: 'temperature_2m,relative_humidity_2m,wind_speed_10m',
+    current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day',
     hourly: 'precipitation_probability',
     forecast_days: '1',
     wind_speed_unit: 'kmh',

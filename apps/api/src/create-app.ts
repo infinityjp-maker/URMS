@@ -20,6 +20,9 @@ import { registerRelationRoutes } from './routes/relations.js';
 import { registerLocationRoutes } from './routes/location.js';
 import { registerLoopRoutes } from './routes/loop.js';
 import { registerScheduleRoutes } from './routes/schedule.js';
+import { registerTransportRoutes } from './routes/transport.js';
+import { registerOperationsRoutes } from './routes/operations.js';
+import { registerKnowledgeRoutes } from './routes/knowledge.js';
 import { registerIntegrationRoutes } from './routes/integrations.js';
 import type { AppServices } from './types/services.js';
 
@@ -72,6 +75,9 @@ export async function createApp(options: CreateAppOptions = {}) {
   await registerAiRoutes(app, services);
   await registerAiTeamRoutes(app, services);
   await registerScheduleRoutes(app, services);
+  await registerTransportRoutes(app, services);
+  await registerOperationsRoutes(app, services);
+  await registerKnowledgeRoutes(app, services);
   await registerLocationRoutes(app, services);
   await registerLoopRoutes(app, services);
   await registerIntegrationRoutes(app, services);

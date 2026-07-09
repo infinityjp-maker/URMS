@@ -1,4 +1,4 @@
-import type { AdvanceTaskResponse, PerceptionResponse, UrmsMode } from '@urms/shared';
+import type { AdvanceTaskResponse, CalendarMonthPayload, CalendarMonthResponse, GoogleCalendarStatusResponse, KnowledgeDocumentResponse, KnowledgeListResponse, OperationsDetailResponse, OperationsListResponse, PerceptionResponse, TransportDepartureResponse, UrmsMode } from '@urms/shared';
 
 import type { DeviceCoords } from '../lib/device-location.js';
 import { DESKTOP_CORE_MODES } from '../lib/urms-modes.js';
@@ -130,6 +130,52 @@ export async function fetchPerception(
   const body = await fetchJson<PerceptionResponse>(`/v1/perception${query}`, mode);
   if (!body?.data) return null;
   return body;
+}
+
+export async function fetchCalendarMonth(
+  mode: UrmsMode,
+  year: number,
+  month: number,
+): Promise<CalendarMonthPayload | null> {
+  const query = `?year=${encodeURIComponent(String(year))}&month=${encodeURIComponent(String(month))}`;
+  const body = await fetchJson<CalendarMonthResponse>(`/v1/schedule/month${query}`, mode);
+  return body?.data ?? null;
+}
+
+export async function fetchTransportDeparture(mode: UrmsMode) {
+  const body = await fetchJson<TransportDepartureResponse>('/v1/transport/departure', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchOperationsFlows(mode: UrmsMode) {
+  const body = await fetchJson<OperationsListResponse>('/v1/operations/flows', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchOperationsFlowDetail(mode: UrmsMode, flowId: string) {
+  const body = await fetchJson<OperationsDetailResponse>(
+    `/v1/operations/flows/${encodeURIComponent(flowId)}`,
+    mode,
+  );
+  return body?.data ?? null;
+}
+
+export async function fetchKnowledgeDocuments(mode: UrmsMode) {
+  const body = await fetchJson<KnowledgeListResponse>('/v1/knowledge/documents', mode);
+  return body?.data ?? null;
+}
+
+export async function fetchKnowledgeDocument(mode: UrmsMode, documentId: string) {
+  const body = await fetchJson<KnowledgeDocumentResponse>(
+    `/v1/knowledge/documents/${encodeURIComponent(documentId)}`,
+    mode,
+  );
+  return body?.data ?? null;
+}
+
+export async function fetchGoogleCalendarStatus(mode: UrmsMode) {
+  const body = await fetchJson<GoogleCalendarStatusResponse>('/v1/schedule/google/status', mode);
+  return body?.data ?? null;
 }
 
 export type AdvanceTaskResult = {

@@ -14,6 +14,7 @@ describe('buildPerceptionMeta', () => {
         humidityPct: 60,
         windKmh: 4,
         hint: '快晴',
+        illustrationId: 'clear-day',
       },
       nextEvents: [{ time: '10:00', title: 'デイリー', tone: 'calm' }],
     });

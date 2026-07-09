@@ -7,6 +7,11 @@ import { DevelopPanel } from '../features/develop/DevelopPanel.js';
 import { ModeSwitcher } from '../features/mode/ModeSwitcher.js';
 import { getModeLabel } from '../features/mode/mode-ui.js';
 import { useMode } from '../features/mode/mode-context.js';
+import { catalogHref, screenHref } from '../app/appRoute.js';
+import { CalendarHubPreview } from '../modules/calendar/CalendarHubPreview.js';
+import { TransportHubPreview } from '../modules/transport/TransportHubPreview.js';
+import { OperationsHubPreview } from '../modules/operations/OperationsHubPreview.js';
+import { WeatherIllustration } from '../modules/weather/WeatherIllustration.js';
 import { formatConnectionSourceLine } from './connection-source-line.js';
 import { layoutForPhase } from './phaseLayout.js';
 import { formatWeatherCoordHint, formatWeatherLocationLabel } from './weather-coord-hint.js';
@@ -89,26 +94,43 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
           <p className="status-line">{statusLine}</p>
 
           {layout.showWeather ? (
-            <div className="glass-card">
-              <p className="card-kicker">天気</p>
-              {weatherLocationLabel ? (
-                <p className="metric-detail weather-location-label">{weatherLocationLabel}</p>
-              ) : null}
-              {hasWeatherData(state.weather) ? (
-                <>
-                  <p className="metric-large">{state.weather.tempC}°C</p>
-                  <p className="metric-detail">
-                    降水 {state.weather.precipitationPct}% · 湿度 {state.weather.humidityPct}% · 風{' '}
-                    {state.weather.windKmh}km/h
-                  </p>
-                  <p className="hint-line">{state.weather.hint}</p>
-                </>
-              ) : (
-                <p className="hint-line">{state.weather.hint}</p>
-              )}
-              {weatherCoordHint ? <p className="hint-line">{weatherCoordHint}</p> : null}
-            </div>
+            <a href={screenHref('M-WEA-DET')} className="glass-card glass-card--link glass-card--weather">
+              <p className="card-kicker">天気 · 詳細へ</p>
+              <div className="weather-card__body">
+                <WeatherIllustration
+                  illustrationId={state.weather.illustrationId}
+                  compact
+                  className="weather-card__art"
+                />
+                <div className="weather-card__metrics">
+                  {weatherLocationLabel ? (
+                    <p className="metric-detail weather-location-label">{weatherLocationLabel}</p>
+                  ) : null}
+                  {hasWeatherData(state.weather) ? (
+                    <>
+                      <p className="metric-large">{state.weather.tempC}°C</p>
+                      <p className="metric-detail">
+                        降水 {state.weather.precipitationPct}% · 湿度 {state.weather.humidityPct}% · 風{' '}
+                        {state.weather.windKmh}km/h
+                      </p>
+                      <p className="hint-line">{state.weather.hint}</p>
+                    </>
+                  ) : (
+                    <p className="hint-line">{state.weather.hint}</p>
+                  )}
+                  {weatherCoordHint ? <p className="hint-line">{weatherCoordHint}</p> : null}
+                </div>
+              </div>
+            </a>
           ) : null}
+
+          {layout.showCalendarMini ? (
+            <CalendarHubPreview compact={layout.gridMode !== 'full'} />
+          ) : null}
+
+          {layout.showTransportMini ? <TransportHubPreview /> : null}
+
+          {layout.showOperationsMini ? <OperationsHubPreview /> : null}
 
           {events.length > 0 ? (
             <div className="glass-card">
@@ -233,9 +255,33 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
         </span>
       </footer>
 
-      {import.meta.env.DEV ? (
-        <nav className="phase-preview" aria-label="時間帯プレビュー（開発用）">
-          <span className="phase-preview__label">時間帯</span>
+      <nav className="module-shortcuts" aria-label="機能モジュール">
+        <span className="module-shortcuts__label">機能</span>
+        <a href={screenHref('M-WEA-DET')} className="module-shortcuts__link">
+          天気
+        </a>
+        <a href={screenHref('M-CAL-MON')} className="module-shortcuts__link">
+          カレンダー
+        </a>
+        <a href={screenHref('M-TRN-DEP')} className="module-shortcuts__link">
+          交通
+        </a>
+        <a href={screenHref('M-OPS-LST')} className="module-shortcuts__link">
+          運用
+        </a>
+        <a href={screenHref('M-AST-LST')} className="module-shortcuts__link">
+          資産
+        </a>
+        <a href={screenHref('M-DOC-VIEW')} className="module-shortcuts__link">
+          ドキュメント
+        </a>
+      </nav>
+
+      <nav className="phase-preview" aria-label="画面切替">
+          <span className="phase-preview__label">画面</span>
+          <a href={catalogHref()} className="phase-preview__link">
+            一覧
+          </a>
           {DAY_PHASES.map((item) => (
             <a
               key={item}
@@ -245,11 +291,10 @@ export function PerceptionDashboard({ state: stateOverride }: Props) {
               {DAY_PHASE_LABELS[item]}
             </a>
           ))}
-          <a href="?" className="phase-preview__link">
+          <a href={window.location.pathname || '/'} className="phase-preview__link">
             現在
           </a>
         </nav>
-      ) : null}
     </div>
   );
 }

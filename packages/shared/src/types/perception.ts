@@ -2,6 +2,17 @@ export type DayPhase = 'morning' | 'day' | 'evening' | 'night';
 
 export type PerceptionEventTone = 'calm' | 'warm' | 'focus';
 
+export type WeatherIllustrationId =
+  | 'clear-day'
+  | 'clear-night'
+  | 'partly-cloudy'
+  | 'overcast'
+  | 'fog'
+  | 'rain'
+  | 'snow'
+  | 'thunderstorm'
+  | 'unknown';
+
 export interface PerceptionState {
   phase: DayPhase;
   statusLine: string;
@@ -11,6 +22,10 @@ export interface PerceptionState {
     humidityPct: number;
     windKmh: number;
     hint: string;
+    /** Open-Meteo WMO weather_code */
+    weatherCode?: number;
+    isDay?: boolean;
+    illustrationId: WeatherIllustrationId;
   };
   nextEvents: Array<{
     time: string;

@@ -101,6 +101,7 @@ describe('buildPerceptionState contract', () => {
           humidityPct: 50,
           windKmh: 5,
           hint: '快晴',
+          illustrationId: 'clear-day',
         },
       },
     );

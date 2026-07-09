@@ -36,6 +36,7 @@ describe('buildPerceptionState', () => {
           humidityPct: 40,
           windKmh: 3,
           hint: 'テスト',
+          illustrationId: 'clear-day',
         },
         nextEvents: [{ time: '15:00', title: '打合せ', tone: 'focus' }],
       },

@@ -264,9 +264,8 @@ Canvas 更新 · Sprint 完了 · リンク変更を **User に返す前** に P
 |---|------|-----------------|----------|
 | 1 | 依存ビルド | `pnpm dev:prepare` | shared · domain · db が dist 更新済 |
 | 2 | サーバー疎通 | `pnpm dev:verify` | 出力をそのまま User に報告（WARN 含む） |
-| 3 | 暫定 Web UI | 5173 を開く | HTML 表示（Resource エラーは DB 未起動なら想定内） |
-| 4 | 設計図 | 5180 を開く | Docker 不要 · 常に確認可能 |
-| 5 | Canvas | 進捗 Canvas のリンク | markdown リンク形式 · 誇張表現禁止 |
+| 3 | 製品 UI（1420） | Canvas urms-hub の青リンク | Cursor 内タブで HMR 表示 |
+| 4 | Canvas | 進捗 Canvas のリンク | markdown リンク形式 · 誇張表現禁止 |
 
 **報告ルール:** 「すべて OK」「開けます」単独禁止。DB 未起動時は Resource 不可を必ず明記。S11 は「実装済 · 未タグ」と記載。
 
