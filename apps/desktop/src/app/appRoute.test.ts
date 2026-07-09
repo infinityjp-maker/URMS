@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { calendarDetailHref, catalogHref, knowledgeDocumentHref, parseAppRoute, pcPartsHref, phaseHref, readAssetId, readCalendarDetailDate, readKnowledgeDocumentId, screenHref } from './appRoute.js';
+import { calendarDetailHref, catalogHref, knowledgeDocumentHref, parseAppRoute, pcPartsHref, phaseHref, readAssetId, readCalendarDetailDate, readCalendarEventId, readKnowledgeDocumentId, screenHref } from './appRoute.js';
 
 describe('appRoute', () => {
   it('parses catalog hash', () => {
@@ -33,6 +33,16 @@ describe('appRoute', () => {
   it('builds calendar detail href with date param', () => {
     expect(calendarDetailHref('2026-07-09')).toContain('calDate=2026-07-09');
     expect(calendarDetailHref('2026-07-09')).toContain('#/M-CAL-DET');
+  });
+
+  it('builds calendar detail href with event id', () => {
+    expect(calendarDetailHref('2026-07-09', 'evt-1')).toContain('calDate=2026-07-09');
+    expect(calendarDetailHref('2026-07-09', 'evt-1')).toContain('eventId=evt-1');
+  });
+
+  it('reads calendar event id from search params', () => {
+    expect(readCalendarEventId('?calDate=2026-07-09&eventId=evt-1')).toBe('evt-1');
+    expect(readCalendarEventId('?calDate=2026-07-09')).toBeNull();
   });
 
   it('reads knowledge document id from search params', () => {

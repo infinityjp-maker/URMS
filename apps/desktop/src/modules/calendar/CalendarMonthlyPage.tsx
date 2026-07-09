@@ -190,6 +190,12 @@ export function CalendarMonthlyPage() {
                         <p className="hint-line">{event.leadAdvice.detail}</p>
                       </div>
                     ) : null}
+                    <a
+                      href={calendarDetailHref(calendar.selectedDateKey ?? '', event.resourceId)}
+                      className="module-shortcuts__link"
+                    >
+                      予定詳細へ
+                    </a>
                   </li>
                 ))}
               </ul>

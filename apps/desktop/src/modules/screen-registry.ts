@@ -54,7 +54,7 @@ export const PRODUCT_SCREENS_V02: readonly ProductScreen[] = [
     moduleLabel: 'カレンダー',
     name: '予定詳細',
     when: '日付タップ',
-    note: '種別別リードタイム · 交通連動',
+    note: '種別別リードタイム · 交通連動 · eventId 深リンク',
     status: 'live',
   },
   {

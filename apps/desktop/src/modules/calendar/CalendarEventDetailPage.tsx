@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { readCalendarDetailDate, screenHref } from '../../app/appRoute.js';
+import { readCalendarDetailDate, readCalendarEventId, screenHref } from '../../app/appRoute.js';
 import { useCalendarMonth } from '../../hooks/useCalendarMonth.js';
 import { useLifeState } from '../../hooks/useLifeState.js';
 import { ModuleScreenLayout } from '../ModuleScreenLayout.js';
@@ -18,6 +18,7 @@ function categoryClass(category: 'tv' | 'reservation' | 'outgoing'): string {
 export function CalendarEventDetailPage() {
   const life = useLifeState();
   const dateKey = readCalendarDetailDate();
+  const eventId = readCalendarEventId();
   const calendar = useCalendarMonth({ apiOnline: life.apiOnline });
 
   const events = useMemo(() => {
@@ -26,6 +27,8 @@ export function CalendarEventDetailPage() {
     }
     return calendar.payload.days[dateKey] ?? [];
   }, [calendar.payload, dateKey]);
+
+  const focusedEvent = eventId ? events.find((event) => event.resourceId === eventId) : undefined;
 
   return (
     <ModuleScreenLayout screenId="M-CAL-DET" title="予定詳細" moduleLabel="カレンダー">
@@ -40,7 +43,15 @@ export function CalendarEventDetailPage() {
         ) : (
           <ul className="calendar-event-list">
             {events.map((event) => (
-              <li key={event.resourceId} className="calendar-event">
+              <li
+                key={event.resourceId}
+                className={[
+                  'calendar-event',
+                  eventId === event.resourceId ? 'calendar-event--focused' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
                 <div className="calendar-event__header">
                   <span className="calendar-event__time">{event.time}</span>
                   <span className={categoryClass(event.category)}>{categoryLabel(event.category)}</span>
@@ -62,6 +73,9 @@ export function CalendarEventDetailPage() {
             ))}
           </ul>
         )}
+        {eventId && !focusedEvent && events.length > 0 ? (
+          <p className="hint-line">指定の予定が見つかりません — 同日の予定を表示しています。</p>
+        ) : null}
       </section>
 
       <section className="glass-card">

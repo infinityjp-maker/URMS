@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { screenHref } from '../../app/appRoute.js';
+import { calendarDetailHref, screenHref } from '../../app/appRoute.js';
 import { useCalendarMonth } from '../../hooks/useCalendarMonth.js';
 import { useLifeState } from '../../hooks/useLifeState.js';
 
@@ -65,9 +65,13 @@ export function CalendarHubPreview({ compact = false }: Props) {
 
   const todayEvents = calendar.payload?.days[todayKey] ?? [];
   const showGrid = calendar.payload && !calendar.error && life.apiOnline && life.dbReady;
+  const hubHref =
+    todayEvents.length > 0
+      ? calendarDetailHref(todayKey, todayEvents[0]?.resourceId)
+      : screenHref('M-CAL-MON');
 
   return (
-    <a href={screenHref('M-CAL-MON')} className="glass-card glass-card--link calendar-hub">
+    <a href={hubHref} className="glass-card glass-card--link calendar-hub">
       <p className="card-kicker">カレンダー · 月表示へ</p>
 
       {showGrid ? (

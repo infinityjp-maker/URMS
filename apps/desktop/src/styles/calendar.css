@@ -108,6 +108,12 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
+.calendar-event--focused {
+  border-color: rgba(120, 180, 255, 0.55);
+  background: rgba(120, 180, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(120, 180, 255, 0.2);
+}
+
 .calendar-event__header {
   display: flex;
   align-items: center;

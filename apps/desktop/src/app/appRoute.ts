@@ -22,10 +22,15 @@ export function screenHref(screenId: string): string {
   return `#/${screenId}`;
 }
 
-export function calendarDetailHref(dateKey: string): string {
+export function calendarDetailHref(dateKey: string, eventId?: string): string {
   const path = typeof window === 'undefined' ? '/' : window.location.pathname || '/';
   const search = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
   search.set('calDate', dateKey);
+  if (eventId) {
+    search.set('eventId', eventId);
+  } else {
+    search.delete('eventId');
+  }
   const query = search.toString();
   return query ? `${path}?${query}#/M-CAL-DET` : `${path}#/M-CAL-DET`;
 }
@@ -33,6 +38,11 @@ export function calendarDetailHref(dateKey: string): string {
 export function readCalendarDetailDate(search = window.location.search): string | null {
   const value = new URLSearchParams(search).get('calDate')?.trim();
   return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+}
+
+export function readCalendarEventId(search = window.location.search): string | null {
+  const value = new URLSearchParams(search).get('eventId')?.trim();
+  return value || null;
 }
 
 export function operationsDetailHref(flowId: string): string {

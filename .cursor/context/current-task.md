@@ -14,7 +14,7 @@
 
 
 
-**v0.2 製品実装 — v0.2 live 画面完成 · S10+ 拡張検討**
+**v0.2 製品実装 — 全 live 画面完成 · 次フェーズ検討**
 
 
 
@@ -32,13 +32,14 @@
 
 | S2 天気詳細 | ✅ M-WEA-DET · 傘アドバイス（Domain + UI） |
 
-| S3 カレンダー | ✅ M-CAL-MON · Google ICS · 種別リードタイム |
+| S3 カレンダー | ✅ M-CAL-MON · M-CAL-DET · Google ICS · 種別リードタイム · eventId 深リンク |
 | S4 交通 | ✅ M-TRN-DEP · M-TRN-ROUTE |
 | S5 運用フロー | ✅ M-OPS-LST · M-OPS-DET |
 | S6 ドキュメント | ✅ M-DOC-VIEW |
 | S7 資産 | ✅ M-AST-LST · M-AST-PC |
 | S8 ストレージ | ✅ M-STR-LST · M-STR-DET · ハブプレビュー |
 | S9 動画 | ✅ M-VID-LST · M-VID-DET · ハブプレビュー · ストレージ連携 |
+| S10 カレンダー詳細 | ✅ M-CAL-DET 深リンク · ハブ当日直行 · docs 同期 |
 | M-WEA-WK | ✅ 週間予報 · Open-Meteo 7 日 |
 | ハブ polish | ✅ 資産 · 週間天気 · ストレージ · 動画 · 時間別 live |
 

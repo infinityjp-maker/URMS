@@ -18,7 +18,7 @@
 | **M-WEA-DET** | 天気 | 詳細 · 傘アドバイス | **live（S2）** |
 | M-WEA-WK | 天気 | 週間予報 | **live** |
 | M-CAL-MON | カレンダー | マンスリー | live（S3 · Google 後半） |
-| M-CAL-DET | カレンダー | 予定詳細 | stub |
+| M-CAL-DET | カレンダー | 予定詳細 | **live（S10 · 深リンク）** |
 | M-TRN-DEP | 交通 | 出発 · 駅発 | **live（S4）** |
 | M-TRN-ROUTE | 交通 | ルート | **live（S4）** |
 | M-OPS-LST | 運用 | フロー一覧 | **live（S5）** |
